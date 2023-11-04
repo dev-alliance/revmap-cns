@@ -1,0 +1,350 @@
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  Paper,
+  Grid,
+  TextField,
+} from "@mui/material";
+import logo from "../assets/logo.jpg"; // Ensure this path is correct
+
+type FormInputs = {
+  companyName: string;
+  companySize: string;
+  country: string;
+  timeZone: string;
+  email: string;
+  phoneNumber: string;
+  industry: string;
+  websiteUrl: string;
+};
+
+const CompanyDetails: React.FC = () => {
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormInputs>();
+
+  const onSubmit = (data: FormInputs) => {
+    console.log(data);
+    // Handle form submission logic here
+  };
+
+  return (
+    <Container maxWidth="xl" sx={{ height: "100vh", padding: 1 }}>
+      <Grid container sx={{ height: "100%" }}>
+        <Grid
+          item
+          xs={12}
+          md={12}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src={logo}
+            alt="Logo"
+            style={{ maxWidth: "320px", marginTop: "16px" }}
+          />
+          <Box sx={{ width: "100%", maxWidth: 800, m: 3 }}>
+            <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+              <Typography
+                variant="h5"
+                component="h1"
+                color={"#155BE5"}
+                sx={{ fontWeight: "bold", textAlign: "left" }}
+              >
+                Company Details
+              </Typography>
+              <Typography
+                variant="h6"
+                component="h2"
+                color={"#9A9A9A"}
+                sx={{ mb: 4, textAlign: "left", fontSize: "15px" }}
+              >
+                Please fill all the details to proceed
+              </Typography>
+
+              <Box
+                component="form"
+                onSubmit={handleSubmit(onSubmit)}
+                noValidate
+              >
+                <Grid container spacing={2}>
+                  {/* Company Name Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Company Name
+                    </Typography>
+                    <Controller
+                      name="companyName"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Company Name is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          placeholder="Enter your company name"
+                          error={Boolean(errors.companyName)}
+                          helperText={
+                            errors.companyName ? errors.companyName.message : ""
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Company Size Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Company Size
+                    </Typography>
+                    <Controller
+                      name="companySize"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Company Size is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          placeholder="Enter your company size"
+                          error={Boolean(errors.companySize)}
+                          helperText={
+                            errors.companySize ? errors.companySize.message : ""
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Country Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Country
+                    </Typography>
+                    <Controller
+                      name="country"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Country is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          placeholder="Enter your country"
+                          error={Boolean(errors.country)}
+                          helperText={
+                            errors.country ? errors.country.message : ""
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Time Zone Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Time Zone
+                    </Typography>
+                    <Controller
+                      name="timeZone"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Time Zone is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          placeholder="Enter your time zone"
+                          error={Boolean(errors.timeZone)}
+                          helperText={
+                            errors.timeZone ? errors.timeZone.message : ""
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Email Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Email
+                    </Typography>
+                    <Controller
+                      name="email"
+                      control={control}
+                      defaultValue=""
+                      rules={{
+                        required: "Email is required",
+                        pattern: {
+                          value: /^\S+@\S+\.\S+$/,
+                          message: "Invalid email address",
+                        },
+                      }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          type="email"
+                          autoComplete="email"
+                          placeholder="Enter email"
+                          error={Boolean(errors.email)}
+                          helperText={errors.email ? errors.email.message : ""}
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Phone Number Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Phone Number
+                    </Typography>
+                    <Controller
+                      name="phoneNumber"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Phone Number is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          type="tel"
+                          placeholder="Enter phone number"
+                          error={Boolean(errors.phoneNumber)}
+                          helperText={
+                            errors.phoneNumber ? errors.phoneNumber.message : ""
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Industry Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Industry
+                    </Typography>
+                    <Controller
+                      name="industry"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Industry is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          placeholder="Enter your industry"
+                          error={Boolean(errors.industry)}
+                          helperText={
+                            errors.industry ? errors.industry.message : ""
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  {/* Website URL Field */}
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                    >
+                      Website URL
+                    </Typography>
+                    <Controller
+                      name="websiteUrl"
+                      control={control}
+                      defaultValue=""
+                      rules={{ required: "Website URL is required" }}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          margin="normal"
+                          fullWidth
+                          placeholder="Enter your website URL"
+                          error={Boolean(errors.websiteUrl)}
+                          helperText={
+                            errors.websiteUrl ? errors.websiteUrl.message : ""
+                          }
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Box
+                  sx={{
+                    display: "flex", // Enable Flexbox for this container
+                    justifyContent: "center", // Center content horizontally
+                    mt: 3, // Top margin
+                    mb: 2, // Bottom margin
+                  }}
+                >
+                  <Button type="submit" variant="contained">
+                    Submit
+                  </Button>
+                </Box>
+              </Box>
+            </Paper>
+          </Box>
+        </Grid>
+      </Grid>
+    </Container>
+  );
+};
+
+export default CompanyDetails;
