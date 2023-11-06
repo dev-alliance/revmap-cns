@@ -20,11 +20,6 @@ import OtpInput from "react-otp-input";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { verifyForgotPass, verifyOtp } from "@/service/api/apiMethods";
-type FormInputs = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
 
 const SignupPage: React.FC = () => {
   const location = useLocation();
