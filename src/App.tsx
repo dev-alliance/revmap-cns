@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "@/pages/LoginPage";
 // import Sidebar from "@/pages/SideBar";
 import CustomerProfile from "@/pages/CustomerProfile";
-import Test from "@/pages/Test";
 import SignupPage from "@/pages/SignupPage";
 import EmailVarfication from "@/pages/EmailVarfication";
 import ComponyDetails from "@/pages/ComponyDetails";
@@ -25,7 +24,6 @@ function App() {
           <Route path="forgotpassword" element={<ForgotPassword />} />
           <Route path="resetpassword" element={<ResetPassword />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="test" element={<Test />} />
         </Routes>
       </BrowserRouter>
     </>
