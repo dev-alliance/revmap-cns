@@ -306,7 +306,7 @@ const CompanyDetails: React.FC = () => {
                         required: "Phone Number is required",
                         pattern: {
                           value: /^[+]*(?:\(\d{1,4}\))?[-\s./0-9]*$/,
-                          message: "Invalid phone number", // Message to show when the pattern validation fails
+                          message: "Invalid phone number",
                         },
                         minLength: {
                           value: 10,

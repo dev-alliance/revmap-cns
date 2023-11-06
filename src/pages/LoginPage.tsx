@@ -275,7 +275,7 @@ const LoginPage: React.FC = () => {
                       "&:hover": { textDecoration: "none" },
                     }}
                   >
-                    Sign up
+                    Sign Up
                   </Link>
                 </Typography>
               </Box>
