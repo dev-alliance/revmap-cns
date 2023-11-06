@@ -23,6 +23,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { login } from "@/service/api/apiMethods";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 type FormInputs = {
   email: string;
   password: string;
@@ -39,6 +40,7 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormInputs>();
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
@@ -47,9 +49,9 @@ const LoginPage: React.FC = () => {
         password: data.password,
       };
       const response = await login(payload);
-      console.log(response);
       if (response.ok === true) {
         toast.success("Logged in successfully!");
+        navigate("/dashboard");
       }
     } catch (error: any) {
       console.log(error);
@@ -123,7 +125,7 @@ const LoginPage: React.FC = () => {
                 {/* Email Label and Input */}
                 <Typography
                   variant="subtitle1"
-                  sx={{ mt: 0, mb: -1, fontSize: "15px" }}
+                  sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
                 >
                   Email
                 </Typography>
@@ -156,7 +158,12 @@ const LoginPage: React.FC = () => {
 
                 <Grid container justifyContent="flex-end" sx={{ mb: -3 }}>
                   <Grid item>
-                    <Link href="/forgotpassword" variant="body2">
+                    <Link
+                      underline="none"
+                      href="/forgotpassword"
+                      variant="body2"
+                      sx={{ color: "#9E9E9E" }}
+                    >
                       Forgot passwordd?
                     </Link>
                   </Grid>
@@ -165,7 +172,7 @@ const LoginPage: React.FC = () => {
                 {/* Password Label and Input */}
                 <Typography
                   variant="subtitle1"
-                  sx={{ mt: 0, mb: -1, fontSize: "15px" }}
+                  sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
                 >
                   Password
                 </Typography>
@@ -235,7 +242,17 @@ const LoginPage: React.FC = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    textTransform: "none",
+                    fontSize: "16px",
+                    backgroundColor: "#155BE5",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#134DAB", // Slightly darker shade for hover effect, change as needed
+                    },
+                  }}
                   size="small"
                 >
                   Sign In
@@ -246,13 +263,15 @@ const LoginPage: React.FC = () => {
                   variant="body2"
                   color="text.secondary"
                   align="center"
+                  sx={{ mb: 4, mt: 3, fontSize: "16px", color: "#9A9A9A" }}
                 >
                   Don't have an account yet?{" "}
                   <Link
-                    href="/signup"
+                    underline="none"
                     sx={{
-                      color: "primary.main",
-                      "&:hover": { textDecoration: "underline" },
+                      m: 1,
+                      color: "#155BE5",
+                      "&:hover": { textDecoration: "none" },
                     }}
                   >
                     Sign up

@@ -7,7 +7,7 @@ import { store } from "./store";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 const theme = createTheme({
   typography: {
-    fontFamily: "Arial",
+    fontFamily: "Poppins",
   },
   // ... other theme properties if needed
 });

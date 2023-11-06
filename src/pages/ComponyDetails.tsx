@@ -10,6 +10,9 @@ import {
   TextField,
 } from "@mui/material";
 import logo from "../assets/logo.jpg"; // Ensure this path is correct
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { CreateCompony } from "@/service/api/apiMethods";
 
 type FormInputs = {
   companyName: string;
@@ -28,10 +31,33 @@ const CompanyDetails: React.FC = () => {
     control,
     formState: { errors },
   } = useForm<FormInputs>();
+  const navigate = useNavigate();
+  const onSubmit = async (data: FormInputs) => {
+    try {
+      const response = await CreateCompony(data);
+      console.log(response.message);
+      if (response.ok === true) {
+        toast.success(response.message);
+        navigate("/");
+      } else {
+        const errorMessage = response.data || response.message;
+        toast.error(errorMessage);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log(error);
 
-  const onSubmit = (data: FormInputs) => {
-    console.log(data);
-    // Handle form submission logic here
+      let errorMessage = "Login failed";
+      if (error.response) {
+        errorMessage = error.response.data || error.response.data.message;
+      } else {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+
+      // Handle error
+      console.error(errorMessage);
+    }
   };
 
   return (
@@ -82,7 +108,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Company Name
                     </Typography>
@@ -112,7 +143,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Company Size
                     </Typography>
@@ -142,7 +178,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Country
                     </Typography>
@@ -172,7 +213,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Time Zone
                     </Typography>
@@ -202,7 +248,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Email
                     </Typography>
@@ -238,7 +289,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Phone Number
                     </Typography>
@@ -269,7 +325,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Industry
                     </Typography>
@@ -299,7 +360,12 @@ const CompanyDetails: React.FC = () => {
                   <Grid item xs={12} md={6}>
                     <Typography
                       variant="subtitle1"
-                      sx={{ mt: -2, mb: -1, fontSize: "15px" }}
+                      sx={{
+                        mt: -2,
+                        mb: -1,
+                        fontSize: "15px",
+                        color: "#9A9A9A",
+                      }}
                     >
                       Website URL
                     </Typography>
@@ -330,11 +396,24 @@ const CompanyDetails: React.FC = () => {
                   sx={{
                     display: "flex", // Enable Flexbox for this container
                     justifyContent: "center", // Center content horizontally
-                    mt: 3, // Top margin
+                    mt: 2, // Top margin
                     mb: 2, // Bottom margin
                   }}
                 >
-                  <Button type="submit" variant="contained">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      textTransform: "none",
+                      fontSize: "16px",
+                      backgroundColor: "#155BE5",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "#134DAB", // Slightly darker shade for hover effect, change as needed
+                      },
+                    }}
+                    size="small"
+                  >
                     Submit
                   </Button>
                 </Box>

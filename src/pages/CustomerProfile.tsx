@@ -135,7 +135,23 @@ const CustomerProfile: React.FC = () => {
           <FormHelperText error>{errors.detail.message}</FormHelperText>
         )}
 
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{
+            mt: 3,
+            mb: 2,
+            textTransform: "none",
+            fontSize: "16px",
+            backgroundColor: "#155BE5",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "#134DAB", // Slightly darker shade for hover effect, change as needed
+            },
+          }}
+          size="small"
+        >
           Submit
         </Button>
       </Box>

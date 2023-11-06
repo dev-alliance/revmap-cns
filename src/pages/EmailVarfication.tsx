@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -18,7 +19,7 @@ import logoVerification from "../assets/email_verification.png";
 import OtpInput from "react-otp-input";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { verifyOtp } from "@/service/api/apiMethods";
+import { verifyForgotPass, verifyOtp } from "@/service/api/apiMethods";
 type FormInputs = {
   email: string;
   password: string;
@@ -28,29 +29,50 @@ type FormInputs = {
 const SignupPage: React.FC = () => {
   const location = useLocation();
   const email = location.state?.email;
+  const condition = location.state?.condition;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
   const onSubmit = async () => {
+    // Assuming OTP is of length 5
     if (otp.length === 5) {
-      // Assuming OTP is of length 5
       try {
         const payload = {
           email: email,
           otp: otp,
         };
-        const response = await verifyOtp(payload); // Pass the OTP for verification
-        if (response.ok === true) {
-          toast.success(response.message);
-          navigate("/"); // Navigate to success page or route
+        console.log(condition, "condition");
+
+        let response;
+        if (condition === "true") {
+          response = await verifyForgotPass(payload);
+
+          if (response.ok === true) {
+            toast.success(response.message);
+            navigate("/resetpassword", {
+              state: { email: email },
+            });
+          } else {
+            toast.error(response.message);
+          }
         } else {
-          toast.error(response.message);
+          response = await verifyOtp(payload);
+          if (response.ok === true) {
+            toast.success(response.message);
+            navigate("/componydetails");
+          } else {
+            toast.error(response.message);
+          }
         }
       } catch (error: any) {
-        toast.error("An error occurred during verification.");
-        console.error("Verification error:", error.response || error.message);
+        // If the error is from an HTTP response, it should have a `response` property
+        const errorMessage =
+          error.response?.data?.message ||
+          "An error occurred during verification.";
+        toast.error(errorMessage);
+        console.error("Verification error:", errorMessage);
       }
     } else {
       toast.error("Please enter a valid 5-digit OTP.");
@@ -146,13 +168,10 @@ const SignupPage: React.FC = () => {
                   )}
                 />
                 <Typography
-                  sx={{
-                    mt: 2,
-                    mb: 1,
-                  }}
                   variant="body2"
                   color="text.secondary"
                   align="center"
+                  sx={{ mb: 1, mt: 2, fontSize: "16px", color: "#9A9A9A" }}
                 >
                   Didn’t get the code?{" "}
                   <Link
@@ -160,7 +179,7 @@ const SignupPage: React.FC = () => {
                     sx={{
                       mt: 2,
                       mb: 2,
-                      color: "primary.main",
+                      color: "##9A9A9A",
                       "&:hover": { textDecoration: "underline" },
                     }}
                   >
@@ -171,42 +190,21 @@ const SignupPage: React.FC = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    textTransform: "none",
+                    fontSize: "16px",
+                    backgroundColor: "#155BE5",
+                    color: "white",
+                    "&:hover": {
+                      backgroundColor: "#134DAB", // Slightly darker shade for hover effect, change as needed
+                    },
+                  }}
                   size="small"
                 >
                   Submit
                 </Button>
-
-                {/* Terms and Privacy Policy Links */}
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  align="center"
-                  sx={{ mt: 2, ml: 0, mr: 0 }}
-                >
-                  By signing up, you agree to ContractnSign’s{" "}
-                  <Link
-                    // href="/signup"
-                    sx={{
-                      m: 1,
-                      color: "primary.main",
-                      "&:hover": { textDecoration: "underline" },
-                    }}
-                  >
-                    Terms of Service
-                  </Link>
-                  and
-                  <Link
-                    // href="/signup"
-                    sx={{
-                      m: 1,
-                      color: "primary.main",
-                      "&:hover": { textDecoration: "underline" },
-                    }}
-                  >
-                    Privacy Policy.
-                  </Link>
-                </Typography>
               </Box>
             </Paper>
           </Box>

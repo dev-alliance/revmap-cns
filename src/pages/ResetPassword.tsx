@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import {
@@ -7,7 +6,6 @@ import {
   Typography,
   TextField,
   Button,
-  Link,
   Paper,
   Grid,
   useMediaQuery,
@@ -19,21 +17,21 @@ import logo from "../assets/logo.jpg"; // Adjust the path to your logo image
 import loginBanner from "@/assets/login_banner.png"; // Adjust the path to your background image
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useNavigate } from "react-router-dom";
+import { resetPaasword } from "@/service/api/apiMethods";
 import toast from "react-hot-toast";
-import { signU } from "@/service/api/apiMethods";
+import { useLocation, useNavigate } from "react-router-dom";
 type FormInputs = {
-  email: string;
   password: string;
   confirmPassword: string;
 };
 
-const SignupPage: React.FC = () => {
+const ResetPassword: React.FC = () => {
+  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const email = location.state?.email;
   const {
     control,
     handleSubmit,
@@ -43,26 +41,22 @@ const SignupPage: React.FC = () => {
     formState: { errors },
   } = useForm<FormInputs>();
   const navigate = useNavigate();
-
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const payload = {
-        email: data.email,
-        password: data.confirmPassword,
-        role: 1,
-        emailVerified: true,
+        email: email,
+        newPassword: data.confirmPassword,
       };
 
-      const response = await signU(payload);
-      console.log(response.message);
+      const response = await resetPaasword(payload);
       if (response.ok === true) {
-        toast.success("Logged in successfully!");
-        navigate("/emailverification");
-        navigate("/emailvarfication", { state: { email: data.email } });
+        toast.success("update successfully!");
+        navigate("/");
       } else {
         const errorMessage = response.data || response.message;
         toast.error(errorMessage);
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
 
@@ -128,27 +122,12 @@ const SignupPage: React.FC = () => {
           <Box sx={{ width: "100%", maxWidth: 400, m: 3 }}>
             <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
               <Typography
-                variant="body2"
-                color="text.secondary"
-                align="center"
-                sx={{ mb: 4, fontSize: "16px", color: "#9A9A9A" }}
+                variant="h5"
+                component="h1"
+                color={"#155BE5"}
+                sx={{ fontWeight: "bold", textAlign: "center" }}
               >
-                Sign up for a{" "}
-                <Link
-                  // href="/signup"
-                  underline="none"
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: "16px",
-                    color: "#155BE5",
-                    textDecoration: "none",
-                    "&:hover": {
-                      textDecoration: "none",
-                    },
-                  }}
-                >
-                  free 14 days Trial
-                </Link>
+                Reset password !
               </Typography>
 
               <Box
@@ -156,39 +135,6 @@ const SignupPage: React.FC = () => {
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
               >
-                {/* Email Label and Input */}
-                <Typography
-                  variant="subtitle1"
-                  sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                >
-                  Email
-                </Typography>
-                <Controller
-                  name="email"
-                  control={control}
-                  defaultValue=""
-                  rules={{
-                    required: "Email is required",
-                    pattern: {
-                      value: /^\S+@\S+\.\S+$/,
-                      message: "Invalid email address",
-                    },
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      margin="normal"
-                      fullWidth
-                      type="email"
-                      autoComplete="email"
-                      placeholder="Enter email"
-                      error={Boolean(errors.email)}
-                      helperText={errors.email ? errors.email.message : ""}
-                      variant="outlined"
-                      size="small"
-                    />
-                  )}
-                />
                 <Typography
                   variant="subtitle1"
                   sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
@@ -203,15 +149,15 @@ const SignupPage: React.FC = () => {
                     required: "Password is required",
                     minLength: {
                       value: 10,
-                      message: "Password must have at least 8 characters",
+                      message: "Password must have at least 10 characters",
                     },
-                    pattern: {
-                      // This is a simple regex for at least one uppercase, one lowercase, one number, and one special character
-                      value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      message:
-                        "Password must include uppercase, lowercase, number, and special char",
-                    },
+                    // pattern: {
+
+                    //   value:
+                    //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    //   message:
+                    //     "Password must include uppercase, lowercase, number, and special char",
+                    // },
                   }}
                   render={({ field }) => (
                     <TextField
@@ -247,6 +193,7 @@ const SignupPage: React.FC = () => {
                   )}
                 />
 
+                {/* Confirm Password Field */}
                 <Typography
                   variant="subtitle1"
                   sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
@@ -309,60 +256,10 @@ const SignupPage: React.FC = () => {
                   }}
                   size="small"
                 >
-                  Sign up
+                  Submit
                 </Button>
-
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  align="center"
-                  sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                >
-                  You have already acoount{" "}
-                  <Link
-                    underline="none"
-                    href="/"
-                    sx={{
-                      m: 1,
-                      color: "#155BE5",
-                      "&:hover": { textDecoration: "none" },
-                    }}
-                  >
-                    Login
-                  </Link>
-                </Typography>
               </Box>
             </Paper>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="center"
-              sx={{ mb: 4, mt: 3, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              By signing up, you agree to ContractnSign’s{" "}
-              <Link
-                underline="none"
-                sx={{
-                  m: 1,
-                  color: "#155BE5",
-                  "&:hover": { textDecoration: "none" },
-                }}
-              >
-                Terms of Service
-              </Link>
-              and
-              <Link
-                underline="none"
-                // href="/signup"
-                sx={{
-                  m: 2,
-                  color: "#155BE5",
-                  "&:hover": { textDecoration: "underline" },
-                }}
-              >
-                Privacy Policy.
-              </Link>
-            </Typography>
           </Box>
         </Grid>
 
@@ -385,4 +282,4 @@ const SignupPage: React.FC = () => {
   );
 };
 
-export default SignupPage;
+export default ResetPassword;

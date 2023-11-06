@@ -6,12 +6,14 @@ import Test from "@/pages/Test";
 import SignupPage from "@/pages/SignupPage";
 import EmailVarfication from "@/pages/EmailVarfication";
 import ComponyDetails from "@/pages/ComponyDetails";
-import ForgotPassword from "@/pages/ForgotPassword";
 import { Toaster } from "react-hot-toast";
+import ResetPassword from "@/pages/ResetPassword";
+import ForgotPassword from "@/pages/ForgotPassword";
+import Dashboard from "@/pages/Dashboard";
 function App() {
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <BrowserRouter>
         {/* <Sidebar /> */}
         <Routes>
@@ -21,6 +23,8 @@ function App() {
           <Route path="emailvarfication" element={<EmailVarfication />} />
           <Route path="componydetails" element={<ComponyDetails />} />
           <Route path="forgotpassword" element={<ForgotPassword />} />
+          <Route path="resetpassword" element={<ResetPassword />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="test" element={<Test />} />
         </Routes>
       </BrowserRouter>
