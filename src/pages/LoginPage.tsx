@@ -267,6 +267,7 @@ const LoginPage: React.FC = () => {
                 >
                   Don't have an account yet?{" "}
                   <Link
+                    href="/signup"
                     underline="none"
                     sx={{
                       m: 1,

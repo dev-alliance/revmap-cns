@@ -302,7 +302,22 @@ const CompanyDetails: React.FC = () => {
                       name="phoneNumber"
                       control={control}
                       defaultValue=""
-                      rules={{ required: "Phone Number is required" }}
+                      rules={{
+                        required: "Phone Number is required",
+                        pattern: {
+                          value: /^[+]*(?:\(\d{1,4}\))?[-\s./0-9]*$/,
+                          message: "Invalid phone number", // Message to show when the pattern validation fails
+                        },
+                        minLength: {
+                          value: 10,
+                          message: "Phone number must be at least 10 digits",
+                        },
+                        maxLength: {
+                          value: 15,
+                          message:
+                            "Phone number must not be greater than 15 digits",
+                        },
+                      }}
                       render={({ field }) => (
                         <TextField
                           {...field}
