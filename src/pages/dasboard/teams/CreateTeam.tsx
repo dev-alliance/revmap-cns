@@ -140,8 +140,8 @@ const CreateTeam = () => {
                 <TextField
                   InputProps={{
                     sx: {
-                      fontSize: "16px", // Apply font size to the input
-                      color: "#9A9A9A", // Apply color to the input text
+                      fontSize: "16px",
+                      color: "#9A9A9A",
                     },
                   }}
                   {...field}

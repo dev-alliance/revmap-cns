@@ -256,7 +256,11 @@ const BranchList = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete!")) {
+      if (
+        window.confirm(
+          "Deleting branch will delete all the data associated with it."
+        )
+      ) {
         setIsLoading(true);
         const res = await deleteBranch(id);
         if (res.ok === true) {

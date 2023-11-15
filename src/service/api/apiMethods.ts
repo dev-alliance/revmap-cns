@@ -85,7 +85,6 @@ export const getTeamsList = async () => {
 };
 
 export const deleteTeam = async (id: string) => {
-  console.log({ id });
   const response = await baseURL.delete(`/api/v1/teams/${id}`);
   return response.data;
 };
@@ -106,6 +105,18 @@ export const archiveTeam = async (id: any, data: any) => {
 
 export const getUserList = async () => {
   return await baseURL.get("/api/v1/users/list-user");
+};
+
+export const deleteUser = async (id: string) => {
+  const response = await baseURL.delete(`/api/v1/users/${id}`);
+  return response.data;
+};
+export const updateStatus = async (id: any, data: any) => {
+  const response = await baseURL.patch(
+    `/api/v1/users/disable-user/${id}`,
+    data
+  );
+  return response.data;
 };
 
 // Function to update user profile

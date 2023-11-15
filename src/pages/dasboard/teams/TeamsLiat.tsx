@@ -274,16 +274,6 @@ const BranchList = () => {
     }
   };
 
-  const options: any[] = [
-    {
-      text: "Edit",
-      // onClick: handleEditClick,
-    },
-    {
-      text: "Delete",
-      // onClick: handleDelete,
-    },
-  ];
   const ITEM_HEIGHT = 48;
 
   // const handleEditClick = (row: any) => {
@@ -311,7 +301,11 @@ const BranchList = () => {
   };
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete ")) {
+      if (
+        window.confirm(
+          "Deleting Team will delete all the data associated with it."
+        )
+      ) {
         setIsLoading(true);
         const res = await deleteTeam(id);
         if (res.ok === true) {

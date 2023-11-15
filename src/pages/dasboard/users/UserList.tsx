@@ -24,7 +24,12 @@ import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { archiveTeam, deleteTeam, getUserList } from "@/service/api/apiMethods";
+import {
+  archiveTeam,
+  deleteUser,
+  getUserList,
+  updateStatus,
+} from "@/service/api/apiMethods";
 import AddIcon from "@mui/icons-material/Add";
 interface CellType {
   row: any;
@@ -98,8 +103,7 @@ const defaultColumns: any[] = [
     headerName: "Team ",
 
     renderCell: ({ row }: { row: any }) => {
-      const { team } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{team}</Typography>;
+      return <Typography sx={{ color: "text.secondary" }}>{"-"}</Typography>;
     },
   },
 
@@ -110,8 +114,7 @@ const defaultColumns: any[] = [
     headerName: "Branch ",
 
     renderCell: ({ row }: { row: any }) => {
-      const { team } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{team}</Typography>;
+      return <Typography sx={{ color: "text.secondary" }}>{"-"}</Typography>;
     },
   },
 
@@ -175,9 +178,9 @@ const UserList = () => {
     page: 0,
     pageSize: 10,
   });
+  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
-  const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
 
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
@@ -221,11 +224,28 @@ const UserList = () => {
 
   const ITEM_HEIGHT = 48;
 
-  const handleArchive = async (id: any) => {
+  const handleActive = async (id: any) => {
     try {
-      alert(id);
       setIsLoading(true);
-      const res = await archiveTeam(id, { status: "archived" });
+      const res = await updateStatus(id, { status: "active" });
+      console.log({ res });
+
+      if (res.ok === true) {
+        toast.success(res.message);
+        listData();
+      } else {
+        toast.error(res?.message || "");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleInactive = async (id: any) => {
+    try {
+      setIsLoading(true);
+      const res = await updateStatus(id, { status: "inactive" });
       console.log({ res });
 
       if (res.ok === true) {
@@ -242,9 +262,13 @@ const UserList = () => {
   };
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete ")) {
+      if (
+        window.confirm(
+          "Deleting user will delete all the data associated with it"
+        )
+      ) {
         setIsLoading(true);
-        const res = await deleteTeam(id);
+        const res = await deleteUser(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -316,10 +340,18 @@ const UserList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                handleArchive(menuState.row?._id); // Use menuState.row._id
+                handleActive(menuState.row?._id); // Use menuState.row._id
               }}
             >
-              Archive
+              Active
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                handleInactive(menuState.row?._id); // Use menuState.row._id
+              }}
+            >
+              InActive
             </MenuItem>
             <MenuItem
               onClick={() => {
