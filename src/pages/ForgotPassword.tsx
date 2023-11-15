@@ -42,13 +42,13 @@ const ForgotPassword: React.FC = () => {
         navigate("/emailvarfication", {
           state: { email: data.email, condition: "true" },
         });
-        toast.success("Logged in successfully!");
+        toast.success(response.message);
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
 
-      let errorMessage = "Login failed";
+      let errorMessage = "failed";
       if (error.response) {
         errorMessage = error.response.data || error.response.data.message;
       } else {
