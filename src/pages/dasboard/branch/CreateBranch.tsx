@@ -17,7 +17,7 @@ import {
 import { countries, getStatesByCountry } from "@/utils/CounteryState";
 import { Country } from "country-state-city";
 import toast from "react-hot-toast";
-import { createBranch } from "@/service/api/apiMethods";
+import { createBranch, getUserListNameID } from "@/service/api/apiMethods";
 import { useNavigate } from "react-router-dom";
 type FormValues = {
   branchName: string;
@@ -49,7 +49,26 @@ const BranchForm = () => {
   const [status, setStatus] = useState<any>("");
   const [state, setState] = useState<any>("");
   const [countery, setCountery] = useState<any>("");
+  const [userList, setUserList] = useState<Array<any>>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const listData = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await getUserListNameID();
+      console.log({ data });
+
+      setUserList(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    listData();
+  }, []);
   const countries = Country.getAllCountries().map((country) => ({
     code: country.isoCode,
     name: country.name,
@@ -164,12 +183,7 @@ const BranchForm = () => {
       <Paper sx={{ padding: 4 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Legal Name*
-            </Typography>
+            <Typography variant="subtitle2">Legal Name*</Typography>
 
             <Controller
               name="branchName"
@@ -177,12 +191,6 @@ const BranchForm = () => {
               rules={{ required: "Branch Name is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Branch Name"
                   fullWidth
@@ -195,24 +203,13 @@ const BranchForm = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Branch ID*
-            </Typography>
+            <Typography variant="subtitle2">Branch ID*</Typography>
             <Controller
               name="branchId"
               control={control}
               rules={{ required: "Branch ID is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Registration No"
                   fullWidth
@@ -226,24 +223,13 @@ const BranchForm = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Address*
-            </Typography>
+            <Typography variant="subtitle2">Address*</Typography>
             <Controller
               name="address"
               control={control}
               rules={{ required: "Address is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Address"
                   fullWidth
@@ -257,24 +243,13 @@ const BranchForm = () => {
           </Grid>
           {/* Pin Code field */}
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Pin Code*
-            </Typography>
+            <Typography variant="subtitle2">Pin Code*</Typography>
             <Controller
               name="pinCode"
               control={control}
               rules={{ required: "Pin Code is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Pin Code"
                   fullWidth
@@ -288,21 +263,10 @@ const BranchForm = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Contact Number
-            </Typography>
+            <Typography variant="subtitle2">Contact Number</Typography>
             <Grid container spacing={2}>
               <Grid item xs={6} sm={4}>
                 <FormControl fullWidth variant="outlined" size="small">
-                  <InputLabel
-                    id="country-code-label"
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                  >
-                    +64
-                  </InputLabel>
                   <Controller
                     name="countryCode"
                     control={control}
@@ -318,6 +282,10 @@ const BranchForm = () => {
                           setValue("contact", e.target.value);
                         }}
                       >
+                        {" "}
+                        <MenuItem value="" disabled>
+                          Country Code
+                        </MenuItem>
                         {countries.map((country) => (
                           <MenuItem
                             key={country.code}
@@ -338,12 +306,7 @@ const BranchForm = () => {
                   defaultValue=""
                   render={({ field }) => (
                     <TextField
-                      InputProps={{
-                        sx: {
-                          fontSize: "16px",
-                          color: "#9A9A9A",
-                        },
-                      }}
+                      InputProps={{}}
                       {...field}
                       placeholder="Contact Number"
                       fullWidth
@@ -358,40 +321,45 @@ const BranchForm = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Manager*
-            </Typography>
+            <Typography variant="subtitle2">Manager*</Typography>
             <Controller
               name="manager"
               control={control}
               defaultValue=""
               render={({ field }) => (
-                <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
-                  {...field}
-                  placeholder="Manager"
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                />
+                <FormControl fullWidth size="small">
+                  {/* Optional: add this line if you want a label */}
+                  <Select
+                    {...field}
+                    labelId="manager-label"
+                    displayEmpty
+                    renderValue={(value) => {
+                      if (value === "") {
+                        return (
+                          <em style={{ color: "#9A9A9A" }}>Select User</em> // Placeholder text with custom color
+                        );
+                      }
+                      // Find the selected manager by ID
+                      const selectedManager = userList.find(
+                        (user) => user._id === value
+                      );
+                      return selectedManager
+                        ? `${selectedManager.firstName} ${selectedManager.lastName}`
+                        : "";
+                    }}
+                  >
+                    {userList?.map((user: any) => (
+                      <MenuItem key={user?._id} value={user?._id}>
+                        {user?.firstName} {user?.lastName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Country*
-            </Typography>
+            <Typography variant="subtitle2">Country*</Typography>
             <FormControl fullWidth size="small">
               <Controller
                 name="country"
@@ -422,12 +390,7 @@ const BranchForm = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              State
-            </Typography>
+            <Typography variant="subtitle2">State</Typography>
             <FormControl fullWidth variant="outlined" size="small">
               <Controller
                 name="state"
@@ -460,24 +423,13 @@ const BranchForm = () => {
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Website
-            </Typography>
+            <Typography variant="subtitle2">Website</Typography>
             <Controller
               name="website"
               control={control}
               defaultValue=""
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Website"
                   fullWidth
@@ -488,12 +440,7 @@ const BranchForm = () => {
             />
           </Grid>
           <Grid item xs={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Status
-            </Typography>
+            <Typography variant="subtitle2">Status</Typography>
             <Controller
               name="status"
               control={control}

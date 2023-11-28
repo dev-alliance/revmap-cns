@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import {
   Box,
   CssBaseline,
@@ -17,6 +17,8 @@ import {
   useMediaQuery,
   Collapse,
   useTheme,
+  MenuItem,
+  Menu,
 } from "@mui/material";
 
 import {
@@ -40,15 +42,41 @@ import CreateTeam from "@/pages/dasboard/teams/CreateTeam";
 import UpdateBranch from "@/pages/dasboard/branch/UpdateBranch";
 import UpdateTeam from "@/pages/dasboard/teams/UpdateTeam";
 import UserList from "@/pages/dasboard/users/UserList";
+import CreateUser from "@/pages/dasboard/users/CreateUser";
+import ResetPassword from "@/pages/ResetPassword";
+import LoginHistory from "@/pages/dasboard/users/LoginHistory";
+import UpdateUser from "@/pages/dasboard/users/UpdateUser";
+import UserDetail from "@/pages/dasboard/users/UserDetail";
+import UserEdit from "@/pages/dasboard/profile/UserEdit";
+import { useAuth } from "@/hooks/useAuth";
+import Setting from "@/pages/dasboard/profile/Setting";
 
 const drawerWidth = 240;
-
 export default function Dashboard() {
+  const { user } = useAuth();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(true);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+  const isMenuOpen = Boolean(anchorEl);
 
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuOptionClick = (option: string) => {
+    console.log(option + " clicked");
+    // You can add logic here for different options
+    handleMenuClose();
+  };
+
+  const menuId = "primary-account-menu";
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -161,7 +189,58 @@ export default function Dashboard() {
             </Badge>
           </IconButton>
           <IconButton>
-            <AccountCircleIcon />
+            <div>
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircleIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                id={menuId}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={isMenuOpen}
+                onClose={handleMenuClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate(`/dashboard/user-detail/${user?._id}`); // Use menuState.row._id
+                  }}
+                >
+                  Profile
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate(`/dashboard/profile-setting`); // Use menuState.row._id
+                  }}
+                >
+                  Settings
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate(`/`); // Use menuState.row._id
+                  }}
+                >
+                  Logout
+                </MenuItem>
+              </Menu>
+            </div>
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -219,6 +298,14 @@ export default function Dashboard() {
           <Route path="/branchlist" element={<BranchList />} />
           <Route path="/branch-edit/:id" element={<UpdateBranch />} />
           <Route path="/user-list" element={<UserList />} />
+          <Route path="/create-user" element={<CreateUser />} />
+          <Route path="/create-password/:token" element={<ResetPassword />} />
+          <Route path="/user-edit/:id" element={<UpdateUser />} />
+          <Route path="/user-update-user/:id" element={<UserEdit />} />
+          <Route path="/user-detail/:id" element={<UserDetail />} />
+          <Route path="/profile-setting" element={<Setting />} />
+          <Route path="/login-history" element={<LoginHistory />} />
+
           <Route path="/sub-page-1" element={<SubPage1 />} />
         </Routes>
       </Box>

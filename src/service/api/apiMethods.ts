@@ -1,37 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import baseURL from "./axiosInstance";
 export const signU = async (data: any) => {
-  const response = await baseURL.post("/api/v1/admin/create-user", data);
+  const response = await baseURL.post("/api/v1/users/create-user", data);
   return response.data;
 };
 
 export const login = async (data: any) => {
-  const response = await baseURL.post("/api/v1/admin/login", data);
+  const response = await baseURL.post("/api/v1/users/login", data);
   return response.data;
 };
 export const forgotPass = async (data: any) => {
   const response = await baseURL.post(
-    "/api/v1/admin/request-password-reset",
+    "/api/v1/users/request-password-reset",
     data
   );
   return response.data;
 };
 
 export const verifyOtp = async (data: any) => {
-  const response = await baseURL.post("/api/v1/admin/verify-otp", data);
+  const response = await baseURL.post("/api/v1/users/verify-otp", data);
   return response.data;
 };
 
 export const verifyForgotPass = async (data: any) => {
   const response = await baseURL.post(
-    "/api/v1/admin/verify-ForgotPass-otp",
+    "/api/v1/users/verify-ForgotPass-otp",
     data
   );
   return response.data;
 };
 
 export const resetPaasword = async (data: any) => {
-  const response = await baseURL.post("/api/v1/admin/reset-password", data);
+  const response = await baseURL.post("/api/v1/users/reset-password", data);
   return response.data;
 };
 export const CreateCompony = async (data: any) => {
@@ -106,7 +106,9 @@ export const archiveTeam = async (id: any, data: any) => {
 export const getUserList = async () => {
   return await baseURL.get("/api/v1/users/list-user");
 };
-
+export const getUserListNameID = async () => {
+  return await baseURL.get("/api/v1/users/list-userIDName");
+};
 export const deleteUser = async (id: string) => {
   const response = await baseURL.delete(`/api/v1/users/${id}`);
   return response.data;
@@ -118,7 +120,46 @@ export const updateStatus = async (id: any, data: any) => {
   );
   return response.data;
 };
+export const createUser = async (data: any) => {
+  const response = await baseURL.post("/api/v1/users/add-user", data);
+  return response.data;
+};
+export const CreateUserPaasword = async (token: any, data: any) => {
+  const response = await baseURL.put(
+    `/api/v1/users/create-password/${token}`,
+    data
+  );
+  return response.data;
+};
+export const loginUser = async (data: any) => {
+  const response = await baseURL.post("/api/v1/users/login", data);
+  return response.data;
+};
+export const logiHistory = async (id: any) => {
+  const response = await baseURL.get(`/api/v1/users/loginHistory/${id}`);
+  return response.data;
+};
 
+export const getUserId = async (id: any) => {
+  const response = await baseURL.get(`/api/v1/users/user/${id}`);
+  return response.data;
+};
+export const updateUser = async (id: any, data: any) => {
+  const response = await baseURL.put(`/api/v1/users/update-users/${id}`, data);
+  return response.data;
+};
+
+export const changepasReq = async (data: any) => {
+  const response = await baseURL.post("/api/v1/users/req-send-otp", data);
+  return response.data;
+};
+export const ChangeUserPassword = async (id: any, data: any) => {
+  const response = await baseURL.put(
+    `/api/v1/users/change-password/${id}`,
+    data
+  );
+  return response.data;
+};
 // Function to update user profile
 // export const updateUserProfile = (userId, data) => baseURL.put(`/user/${userId}`, data);
 

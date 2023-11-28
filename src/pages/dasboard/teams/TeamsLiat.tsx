@@ -64,11 +64,7 @@ const defaultColumns: any[] = [
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Img src={logo} />
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography
-              sx={{ color: "#92929D", fontSize: "16px", fontWeight: 400 }}
-            >
-              {name}
-            </Typography>
+            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
           </Box>
         </Box>
       );

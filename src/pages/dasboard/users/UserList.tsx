@@ -53,19 +53,21 @@ interface RowType {
 
 const defaultColumns: any[] = [
   {
-    flex: 0.2,
+    flex: 0.1,
     field: "name ",
     minWidth: 220,
     headerName: "User",
+    headerAlign: "center",
     renderCell: ({ row }: any) => {
       const { name } = row;
-
       return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex" }}>
           <Img src={logo} />
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography
-              sx={{ color: "#92929D", fontSize: "16px", fontWeight: 400 }}
+              sx={{
+                color: "text.secondary",
+              }}
             >
               {name}
             </Typography>
@@ -74,18 +76,9 @@ const defaultColumns: any[] = [
       );
     },
   },
+
   {
-    flex: 0.2,
-    minWidth: 200,
-    field: "email",
-    headerName: "Email",
-    renderCell: ({ row }: { row: any }) => {
-      const { email } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
-    },
-  },
-  {
-    flex: 0.2,
+    flex: 0.1,
     minWidth: 125,
     field: "job",
     headerName: "Job Title ",
@@ -97,8 +90,8 @@ const defaultColumns: any[] = [
   },
 
   {
-    flex: 0.2,
-    minWidth: 125,
+    flex: 0.1,
+    minWidth: 100,
     field: "team",
     headerName: "Team ",
 
@@ -106,10 +99,9 @@ const defaultColumns: any[] = [
       return <Typography sx={{ color: "text.secondary" }}>{"-"}</Typography>;
     },
   },
-
   {
-    flex: 0.2,
-    minWidth: 125,
+    flex: 0.1,
+    minWidth: 100,
     field: "branch",
     headerName: "Branch ",
 
@@ -120,7 +112,37 @@ const defaultColumns: any[] = [
 
   {
     flex: 0.2,
-    minWidth: 125,
+    minWidth: 200,
+    field: "loginHistory",
+    headerName: "Last Login",
+    renderCell: ({ row }: { row: any }) => {
+      const createdAt = new Date(row?.createdAt);
+
+      // Check if createdAt is a valid date
+      if (isNaN(createdAt.getTime())) {
+        return <Typography sx={{ color: "text.secondary" }}>-</Typography>;
+      }
+
+      const formattedDate = createdAt.toLocaleString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+      return (
+        <Typography sx={{ color: "text.secondary" }}>
+          {formattedDate}
+        </Typography>
+      );
+    },
+  },
+
+  {
+    flex: 0.1,
+    minWidth: 50,
     field: "status",
     headerName: "Status",
     renderCell: ({ row }: { row: any }) => (
@@ -167,6 +189,16 @@ const defaultColumns: any[] = [
         />
       </>
     ),
+  },
+  {
+    flex: 0.2,
+    minWidth: 300,
+    field: "email",
+    headerName: "Email",
+    renderCell: ({ row }: { row: any }) => {
+      const { email } = row;
+      return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
+    },
   },
 ];
 
@@ -332,7 +364,7 @@ const UserList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/Team-edit/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/user-edit/${menuState.row?._id}`); // Use menuState.row._id
               }}
             >
               Edit
@@ -407,7 +439,7 @@ const UserList = () => {
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="contained"
                   component={Link}
-                  to="/dashboard/create-team"
+                  to="/dashboard/create-user"
                 >
                   <AddIcon /> Add User
                 </Button>

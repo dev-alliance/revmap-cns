@@ -20,6 +20,7 @@ import OtpInput from "react-otp-input";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { verifyForgotPass, verifyOtp } from "@/service/api/apiMethods";
+import { useAuth } from "@/hooks/useAuth";
 
 const SignupPage: React.FC = () => {
   const location = useLocation();
@@ -29,37 +30,42 @@ const SignupPage: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
+  const { loginContext } = useAuth();
 
   const onSubmit = async () => {
     // Assuming OTP is of length 5
     if (otp.length === 5) {
       try {
-        const payload = {
-          email: email,
-          otp: otp,
-        };
-        console.log(condition, "condition");
+        let payload;
 
-        let response;
-        if (condition === "true") {
-          response = await verifyForgotPass(payload);
-
-          if (response.ok === true) {
-            toast.success(response.message);
+        if (condition === "twoFactorAuth") {
+          console.log(condition, "cond");
+          payload = {
+            email: email,
+            otp: otp,
+            twoFactorloginAuth: true,
+          };
+        } else {
+          payload = {
+            email: email,
+            otp: otp,
+          };
+        }
+        const response = await verifyOtp(payload);
+        if (response.ok === true) {
+          toast.success(response.message);
+          if (condition === "twoFactorAuth") {
+            navigate("/dashboard");
+            loginContext(response.user);
+          } else if (condition === "true") {
             navigate("/resetpassword", {
               state: { email: email },
             });
           } else {
-            toast.error(response.message);
+            navigate("/componydetails");
           }
         } else {
-          response = await verifyOtp(payload);
-          if (response.ok === true) {
-            toast.success(response.message);
-            navigate("/componydetails");
-          } else {
-            toast.error(response.message);
-          }
+          toast.error(response.message);
         }
       } catch (error: any) {
         // If the error is from an HTTP response, it should have a `response` property

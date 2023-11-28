@@ -22,6 +22,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { signU } from "@/service/api/apiMethods";
+import { useAuth } from "@/hooks/useAuth";
 type FormInputs = {
   email: string;
   password: string;
@@ -43,7 +44,6 @@ const SignupPage: React.FC = () => {
     formState: { errors },
   } = useForm<FormInputs>();
   const navigate = useNavigate();
-
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       const payload = {
@@ -116,6 +116,7 @@ const SignupPage: React.FC = () => {
             ...(isMobile && { paddingBottom: 2 }),
           }}
         >
+          <div></div>
           <img
             src={logo}
             alt="Logo"

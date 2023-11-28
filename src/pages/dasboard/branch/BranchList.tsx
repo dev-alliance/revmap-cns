@@ -73,9 +73,7 @@ const defaultColumns: GridColDef[] = [
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography
-              sx={{ color: "#92929D", fontSize: "16px", fontWeight: 400 }}
-            >
+            <Typography sx={{ color: "text.secondary" }}>
               {branchName}
             </Typography>
           </Box>
@@ -86,7 +84,7 @@ const defaultColumns: GridColDef[] = [
   {
     flex: 0.2,
     minWidth: 125,
-    field: "Region/State",
+    field: "state",
     headerName: "Region/State",
 
     renderCell: ({ row }: { row: any }) => {
@@ -145,20 +143,20 @@ const defaultColumns: GridColDef[] = [
     ),
   },
 
-  {
-    flex: 0.2,
-    minWidth: 125,
-    field: "branchId",
-    headerName: "Branch ID",
-    renderCell: ({ row }: { row: any }) => {
-      const { branchId } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          branchId || ""
-        }`}</Typography>
-      );
-    },
-  },
+  // {
+  //   flex: 0.2,
+  //   minWidth: 125,
+  //   field: "branchId",
+  //   headerName: "Branch ID",
+  //   renderCell: ({ row }: { row: any }) => {
+  //     const { branchId } = row;
+  //     return (
+  //       <Typography sx={{ color: "text.secondary" }}>{`${
+  //         branchId || ""
+  //       }`}</Typography>
+  //     );
+  //   },
+  // },
   {
     flex: 0.2,
     minWidth: 125,
@@ -168,7 +166,7 @@ const defaultColumns: GridColDef[] = [
       const { manager } = row;
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          manager || ""
+          manager?.firstName || ""
         }`}</Typography>
       );
     },
@@ -317,7 +315,7 @@ const BranchList = () => {
     // setData(filteredData);
   };
 
-  const columns: GridColDef[] = [
+  const columns: any[] = [
     ...defaultColumns,
     {
       flex: 0.1,
@@ -350,7 +348,7 @@ const BranchList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/Team-edit/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/branch-edit/${menuState.row?._id}`); // Use menuState.row._id
               }}
             >
               Edit

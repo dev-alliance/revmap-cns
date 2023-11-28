@@ -8,9 +8,25 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 const theme = createTheme({
   typography: {
     fontFamily: "Poppins",
+    subtitle1: {
+      fontSize: "20px",
+    },
+    subtitle2: {
+      fontSize: "16px",
+    },
+    body1: {
+      fontSize: "16px",
+      fontWeight: 600,
+    },
   },
-  // ... other theme properties if needed
+  palette: {
+    text: {
+      secondary: "red", // Replace this with your desired color value
+    },
+  },
+  // Other theme configurations
 });
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>

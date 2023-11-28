@@ -47,7 +47,7 @@ const CompanyDetails: React.FC = () => {
     } catch (error: any) {
       console.log(error);
 
-      let errorMessage = "Login failed";
+      let errorMessage = "failed";
       if (error.response) {
         errorMessage = error.response.data || error.response.data.message;
       } else {

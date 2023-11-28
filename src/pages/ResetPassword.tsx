@@ -17,9 +17,9 @@ import logo from "../assets/logo.jpg"; // Adjust the path to your logo image
 import loginBanner from "@/assets/login_banner.png"; // Adjust the path to your background image
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { resetPaasword } from "@/service/api/apiMethods";
+import { CreateUserPaasword, resetPaasword } from "@/service/api/apiMethods";
 import toast from "react-hot-toast";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 type FormInputs = {
   password: string;
   confirmPassword: string;
@@ -32,6 +32,7 @@ const ResetPassword: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const email = location.state?.email;
+  const { token } = useParams();
   const {
     control,
     handleSubmit,
@@ -43,33 +44,47 @@ const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
-      const payload = {
-        email: email,
-        newPassword: data.confirmPassword,
-      };
+      if (token) {
+        const payload = {
+          password: data.confirmPassword, // Assuming you want to send confirmPassword here
+        };
+        const response = await CreateUserPaasword(token, payload);
 
-      const response = await resetPaasword(payload);
-      if (response.ok === true) {
-        toast.success("update successfully!");
-        navigate("/");
+        if (response.ok === true) {
+          toast.success("Update successful!");
+          navigate("/");
+          navigate("/", {
+            state: { user: true },
+          });
+        } else {
+          console.log(response, "rrsp");
+          const errorMessage = response.data || response.message;
+          toast.error(errorMessage);
+        }
       } else {
-        const errorMessage = response.data || response.message;
-        toast.error(errorMessage);
+        console.log("else");
+        const payload = {
+          email: email, // Assuming email is defined somewhere
+          newPassword: data.confirmPassword, // Assuming you want to send confirmPassword here
+        };
+        const response = await resetPaasword(payload);
+        if (response.ok === true) {
+          toast.success("Update successful!");
+          navigate("/");
+        } else {
+          console.log(response, "rrsp");
+          const errorMessage = response.data || response.message;
+          toast.error(errorMessage);
+        }
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.log(error);
+    } catch (error) {
+      console.log(error, "ersasar");
 
-      let errorMessage = "Login failed";
-      if (error.response) {
-        errorMessage = error.response.data || error.response.data.message;
-      } else {
-        errorMessage = error.message;
-      }
+      const errorMessage = "Failed";
       toast.error(errorMessage);
 
       // Handle error
-      console.error(errorMessage);
+      console.error(errorMessage, error);
     }
   };
 
@@ -121,14 +136,25 @@ const ResetPassword: React.FC = () => {
 
           <Box sx={{ width: "100%", maxWidth: 400, m: 3 }}>
             <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-              <Typography
-                variant="h5"
-                component="h1"
-                color={"#155BE5"}
-                sx={{ fontWeight: "bold", textAlign: "center" }}
-              >
-                Reset password !
-              </Typography>
+              {token ? (
+                <Typography
+                  variant="h5"
+                  component="h1"
+                  color="#155BE5"
+                  sx={{ fontWeight: "bold", textAlign: "center" }}
+                >
+                  Create your password to use from next login
+                </Typography>
+              ) : (
+                <Typography
+                  variant="h5"
+                  component="h1"
+                  color="#155BE5"
+                  sx={{ fontWeight: "bold", textAlign: "center" }}
+                >
+                  Reset passwohhrd!
+                </Typography>
+              )}
 
               <Box
                 component="form"
@@ -149,15 +175,15 @@ const ResetPassword: React.FC = () => {
                     required: "Password is required",
                     minLength: {
                       value: 10,
-                      message: "Password must have at least 10 characters",
+                      message: "Password must have at least 8 characters",
                     },
-                    // pattern: {
-
-                    //   value:
-                    //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                    //   message:
-                    //     "Password must include uppercase, lowercase, number, and special char",
-                    // },
+                    pattern: {
+                      // This is a simple regex for at least one uppercase, one lowercase, one number, and one special character
+                      value:
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message:
+                        "Password must be at least 8  characters long  include 1 number, and special characters , 1 uppercase letter and 1 lower caseletter",
+                    },
                   }}
                   render={({ field }) => (
                     <TextField

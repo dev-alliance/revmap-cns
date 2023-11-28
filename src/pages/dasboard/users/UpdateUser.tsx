@@ -18,25 +18,23 @@ import {
   Divider,
   Avatar,
   Tooltip,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
-import { countries, getStatesByCountry } from "@/utils/CounteryState";
-import { Country } from "country-state-city";
+
 import toast from "react-hot-toast";
 import {
-  createBranch,
-  createUser,
   getBranchList,
   getTeamsList,
+  getUserId,
+  updateUser,
 } from "@/service/api/apiMethods";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import logo from "@/assets/send.png";
-import user from "@/assets/user.png";
+import users from "@/assets/user.png";
 import permission from "@/assets/permission.png";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
 import RoleTable from "@/pages/dasboard/users/RoleTable";
+import { useAuth } from "@/hooks/useAuth";
 type FormValues = {
   firstName: string;
   lastName: string;
@@ -47,7 +45,7 @@ type FormValues = {
   team: string;
   branch: string;
   status: string;
-  inviteCheack: boolean;
+  image: string;
 };
 
 interface TabPanelProps {
@@ -72,29 +70,55 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const CreateUser = () => {
+const UpdateUser = () => {
   const {
     control,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<FormValues>({
     mode: "onBlur",
   });
   const navigate = useNavigate();
-
+  const { id } = useParams();
   const [status, setStatus] = useState<any>("");
   const [tabValue, setTabValue] = useState(0);
   const [image, setImage] = useState<string>("");
-  const [imageBase64, setImageBase64] = useState<string>("");
+  const [imageBase64, setImageBase64] = useState<any>("");
   const [teamData, setTeamData] = useState<Array<any>>([]);
   const [branchData, setBranchData] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [list, setList] = useState<undefined>(undefined);
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
-  const getBrandsData = async () => {
+
+  const listData = async () => {
+    try {
+      setIsLoading(true);
+      const { user } = await getUserId(id);
+      setList(user);
+      setValue("firstName", user.firstName);
+      setValue("lastName", user.lastName);
+      setValue("email", user.email);
+      setValue("job", user.job);
+      setValue("mobile", user.mobile);
+      setValue("landline", user.team);
+      setValue("team", user.team);
+      setValue("branch", user.branch);
+      setValue("status", user.status);
+      setImage(user?.image);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  React.useEffect(() => {
+    if (id) listData();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+  const getTeamsData = async () => {
     try {
       const { data } = await getTeamsList();
       setTeamData(data);
@@ -114,20 +138,19 @@ const CreateUser = () => {
 
   useEffect(() => {
     getBranchData();
-    getBrandsData();
+    getTeamsData();
   }, []);
 
   const onSubmit = async (data: FormValues) => {
     try {
-      if (!imageBase64 || image === "") {
+      if (image === "") {
         await toast.error("Please select an Image!");
         return;
       }
       setTabValue(1);
-      const payload = {
+      const payload: any = {
         firstName: data.firstName,
         lastName: data.lastName,
-        email: data.email,
         job: data.job,
         landline: data.landline,
         mobile: data.mobile,
@@ -135,11 +158,13 @@ const CreateUser = () => {
         status: data.status,
         role: 1,
         emailVerified: false,
-        image: imageBase64,
         disabled: false,
         branch: data.branch,
       };
-      const response = await createUser(payload);
+      if (imageBase64) {
+        payload.image = imageBase64;
+      }
+      const response = await updateUser(id, payload);
       if (response.ok === true) {
         toast.success(response.message);
         // navigate("/resetpassword");
@@ -149,12 +174,17 @@ const CreateUser = () => {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || "Something went wrong!";
-      toast.error(errorMessage);
       console.log(error);
-    } finally {
-      setIsLoading(false);
+      let errorMessage = "failed";
+      if (error.response) {
+        errorMessage = error.response.data || error.response.message;
+      } else {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+
+      // Handle error
+      console.error(errorMessage);
     }
   };
   console.log(imageBase64, "image");
@@ -189,18 +219,19 @@ const CreateUser = () => {
             <Grid item xs={12} sm={6}>
               <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                 <img
-                  src={user}
+                  src={users}
                   alt="send"
                   style={{ marginRight: 8, height: "20px" }}
                 />
                 <Typography
-                  variant="subtitle2"
+                  variant="subtitle1"
                   sx={{ fontSize: "16px", color: "#9A9A9A" }}
                 >
                   Personal Information
                 </Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
               </Box>
+
               <Box sx={{ alignItems: "center" }}>
                 <Tooltip title="Upload Image" arrow>
                   <Avatar
@@ -242,7 +273,12 @@ const CreateUser = () => {
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">First Name*</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                First Name*
+              </Typography>
 
               <Controller
                 name="firstName"
@@ -250,6 +286,12 @@ const CreateUser = () => {
                 rules={{ required: "Branch Name is required" }}
                 render={({ field }) => (
                   <TextField
+                    InputProps={{
+                      sx: {
+                        fontSize: "16px",
+                        color: "#9A9A9A",
+                      },
+                    }}
                     {...field}
                     placeholder="Branch Name"
                     fullWidth
@@ -262,7 +304,12 @@ const CreateUser = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">Last Name*</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                Last Name*
+              </Typography>
               <Controller
                 name="lastName"
                 control={control}
@@ -288,7 +335,12 @@ const CreateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">email*</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                email*
+              </Typography>
               <Controller
                 name="email"
                 control={control}
@@ -306,6 +358,7 @@ const CreateUser = () => {
                     fullWidth
                     error={!!errors.email}
                     helperText={errors.email?.message}
+                    disabled
                     size="small"
                     variant="outlined"
                   />
@@ -314,7 +367,12 @@ const CreateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">Job Title</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                Job Title
+              </Typography>
               <Controller
                 name="job"
                 control={control}
@@ -340,7 +398,12 @@ const CreateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">Team</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                Team
+              </Typography>
 
               <FormControl fullWidth size="small">
                 <Controller
@@ -349,15 +412,14 @@ const CreateUser = () => {
                   defaultValue=""
                   render={({ field }) => (
                     <Select
+                      sx={{ fontSize: "16px", color: "#9A9A9A" }}
                       {...field}
                       labelId="team-label"
                       placeholder="Team"
                       displayEmpty
                       renderValue={(value) => {
                         if (value === "") {
-                          return (
-                            <em style={{ color: "#9A9A9A" }}>Select Team</em> // Placeholder text with custom color
-                          );
+                          return <em>Select Team</em>; // Placeholder text
                         }
 
                         // Find the team with the matching ID in teamData and return its name
@@ -379,7 +441,12 @@ const CreateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">Branch</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                Branch
+              </Typography>
               <FormControl fullWidth size="small">
                 <Controller
                   name="branch"
@@ -387,16 +454,17 @@ const CreateUser = () => {
                   defaultValue=""
                   render={({ field }) => (
                     <Select
+                      sx={{ fontSize: "16px", color: "#9A9A9A" }}
                       {...field}
                       labelId="branch-label"
                       placeholder="Branch"
                       displayEmpty
                       renderValue={(value) => {
                         if (value === "") {
-                          return (
-                            <em style={{ color: "#9A9A9A" }}>Select Branch</em> // Placeholder text with custom color
-                          );
+                          return <em>Select Branch</em>; // Placeholder text
                         }
+
+                        // Find the branch with the matching ID in branchData and return its name
                         const selectedBranch = branchData.find(
                           (branch) => branch._id === value
                         );
@@ -415,7 +483,12 @@ const CreateUser = () => {
             </Grid>
 
             <Grid item xs={6}>
-              <Typography variant="subtitle2">Mobile</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                Mobile
+              </Typography>
               <Controller
                 name="mobile"
                 control={control}
@@ -443,7 +516,12 @@ const CreateUser = () => {
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography variant="subtitle2">Landline</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
+              >
+                Landline
+              </Typography>
               <Controller
                 name="landline"
                 control={control}
@@ -497,63 +575,18 @@ const CreateUser = () => {
                   alt="send"
                   style={{ marginRight: 8, height: "20px" }}
                 />
-                <Typography variant="subtitle1">Permission</Typography>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ fontSize: "16px", color: "#9A9A9A" }}
+                >
+                  Permission
+                </Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
               </Box>
               <Grid sx={{ mb: 3 }}>
                 <RoleTable />
               </Grid>
 
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <img
-                  src={logo}
-                  alt="send"
-                  style={{ marginRight: 8, height: "20px" }}
-                />
-                <Typography variant="subtitle2">Send Invitation</Typography>
-                <Divider sx={{ flexGrow: 1, ml: 2 }} />
-              </Box>
-              <Controller
-                name="email"
-                control={control}
-                rules={{ required: "email is required" }}
-                render={({ field }) => (
-                  <TextField
-                    sx={{
-                      width: "60%", // Setting the width
-                    }}
-                    {...field}
-                    placeholder="email"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
-              />
-              <Grid>
-                <FormControlLabel
-                  control={
-                    <Controller
-                      name="inviteCheack"
-                      control={control}
-                      defaultValue={false}
-                      render={({ field }) => (
-                        <Checkbox {...field} color="primary" />
-                      )}
-                    />
-                  }
-                  label={
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ whiteSpace: "nowrap" }}
-                    >
-                      Send invitation to the above email to complete login
-                      process
-                    </Typography>
-                  }
-                />
-              </Grid>
               <Box sx={{ width: "100%", textAlign: "right" }}>
                 {" "}
                 {/* Container with full width */}
@@ -570,7 +603,7 @@ const CreateUser = () => {
                   variant="contained"
                   color="primary"
                 >
-                  Create User
+                  Update User
                 </Button>
               </Box>
             </Grid>
@@ -581,4 +614,4 @@ const CreateUser = () => {
   );
 };
 
-export default CreateUser;
+export default UpdateUser;
