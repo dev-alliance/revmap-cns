@@ -32,6 +32,8 @@ import {
   Info as InfoIcon,
 } from "@mui/icons-material";
 import logo from "../assets/logo.jpg";
+// import userIcon from "../assets/userLogo.png";
+import PersonIcon from "@mui/icons-material/Person";
 // Import your page components
 import HomePage from "@/pages/dasboard/Dashboard";
 import TeamsList from "@/pages/dasboard/teams/TeamsLiat";
@@ -50,10 +52,12 @@ import UserDetail from "@/pages/dasboard/users/UserDetail";
 import UserEdit from "@/pages/dasboard/profile/UserEdit";
 import { useAuth } from "@/hooks/useAuth";
 import Setting from "@/pages/dasboard/profile/Setting";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 const drawerWidth = 240;
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState(true);
@@ -103,7 +107,10 @@ export default function Dashboard() {
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
-          <ListItemText primary="Dashboard" />
+          <ListItemText
+            primary="Dashboard"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
           {open ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         {/* Collapsible sub-items */}
@@ -114,7 +121,10 @@ export default function Dashboard() {
               component={Link}
               to="/dashboard/sub-page-1"
             >
-              <ListItemText primary="Sub Page 1" />
+              <ListItemText
+                primary="Sub Page 1"
+                primaryTypographyProps={{ variant: "subtitle2" }}
+              />
             </ListItemButton>
             {/* You can add more sub-items here */}
           </List>
@@ -123,26 +133,38 @@ export default function Dashboard() {
           <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText primary="Home" />
+          <ListItemText
+            primary="Home"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
         </ListItemButton>
         <ListItemButton component={Link} to="/dashboard/teamlist">
           <ListItemIcon>
-            <InfoIcon />
+            <GroupsIcon />
           </ListItemIcon>
-          <ListItemText primary="Team" />
+          <ListItemText
+            primary="Team"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
         </ListItemButton>
         <ListItemButton component={Link} to="/dashboard/branchlist">
           <ListItemIcon>
-            <InfoIcon />
+            <AccountTreeIcon />
           </ListItemIcon>
-          <ListItemText primary="Branches" />
+          <ListItemText
+            primary="Branches"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
         </ListItemButton>
 
         <ListItemButton component={Link} to="/dashboard/user-list">
           <ListItemIcon>
-            <InfoIcon />
+            <PersonIcon />
           </ListItemIcon>
-          <ListItemText primary="Users" />
+          <ListItemText
+            primary="Users"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
         </ListItemButton>
 
         {/* Main collapsible list item */}
@@ -234,7 +256,8 @@ export default function Dashboard() {
                 <MenuItem
                   onClick={() => {
                     handleMenuClose();
-                    navigate(`/`); // Use menuState.row._id
+                    navigate(`/`);
+                    logout();
                   }}
                 >
                   Logout
@@ -305,7 +328,6 @@ export default function Dashboard() {
           <Route path="/user-detail/:id" element={<UserDetail />} />
           <Route path="/profile-setting" element={<Setting />} />
           <Route path="/login-history" element={<LoginHistory />} />
-
           <Route path="/sub-page-1" element={<SubPage1 />} />
         </Routes>
       </Box>

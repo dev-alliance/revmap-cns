@@ -53,16 +53,43 @@ interface RowType {
 
 const defaultColumns: any[] = [
   {
-    flex: 0.1,
-    field: "name ",
-    minWidth: 220,
-    headerName: "User",
+    flex: 0.03,
+    field: "gap ",
+    minWidth: 10,
+    headerName: "",
+    headerAlign: "center",
+    renderCell: ({ row }: any) => {
+      const { name } = row;
+      return <Box sx={{ display: "flex" }}>{/* <Img src={logo} /> */}</Box>;
+    },
+  },
+  {
+    flex: 0.04,
+    field: "image ",
+    minWidth: 40,
+    headerName: "",
     headerAlign: "center",
     renderCell: ({ row }: any) => {
       const { name } = row;
       return (
         <Box sx={{ display: "flex" }}>
           <Img src={logo} />
+        </Box>
+      );
+    },
+  },
+
+  {
+    flex: 0.2,
+    field: "name ",
+    minWidth: 250,
+    headerName: "User",
+    // headerAlign: "center",
+    renderCell: ({ row }: any) => {
+      const { name } = row;
+      return (
+        <Box sx={{ display: "flex" }}>
+          {/* <Img src={logo} /> */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography
               sx={{
@@ -78,7 +105,7 @@ const defaultColumns: any[] = [
   },
 
   {
-    flex: 0.1,
+    flex: 0.2,
     minWidth: 125,
     field: "job",
     headerName: "Job Title ",
@@ -90,59 +117,67 @@ const defaultColumns: any[] = [
   },
 
   {
-    flex: 0.1,
-    minWidth: 100,
+    flex: 0.2,
+    minWidth: 130,
     field: "team",
     headerName: "Team ",
 
     renderCell: ({ row }: { row: any }) => {
-      return <Typography sx={{ color: "text.secondary" }}>{"-"}</Typography>;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>
+          {row?.team || "-"}
+        </Typography>
+      );
     },
   },
   {
-    flex: 0.1,
-    minWidth: 100,
+    flex: 0.2,
+    minWidth: 130,
     field: "branch",
     headerName: "Branch ",
 
     renderCell: ({ row }: { row: any }) => {
-      return <Typography sx={{ color: "text.secondary" }}>{"-"}</Typography>;
-    },
-  },
-
-  {
-    flex: 0.2,
-    minWidth: 200,
-    field: "loginHistory",
-    headerName: "Last Login",
-    renderCell: ({ row }: { row: any }) => {
-      const createdAt = new Date(row?.createdAt);
-
-      // Check if createdAt is a valid date
-      if (isNaN(createdAt.getTime())) {
-        return <Typography sx={{ color: "text.secondary" }}>-</Typography>;
-      }
-
-      const formattedDate = createdAt.toLocaleString("en-US", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      });
-
       return (
         <Typography sx={{ color: "text.secondary" }}>
-          {formattedDate}
+          {row?.branch || "-"}
         </Typography>
       );
     },
   },
 
+  // {
+  //   flex: 0.2,
+  //   minWidth: 200,
+  //   field: "loginHistory",
+  //   headerName: "Last Login",
+  //   renderCell: ({ row }: { row: any }) => {
+  //     const createdAt = new Date(row?.createdAt);
+
+  //     // Check if createdAt is a valid date
+  //     if (isNaN(createdAt.getTime())) {
+  //       return <Typography sx={{ color: "text.secondary" }}>-</Typography>;
+  //     }
+
+  //     const formattedDate = createdAt.toLocaleString("en-US", {
+  //       day: "numeric",
+  //       month: "short",
+  //       year: "numeric",
+  //       hour: "numeric",
+  //       minute: "numeric",
+  //       hour12: true,
+  //     });
+
+  //     return (
+  //       <Typography sx={{ color: "text.secondary" }}>
+  //         {formattedDate}
+  //       </Typography>
+  //     );
+  //   },
+  // },
+
   {
-    flex: 0.1,
-    minWidth: 50,
+    flex: 0.2,
+    minWidth: 125,
     field: "status",
     headerName: "Status",
     renderCell: ({ row }: { row: any }) => (
@@ -158,24 +193,26 @@ const defaultColumns: any[] = [
               : "Inactive"
           }
           sx={{
+            fontSize: "15px",
+            fontWeight: "bold",
             backgroundColor:
               row.status === "active"
                 ? "#D3FDE4"
                 : row.status === "archived"
                 ? "#FFF7CB"
-                : "#D32F2F",
+                : "#FFCBCB",
             color:
               row.status === "active"
                 ? "#3F9748"
                 : row.status === "archived"
-                ? "#D36A2F"
-                : "#FFCBCB",
+                ? "#D32F2F"
+                : "#red",
             borderColor:
               row.status === "active"
                 ? "#D3FDE4"
                 : row.status === "archived"
                 ? "#FFF7CB"
-                : "#D32F2F", // Optional: to match border color with background
+                : "#FFCBCB", // Optional: to match border color with background
             "& .MuiChip-label": {
               // This targets the label inside the chip for more specific styling
               color:
@@ -183,23 +220,23 @@ const defaultColumns: any[] = [
                   ? "#3F9748"
                   : row.status === "archived"
                   ? "#D36A2F"
-                  : "#FFCBCB",
+                  : "#D32F2F",
             },
           }}
         />
       </>
     ),
   },
-  {
-    flex: 0.2,
-    minWidth: 300,
-    field: "email",
-    headerName: "Email",
-    renderCell: ({ row }: { row: any }) => {
-      const { email } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
-    },
-  },
+  // {
+  //   flex: 0.2,
+  //   minWidth: 300,
+  //   field: "email",
+  //   headerName: "Email",
+  //   renderCell: ({ row }: { row: any }) => {
+  //     const { email } = row;
+  //     return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
+  //   },
+  // },
 ];
 
 const UserList = () => {
@@ -244,6 +281,8 @@ const UserList = () => {
       const transformedData = data.map((row: any) => ({
         ...row,
         name: `${row?.firstName || ""} ${row?.lastName || ""}`.trim(),
+        team: `${row?.team?.name || ""} `.trim(),
+        branch: `${row?.branch?.branchName || ""}`,
         // members: row.members ? row.members.length : "",
       }));
       setCategorylist(transformedData);

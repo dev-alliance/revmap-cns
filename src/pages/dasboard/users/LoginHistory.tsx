@@ -13,12 +13,9 @@ import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid";
-import Chip from "@mui/material/Chip";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import AddIcon from "@mui/icons-material/Add";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+
 // ** Third Party Imports
 
 import toast from "react-hot-toast";
@@ -26,12 +23,9 @@ import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  archiveBranch,
-  deleteBranch,
-  getBranchList,
-  logiHistory,
-} from "@/service/api/apiMethods";
+import { logiHistory } from "@/service/api/apiMethods";
+import { useAuth } from "@/hooks/useAuth";
+import { list } from "postcss";
 // import MenuButton from "@/components/MenuButton";
 
 interface CellType {
@@ -126,6 +120,8 @@ const defaultColumns: GridColDef[] = [
 ];
 const LoginHistory = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const id = user?._id;
   // ** State
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
@@ -136,30 +132,46 @@ const LoginHistory = () => {
   const [List, setList] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
   const [data, setData] = useState<any>([]);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [filteredList, setFilteredList] = useState<Array<any>>([]);
 
-  const [menuState, setMenuState] = useState<{
-    anchorEl: null | HTMLElement;
-    row: CellType | null;
-  }>({
-    anchorEl: null,
-    row: null,
-  });
+  const applyDateFilter = () => {
+    if (startDate && endDate) {
+      console.log(startDate, startDate, "logdate");
 
-  const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    row: CellType
-  ) => {
-    setMenuState({ anchorEl: event.currentTarget, row: row });
+      const adjustedEndDate = new Date(endDate);
+      adjustedEndDate.setHours(23, 59, 59, 999);
+
+      const filtered = List.filter((item) => {
+        const itemDate = new Date(item?.Date);
+        return itemDate >= startDate && itemDate <= adjustedEndDate;
+      });
+
+      console.log(filtered, "logdatef");
+      setFilteredList(filtered);
+    } else {
+      // Reset to full list if no dates are selected
+      setFilteredList(List);
+    }
   };
+  useEffect(() => {
+    // If you want to apply a default filter, uncomment and set default dates
+    // setStartDate(defaultStartDate);
+    // setEndDate(defaultEndDate);
 
-  const handleClose = () => {
-    setMenuState({ anchorEl: null, row: null });
-  };
+    // Apply the filter or set the full list if no dates are provided
+    if (startDate && endDate) {
+      applyDateFilter();
+    } else {
+      setFilteredList(List);
+    }
+  }, [List]);
 
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { user } = await logiHistory("655ca092c273b5227c1ec6cd");
+      const { user } = await logiHistory(id);
       setList(user?.loginHistory);
       setData(user);
       console.log("user", user);
@@ -170,120 +182,53 @@ const LoginHistory = () => {
     }
   };
 
-  const ITEM_HEIGHT = 48;
-
   useEffect(() => {
     listData();
   }, []);
 
-  const filteredList = useMemo(() => {
-    let result = List;
-    if (search?.trim().length) {
-      result = result.filter((item) =>
-        item.branchName?.toLowerCase().includes(search.trim().toLowerCase())
-      );
-    }
-    return result;
-  }, [search, List]);
-
-  const handleApplyFilters = async (filters: CheckedState) => {
-    console.log(filters, "filters");
-
-    // const filteredData = await fetchDataWithFilters(filters);
-    // setData(filteredData);
-  };
-
-  //   const columns: any[] = [
-  //     ...defaultColumns,
-  //     {
-  //       flex: 0.1,
-  //       minWidth: 130,
-  //       sortable: false,
-  //       field: "actions",
-  //       headerName: "Actions",
-  //       renderCell: ({ row }: CellType) => (
-  //         <div>
-  //           <IconButton
-  //             aria-label="more"
-  //             aria-controls="long-menu"
-  //             aria-haspopup="true"
-  //             onClick={(e) => handleClick(e, row)} // Pass the current row here
-  //           >
-  //             <MoreVertIcon />
-  //           </IconButton>
-  //           <Menu
-  //             id="long-menu"
-  //             anchorEl={menuState.anchorEl}
-  //             open={Boolean(menuState.anchorEl)}
-  //             onClose={handleClose}
-  //             PaperProps={{
-  //               style: {
-  //                 maxHeight: ITEM_HEIGHT * 4.5,
-  //                 width: "20ch",
-  //               },
-  //             }}
-  //           >
-  //             <MenuItem
-  //               onClick={() => {
-  //                 handleClose();
-  //                 navigate(`/dashboard/Team-edit/${menuState.row?._id}`); // Use menuState.row._id
-  //               }}
-  //             >
-  //               Edit
-  //             </MenuItem>
-  //             <MenuItem
-  //               onClick={() => {
-  //                 handleClose();
-  //                 handleArchive(menuState.row?._id); // Use menuState.row._id
-  //               }}
-  //             >
-  //               Archive
-  //             </MenuItem>
-  //             <MenuItem
-  //               onClick={() => {
-  //                 handleDelete(menuState.row?._id); // Use menuState.row._id
-  //                 handleClose();
-  //               }}
-  //             >
-  //               Delete
-  //             </MenuItem>
-  //           </Menu>
-  //         </div>
-  //       ),
-  //     },
-  //   ];
+  // const filteredList = useMemo(() => {
+  //   let result = List;
+  //   if (search?.trim().length) {
+  //     result = result.filter((item) =>
+  //       item.branchName?.toLowerCase().includes(search.trim().toLowerCase())
+  //     );
+  //   }
+  //   return result;
+  // }, [search, List]);
 
   return (
     <>
       <Grid container spacing={6}>
         <Grid item xs={12} sx={{ mb: -4 }}>
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <TextField
-                value={search}
-                sx={{ mr: 1, maxWidth: "170px" }}
-                placeholder="Search Orders"
-                onChange={(e) => setSearch(e.target.value)}
-                size="small"
-              />
+              {/* <DatePicker
+                label="Start Date"
+                value={startDate}
+                onChange={setStartDate}
+                renderInput={(params: any) => (
+                  <TextField {...params} size="small" />
+                )}
+              /> */}
+              {/* <DatePicker
+                sx={{ mr: 2, ml: 2 }}
+                label="End Date"
+                value={endDate}
+                onChange={setEndDate}
+                renderInput={(params: any) => (
+                  <TextField {...params} size="small" />
+                )}
+              /> */}
+              <Button
+                onClick={applyDateFilter}
+                variant="contained"
+                size="large"
+                sx={{ textTransform: "none", height: "3.5rem" }}
+              >
+                Apply Filter
+              </Button>
             </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-              }}
-            ></Box>
-          </Box>
+          </LocalizationProvider>
         </Grid>
 
         <Grid item xs={12}>

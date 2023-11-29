@@ -275,21 +275,30 @@ const BranchForm = () => {
                       <Select
                         {...field}
                         labelId="country-code-label"
-                        placeholder="Country Code"
+                        displayEmpty // Ensures that the placeholder is displayed when the value is empty
                         onChange={(e) => {
                           // When country code changes, update its state and reset contact field
                           setSelectedCountryCode(e.target.value);
                           setValue("contact", e.target.value);
                         }}
+                        renderValue={(value) => {
+                          if (value === "") {
+                            return (
+                              <em style={{ color: "#9A9A9A" }}>Country Code</em>
+                            );
+                          }
+                          // Display the selected value. You might need to format it or find the corresponding country name
+                          return `+${value}`;
+                        }}
                       >
-                        {" "}
                         <MenuItem value="" disabled>
-                          Country Code
+                          <em>Country Code</em>{" "}
+                          {/* This is the placeholder item */}
                         </MenuItem>
                         {countries.map((country) => (
                           <MenuItem
                             key={country.code}
-                            value={`+${country.phoneCode}`}
+                            value={country.phoneCode} // Store just the phone code as the value
                           >
                             {`${country.name} (+${country.phoneCode})`}
                           </MenuItem>
@@ -367,14 +376,15 @@ const BranchForm = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <Select
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
                     {...field}
                     labelId="country-label"
                     placeholder="Country"
                     displayEmpty
                     renderValue={(value) => {
                       if (value === "") {
-                        return <em>Select State</em>; // Placeholder text
+                        return (
+                          <em style={{ color: "#9A9A9A" }}>Select Country</em>
+                        ); // Placeholder text
                       }
                       return field.value;
                     }}
@@ -398,7 +408,6 @@ const BranchForm = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <Select
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
                     onChange={(e) => setState(e.target.value)}
                     value={state}
                     labelId="state-label"
@@ -406,7 +415,9 @@ const BranchForm = () => {
                     displayEmpty
                     renderValue={(value) => {
                       if (value === "") {
-                        return <em>Select State</em>; // Placeholder text
+                        return (
+                          <em style={{ color: "#9A9A9A" }}>Select State</em>
+                        ); // Placeholder text
                       }
                       return state;
                     }}
@@ -447,18 +458,21 @@ const BranchForm = () => {
               defaultValue=""
               render={({ field }) => (
                 <FormControl fullWidth size="small">
+                  {/* Optional: add this line if you want a label */}
                   <Select
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                    {...field} // Spread the field props to bind the form control to the Controller
+                    {...field}
                     labelId="status-label"
                     displayEmpty
                     renderValue={(value) => {
                       if (value === "") {
-                        return <em>Select Status</em>; // Placeholder text
+                        return (
+                          <em style={{ color: "#9A9A9A" }}> Choose a status</em> // Placeholder text with custom color
+                        );
                       }
                       return field.value;
                     }}
                   >
+                    {/* Placeholder */}
                     <MenuItem value="active">Active</MenuItem>
                     <MenuItem value="inactive">Inactive</MenuItem>
                     <MenuItem value="archived">Archived</MenuItem>

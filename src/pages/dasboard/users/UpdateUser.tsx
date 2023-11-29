@@ -18,6 +18,9 @@ import {
   Divider,
   Avatar,
   Tooltip,
+  FormControlLabel,
+  Checkbox,
+  CardHeader,
 } from "@mui/material";
 
 import toast from "react-hot-toast";
@@ -35,6 +38,8 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
 import RoleTable from "@/pages/dasboard/users/RoleTable";
 import { useAuth } from "@/hooks/useAuth";
+import { CheckBox } from "@mui/icons-material";
+
 type FormValues = {
   firstName: string;
   lastName: string;
@@ -46,6 +51,7 @@ type FormValues = {
   branch: string;
   status: string;
   image: string;
+  inviteCheack: boolean;
 };
 
 interface TabPanelProps {
@@ -167,7 +173,7 @@ const UpdateUser = () => {
       const response = await updateUser(id, payload);
       if (response.ok === true) {
         toast.success(response.message);
-        // navigate("/resetpassword");
+        navigate("/dashboard/user-list");
       } else {
         const errorMessage = response.message || response.data;
         toast.error(errorMessage);
@@ -203,6 +209,7 @@ const UpdateUser = () => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <CardHeader title=" Update User" sx={{ ml: -2 }} />
       <Paper sx={{ width: "100%" }}>
         <Box sx={{ borderBottom: 1, borderColor: "divider", color: "red" }}>
           <Tabs
@@ -224,14 +231,13 @@ const UpdateUser = () => {
                   style={{ marginRight: 8, height: "20px" }}
                 />
                 <Typography
-                  variant="subtitle1"
+                  variant="subtitle2"
                   sx={{ fontSize: "16px", color: "#9A9A9A" }}
                 >
                   Personal Information
                 </Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
               </Box>
-
               <Box sx={{ alignItems: "center" }}>
                 <Tooltip title="Upload Image" arrow>
                   <Avatar
@@ -273,12 +279,7 @@ const UpdateUser = () => {
           </Grid>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                First Name*
-              </Typography>
+              <Typography variant="subtitle2">First Name*</Typography>
 
               <Controller
                 name="firstName"
@@ -286,12 +287,6 @@ const UpdateUser = () => {
                 rules={{ required: "Branch Name is required" }}
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="Branch Name"
                     fullWidth
@@ -304,24 +299,13 @@ const UpdateUser = () => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                Last Name*
-              </Typography>
+              <Typography variant="subtitle2">Last Name*</Typography>
               <Controller
                 name="lastName"
                 control={control}
                 rules={{ required: "Branch ID is required" }}
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="Last Name"
                     fullWidth
@@ -335,30 +319,18 @@ const UpdateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                email*
-              </Typography>
+              <Typography variant="subtitle2">email*</Typography>
               <Controller
                 name="email"
                 control={control}
                 rules={{ required: "email is required" }}
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="email"
                     fullWidth
                     error={!!errors.email}
                     helperText={errors.email?.message}
-                    disabled
                     size="small"
                     variant="outlined"
                   />
@@ -367,24 +339,13 @@ const UpdateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                Job Title
-              </Typography>
+              <Typography variant="subtitle2">Job Title</Typography>
               <Controller
                 name="job"
                 control={control}
                 rules={{ required: "Pin Code is required" }}
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="Job Title"
                     fullWidth
@@ -398,12 +359,7 @@ const UpdateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                Team
-              </Typography>
+              <Typography variant="subtitle2">Team</Typography>
 
               <FormControl fullWidth size="small">
                 <Controller
@@ -412,14 +368,15 @@ const UpdateUser = () => {
                   defaultValue=""
                   render={({ field }) => (
                     <Select
-                      sx={{ fontSize: "16px", color: "#9A9A9A" }}
                       {...field}
                       labelId="team-label"
                       placeholder="Team"
                       displayEmpty
                       renderValue={(value) => {
                         if (value === "") {
-                          return <em>Select Team</em>; // Placeholder text
+                          return (
+                            <em style={{ color: "#9A9A9A" }}>Select Team</em> // Placeholder text with custom color
+                          );
                         }
 
                         // Find the team with the matching ID in teamData and return its name
@@ -441,12 +398,7 @@ const UpdateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                Branch
-              </Typography>
+              <Typography variant="subtitle2">Branch</Typography>
               <FormControl fullWidth size="small">
                 <Controller
                   name="branch"
@@ -454,17 +406,16 @@ const UpdateUser = () => {
                   defaultValue=""
                   render={({ field }) => (
                     <Select
-                      sx={{ fontSize: "16px", color: "#9A9A9A" }}
                       {...field}
                       labelId="branch-label"
                       placeholder="Branch"
                       displayEmpty
                       renderValue={(value) => {
                         if (value === "") {
-                          return <em>Select Branch</em>; // Placeholder text
+                          return (
+                            <em style={{ color: "#9A9A9A" }}>Select Branch</em> // Placeholder text with custom color
+                          );
                         }
-
-                        // Find the branch with the matching ID in branchData and return its name
                         const selectedBranch = branchData.find(
                           (branch) => branch._id === value
                         );
@@ -483,12 +434,7 @@ const UpdateUser = () => {
             </Grid>
 
             <Grid item xs={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                Mobile
-              </Typography>
+              <Typography variant="subtitle2">Mobile</Typography>
               <Controller
                 name="mobile"
                 control={control}
@@ -516,24 +462,13 @@ const UpdateUser = () => {
               />
             </Grid>
             <Grid item xs={6}>
-              <Typography
-                variant="subtitle1"
-                sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-              >
-                Landline
-              </Typography>
+              <Typography variant="subtitle2">Landline</Typography>
               <Controller
                 name="landline"
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="landline"
                     fullWidth
@@ -575,18 +510,63 @@ const UpdateUser = () => {
                   alt="send"
                   style={{ marginRight: 8, height: "20px" }}
                 />
-                <Typography
-                  variant="subtitle1"
-                  sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                >
-                  Permission
-                </Typography>
+                <Typography variant="subtitle1">Permission</Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
               </Box>
               <Grid sx={{ mb: 3 }}>
                 <RoleTable />
               </Grid>
 
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+                <img
+                  src={logo}
+                  alt="send"
+                  style={{ marginRight: 8, height: "20px" }}
+                />
+                <Typography variant="subtitle2">Send Invitation</Typography>
+                <Divider sx={{ flexGrow: 1, ml: 2 }} />
+              </Box>
+              <Controller
+                name="email"
+                control={control}
+                rules={{ required: "email is required" }}
+                render={({ field }) => (
+                  <TextField
+                    sx={{
+                      width: "60%", // Setting the width
+                    }}
+                    {...field}
+                    placeholder="email"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    size="small"
+                    variant="outlined"
+                  />
+                )}
+              />
+              <Grid sx={{ mt: 1 }}>
+                <FormControlLabel
+                  control={
+                    <Controller
+                      name="inviteCheack"
+                      control={control}
+                      defaultValue={false}
+                      render={({ field }) => (
+                        <CheckBox {...field} color="primary" />
+                      )}
+                    />
+                  }
+                  label={
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ whiteSpace: "nowrap" }}
+                    >
+                      Send invitation to the above email to complete login
+                      process
+                    </Typography>
+                  }
+                />
+              </Grid>
               <Box sx={{ width: "100%", textAlign: "right" }}>
                 {" "}
                 {/* Container with full width */}

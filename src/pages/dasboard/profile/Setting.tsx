@@ -126,7 +126,7 @@ const Setting = () => {
             ml: "auto",
           }}
         >
-          <Button
+          {/* <Button
             sx={{
               textTransform: "none",
               mr: 5,
@@ -137,7 +137,7 @@ const Setting = () => {
             to={`/dashboard/user-update-user/${id}`}
           >
             Edit
-          </Button>
+          </Button> */}
         </Box>
       </Box>
 

@@ -166,7 +166,7 @@ const CreateTeam = () => {
         </Box>
         <Paper sx={{ padding: 4 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={7}>
               <Typography variant="subtitle2">Team Name*</Typography>
 
               <Controller
@@ -188,7 +188,7 @@ const CreateTeam = () => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={7}>
               <Typography variant="subtitle2">Team Manger</Typography>
               <Controller
                 name="manager"
@@ -227,7 +227,7 @@ const CreateTeam = () => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={7}>
               <Typography variant="subtitle2">Status</Typography>
               <Controller
                 name="status"
@@ -237,13 +237,21 @@ const CreateTeam = () => {
                   <FormControl fullWidth size="small">
                     {/* Optional: add this line if you want a label */}
                     <Select
-                      {...field} // Spread the field props
+                      {...field}
                       labelId="status-label"
-                      displayEmpty // Add this to display the empty MenuItem as a placeholder
+                      displayEmpty
+                      renderValue={(value) => {
+                        if (value === "") {
+                          return (
+                            <em style={{ color: "#9A9A9A" }}>
+                              {" "}
+                              Choose a status
+                            </em> // Placeholder text with custom color
+                          );
+                        }
+                        return field.value;
+                      }}
                     >
-                      <MenuItem value="" disabled style={{ color: "#9A9A9A" }}>
-                        Choose a status
-                      </MenuItem>{" "}
                       {/* Placeholder */}
                       <MenuItem value="active">Active</MenuItem>
                       <MenuItem value="inactive">Inactive</MenuItem>
@@ -254,7 +262,7 @@ const CreateTeam = () => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={7}>
               <Typography variant="subtitle2">Team Members</Typography>
               <Controller
                 name="members"

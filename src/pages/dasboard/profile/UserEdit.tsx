@@ -18,6 +18,7 @@ import {
   Divider,
   Avatar,
   Tooltip,
+  CardHeader,
 } from "@mui/material";
 
 import toast from "react-hot-toast";
@@ -98,15 +99,15 @@ const UserEdit = () => {
       const { user } = await getUserId(id);
       console.log(user);
       setList(user);
-      setValue("firstName", user.firstName);
-      setValue("lastName", user.lastName);
-      setValue("email", user.email);
-      setValue("job", user.job);
-      setValue("mobile", user.mobile);
-      setValue("landline", user.team);
-      setValue("team", user.team);
-      setValue("branch", user.branch);
-      setValue("status", user.status);
+      setValue("firstName", user?.firstName);
+      setValue("lastName", user?.lastName);
+      setValue("email", user?.email);
+      setValue("job", user?.job);
+      setValue("mobile", user?.mobile);
+      setValue("landline", user?.landline);
+      setValue("team", user?.team);
+      setValue("branch", user?.branch);
+      setValue("status", user?.status);
       setImage(user?.image);
     } catch (error) {
       console.log(error);
@@ -157,7 +158,7 @@ const UserEdit = () => {
       const response = await updateUser(id, payload);
       if (response.ok === true) {
         toast.success(response.message);
-        // navigate("/resetpassword");
+        navigate(`/dashboard/user-detail/${id}`);
       } else {
         const errorMessage = response.message || response.data;
         toast.error(errorMessage);
@@ -193,6 +194,7 @@ const UserEdit = () => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <CardHeader title={" Update User"} sx={{ ml: -2 }} />
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
@@ -289,7 +291,7 @@ const UserEdit = () => {
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Typography variant="subtitle2">email*</Typography>
+          <Typography variant="subtitle2">Email*</Typography>
           <Controller
             name="email"
             control={control}

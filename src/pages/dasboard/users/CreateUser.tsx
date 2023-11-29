@@ -20,6 +20,7 @@ import {
   Tooltip,
   FormControlLabel,
   Checkbox,
+  CardHeader,
 } from "@mui/material";
 import { countries, getStatesByCountry } from "@/utils/CounteryState";
 import { Country } from "country-state-city";
@@ -142,7 +143,7 @@ const CreateUser = () => {
       const response = await createUser(payload);
       if (response.ok === true) {
         toast.success(response.message);
-        // navigate("/resetpassword");
+        navigate("/dashboard/user-list");
       } else {
         const errorMessage = response.message || response.data;
         toast.error(errorMessage);
@@ -173,6 +174,7 @@ const CreateUser = () => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <CardHeader title=" Create User" sx={{ ml: -2 }} />
       <Paper sx={{ width: "100%" }}>
         <Box sx={{ borderBottom: 1, borderColor: "divider", color: "red" }}>
           <Tabs
@@ -193,10 +195,7 @@ const CreateUser = () => {
                   alt="send"
                   style={{ marginRight: 8, height: "20px" }}
                 />
-                <Typography
-                  variant="subtitle2"
-                  sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                >
+                <Typography variant="subtitle2">
                   Personal Information
                 </Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
@@ -269,12 +268,6 @@ const CreateUser = () => {
                 rules={{ required: "Branch ID is required" }}
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="Last Name"
                     fullWidth
@@ -295,12 +288,6 @@ const CreateUser = () => {
                 rules={{ required: "email is required" }}
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="email"
                     fullWidth
@@ -321,12 +308,6 @@ const CreateUser = () => {
                 rules={{ required: "Pin Code is required" }}
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="Job Title"
                     fullWidth
@@ -450,12 +431,6 @@ const CreateUser = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <TextField
-                    InputProps={{
-                      sx: {
-                        fontSize: "16px",
-                        color: "#9A9A9A",
-                      },
-                    }}
                     {...field}
                     placeholder="landline"
                     fullWidth
@@ -531,7 +506,7 @@ const CreateUser = () => {
                   />
                 )}
               />
-              <Grid>
+              <Grid sx={{ mt: 1 }}>
                 <FormControlLabel
                   control={
                     <Controller

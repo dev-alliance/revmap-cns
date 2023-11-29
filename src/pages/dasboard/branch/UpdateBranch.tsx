@@ -193,12 +193,7 @@ const UpdateBranch = () => {
       <Paper sx={{ padding: 4 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Legal Name*
-            </Typography>
+            <Typography variant="subtitle1">Legal Name*</Typography>
 
             <Controller
               name="branchName"
@@ -206,12 +201,6 @@ const UpdateBranch = () => {
               rules={{ required: "Branch Name is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Branch Name"
                   fullWidth
@@ -225,24 +214,13 @@ const UpdateBranch = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Branch ID*
-            </Typography>
+            <Typography variant="subtitle1">Branch ID*</Typography>
             <Controller
               name="branchId"
               control={control}
               rules={{ required: "Branch ID is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Registration No"
                   fullWidth
@@ -256,24 +234,13 @@ const UpdateBranch = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Address*
-            </Typography>
+            <Typography variant="subtitle1">Address*</Typography>
             <Controller
               name="address"
               control={control}
               rules={{ required: "Address is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Address"
                   fullWidth
@@ -287,24 +254,13 @@ const UpdateBranch = () => {
           </Grid>
           {/* Pin Code field */}
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Pin Code*
-            </Typography>
+            <Typography variant="subtitle1">Pin Code*</Typography>
             <Controller
               name="pinCode"
               control={control}
               rules={{ required: "Pin Code is required" }}
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Pin Code"
                   fullWidth
@@ -318,12 +274,7 @@ const UpdateBranch = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Contact Number
-            </Typography>
+            <Typography variant="subtitle2">Contact Number</Typography>
             <Grid container spacing={2}>
               <Grid item xs={6} sm={4}>
                 <FormControl fullWidth variant="outlined" size="small">
@@ -333,21 +284,27 @@ const UpdateBranch = () => {
                     defaultValue=""
                     render={({ field }) => (
                       <Select
-                        sx={{ fontSize: "16px", color: "#9A9A9A" }}
                         {...field}
                         labelId="country-code-label"
-                        placeholder="Country Code"
-                        value={selectedCountryCode}
+                        displayEmpty
                         onChange={(e) => {
+                          // When country code changes, update its state and reset contact field
                           setSelectedCountryCode(e.target.value);
                           setValue("contact", e.target.value);
                         }}
-                        displayEmpty
                         renderValue={(value) => {
                           if (value === "") {
-                            return <em>Select Country Code</em>; // Placeholder text
+                            return (
+                              <em style={{ color: "#9A9A9A" }}>Country Code</em>
+                            );
                           }
-                          return selectedCountryCode;
+                          // Find the country with the matching phoneCode and return its phoneCode
+                          const selectedCountry = countries.find(
+                            (country) => `+${country.phoneCode}` === value
+                          );
+                          return selectedCountry
+                            ? `+${selectedCountry.phoneCode}`
+                            : "Country Code";
                         }}
                       >
                         {countries.map((country) => (
@@ -370,12 +327,7 @@ const UpdateBranch = () => {
                   defaultValue=""
                   render={({ field }) => (
                     <TextField
-                      InputProps={{
-                        sx: {
-                          fontSize: "16px",
-                          color: "#9A9A9A",
-                        },
-                      }}
+                      InputProps={{}}
                       {...field}
                       placeholder="Contact Number"
                       fullWidth
@@ -390,24 +342,13 @@ const UpdateBranch = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Manager*
-            </Typography>
+            <Typography variant="subtitle1">Manager*</Typography>
             <Controller
               name="manager"
               control={control}
               defaultValue=""
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Manager"
                   fullWidth
@@ -418,12 +359,7 @@ const UpdateBranch = () => {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Country*
-            </Typography>
+            <Typography variant="subtitle2">Country*</Typography>
             <FormControl fullWidth size="small">
               <Controller
                 name="country"
@@ -431,14 +367,15 @@ const UpdateBranch = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <Select
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
                     {...field}
                     labelId="country-label"
                     placeholder="Country"
                     displayEmpty
                     renderValue={(value) => {
                       if (value === "") {
-                        return <em>Select Country</em>; // Placeholder text
+                        return (
+                          <em style={{ color: "#9A9A9A" }}>Select Country</em>
+                        ); // Placeholder text
                       }
                       return field.value;
                     }}
@@ -454,12 +391,7 @@ const UpdateBranch = () => {
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              State
-            </Typography>
+            <Typography variant="subtitle2">State</Typography>
             <FormControl fullWidth variant="outlined" size="small">
               <Controller
                 name="state"
@@ -467,7 +399,6 @@ const UpdateBranch = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <Select
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
                     onChange={(e) => setState(e.target.value)}
                     value={state}
                     labelId="state-label"
@@ -475,7 +406,9 @@ const UpdateBranch = () => {
                     displayEmpty
                     renderValue={(value) => {
                       if (value === "") {
-                        return <em>Select State</em>; // Placeholder text
+                        return (
+                          <em style={{ color: "#9A9A9A" }}>Select State</em>
+                        ); // Placeholder text
                       }
                       return state;
                     }}
@@ -492,24 +425,13 @@ const UpdateBranch = () => {
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Website
-            </Typography>
+            <Typography variant="subtitle1">Website</Typography>
             <Controller
               name="website"
               control={control}
               defaultValue=""
               render={({ field }) => (
                 <TextField
-                  InputProps={{
-                    sx: {
-                      fontSize: "16px",
-                      color: "#9A9A9A",
-                    },
-                  }}
                   {...field}
                   placeholder="Website"
                   fullWidth
@@ -520,30 +442,28 @@ const UpdateBranch = () => {
             />
           </Grid>
           <Grid item xs={6}>
-            <Typography
-              variant="subtitle1"
-              sx={{ mb: 0.5, fontSize: "16px", color: "#9A9A9A" }}
-            >
-              Status
-            </Typography>
+            <Typography variant="subtitle1">Status</Typography>
             <Controller
               name="status"
               control={control}
               defaultValue=""
               render={({ field }) => (
                 <FormControl fullWidth size="small">
+                  {/* Optional: add this line if you want a label */}
                   <Select
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                    {...field} // Spread the field props to bind the form control to the Controller
+                    {...field}
                     labelId="status-label"
                     displayEmpty
                     renderValue={(value) => {
                       if (value === "") {
-                        return <em>Select Status</em>; // Placeholder text
+                        return (
+                          <em style={{ color: "#9A9A9A" }}> Choose a status</em> // Placeholder text with custom color
+                        );
                       }
                       return field.value;
                     }}
                   >
+                    {/* Placeholder */}
                     <MenuItem value="active">Active</MenuItem>
                     <MenuItem value="inactive">Inactive</MenuItem>
                     <MenuItem value="archived">Archived</MenuItem>

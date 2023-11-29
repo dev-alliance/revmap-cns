@@ -264,11 +264,19 @@ const UpdateTeam = () => {
                     <Select
                       {...field} // Spread the field props
                       labelId="status-label"
-                      displayEmpty // Add this to display the empty MenuItem as a placeholder
+                      displayEmpty
+                      renderValue={(value) => {
+                        if (value === "") {
+                          return (
+                            <em style={{ color: "#9A9A9A" }}>
+                              {" "}
+                              Choose a status
+                            </em> // Placeholder text with custom color
+                          );
+                        }
+                        return field.value;
+                      }}
                     >
-                      <MenuItem value="" disabled style={{ color: "#9A9A9A" }}>
-                        Choose a status
-                      </MenuItem>{" "}
                       {/* Placeholder */}
                       <MenuItem value="active">Active</MenuItem>
                       <MenuItem value="inactive">Inactive</MenuItem>

@@ -116,11 +116,11 @@ const Account: React.FC = () => {
         </Box>
       )}
       <Box sx={{ padding: 1.3, opacity: isLoading ? "30%" : "100%" }}>
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="subtitle1" gutterBottom>
           Organisation
         </Typography>
         <Typography
-          variant="subtitle2"
+          variant="body1"
           gutterBottom
           sx={{ color: "text.secondary" }}
         >
@@ -135,10 +135,10 @@ const Account: React.FC = () => {
           }}
         >
           <Box>
-            <Typography variant="h5" component="div">
+            <Typography variant="subtitle1" component="div">
               Password
             </Typography>
-            <Typography variant="subtitle2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body1" sx={{ color: "text.secondary" }}>
               Change the password for your account
             </Typography>
           </Box>
@@ -160,10 +160,10 @@ const Account: React.FC = () => {
           }}
         >
           <Box>
-            <Typography variant="h5" component="div">
+            <Typography variant="subtitle1" component="div">
               Two-Factor Authentication
             </Typography>
-            <Typography variant="subtitle2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body1" sx={{ color: "text.secondary" }}>
               Requires an authentication code when you log in with an email and
               passwords
             </Typography>

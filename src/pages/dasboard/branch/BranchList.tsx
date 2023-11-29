@@ -110,24 +110,26 @@ const defaultColumns: GridColDef[] = [
               : "Inactive"
           }
           sx={{
+            fontSize: "15px",
+            fontWeight: "bold",
             backgroundColor:
               row.status === "active"
                 ? "#D3FDE4"
                 : row.status === "archived"
                 ? "#FFF7CB"
-                : "#D32F2F",
+                : "#FFCBCB",
             color:
               row.status === "active"
                 ? "#3F9748"
                 : row.status === "archived"
-                ? "#D36A2F"
-                : "#FFCBCB",
+                ? "#D32F2F"
+                : "#red",
             borderColor:
               row.status === "active"
                 ? "#D3FDE4"
                 : row.status === "archived"
                 ? "#FFF7CB"
-                : "#D32F2F", // Optional: to match border color with background
+                : "#FFCBCB", // Optional: to match border color with background
             "& .MuiChip-label": {
               // This targets the label inside the chip for more specific styling
               color:
@@ -135,7 +137,7 @@ const defaultColumns: GridColDef[] = [
                   ? "#3F9748"
                   : row.status === "archived"
                   ? "#D36A2F"
-                  : "#FFCBCB",
+                  : "#D32F2F",
             },
           }}
         />

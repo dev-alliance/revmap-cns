@@ -17,6 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import toast from "react-hot-toast";
 import { ChangeUserPassword } from "@/service/api/apiMethods";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 interface ChangePasswordModalProps {
   open: boolean;
@@ -41,7 +42,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     watch,
     formState: { errors },
   } = useForm<IFormInput>();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const newPassword = watch("newPassword");
   const onSubmit: any = async (data: any) => {
     try {
@@ -56,6 +58,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       if (response.ok === true) {
         toast.success(response.message);
         onClose();
+        navigate("/");
+        logout();
       } else {
         const errorMessage = response.data || response.message;
         toast.error(errorMessage);
