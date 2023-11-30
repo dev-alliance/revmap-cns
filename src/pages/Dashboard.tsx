@@ -54,6 +54,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Setting from "@/pages/dasboard/profile/Setting";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import GroupsIcon from "@mui/icons-material/Groups";
+import CategoryList from "@/pages/dasboard/category/CategoryList";
 
 const drawerWidth = 240;
 export default function Dashboard() {
@@ -166,6 +167,15 @@ export default function Dashboard() {
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
+        {/* <ListItemButton component={Link} to="/dashboard/category-list">
+          <ListItemIcon>
+            <PersonIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Category"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton> */}
 
         {/* Main collapsible list item */}
 
@@ -328,6 +338,7 @@ export default function Dashboard() {
           <Route path="/user-detail/:id" element={<UserDetail />} />
           <Route path="/profile-setting" element={<Setting />} />
           <Route path="/login-history" element={<LoginHistory />} />
+          <Route path="/category-list" element={<CategoryList />} />
           <Route path="/sub-page-1" element={<SubPage1 />} />
         </Routes>
       </Box>

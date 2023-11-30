@@ -52,7 +52,7 @@ const theme = createTheme({
       styleOverrides: {
         body: {
           backgroundColor: "#f0f2f5",
-          wordSpacing: "4px",
+          // wordSpacing: "3px",
           // letterSpacing: "0.5px",
         },
       },

@@ -108,7 +108,7 @@ const Setting = () => {
         sx={{
           borderBottom: 1,
           borderColor: "divider",
-          color: "red",
+
           display: "flex",
           pl: 2,
         }}
@@ -118,8 +118,8 @@ const Setting = () => {
           onChange={handleTabChange}
           aria-label="basic tabs example"
         >
-          <Tab label="Notification" />
-          <Tab label="Account" />
+          <Tab label="Notification" sx={{ fontWeight: "bold" }} />
+          <Tab label="Account" sx={{ fontWeight: "bold" }} />
         </Tabs>
         <Box
           sx={{

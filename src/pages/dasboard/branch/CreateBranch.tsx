@@ -18,7 +18,8 @@ import { countries, getStatesByCountry } from "@/utils/CounteryState";
 import { Country } from "country-state-city";
 import toast from "react-hot-toast";
 import { createBranch, getUserListNameID } from "@/service/api/apiMethods";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 type FormValues = {
   branchName: string;
   branchId: string;
@@ -94,6 +95,7 @@ const BranchForm = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      setIsLoading(true);
       const payload = {
         branchName: data.branchName,
         branchId: data.branchId,
@@ -148,7 +150,6 @@ const BranchForm = () => {
         <div style={{ display: "flex" }}>
           <Box
             sx={{
-              display: "flex",
               flexWrap: "wrap",
               alignItems: "center",
             }}
@@ -159,13 +160,22 @@ const BranchForm = () => {
             >
               Create Branch
             </Typography>
+            <Breadcrumbs
+              aria-label="breadcrumb"
+              sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+            >
+              <Link to="/dashboard/branchlist" className="link-no-underline">
+                Home
+              </Link>
+              {/* <Typography color="text.primary">Categories</Typography> */}
+            </Breadcrumbs>
           </Box>
         </div>
 
         <div>
           <Button
             variant="outlined"
-            onClick={() => console.log("Cancel")}
+            onClick={() => navigate(-1)}
             sx={{ textTransform: "none" }}
           >
             Cancel
@@ -175,6 +185,7 @@ const BranchForm = () => {
             type="submit"
             variant="contained"
             color="primary"
+            disabled={isLoading}
           >
             Save
           </Button>
@@ -270,16 +281,18 @@ const BranchForm = () => {
                   <Controller
                     name="countryCode"
                     control={control}
-                    defaultValue=""
+                    defaultValue={selectedCountryCode}
                     render={({ field }) => (
                       <Select
                         {...field}
                         labelId="country-code-label"
                         displayEmpty // Ensures that the placeholder is displayed when the value is empty
+                        value={selectedCountryCode}
                         onChange={(e) => {
-                          // When country code changes, update its state and reset contact field
-                          setSelectedCountryCode(e.target.value);
-                          setValue("contact", e.target.value);
+                          const newCountryCode = e.target.value;
+                          setSelectedCountryCode(newCountryCode);
+                          // Prepend '+' to the country code when setting the contact field value
+                          setValue("contact", `+${newCountryCode}`);
                         }}
                         renderValue={(value) => {
                           if (value === "") {
@@ -330,7 +343,7 @@ const BranchForm = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Manager*</Typography>
+            <Typography variant="subtitle2">Manager</Typography>
             <Controller
               name="manager"
               control={control}
@@ -473,9 +486,9 @@ const BranchForm = () => {
                     }}
                   >
                     {/* Placeholder */}
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="inactive">Inactive</MenuItem>
-                    <MenuItem value="archived">Archived</MenuItem>
+                    <MenuItem value="Active">Active</MenuItem>
+                    <MenuItem value="Inactive">Inactive</MenuItem>
+                    <MenuItem value="Archived">Archived</MenuItem>
                   </Select>
                 </FormControl>
               )}

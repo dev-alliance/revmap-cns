@@ -18,6 +18,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 // ** Third Party Imports
 import logo from "@/assets/team_icon.svg";
 import toast from "react-hot-toast";
@@ -31,6 +32,7 @@ import {
   resetPaasword,
 } from "@/service/api/apiMethods";
 import AddIcon from "@mui/icons-material/Add";
+import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 interface CellType {
   row: any;
   _id: any;
@@ -55,14 +57,14 @@ const defaultColumns: any[] = [
   {
     flex: 0.2,
     field: "name",
-    minWidth: 200,
+    minWidth: 230,
     headerName: "Team Name",
     renderCell: ({ row }: any) => {
       const { name } = row;
 
       return (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Img src={logo} />
+          {/* <Img src={logo} /> */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
           </Box>
@@ -71,7 +73,7 @@ const defaultColumns: any[] = [
     },
   },
   {
-    flex: 0.2,
+    flex: 0.3,
     minWidth: 125,
     field: "managerFirstName",
     headerName: "Manager",
@@ -94,39 +96,39 @@ const defaultColumns: any[] = [
           size="small"
           variant="outlined"
           label={
-            row.status === "active"
+            row.status === "Active"
               ? "Active"
-              : row.status === "archived"
+              : row.status === "Archived"
               ? "Archived"
               : "Inactive"
           }
           sx={{
-            fontSize: "15px",
-            fontWeight: "bold",
+            fontSize: "14px",
+            // fontWeight: "bold",
             backgroundColor:
-              row.status === "active"
+              row.status === "Active"
                 ? "#D3FDE4"
-                : row.status === "archived"
+                : row.status === "Archived"
                 ? "#FFF7CB"
                 : "#FFCBCB",
             color:
-              row.status === "active"
+              row.status === "Active"
                 ? "#3F9748"
-                : row.status === "archived"
+                : row.status === "Archived"
                 ? "#D32F2F"
                 : "#red",
             borderColor:
-              row.status === "active"
+              row.status === "Active"
                 ? "#D3FDE4"
-                : row.status === "archived"
+                : row.status === "Archived"
                 ? "#FFF7CB"
                 : "#FFCBCB", // Optional: to match border color with background
             "& .MuiChip-label": {
               // This targets the label inside the chip for more specific styling
               color:
-                row.status === "active"
+                row.status === "Active"
                   ? "#3F9748"
-                  : row.status === "archived"
+                  : row.status === "Archived"
                   ? "#D36A2F"
                   : "#D32F2F",
             },
@@ -186,11 +188,10 @@ const defaultColumns: any[] = [
   //   ),
   // },
   {
-    flex: 0.2,
+    flex: 0.3,
     minWidth: 125,
     field: "members",
-    headerName: "No of Users ",
-
+    headerName: "No. of Users ",
     renderCell: ({ row }: { row: any }) => {
       const { members } = row;
       return (
@@ -199,23 +200,25 @@ const defaultColumns: any[] = [
     },
   },
   {
-    flex: 0.2,
-    minWidth: 105,
+    flex: 0.3,
+    minWidth: 120,
     field: "ctive Contracts ",
-    headerName: "Active Contracts ",
+    headerName: "Active Contracts",
 
     renderCell: ({ row }: { row: RowType }) => {
       return <Typography sx={{ color: "text.secondary" }}>{"10"}</Typography>;
     },
   },
   {
-    flex: 0.2,
-    minWidth: 105,
-    field: "display_name",
-    headerName: "Annual value ",
-
+    flex: 0.3,
+    minWidth: 120,
+    field: "Annual Value",
+    headerName: "Annual value",
+    // headerAlign: "center",
     renderCell: ({ row }: { row: RowType }) => {
-      return <Typography sx={{ color: "text.secondary" }}>{"$150"}</Typography>;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
+      );
     },
   },
 ];
@@ -226,9 +229,9 @@ const BranchList = () => {
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10,
+    pageSize: 8,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
 
@@ -280,16 +283,17 @@ const BranchList = () => {
 
   const handleArchive = async (id: any) => {
     try {
-      alert(id);
-      setIsLoading(true);
-      const res = await archiveTeam(id, { status: "archived" });
-      console.log({ res });
+      if (window.confirm("Are you sure you want to archive this item?")) {
+        setIsLoading(true);
+        const res = await archiveTeam(id, { status: "Archived" });
+        console.log({ res });
 
-      if (res.ok === true) {
-        toast.success(res.message);
-        listData();
-      } else {
-        toast.error(res?.message || "");
+        if (res.ok === true) {
+          toast.success(res.message);
+          listData();
+        } else {
+          toast.error(res?.message || "");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -339,11 +343,12 @@ const BranchList = () => {
   const columns: GridColDef[] = [
     ...defaultColumns,
     {
-      flex: 0.1,
-      minWidth: 130,
+      flex: 0.02,
+      minWidth: 100,
       sortable: false,
       field: "actions",
       headerName: "Actions",
+      headerAlign: "center",
       renderCell: ({ row }: CellType) => (
         <div>
           <IconButton
@@ -401,6 +406,15 @@ const BranchList = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <CardHeader title="Teams" />
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+          >
+            <Link to="/dashboard/teamlist" className="link-no-underline">
+              Home
+            </Link>
+            {/* <Typography color="text.primary">Categories</Typography> */}
+          </Breadcrumbs>
           <Card>
             <Box
               sx={{
@@ -465,16 +479,20 @@ const BranchList = () => {
                   justifyContent: "center",
                   height: "50vh",
                 }}
-              ></Box>
+              >
+                {" "}
+                <ProgressCircularCustomization />
+              </Box>
             ) : (
               <DataGrid
+                style={{ paddingLeft: "10px", paddingRight: "10px" }}
                 autoHeight
                 pagination
                 rows={filteredList || []}
                 columns={columns}
                 // checkboxSelection
                 disableRowSelectionOnClick
-                pageSizeOptions={[10, 25, 50]}
+                pageSizeOptions={[8, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
                 onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}

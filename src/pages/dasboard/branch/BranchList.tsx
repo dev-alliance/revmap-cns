@@ -22,7 +22,7 @@ import AddIcon from "@mui/icons-material/Add";
 // ** Third Party Imports
 
 import toast from "react-hot-toast";
-
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,6 +31,7 @@ import {
   deleteBranch,
   getBranchList,
 } from "@/service/api/apiMethods";
+import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 // import MenuButton from "@/components/MenuButton";
 
 interface CellType {
@@ -64,7 +65,7 @@ const defaultColumns: GridColDef[] = [
   {
     flex: 0.2,
     field: "branchName",
-    minWidth: 200,
+    minWidth: 220,
     headerName: "Branch Name",
     renderCell: ({ row }: any) => {
       const { branchName } = row;
@@ -82,8 +83,8 @@ const defaultColumns: GridColDef[] = [
     },
   },
   {
-    flex: 0.2,
-    minWidth: 125,
+    flex: 0.3,
+    minWidth: 170,
     field: "state",
     headerName: "Region/State",
 
@@ -103,39 +104,39 @@ const defaultColumns: GridColDef[] = [
           size="small"
           variant="outlined"
           label={
-            row.status === "active"
+            row.status === "Active"
               ? "Active"
-              : row.status === "archived"
+              : row.status === "Archived"
               ? "Archived"
               : "Inactive"
           }
           sx={{
-            fontSize: "15px",
-            fontWeight: "bold",
+            fontSize: "14px",
+            // fontWeight: "bold",
             backgroundColor:
-              row.status === "active"
+              row.status === "Active"
                 ? "#D3FDE4"
-                : row.status === "archived"
+                : row.status === "Archived"
                 ? "#FFF7CB"
                 : "#FFCBCB",
             color:
-              row.status === "active"
+              row.status === "Active"
                 ? "#3F9748"
-                : row.status === "archived"
+                : row.status === "Archived"
                 ? "#D32F2F"
                 : "#red",
             borderColor:
-              row.status === "active"
+              row.status === "Active"
                 ? "#D3FDE4"
-                : row.status === "archived"
+                : row.status === "Archived"
                 ? "#FFF7CB"
                 : "#FFCBCB", // Optional: to match border color with background
             "& .MuiChip-label": {
               // This targets the label inside the chip for more specific styling
               color:
-                row.status === "active"
+                row.status === "Active"
                   ? "#3F9748"
-                  : row.status === "archived"
+                  : row.status === "Archived"
                   ? "#D36A2F"
                   : "#D32F2F",
             },
@@ -146,7 +147,7 @@ const defaultColumns: GridColDef[] = [
   },
 
   // {
-  //   flex: 0.2,
+  //   flex: 0.3,
   //   minWidth: 125,
   //   field: "branchId",
   //   headerName: "Branch ID",
@@ -160,7 +161,7 @@ const defaultColumns: GridColDef[] = [
   //   },
   // },
   {
-    flex: 0.2,
+    flex: 0.3,
     minWidth: 125,
     field: "manager",
     headerName: "Manager ",
@@ -174,7 +175,7 @@ const defaultColumns: GridColDef[] = [
     },
   },
   {
-    flex: 0.2,
+    flex: 0.3,
     minWidth: 105,
     field: "Active Contracts",
     headerName: "Active Contracts",
@@ -185,14 +186,16 @@ const defaultColumns: GridColDef[] = [
   },
 
   {
-    flex: 0.2,
+    flex: 0.3,
     minWidth: 125,
     field: "display_name",
-    headerName: "Annual value ",
+    headerName: "Annual Value ",
 
     renderCell: ({ row }: { row: RowType }) => {
       const { display_name } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{"$150"}</Typography>;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
+      );
     },
   },
 ];
@@ -203,7 +206,7 @@ const BranchList = () => {
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10,
+    pageSize: 8,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
@@ -279,15 +282,17 @@ const BranchList = () => {
 
   const handleArchive = async (id: any) => {
     try {
-      setIsLoading(true);
-      const res = await archiveBranch(id, { status: "archived" });
-      console.log({ res });
+      if (window.confirm("Are you sure you want to archive this item?")) {
+        setIsLoading(true);
+        const res = await archiveBranch(id, { status: "Archived" });
+        console.log({ res });
 
-      if (res.ok === true) {
-        toast.success(res.message);
-        listData();
-      } else {
-        toast.error(res?.message || "");
+        if (res.ok === true) {
+          toast.success(res.message);
+          listData();
+        } else {
+          toast.error(res?.message || "");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -320,11 +325,12 @@ const BranchList = () => {
   const columns: any[] = [
     ...defaultColumns,
     {
-      flex: 0.1,
-      minWidth: 130,
+      flex: 0.02,
+      minWidth: 100,
       sortable: false,
       field: "actions",
       headerName: "Actions",
+      headerAlign: "center",
       renderCell: ({ row }: CellType) => (
         <div>
           <IconButton
@@ -382,6 +388,15 @@ const BranchList = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <CardHeader title="Branches" />
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+          >
+            <Link to="/dashboard/branchlist" className="link-no-underline">
+              Home
+            </Link>
+            {/* <Typography color="text.primary">Categories</Typography> */}
+          </Breadcrumbs>
           <Card>
             <Box
               sx={{
@@ -447,16 +462,20 @@ const BranchList = () => {
                   justifyContent: "center",
                   height: "50vh",
                 }}
-              ></Box>
+              >
+                {" "}
+                <ProgressCircularCustomization />
+              </Box>
             ) : (
               <DataGrid
+                style={{ paddingLeft: "10px", paddingRight: "10px" }}
                 autoHeight
                 pagination
                 rows={filteredList || []}
                 columns={columns}
                 // checkboxSelection
                 disableRowSelectionOnClick
-                pageSizeOptions={[10, 25, 50]}
+                pageSizeOptions={[8, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
                 onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}

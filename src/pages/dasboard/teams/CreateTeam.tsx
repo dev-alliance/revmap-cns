@@ -7,22 +7,16 @@ import {
   Button,
   Grid,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   Typography,
   Paper,
   Box,
 } from "@mui/material";
-import { countries, getStatesByCountry } from "@/utils/CounteryState";
-import { Country } from "country-state-city";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import toast from "react-hot-toast";
-import {
-  createBranch,
-  createTeam,
-  getUserListNameID,
-} from "@/service/api/apiMethods";
-import { useNavigate } from "react-router-dom";
+import { createTeam, getUserListNameID } from "@/service/api/apiMethods";
+import { Link, useNavigate } from "react-router-dom";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 type FormValues = {
   name: string;
@@ -35,8 +29,7 @@ const CreateTeam = () => {
   const {
     control,
     handleSubmit,
-    watch,
-    setValue,
+
     formState: { errors },
   } = useForm<FormValues>({
     mode: "onBlur",
@@ -97,6 +90,10 @@ const CreateTeam = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       {isLoading && (
@@ -132,28 +129,35 @@ const CreateTeam = () => {
           <div style={{ display: "flex" }}>
             <Box
               sx={{
-                display: "flex",
                 flexWrap: "wrap",
                 alignItems: "center",
               }}
             >
-              <Typography
-                variant="h5"
-                sx={{ textAlign: "left", marginBottom: 2 }}
-              >
+              <Typography variant="h5" sx={{ marginBottom: 2 }}>
                 Create Teams
               </Typography>
+
+              <Breadcrumbs
+                aria-label="breadcrumb"
+                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+              >
+                <Link to="/dashboard/teamlist" className="link-no-underline">
+                  Home
+                </Link>
+                {/* <Typography color="text.primary">Categories</Typography> */}
+              </Breadcrumbs>
             </Box>
           </div>
 
           <div>
             <Button
               variant="outlined"
-              onClick={() => console.log("Cancel")}
+              onClick={handleBack}
               sx={{ textTransform: "none" }}
             >
               Cancel
             </Button>
+
             <Button
               sx={{ ml: 2, textTransform: "none" }}
               type="submit"
@@ -253,8 +257,8 @@ const CreateTeam = () => {
                       }}
                     >
                       {/* Placeholder */}
-                      <MenuItem value="active">Active</MenuItem>
-                      <MenuItem value="inactive">Inactive</MenuItem>
+                      <MenuItem value="Active">Active</MenuItem>
+                      <MenuItem value="Inactive">Inactive</MenuItem>
                       <MenuItem value="archived">Archived</MenuItem>
                     </Select>
                   </FormControl>

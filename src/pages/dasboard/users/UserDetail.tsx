@@ -201,7 +201,7 @@ const UserDetail = () => {
           sx={{
             borderBottom: 1,
             borderColor: "divider",
-            color: "red",
+
             display: "flex",
           }}
         >
@@ -210,8 +210,8 @@ const UserDetail = () => {
             onChange={handleTabChange}
             aria-label="basic tabs example"
           >
-            <Tab label="Profile" />
-            <Tab label="Login History" />
+            <Tab label="Profile" sx={{ fontWeight: "bold" }} />
+            <Tab label="Login History" sx={{ fontWeight: "bold" }} />
           </Tabs>
           <Button
             sx={{

@@ -30,7 +30,7 @@ import {
   getUserId,
   updateUser,
 } from "@/service/api/apiMethods";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import logo from "@/assets/send.png";
 import users from "@/assets/user.png";
 import permission from "@/assets/permission.png";
@@ -38,7 +38,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
 import RoleTable from "@/pages/dasboard/users/RoleTable";
 import { useAuth } from "@/hooks/useAuth";
-import { CheckBox } from "@mui/icons-material";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 
 type FormValues = {
   firstName: string;
@@ -149,6 +149,7 @@ const UpdateUser = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      setIsLoading(true);
       if (image === "") {
         await toast.error("Please select an Image!");
         return;
@@ -189,11 +190,11 @@ const UpdateUser = () => {
       }
       toast.error(errorMessage);
 
-      // Handle error
       console.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
-  console.log(imageBase64, "image");
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -209,16 +210,30 @@ const UpdateUser = () => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <CardHeader title=" Update User" sx={{ ml: -2 }} />
+      <CardHeader title=" Update User" />
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+      >
+        <Link to="/dashboard/user-list" className="link-no-underline">
+          Home
+        </Link>
+        {/* <Typography color="text.primary">Categories</Typography> */}
+      </Breadcrumbs>
       <Paper sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider", color: "red" }}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+          }}
+        >
           <Tabs
             value={tabValue}
             onChange={handleTabChange}
             aria-label="basic tabs example"
           >
-            <Tab label="User" />
-            <Tab label="Role & Permissions" />
+            <Tab label="User" sx={{ fontWeight: "bold" }} />
+            <Tab label="Role & Permissions" sx={{ fontWeight: "bold" }} />
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}>
@@ -230,10 +245,7 @@ const UpdateUser = () => {
                   alt="send"
                   style={{ marginRight: 8, height: "20px" }}
                 />
-                <Typography
-                  variant="subtitle2"
-                  sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                >
+                <Typography variant="subtitle2">
                   Personal Information
                 </Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
@@ -284,11 +296,11 @@ const UpdateUser = () => {
               <Controller
                 name="firstName"
                 control={control}
-                rules={{ required: "Branch Name is required" }}
+                rules={{ required: "First Name is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Branch Name"
+                    placeholder=" Name"
                     fullWidth
                     error={!!errors.firstName}
                     helperText={errors.firstName?.message}
@@ -303,7 +315,7 @@ const UpdateUser = () => {
               <Controller
                 name="lastName"
                 control={control}
-                rules={{ required: "Branch ID is required" }}
+                rules={{ required: "Last name is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -319,7 +331,7 @@ const UpdateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">email*</Typography>
+              <Typography variant="subtitle2">Email*</Typography>
               <Controller
                 name="email"
                 control={control}
@@ -442,7 +454,7 @@ const UpdateUser = () => {
                 rules={{
                   required: "Phone number is required",
                   pattern: {
-                    value: /^\d+$/,
+                    value: /^\+?[0-9]+$/,
                     message: "Invalid phone number",
                   },
                 }}
@@ -517,71 +529,20 @@ const UpdateUser = () => {
                 <RoleTable />
               </Grid>
 
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <img
-                  src={logo}
-                  alt="send"
-                  style={{ marginRight: 8, height: "20px" }}
-                />
-                <Typography variant="subtitle2">Send Invitation</Typography>
-                <Divider sx={{ flexGrow: 1, ml: 2 }} />
-              </Box>
-              <Controller
-                name="email"
-                control={control}
-                rules={{ required: "email is required" }}
-                render={({ field }) => (
-                  <TextField
-                    sx={{
-                      width: "60%", // Setting the width
-                    }}
-                    {...field}
-                    placeholder="email"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
-              />
-              <Grid sx={{ mt: 1 }}>
-                <FormControlLabel
-                  control={
-                    <Controller
-                      name="inviteCheack"
-                      control={control}
-                      defaultValue={false}
-                      render={({ field }) => (
-                        <CheckBox {...field} color="primary" />
-                      )}
-                    />
-                  }
-                  label={
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ whiteSpace: "nowrap" }}
-                    >
-                      Send invitation to the above email to complete login
-                      process
-                    </Typography>
-                  }
-                />
-              </Grid>
               <Box sx={{ width: "100%", textAlign: "right" }}>
-                {" "}
-                {/* Container with full width */}
                 <Button
-                  sx={{ mt: 2, ml: 2, textTransform: "none" }}
                   variant="outlined"
-                  onClick={() => console.log("Cancel")}
+                  onClick={() => navigate(-1)}
+                  sx={{ textTransform: "none" }}
                 >
                   Cancel
                 </Button>
                 <Button
-                  sx={{ mt: 2, ml: 2, textTransform: "none" }}
+                  sx={{ ml: 2, textTransform: "none" }}
                   type="submit"
                   variant="contained"
                   color="primary"
+                  disabled={isLoading}
                 >
                   Update User
                 </Button>

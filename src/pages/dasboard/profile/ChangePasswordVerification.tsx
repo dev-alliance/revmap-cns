@@ -118,7 +118,8 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
             borderRadius: 1,
             boxShadow: 24,
             outline: "none",
-            maxWidth: 500,
+            maxWidth: 400,
+            maxHeight: 500,
             width: "100%",
             position: "relative",
           }}
@@ -130,7 +131,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
           >
             <CloseIcon />
           </IconButton>
-          <Grid container sx={{ height: "100%" }}>
+          <Grid container>
             {/* Left side - Form */}
             <Grid
               item
@@ -148,7 +149,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                 src={logo}
                 alt="Logo"
                 style={{
-                  maxWidth: isMobile ? "150px" : "320px",
+                  maxWidth: isMobile ? "100px" : "220px",
                   marginTop: "16px",
                 }}
               />
@@ -156,13 +157,13 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
               <Box
                 sx={{
                   width: "100%",
-                  maxWidth: 400,
-                  m: 3,
+                  // maxWidth: 400,
+
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+                <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
                   <Typography
                     variant="h5"
                     component="h1"
@@ -175,7 +176,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                     variant="h5"
                     component="h1"
                     color={"#9A9A9A"}
-                    sx={{ mb: 4, textAlign: "center", fontSize: "15px" }}
+                    sx={{ mb: 1, textAlign: "center", fontSize: "15px" }}
                   >
                     we've sent a code to {user?.email}
                   </Typography>
@@ -183,14 +184,13 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                     src={logoVerification}
                     alt="logoVerification"
                     style={{
-                      maxWidth: isMobile ? "100px" : "150px",
-                      marginTop: "16px",
+                      maxWidth: isMobile ? "70px" : "100px",
                       display: "block", // Add this line
                       margin: "auto", // Add this line
                     }}
                   />
                   <Box
-                    sx={{ mt: 2 }}
+                    sx={{ mt: 1, alignItems: "center" }}
                     component="form"
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -203,8 +203,8 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                       onChange={setOtp}
                       numInputs={5}
                       inputStyle={{
-                        width: "3rem", // Adjust width as needed
-                        height: "3rem", // Adjust height as needed
+                        width: "2.8rem", // Adjust width as needed
+                        height: "2.8rem", // Adjust height as needed
                         margin: "0.5rem",
                         fontSize: "2rem", // Adjust font size as needed
                         borderRadius: 4,
@@ -220,14 +220,14 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                       variant="body2"
                       color="text.secondary"
                       align="center"
-                      sx={{ mb: 1, mt: 2, fontSize: "16px", color: "#9A9A9A" }}
+                      sx={{ mb: 1, mt: 1, fontSize: "16px", color: "#9A9A9A" }}
                     >
                       Didn’t get the code?{" "}
                       <Link
                         href="/signup"
                         sx={{
-                          mt: 2,
-                          mb: 2,
+                          mt: 1,
+                          mb: 1,
                           color: "##9A9A9A",
                           "&:hover": { textDecoration: "underline" },
                         }}
@@ -240,8 +240,8 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                       fullWidth
                       variant="contained"
                       sx={{
-                        mt: 3,
-                        mb: 2,
+                        mt: 1,
+                        mb: 1,
                         textTransform: "none",
                         fontSize: "16px",
                         backgroundColor: "#155BE5",

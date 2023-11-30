@@ -22,16 +22,14 @@ import {
   Checkbox,
   CardHeader,
 } from "@mui/material";
-import { countries, getStatesByCountry } from "@/utils/CounteryState";
-import { Country } from "country-state-city";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import toast from "react-hot-toast";
 import {
-  createBranch,
   createUser,
   getBranchList,
   getTeamsList,
 } from "@/service/api/apiMethods";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/send.png";
 import user from "@/assets/user.png";
 import permission from "@/assets/permission.png";
@@ -120,6 +118,7 @@ const CreateUser = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
+      setIsLoading(true);
       if (!imageBase64 || image === "") {
         await toast.error("Please select an Image!");
         return;
@@ -158,7 +157,6 @@ const CreateUser = () => {
       setIsLoading(false);
     }
   };
-  console.log(imageBase64, "image");
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -174,7 +172,16 @@ const CreateUser = () => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <CardHeader title=" Create User" sx={{ ml: -2 }} />
+      <CardHeader title=" Create User" sx={{}} />
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+      >
+        <Link to="/dashboard/user-list" className="link-no-underline">
+          Home
+        </Link>
+        {/* <Typography color="text.primary">Categories</Typography> */}
+      </Breadcrumbs>
       <Paper sx={{ width: "100%" }}>
         <Box sx={{ borderBottom: 1, borderColor: "divider", color: "red" }}>
           <Tabs
@@ -246,11 +253,11 @@ const CreateUser = () => {
               <Controller
                 name="firstName"
                 control={control}
-                rules={{ required: "Branch Name is required" }}
+                rules={{ required: " Name is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Branch Name"
+                    placeholder=" Name"
                     fullWidth
                     error={!!errors.firstName}
                     helperText={errors.firstName?.message}
@@ -265,7 +272,7 @@ const CreateUser = () => {
               <Controller
                 name="lastName"
                 control={control}
-                rules={{ required: "Branch ID is required" }}
+                rules={{ required: "Last anme is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -281,7 +288,7 @@ const CreateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">email*</Typography>
+              <Typography variant="subtitle2">Email*</Typography>
               <Controller
                 name="email"
                 control={control}
@@ -404,7 +411,7 @@ const CreateUser = () => {
                 rules={{
                   required: "Phone number is required",
                   pattern: {
-                    value: /^\d+$/,
+                    value: /^\+?[0-9]+$/,
                     message: "Invalid phone number",
                   },
                 }}
@@ -533,17 +540,18 @@ const CreateUser = () => {
                 {" "}
                 {/* Container with full width */}
                 <Button
-                  sx={{ mt: 2, ml: 2, textTransform: "none" }}
                   variant="outlined"
-                  onClick={() => console.log("Cancel")}
+                  onClick={() => navigate(-1)}
+                  sx={{ textTransform: "none" }}
                 >
                   Cancel
                 </Button>
                 <Button
-                  sx={{ mt: 2, ml: 2, textTransform: "none" }}
+                  sx={{ ml: 2, textTransform: "none" }}
                   type="submit"
                   variant="contained"
                   color="primary"
+                  disabled={isLoading}
                 >
                   Create User
                 </Button>

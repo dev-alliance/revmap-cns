@@ -23,7 +23,9 @@ import {
   updateBranch,
 } from "@/service/api/apiMethods";
 import { Update } from "@mui/icons-material";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 
 type FormValues = {
   branchName: string;
@@ -111,6 +113,7 @@ const UpdateBranch = () => {
   }, [id]);
   const onSubmit = async (data: FormValues) => {
     try {
+      setIsLoading(true);
       const payload = {
         branchName: data.branchName,
         branchId: data.branchId,
@@ -149,332 +152,373 @@ const UpdateBranch = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Box
-        sx={{
-          pl: 3,
-          p: 2,
-          pr: 3,
-          width: "100%",
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="h5"
-              sx={{ textAlign: "left", marginBottom: 2 }}
+    <>
+      {isLoading && (
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "70vh",
+            position: "absolute",
+            margin: "auto",
+            width: "70%",
+          }}
+        >
+          <ProgressCircularCustomization />
+        </Box>
+      )}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Box
+          sx={{
+            opacity: isLoading ? "30%" : "100%",
+            pl: 3,
+            p: 2,
+            pr: 3,
+            width: "100%",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            <Box
+              sx={{
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
             >
-              Update Branch
-            </Typography>
-          </Box>
-        </div>
+              <Typography
+                variant="h5"
+                sx={{ textAlign: "left", marginBottom: 2 }}
+              >
+                Update Branch
+              </Typography>
+              <Breadcrumbs
+                aria-label="breadcrumb"
+                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+              >
+                <Link to="/dashboard/branchlist" className="link-no-underline">
+                  Home
+                </Link>
+                {/* <Typography color="text.primary">Categories</Typography> */}
+              </Breadcrumbs>
+            </Box>
+          </div>
 
-        <div>
-          <Button
-            sx={{ ml: 2, textTransform: "none" }}
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
-            Update
-          </Button>
-        </div>
-      </Box>
-      <Paper sx={{ padding: 4 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle1">Legal Name*</Typography>
+          <div>
+            <Button
+              variant="outlined"
+              onClick={() => navigate(-1)}
+              sx={{ textTransform: "none" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              sx={{ ml: 2, textTransform: "none" }}
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={isLoading}
+            >
+              Update
+            </Button>
+          </div>
+        </Box>
+        <Paper sx={{ padding: 4 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle1">Legal Name*</Typography>
 
-            <Controller
-              name="branchName"
-              control={control}
-              rules={{ required: "Branch Name is required" }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  placeholder="Branch Name"
-                  fullWidth
-                  error={!!errors.branchName}
-                  helperText={errors.branchName?.message}
-                  size="small"
-                  variant="outlined"
-                  sx={{ fontSize: "16px", color: "#9A9A9A" }}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle1">Branch ID*</Typography>
-            <Controller
-              name="branchId"
-              control={control}
-              rules={{ required: "Branch ID is required" }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  placeholder="Registration No"
-                  fullWidth
-                  error={!!errors.branchId}
-                  helperText={errors.branchId?.message}
-                  size="small"
-                  variant="outlined"
-                />
-              )}
-            />
-          </Grid>
+              <Controller
+                name="branchName"
+                control={control}
+                rules={{ required: "Branch Name is required" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    placeholder="Branch Name"
+                    fullWidth
+                    error={!!errors.branchName}
+                    helperText={errors.branchName?.message}
+                    size="small"
+                    variant="outlined"
+                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle1">Branch ID*</Typography>
+              <Controller
+                name="branchId"
+                control={control}
+                rules={{ required: "Branch ID is required" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    placeholder="Registration No"
+                    fullWidth
+                    error={!!errors.branchId}
+                    helperText={errors.branchId?.message}
+                    size="small"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle1">Address*</Typography>
-            <Controller
-              name="address"
-              control={control}
-              rules={{ required: "Address is required" }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  placeholder="Address"
-                  fullWidth
-                  error={!!errors.address}
-                  helperText={errors.address?.message}
-                  size="small"
-                  variant="outlined"
-                />
-              )}
-            />
-          </Grid>
-          {/* Pin Code field */}
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle1">Pin Code*</Typography>
-            <Controller
-              name="pinCode"
-              control={control}
-              rules={{ required: "Pin Code is required" }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  placeholder="Pin Code"
-                  fullWidth
-                  error={!!errors.pinCode}
-                  helperText={errors.pinCode?.message}
-                  size="small"
-                  variant="outlined"
-                />
-              )}
-            />
-          </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle1">Address*</Typography>
+              <Controller
+                name="address"
+                control={control}
+                rules={{ required: "Address is required" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    placeholder="Address"
+                    fullWidth
+                    error={!!errors.address}
+                    helperText={errors.address?.message}
+                    size="small"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </Grid>
+            {/* Pin Code field */}
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle1">Pin Code*</Typography>
+              <Controller
+                name="pinCode"
+                control={control}
+                rules={{ required: "Pin Code is required" }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    placeholder="Pin Code"
+                    fullWidth
+                    error={!!errors.pinCode}
+                    helperText={errors.pinCode?.message}
+                    size="small"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Contact Number</Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6} sm={4}>
-                <FormControl fullWidth variant="outlined" size="small">
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle2">Contact Number</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6} sm={4}>
+                  <FormControl fullWidth variant="outlined" size="small">
+                    <Controller
+                      name="countryCode"
+                      control={control}
+                      defaultValue={selectedCountryCode}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          labelId="country-code-label"
+                          displayEmpty // Ensures that the placeholder is displayed when the value is empty
+                          value={selectedCountryCode}
+                          onChange={(e) => {
+                            const newCountryCode = e.target.value;
+                            setSelectedCountryCode(newCountryCode);
+                            // Prepend '+' to the country code when setting the contact field value
+                            setValue("contact", `+${newCountryCode}`);
+                          }}
+                          renderValue={(value) => {
+                            if (value === "") {
+                              return (
+                                <em style={{ color: "#9A9A9A" }}>
+                                  Country Code
+                                </em>
+                              );
+                            }
+                            // Display the selected value. You might need to format it or find the corresponding country name
+                            return `+${value}`;
+                          }}
+                        >
+                          <MenuItem value="" disabled>
+                            <em>Country Code</em>{" "}
+                            {/* This is the placeholder item */}
+                          </MenuItem>
+                          {countries.map((country) => (
+                            <MenuItem
+                              key={country.code}
+                              value={country.phoneCode} // Store just the phone code as the value
+                            >
+                              {`${country.name} (+${country.phoneCode})`}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={6} sm={8}>
                   <Controller
-                    name="countryCode"
+                    name="contact"
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
-                      <Select
+                      <TextField
+                        InputProps={{}}
                         {...field}
-                        labelId="country-code-label"
-                        displayEmpty
-                        onChange={(e) => {
-                          // When country code changes, update its state and reset contact field
-                          setSelectedCountryCode(e.target.value);
-                          setValue("contact", e.target.value);
-                        }}
-                        renderValue={(value) => {
-                          if (value === "") {
-                            return (
-                              <em style={{ color: "#9A9A9A" }}>Country Code</em>
-                            );
-                          }
-                          // Find the country with the matching phoneCode and return its phoneCode
-                          const selectedCountry = countries.find(
-                            (country) => `+${country.phoneCode}` === value
-                          );
-                          return selectedCountry
-                            ? `+${selectedCountry.phoneCode}`
-                            : "Country Code";
-                        }}
-                      >
-                        {countries.map((country) => (
-                          <MenuItem
-                            key={country.code}
-                            value={`+${country.phoneCode}`}
-                          >
-                            {`${country.name} (+${country.phoneCode})`}
-                          </MenuItem>
-                        ))}
-                      </Select>
+                        placeholder="Contact Number"
+                        fullWidth
+                        required
+                        size="small"
+                        variant="outlined"
+                      />
                     )}
                   />
-                </FormControl>
+                </Grid>
               </Grid>
-              <Grid item xs={6} sm={8}>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle1">Manager</Typography>
+              <Controller
+                name="manager"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    placeholder="Manager"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle2">Country*</Typography>
+              <FormControl fullWidth size="small">
                 <Controller
-                  name="contact"
+                  name="country"
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <TextField
-                      InputProps={{}}
+                    <Select
                       {...field}
-                      placeholder="Contact Number"
-                      fullWidth
-                      required
-                      size="small"
-                      variant="outlined"
-                    />
-                  )}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle1">Manager*</Typography>
-            <Controller
-              name="manager"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  placeholder="Manager"
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Country*</Typography>
-            <FormControl fullWidth size="small">
-              <Controller
-                name="country"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    labelId="country-label"
-                    placeholder="Country"
-                    displayEmpty
-                    renderValue={(value) => {
-                      if (value === "") {
-                        return (
-                          <em style={{ color: "#9A9A9A" }}>Select Country</em>
-                        ); // Placeholder text
-                      }
-                      return field.value;
-                    }}
-                  >
-                    {countries.map((country) => (
-                      <MenuItem key={country.code} value={country.code}>
-                        {country.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">State</Typography>
-            <FormControl fullWidth variant="outlined" size="small">
-              <Controller
-                name="state"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <Select
-                    onChange={(e) => setState(e.target.value)}
-                    value={state}
-                    labelId="state-label"
-                    placeholder="State"
-                    displayEmpty
-                    renderValue={(value) => {
-                      if (value === "") {
-                        return (
-                          <em style={{ color: "#9A9A9A" }}>Select State</em>
-                        ); // Placeholder text
-                      }
-                      return state;
-                    }}
-                  >
-                    {selectedCountry &&
-                      getStatesByCountry(selectedCountry).map((state) => (
-                        <MenuItem key={state.stateCode} value={state.name}>
-                          {state.name}
+                      labelId="country-label"
+                      placeholder="Country"
+                      displayEmpty
+                      renderValue={(value) => {
+                        if (value === "") {
+                          return (
+                            <em style={{ color: "#9A9A9A" }}>Select Country</em>
+                          ); // Placeholder text
+                        }
+                        return field.value;
+                      }}
+                    >
+                      {countries.map((country) => (
+                        <MenuItem key={country.code} value={country.code}>
+                          {country.name}
                         </MenuItem>
                       ))}
-                  </Select>
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Typography variant="subtitle2">State</Typography>
+              <FormControl fullWidth variant="outlined" size="small">
+                <Controller
+                  name="state"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <Select
+                      onChange={(e) => setState(e.target.value)}
+                      value={state}
+                      labelId="state-label"
+                      placeholder="State"
+                      displayEmpty
+                      renderValue={(value) => {
+                        if (value === "") {
+                          return (
+                            <em style={{ color: "#9A9A9A" }}>Select State</em>
+                          ); // Placeholder text
+                        }
+                        return state;
+                      }}
+                    >
+                      {selectedCountry &&
+                        getStatesByCountry(selectedCountry).map((state) => (
+                          <MenuItem key={state.stateCode} value={state.name}>
+                            {state.name}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="subtitle1">Website</Typography>
+              <Controller
+                name="website"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    placeholder="Website"
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                  />
                 )}
               />
-            </FormControl>
+            </Grid>
+            <Grid item xs={6}>
+              <Typography variant="subtitle1">Status</Typography>
+              <Controller
+                name="status"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <FormControl fullWidth size="small">
+                    {/* Optional: add this line if you want a label */}
+                    <Select
+                      {...field}
+                      labelId="status-label"
+                      displayEmpty
+                      renderValue={(value) => {
+                        if (value === "") {
+                          return (
+                            <em style={{ color: "#9A9A9A" }}>
+                              {" "}
+                              Choose a status
+                            </em> // Placeholder text with custom color
+                          );
+                        }
+                        return field.value;
+                      }}
+                    >
+                      {/* Placeholder */}
+                      <MenuItem value="Active">Active</MenuItem>
+                      <MenuItem value="Inactive">Inactive</MenuItem>
+                      <MenuItem value="Archived">Archived</MenuItem>
+                    </Select>
+                  </FormControl>
+                )}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1">Website</Typography>
-            <Controller
-              name="website"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  placeholder="Website"
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1">Status</Typography>
-            <Controller
-              name="status"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <FormControl fullWidth size="small">
-                  {/* Optional: add this line if you want a label */}
-                  <Select
-                    {...field}
-                    labelId="status-label"
-                    displayEmpty
-                    renderValue={(value) => {
-                      if (value === "") {
-                        return (
-                          <em style={{ color: "#9A9A9A" }}> Choose a status</em> // Placeholder text with custom color
-                        );
-                      }
-                      return field.value;
-                    }}
-                  >
-                    {/* Placeholder */}
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="inactive">Inactive</MenuItem>
-                    <MenuItem value="archived">Archived</MenuItem>
-                  </Select>
-                </FormControl>
-              )}
-            />
-          </Grid>
-        </Grid>
-      </Paper>
-    </form>
+        </Paper>
+      </form>
+    </>
   );
 };
 

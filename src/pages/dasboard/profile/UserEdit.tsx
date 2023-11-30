@@ -142,6 +142,7 @@ const UserEdit = () => {
     getTeamsData();
   }, []);
   const onSubmit = async (data: FormValues) => {
+    setIsLoading(true);
     try {
       if (image === "") {
         await toast.error("Please select an Image!");
@@ -176,9 +177,10 @@ const UserEdit = () => {
 
       // Handle error
       console.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
-  console.log(imageBase64, "image");
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -460,6 +462,7 @@ const UserEdit = () => {
             variant="contained"
             color="primary"
             type="submit"
+            disabled={isLoading}
           >
             Update
           </Button>

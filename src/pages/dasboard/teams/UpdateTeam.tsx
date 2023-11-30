@@ -7,23 +7,20 @@ import {
   Button,
   Grid,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   Typography,
   Paper,
   Box,
 } from "@mui/material";
-import { countries, getStatesByCountry } from "@/utils/CounteryState";
-import { Country } from "country-state-city";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import toast from "react-hot-toast";
 import {
-  createBranch,
   getTeamByid,
   getUserListNameID,
   updateTeam,
 } from "@/service/api/apiMethods";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 type FormValues = {
   name: string;
@@ -46,7 +43,7 @@ const UpdateTeam = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [member, setMamber] = useState<Array<any>>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [list, setList] = useState<undefined>(undefined);
   const [userList, setUserList] = useState<Array<any>>([]);
   const listData = async () => {
@@ -57,7 +54,7 @@ const UpdateTeam = () => {
 
       setList(data);
       setValue("name", data?.name);
-      setValue("manager", data.manager?.firstName);
+      setValue("manager", data.manager);
       setValue("status", data?.status);
       setMamber(data?.members);
     } catch (error) {
@@ -90,6 +87,7 @@ const UpdateTeam = () => {
   }, []);
   const onSubmit = async (data: FormValues) => {
     try {
+      setIsLoading(true);
       const payload = {
         name: data.name,
         manager: data.manager, // Convert the string to an object
@@ -120,8 +118,13 @@ const UpdateTeam = () => {
       // Handle error
       console.error(errorMessage);
     }
+    {
+      setIsLoading(false);
+    }
   };
-
+  const handleBack = () => {
+    navigate(-1);
+  };
   return (
     <>
       {isLoading && (
@@ -157,7 +160,6 @@ const UpdateTeam = () => {
           <div style={{ display: "flex" }}>
             <Box
               sx={{
-                display: "flex",
                 flexWrap: "wrap",
                 alignItems: "center",
               }}
@@ -166,15 +168,24 @@ const UpdateTeam = () => {
                 variant="h5"
                 sx={{ textAlign: "left", marginBottom: 2 }}
               >
-                Create Teams
+                Update Teams
               </Typography>
+              <Breadcrumbs
+                aria-label="breadcrumb"
+                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+              >
+                <Link to="/dashboard/teamlist" className="link-no-underline">
+                  Home
+                </Link>
+                {/* <Typography color="text.primary">Categories</Typography> */}
+              </Breadcrumbs>
             </Box>
           </div>
 
           <div>
             <Button
               variant="outlined"
-              onClick={() => console.log("Cancel")}
+              onClick={handleBack}
               sx={{ textTransform: "none" }}
             >
               Cancel
@@ -278,8 +289,8 @@ const UpdateTeam = () => {
                       }}
                     >
                       {/* Placeholder */}
-                      <MenuItem value="active">Active</MenuItem>
-                      <MenuItem value="inactive">Inactive</MenuItem>
+                      <MenuItem value="Active">Active</MenuItem>
+                      <MenuItem value="Inactive">Inactive</MenuItem>
                       <MenuItem value="archived">Archived</MenuItem>
                     </Select>
                   </FormControl>
