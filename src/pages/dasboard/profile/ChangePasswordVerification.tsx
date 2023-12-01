@@ -34,7 +34,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
   onClose,
   listData,
 }) => {
-  const { user, verification, twoFA } = useAuth();
+  const { user, verification, twoFA, logout } = useAuth();
 
   const theme = useTheme();
 
@@ -45,6 +45,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
   const [isLoading, setIsLoading] = useState(false);
   const handleCloseModalResetPass = () => setIsPassModalOpen(false);
 
+  const navigate = useNavigate();
   const onSubmit = async () => {
     // Assuming OTP is of length 5
     if (otp.length === 5) {
@@ -69,6 +70,8 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
             onClose();
             listData();
             setOtp("");
+            navigate("/");
+            logout();
           } else {
             toast.error(response.message);
           }

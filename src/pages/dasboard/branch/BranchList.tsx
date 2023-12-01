@@ -169,7 +169,7 @@ const defaultColumns: GridColDef[] = [
       const { manager } = row;
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          manager?.firstName || ""
+          manager?.firstName || "-"
         }`}</Typography>
       );
     },

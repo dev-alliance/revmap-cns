@@ -80,7 +80,7 @@ const defaultColumns: any[] = [
     sortable: true,
     renderCell: (params: any) => (
       <Typography sx={{ color: "text.secondary" }}>
-        {params.row.manager ? params.row.manager.firstName : ""}
+        {params.row.manager ? params.row.manager.firstName : "-"}
       </Typography>
     ),
   },

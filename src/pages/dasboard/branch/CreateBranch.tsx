@@ -127,6 +127,8 @@ const BranchForm = () => {
 
       // Handle error
       console.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 

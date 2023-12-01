@@ -24,7 +24,7 @@ import AddIcon from "@mui/icons-material/Add";
 import toast from "react-hot-toast";
 
 import Button from "@mui/material/Button";
-import { FormControl } from "@mui/material";
+import { Checkbox, FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import {
   archiveBranch,
@@ -71,6 +71,13 @@ const defaultColumns: GridColDef[] = [
       const { state } = row;
       return (
         <Typography sx={{ color: "text.secondary" }}>
+          <Checkbox
+            sx={{ mr: 1 }}
+            // Include any logic for determining if the checkbox should be checked
+            // checked={/* your logic here, e.g., row.isChecked */}
+            // Include any additional props or event handlers
+            // onChange={/* your event handler here, if needed */}
+          />
           {"full access , ets "}
         </Typography>
       );
@@ -255,6 +262,7 @@ const RoleTable = () => {
                 rows={filteredList || []}
                 columns={defaultColumns}
                 // checkboxSelection
+                // hideSelectAll={true}
                 disableRowSelectionOnClick
                 pageSizeOptions={[10, 25, 50]}
                 paginationModel={paginationModel}
