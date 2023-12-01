@@ -107,6 +107,7 @@ const UserDetail = () => {
       setIsLoading(true);
       const { user } = await getUserId(id);
       console.log(user);
+      setImage(user?.image);
       if (user.status === "active") {
         setIsAccessDisabled(true);
       } else {

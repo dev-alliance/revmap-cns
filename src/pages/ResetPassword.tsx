@@ -31,6 +31,7 @@ const ResetPassword: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const email = location.state?.email;
   const { token } = useParams();
   const {
@@ -44,6 +45,7 @@ const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
+      setIsLoading(true);
       if (token) {
         const payload = {
           password: data.confirmPassword, // Assuming you want to send confirmPassword here
@@ -85,6 +87,8 @@ const ResetPassword: React.FC = () => {
 
       // Handle error
       console.error(errorMessage, error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -269,6 +273,7 @@ const ResetPassword: React.FC = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
+                  disabled={isLoading}
                   sx={{
                     mt: 3,
                     mb: 2,

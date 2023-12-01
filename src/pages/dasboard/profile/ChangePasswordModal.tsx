@@ -45,8 +45,11 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const newPassword = watch("newPassword");
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit: any = async (data: any) => {
     try {
+      setIsLoading(true);
       const payload = {
         currentPassword: data.currentPassword,
         newPassword: data.confirmPassword,
@@ -77,6 +80,8 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 
       // Handle error
       console.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -236,6 +241,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             <Button
               type="submit"
               variant="contained"
+              disabled={isLoading}
               sx={{
                 mt: 3,
                 mb: 2,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import {
   Container,
@@ -23,6 +23,7 @@ type FormInputs = {
 const ForgotPassword: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     control,
@@ -32,6 +33,7 @@ const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
+      setIsLoading(true);
       const payload = {
         email: data.email,
       };
@@ -58,6 +60,8 @@ const ForgotPassword: React.FC = () => {
 
       // Handle error
       console.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -139,6 +143,7 @@ const ForgotPassword: React.FC = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
+                  disabled={isLoading}
                   sx={{
                     mt: 3,
                     mb: 2,

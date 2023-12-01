@@ -31,11 +31,13 @@ const SignupPage: React.FC = () => {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
   const { loginContext } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async () => {
     // Assuming OTP is of length 5
     if (otp.length === 5) {
       try {
+        setIsLoading(true);
         let payload;
 
         if (condition === "twoFactorAuth") {
@@ -74,6 +76,8 @@ const SignupPage: React.FC = () => {
           "An error occurred during verification.";
         toast.error(errorMessage);
         console.error("Verification error:", errorMessage);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       toast.error("Please enter a valid 5-digit OTP.");
@@ -191,6 +195,7 @@ const SignupPage: React.FC = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
+                  disabled={isLoading}
                   sx={{
                     mt: 3,
                     mb: 2,

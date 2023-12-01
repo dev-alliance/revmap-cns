@@ -77,7 +77,10 @@ const LoginPage: React.FC = () => {
         alert("elsee");
         navigate("/forgotpassword");
       }
-      const errorMessage = error.response?.data || "Something went wrong!";
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Something went wrong!";
       toast.error(errorMessage);
       console.log(error);
     } finally {

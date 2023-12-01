@@ -42,13 +42,14 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
   const [otp, setOtp] = useState("");
 
   const [ispassModalOpen, setIsPassModalOpen] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleCloseModalResetPass = () => setIsPassModalOpen(false);
 
   const onSubmit = async () => {
     // Assuming OTP is of length 5
     if (otp.length === 5) {
       try {
+        setIsLoading(true);
         let response;
         if (verification === true) {
           const payload = {
@@ -93,6 +94,8 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
           "An error occurred during verification.";
         toast.error(errorMessage);
         console.error("Verification error:", errorMessage);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       toast.error("Please enter a valid 5-digit OTP.");
@@ -239,6 +242,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                       type="submit"
                       fullWidth
                       variant="contained"
+                      disabled={isLoading}
                       sx={{
                         mt: 1,
                         mb: 1,
