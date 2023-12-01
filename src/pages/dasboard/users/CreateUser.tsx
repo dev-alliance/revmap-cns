@@ -47,6 +47,7 @@ type FormValues = {
   branch: string;
   status: string;
   inviteCheack: boolean;
+  image: string;
 };
 
 interface TabPanelProps {
@@ -90,6 +91,10 @@ const CreateUser = () => {
   const [teamData, setTeamData] = useState<Array<any>>([]);
   const [branchData, setBranchData] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -116,29 +121,54 @@ const CreateUser = () => {
     getBrandsData();
   }, []);
 
+  const validateEmail = (email: any) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (e: any) => {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+    if (!validateEmail(emailValue)) {
+      setEmailError("Invalid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+  const handleValidation = () => {
+    console.log(firstName, lastName, email, "ok");
+    if (!firstName || !email || !lastName || emailError) {
+      toast.error("Please fill the require feilds");
+      return;
+    } else {
+      setTabValue(1);
+    }
+  };
   const onSubmit = async (data: FormValues) => {
     try {
       setIsLoading(true);
-      if (!imageBase64 || image === "") {
-        await toast.error("Please select an Image!");
-        return;
-      }
-      setTabValue(1);
-      const payload = {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
+      // if (!imageBase64 || image === "") {
+      //   await toast.error("Please select an Image!");
+      //   return;
+      // }
+
+      const payload: any = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
         job: data.job,
         landline: data.landline,
         mobile: data.mobile,
-        team: data.team,
         status: data.status,
         role: 1,
         emailVerified: false,
-        image: imageBase64,
         disabled: false,
-        branch: data.branch,
+        team: data.team ? data.team : null,
+        branch: data.branch ? data.branch : null,
       };
+      if (imageBase64) {
+        payload.image = imageBase64;
+      }
       const response = await createUser(payload);
       if (response.ok === true) {
         toast.success(response.message);
@@ -180,17 +210,19 @@ const CreateUser = () => {
         <Link to="/dashboard/user-list" className="link-no-underline">
           Home
         </Link>
-        {/* <Typography color="text.primary">Categories</Typography> */}
+        <Typography sx={{ fontSize: "14px" }} color="text.primary">
+          Create User
+        </Typography>
       </Breadcrumbs>
       <Paper sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider", color: "red" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", color: "gray" }}>
           <Tabs
             value={tabValue}
             onChange={handleTabChange}
             aria-label="basic tabs example"
           >
-            <Tab label="User" />
-            <Tab label="Role & Permissions" />
+            <Tab label="User" sx={{ fontWeight: "bold" }} />
+            <Tab label="Role & Permissions" sx={{ fontWeight: "bold" }} />
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}>
@@ -250,60 +282,43 @@ const CreateUser = () => {
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">First Name*</Typography>
 
-              <Controller
-                name="firstName"
-                control={control}
-                rules={{ required: " Name is required" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder=" Name"
-                    fullWidth
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
+              <TextField
+                placeholder=" Name"
+                fullWidth
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                }}
+                error={!!errors.firstName}
+                helperText={errors.firstName?.message}
+                size="small"
+                variant="outlined"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Last Name*</Typography>
-              <Controller
-                name="lastName"
-                control={control}
-                rules={{ required: "Last anme is required" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder="Last Name"
-                    fullWidth
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
+              <TextField
+                placeholder="Last Name"
+                fullWidth
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                }}
+                error={!!errors.lastName}
+                helperText={errors.lastName?.message}
+                size="small"
+                variant="outlined"
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Email*</Typography>
-              <Controller
-                name="email"
-                control={control}
-                rules={{ required: "email is required" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder="email"
-                    fullWidth
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
+              <TextField
+                placeholder="Email"
+                fullWidth
+                error={!!emailError}
+                onChange={handleEmailChange}
+                helperText={emailError}
+                size="small"
+                variant="outlined"
               />
             </Grid>
 
@@ -312,7 +327,7 @@ const CreateUser = () => {
               <Controller
                 name="job"
                 control={control}
-                rules={{ required: "Pin Code is required" }}
+                // rules={{ required: "Pin Code is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -335,6 +350,7 @@ const CreateUser = () => {
                   name="team"
                   control={control}
                   defaultValue=""
+                  rules={{ required: " Team is required" }}
                   render={({ field }) => (
                     <Select
                       {...field}
@@ -373,6 +389,7 @@ const CreateUser = () => {
                   name="branch"
                   control={control}
                   defaultValue=""
+                  rules={{ required: " Branch is required" }}
                   render={({ field }) => (
                     <Select
                       {...field}
@@ -409,7 +426,7 @@ const CreateUser = () => {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "Phone number is required",
+                  // required: "Phone number is required",
                   pattern: {
                     value: /^\+?[0-9]+$/,
                     message: "Invalid phone number",
@@ -454,7 +471,7 @@ const CreateUser = () => {
                 sx={{ mt: 2, ml: 2, textTransform: "none" }}
                 variant="contained"
                 color="primary"
-                onClick={() => setTabValue(1)}
+                onClick={handleValidation}
               >
                 Next
               </Button>
@@ -495,24 +512,21 @@ const CreateUser = () => {
                 <Typography variant="subtitle2">Send Invitation</Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
               </Box>
-              <Controller
-                name="email"
-                control={control}
-                rules={{ required: "email is required" }}
-                render={({ field }) => (
-                  <TextField
-                    sx={{
-                      width: "60%", // Setting the width
-                    }}
-                    {...field}
-                    placeholder="email"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
-              />
+
+              <Grid item xs={12} sm={6}>
+                <Typography variant="subtitle2">Email*</Typography>
+                <TextField
+                  placeholder="Email"
+                  fullWidth
+                  value={email}
+                  error={!!emailError}
+                  onChange={handleEmailChange}
+                  helperText={emailError}
+                  size="small"
+                  variant="outlined"
+                />
+              </Grid>
+
               <Grid sx={{ mt: 1 }}>
                 <FormControlLabel
                   control={

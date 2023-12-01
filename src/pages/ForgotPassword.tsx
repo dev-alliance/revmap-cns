@@ -106,10 +106,7 @@ const ForgotPassword: React.FC = () => {
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
               >
-                <Typography
-                  variant="subtitle1"
-                  sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                >
+                <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                   Email
                 </Typography>
                 <Controller

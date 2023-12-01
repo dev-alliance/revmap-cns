@@ -167,7 +167,7 @@ export default function Dashboard() {
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
-        {/* <ListItemButton component={Link} to="/dashboard/category-list">
+        <ListItemButton component={Link} to="/dashboard/category-list">
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
@@ -175,7 +175,7 @@ export default function Dashboard() {
             primary="Category"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
-        </ListItemButton> */}
+        </ListItemButton>
 
         {/* Main collapsible list item */}
 

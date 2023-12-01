@@ -111,6 +111,12 @@ const UpdateBranch = () => {
     if (id) listData();
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const handleCountryCodeChange = (e: any) => {
+    const newCountryCode = e.target.value;
+
+    setSelectedCountryCode(`${newCountryCode}`);
+  };
   const onSubmit = async (data: FormValues) => {
     try {
       setIsLoading(true);
@@ -119,7 +125,7 @@ const UpdateBranch = () => {
         branchId: data.branchId,
         address: data.address,
         pinCode: data.pinCode,
-        contact: data.contact,
+        contact: `+${selectedCountryCode}${data.contact}`.trim(),
         manager: data.manager,
         state: state,
         website: data.website,
@@ -203,7 +209,9 @@ const UpdateBranch = () => {
                 <Link to="/dashboard/branchlist" className="link-no-underline">
                   Home
                 </Link>
-                {/* <Typography color="text.primary">Categories</Typography> */}
+                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                  Update Branch
+                </Typography>
               </Breadcrumbs>
             </Box>
           </div>
@@ -325,12 +333,14 @@ const UpdateBranch = () => {
                           labelId="country-code-label"
                           displayEmpty // Ensures that the placeholder is displayed when the value is empty
                           value={selectedCountryCode}
-                          onChange={(e) => {
-                            const newCountryCode = e.target.value;
-                            setSelectedCountryCode(newCountryCode);
-                            // Prepend '+' to the country code when setting the contact field value
-                            setValue("contact", `+${newCountryCode}`);
-                          }}
+                          // onChange={(e) => {
+                          //   handleCountryCodeChange;
+                          // const newCountryCode = e.target.value;
+                          // setSelectedCountryCode(newCountryCode);
+                          // Prepend '+' to the country code when setting the contact field value
+                          // setValue("contact", `+${newCountryCode}`);
+                          // }}
+                          onChange={handleCountryCodeChange}
                           renderValue={(value) => {
                             if (value === "") {
                               return (
@@ -371,7 +381,6 @@ const UpdateBranch = () => {
                         {...field}
                         placeholder="Contact Number"
                         fullWidth
-                        required
                         size="small"
                         variant="outlined"
                       />
@@ -382,7 +391,7 @@ const UpdateBranch = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle1">Manager</Typography>
+              <Typography variant="subtitle1">Manager*</Typography>
               <Controller
                 name="manager"
                 control={control}

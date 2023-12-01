@@ -95,6 +95,10 @@ const UpdateUser = () => {
   const [branchData, setBranchData] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [list, setList] = useState<undefined>(undefined);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -106,7 +110,6 @@ const UpdateUser = () => {
       setList(user);
       setValue("firstName", user.firstName);
       setValue("lastName", user.lastName);
-      setValue("email", user.email);
       setValue("job", user.job);
       setValue("mobile", user.mobile);
       setValue("landline", user.team);
@@ -114,6 +117,9 @@ const UpdateUser = () => {
       setValue("branch", user.branch);
       setValue("status", user.status);
       setImage(user?.image);
+      setEmail(user?.email);
+      setFirstName(user?.firstName);
+      setLastName(user?.lastName);
     } catch (error) {
       console.log(error);
     } finally {
@@ -146,27 +152,50 @@ const UpdateUser = () => {
     getBranchData();
     getTeamsData();
   }, []);
+  const validateEmail = (email: any) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (e: any) => {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+    if (!validateEmail(emailValue)) {
+      setEmailError("Invalid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+  const handleValidation = () => {
+    console.log(firstName, lastName, email, "ok");
+    if (!firstName || !email || !lastName || emailError) {
+      toast.error("Please fill the require feilds");
+      return;
+    } else {
+      setTabValue(1);
+    }
+  };
 
   const onSubmit = async (data: FormValues) => {
     try {
       setIsLoading(true);
-      if (image === "") {
-        await toast.error("Please select an Image!");
-        return;
-      }
+      // if (image === "") {
+      //   await toast.error("Please select an Image!");
+      //   return;
+      // }
       setTabValue(1);
       const payload: any = {
-        firstName: data.firstName,
-        lastName: data.lastName,
+        firstName: firstName,
+        lastName: lastName,
         job: data.job,
         landline: data.landline,
         mobile: data.mobile,
-        team: data.team,
         status: data.status,
         role: 1,
         emailVerified: false,
         disabled: false,
-        branch: data.branch,
+        team: data.team ? data.team : null,
+        branch: data.branch ? data.branch : null,
       };
       if (imageBase64) {
         payload.image = imageBase64;
@@ -218,7 +247,9 @@ const UpdateUser = () => {
         <Link to="/dashboard/user-list" className="link-no-underline">
           Home
         </Link>
-        {/* <Typography color="text.primary">Categories</Typography> */}
+        <Typography sx={{ fontSize: "14px" }} color="text.primary">
+          Update User
+        </Typography>
       </Breadcrumbs>
       <Paper sx={{ width: "100%" }}>
         <Box
@@ -293,60 +324,47 @@ const UpdateUser = () => {
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">First Name*</Typography>
 
-              <Controller
-                name="firstName"
-                control={control}
-                rules={{ required: "First Name is required" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder=" Name"
-                    fullWidth
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
+              <TextField
+                placeholder=" Name"
+                fullWidth
+                value={firstName}
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                }}
+                error={!!errors.firstName}
+                helperText={errors.firstName?.message}
+                size="small"
+                variant="outlined"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Last Name*</Typography>
-              <Controller
-                name="lastName"
-                control={control}
-                rules={{ required: "Last name is required" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder="Last Name"
-                    fullWidth
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
+              <TextField
+                placeholder="Last Name"
+                fullWidth
+                value={lastName}
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                }}
+                error={!!errors.lastName}
+                helperText={errors.lastName?.message}
+                size="small"
+                variant="outlined"
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Email*</Typography>
-              <Controller
-                name="email"
-                control={control}
-                rules={{ required: "email is required" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder="email"
-                    fullWidth
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
+              <TextField
+                placeholder="Email"
+                fullWidth
+                value={email}
+                error={!!emailError}
+                onChange={handleEmailChange}
+                helperText={emailError}
+                disabled
+                size="small"
+                variant="outlined"
               />
             </Grid>
 
@@ -387,7 +405,7 @@ const UpdateUser = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>Select Team</em> // Placeholder text with custom color
+                            <em style={{ color: "#9A9A9A" }}>Select Team </em> // Placeholder text with custom color
                           );
                         }
 

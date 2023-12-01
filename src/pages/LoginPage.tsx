@@ -155,10 +155,9 @@ const LoginPage: React.FC = () => {
                   Welcome Back !
                 </Typography>
                 <Typography
-                  variant="h5"
+                  variant="subtitle2"
                   component="h1"
-                  color={"#9A9A9A"}
-                  sx={{ mb: 2, textAlign: "center", fontSize: "15px" }}
+                  sx={{ mb: 2, textAlign: "center" }}
                 >
                   Sign in to Continue
                 </Typography>
@@ -169,10 +168,7 @@ const LoginPage: React.FC = () => {
                   noValidate
                 >
                   {/* Email Label and Input */}
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                  >
+                  <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                     Email
                   </Typography>
                   <Controller
@@ -203,10 +199,7 @@ const LoginPage: React.FC = () => {
                   />
 
                   {/* Password Label and Input */}
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                  >
+                  <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                     Password
                   </Typography>
                   <Controller
@@ -278,8 +271,7 @@ const LoginPage: React.FC = () => {
                         <Link
                           underline="none"
                           href="/forgotpassword"
-                          variant="body2"
-                          sx={{ color: "#9E9E9E" }}
+                          variant="subtitle2"
                         >
                           Forgot password?
                         </Link>
@@ -313,7 +305,7 @@ const LoginPage: React.FC = () => {
                     variant="body2"
                     color="text.secondary"
                     align="center"
-                    sx={{ mb: 4, mt: 3, fontSize: "16px", color: "#9A9A9A" }}
+                    sx={{ mb: 4, mt: 3 }}
                   >
                     Don't have an account yet?{" "}
                     <Link

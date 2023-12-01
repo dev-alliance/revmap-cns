@@ -128,10 +128,9 @@ const SignupPage: React.FC = () => {
                 Email Verification
               </Typography>
               <Typography
-                variant="h5"
+                variant="subtitle2"
                 component="h1"
-                color={"#9A9A9A"}
-                sx={{ mb: 4, textAlign: "center", fontSize: "15px" }}
+                sx={{ mb: 4, textAlign: "center" }}
               >
                 we've sent a code to {email}
               </Typography>
@@ -173,10 +172,10 @@ const SignupPage: React.FC = () => {
                   )}
                 />
                 <Typography
-                  variant="body2"
+                  variant="subtitle2"
                   color="text.secondary"
                   align="center"
-                  sx={{ mb: 1, mt: 2, fontSize: "16px", color: "#9A9A9A" }}
+                  sx={{ mb: 1, mt: 2 }}
                 >
                   Didn’t get the code?{" "}
                   <Link

@@ -212,8 +212,8 @@ const defaultColumns: any[] = [
   {
     flex: 0.3,
     minWidth: 120,
-    field: "Annual Value",
-    headerName: "Annual value",
+    field: "Annual value",
+    headerName: "Annual Value",
     // headerAlign: "center",
     renderCell: ({ row }: { row: RowType }) => {
       return (

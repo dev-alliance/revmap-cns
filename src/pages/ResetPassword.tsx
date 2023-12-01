@@ -144,8 +144,7 @@ const ResetPassword: React.FC = () => {
                 <Typography
                   variant="h5"
                   component="h1"
-                  color="#155BE5"
-                  sx={{ fontWeight: "bold", textAlign: "center" }}
+                  sx={{ textAlign: "center", mb: 2 }}
                 >
                   Create your password to use from next login
                 </Typography>
@@ -153,8 +152,7 @@ const ResetPassword: React.FC = () => {
                 <Typography
                   variant="h5"
                   component="h1"
-                  color="#155BE5"
-                  sx={{ fontWeight: "bold", textAlign: "center" }}
+                  sx={{ textAlign: "center", mb: 2 }}
                 >
                   Reset passwohhrd!
                 </Typography>
@@ -165,10 +163,7 @@ const ResetPassword: React.FC = () => {
                 onSubmit={handleSubmit(onSubmit)}
                 noValidate
               >
-                <Typography
-                  variant="subtitle1"
-                  sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                >
+                <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                   Password
                 </Typography>
                 <Controller
@@ -224,10 +219,7 @@ const ResetPassword: React.FC = () => {
                 />
 
                 {/* Confirm Password Field */}
-                <Typography
-                  variant="subtitle1"
-                  sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                >
+                <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                   Confirm Password
                 </Typography>
                 <Controller

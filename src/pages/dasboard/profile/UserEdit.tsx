@@ -144,10 +144,10 @@ const UserEdit = () => {
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      if (image === "") {
-        await toast.error("Please select an Image!");
-        return;
-      }
+      // if (image === "") {
+      //   await toast.error("Please select an Image!");
+      //   return;
+      // }
       setTabValue(1);
       const payload: any = {
         landline: data.landline,
@@ -297,11 +297,11 @@ const UserEdit = () => {
           <Controller
             name="email"
             control={control}
-            rules={{ required: "email is required" }}
+            rules={{ required: "Email is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
-                placeholder="email"
+                placeholder="Email"
                 fullWidth
                 error={!!errors.email}
                 helperText={errors.email?.message}

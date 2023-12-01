@@ -59,7 +59,7 @@ const SignupPage: React.FC = () => {
       const response = await signU(payload);
       console.log(response.message);
       if (response.ok === true) {
-        toast.success("Logged in successfully!");
+        toast.success(response.message);
         navigate("/emailverification");
         navigate("/emailvarfication", { state: { email: data.email } });
       } else {
@@ -161,7 +161,7 @@ const SignupPage: React.FC = () => {
                   variant="body2"
                   color="text.secondary"
                   align="center"
-                  sx={{ mb: 4, fontSize: "16px", color: "#9A9A9A" }}
+                  sx={{ mb: 4, fontSize: "16px" }}
                 >
                   Sign up for a{" "}
                   <Link
@@ -187,10 +187,7 @@ const SignupPage: React.FC = () => {
                   noValidate
                 >
                   {/* Email Label and Input */}
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                  >
+                  <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                     Email
                   </Typography>
                   <Controller
@@ -219,10 +216,7 @@ const SignupPage: React.FC = () => {
                       />
                     )}
                   />
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                  >
+                  <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                     Password
                   </Typography>
                   <Controller
@@ -277,10 +271,7 @@ const SignupPage: React.FC = () => {
                     )}
                   />
 
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ mt: 0, mb: -1, fontSize: "16px", color: "#9A9A9A" }}
-                  >
+                  <Typography variant="subtitle2" sx={{ mt: 0, mb: -1 }}>
                     Confirm Password
                   </Typography>
                   <Controller
@@ -347,7 +338,7 @@ const SignupPage: React.FC = () => {
                     variant="body2"
                     color="text.secondary"
                     align="center"
-                    sx={{ fontSize: "16px", color: "#9A9A9A" }}
+                    sx={{}}
                   >
                     You have already acoount{" "}
                     <Link
@@ -368,7 +359,7 @@ const SignupPage: React.FC = () => {
                 variant="body2"
                 color="text.secondary"
                 align="center"
-                sx={{ mb: 4, mt: 3, fontSize: "16px", color: "#9A9A9A" }}
+                sx={{ mb: 4, mt: 3 }}
               >
                 By signing up, you agree to ContractnSign’s{" "}
                 <Link

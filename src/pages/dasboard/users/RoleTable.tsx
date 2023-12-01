@@ -254,7 +254,7 @@ const RoleTable = () => {
                 pagination
                 rows={filteredList || []}
                 columns={defaultColumns}
-                checkboxSelection
+                // checkboxSelection
                 disableRowSelectionOnClick
                 pageSizeOptions={[10, 25, 50]}
                 paginationModel={paginationModel}

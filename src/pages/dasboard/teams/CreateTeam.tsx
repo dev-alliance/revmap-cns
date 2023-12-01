@@ -144,7 +144,9 @@ const CreateTeam = () => {
                 <Link to="/dashboard/teamlist" className="link-no-underline">
                   Home
                 </Link>
-                {/* <Typography color="text.primary">Categories</Typography> */}
+                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                  Create Teams
+                </Typography>
               </Breadcrumbs>
             </Box>
           </div>
@@ -176,11 +178,11 @@ const CreateTeam = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Branch Name is required" }}
+                rules={{ required: "Team Name is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="addName"
+                    placeholder="Add Name"
                     fullWidth
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -193,7 +195,7 @@ const CreateTeam = () => {
             </Grid>
 
             <Grid item xs={7}>
-              <Typography variant="subtitle2">Team Manger</Typography>
+              <Typography variant="subtitle2">Team Manger *</Typography>
               <Controller
                 name="manager"
                 control={control}

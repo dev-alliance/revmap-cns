@@ -90,10 +90,9 @@ const CompanyDetails: React.FC = () => {
                 Company Details
               </Typography>
               <Typography
-                variant="h6"
+                variant="subtitle1"
                 component="h2"
-                color={"#9A9A9A"}
-                sx={{ mb: 4, textAlign: "left", fontSize: "15px" }}
+                sx={{ mb: 4, textAlign: "left" }}
               >
                 Please fill all the details to proceed
               </Typography>
@@ -107,12 +106,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Company Name Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Company Name
@@ -142,12 +139,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Company Size Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Company Size
@@ -177,12 +172,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Country Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Country
@@ -212,12 +205,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Time Zone Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Time Zone
@@ -247,12 +238,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Email Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Email
@@ -288,12 +277,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Phone Number Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Phone Number
@@ -339,12 +326,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Industry Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Industry
@@ -374,12 +359,10 @@ const CompanyDetails: React.FC = () => {
                   {/* Website URL Field */}
                   <Grid item xs={12} md={6}>
                     <Typography
-                      variant="subtitle1"
+                      variant="subtitle2"
                       sx={{
                         mt: -2,
                         mb: -1,
-                        fontSize: "15px",
-                        color: "#9A9A9A",
                       }}
                     >
                       Website URL

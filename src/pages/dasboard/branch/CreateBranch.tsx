@@ -75,23 +75,20 @@ const BranchForm = () => {
     name: country.name,
     phoneCode: country.phonecode,
   }));
-
   React.useEffect(() => {
     setValue("state", "");
   }, [selectedCountry, setValue]);
-  const countryCode = watch("countryCode");
-  const contact = watch("contact");
 
-  React.useEffect(() => {
-    // If there is a selected country code and a contact number, concatenate them
-    if (countryCode && contact) {
-      // Update the contact field to include the country code
-      setValue(
-        "contact",
-        `${countryCode} ${contact.replace(countryCode, "")}`.trim()
-      );
-    }
-  }, [countryCode, contact, setValue]);
+  // Watchers for countryCode and contact
+
+  // OnChange handler for countryCode - no concatenation logic here
+  const handleCountryCodeChange = (e: any) => {
+    const newCountryCode = e.target.value;
+
+    setSelectedCountryCode(`${newCountryCode}`);
+  };
+
+  console.log();
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -101,7 +98,7 @@ const BranchForm = () => {
         branchId: data.branchId,
         address: data.address,
         pinCode: data.pinCode,
-        contact: data.contact,
+        contact: `+${selectedCountryCode}${data.contact}`.trim(),
         manager: data.manager,
         state: state,
         website: data.website,
@@ -167,7 +164,9 @@ const BranchForm = () => {
               <Link to="/dashboard/branchlist" className="link-no-underline">
                 Home
               </Link>
-              {/* <Typography color="text.primary">Categories</Typography> */}
+              <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                Create Branch
+              </Typography>
             </Breadcrumbs>
           </Box>
         </div>
@@ -288,12 +287,13 @@ const BranchForm = () => {
                         labelId="country-code-label"
                         displayEmpty // Ensures that the placeholder is displayed when the value is empty
                         value={selectedCountryCode}
-                        onChange={(e) => {
-                          const newCountryCode = e.target.value;
-                          setSelectedCountryCode(newCountryCode);
-                          // Prepend '+' to the country code when setting the contact field value
-                          setValue("contact", `+${newCountryCode}`);
-                        }}
+                        // onChange={(e) => {
+                        // const newCountryCode = e.target.value;
+                        // setSelectedCountryCode(newCountryCode);
+                        // Prepend '+' to the country code when setting the contact field value
+                        // setValue("contact", `+${newCountryCode}`);
+                        // }}
+                        onChange={handleCountryCodeChange}
                         renderValue={(value) => {
                           if (value === "") {
                             return (
@@ -332,7 +332,6 @@ const BranchForm = () => {
                       {...field}
                       placeholder="Contact Number"
                       fullWidth
-                      required
                       size="small"
                       variant="outlined"
                     />
@@ -343,7 +342,7 @@ const BranchForm = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Manager</Typography>
+            <Typography variant="subtitle2">Manager*</Typography>
             <Controller
               name="manager"
               control={control}
