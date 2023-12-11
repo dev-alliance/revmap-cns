@@ -1,54 +1,73 @@
-import React, { useEffect, useState } from "react";
-import { Typography, Divider, Button, Box } from "@mui/material";
-import { ArrowForward } from "@mui/icons-material";
-import ChangePasswordVerification from "@/pages/dasboard/profile/ChangePasswordVerification";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  FormGroup,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CloseIcon from "@mui/icons-material/Close";
 import toast from "react-hot-toast";
+import { ChangeUserPassword } from "@/service/api/apiMethods";
 import { useAuth } from "@/hooks/useAuth";
-import { changepasReq, getUserId } from "@/service/api/apiMethods";
-import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
+import { useNavigate } from "react-router-dom";
 
-const Account: React.FC = () => {
-  const { user, setVerification, twoFA, setTwoFA } = useAuth();
+interface ChangePasswordModalProps {
+  open: boolean;
+  onClose: () => void;
+}
 
-  const [isModalOpenVerifi, setIsModalOpenVerifi] = useState(false);
+interface IFormInput {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+const ChangePasswordModal: React.FC<any> = ({ open, onClose }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<IFormInput>();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const newPassword = watch("newPassword");
   const [isLoading, setIsLoading] = useState(false);
 
-  const listData = async () => {
-    try {
-      setIsLoading(true);
-      const data = await getUserId(user?._id);
-      console.log(data?.user.twoFactorAuth);
-      setTwoFA(data?.user?.twoFactorAuth);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    if (user?._id) listData();
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?._id]);
-
-  const handleOpenModalchangePass = async () => {
+  const onSubmit: any = async (data: any) => {
     try {
       setIsLoading(true);
       const payload = {
-        email: user?.email,
+        currentPassword: data.currentPassword,
+        newPassword: data.confirmPassword,
       };
-      const response = await changepasReq(payload);
-      console.log(response);
+      console.log(payload, "payload");
+
+      const response = await ChangeUserPassword(user?._id, payload);
+      console.log(response.message);
       if (response.ok === true) {
-        setVerification(false);
         toast.success(response.message);
-        setIsModalOpenVerifi(true);
+        onClose();
+        navigate("/");
+        logout();
+      } else {
+        const errorMessage = response.data || response.message;
+        toast.error(errorMessage);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
 
-      let errorMessage = "failed";
+      let errorMessage = "Login failed";
       if (error.response) {
         errorMessage = error.response.data || error.response.data.message;
       } else {
@@ -62,139 +81,177 @@ const Account: React.FC = () => {
       setIsLoading(false);
     }
   };
-  const handleCloseModalVerifiPass = () => setIsModalOpenVerifi(false);
 
-  const handleEnable2FA = async () => {
-    try {
-      setIsLoading(true);
-      const payload = {
-        email: user?.email,
-        is2FA: true,
-      };
-      const response = await changepasReq(payload);
-      console.log(response);
-      if (response.ok === true) {
-        toast.success(response.message);
-        setVerification(true);
-        setIsModalOpenVerifi(true);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.log(error);
-
-      let errorMessage = "failed";
-      if (error.response) {
-        errorMessage = error.response.data || error.response.data.message;
-      } else {
-        errorMessage = error.message;
-      }
-      toast.error(errorMessage);
-
-      // Handle error
-      console.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
   return (
-    <>
-      {" "}
-      {isLoading && (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "70vh",
-            position: "absolute",
-            margin: "auto",
-            width: "70%",
-          }}
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="change-password-modal"
+      aria-describedby="change-password-form"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Box
+        sx={{
+          backgroundColor: "background.paper",
+          padding: 3,
+          borderRadius: 1,
+          boxShadow: 24,
+          outline: "none",
+          maxWidth: 500,
+          width: "100%",
+          position: "relative",
+        }}
+      >
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{ position: "absolute", right: 8, top: 8 }}
         >
-          <ProgressCircularCustomization />
-        </Box>
-      )}
-      <Box sx={{ padding: 1.3, opacity: isLoading ? "30%" : "100%" }}>
-        <Typography variant="subtitle1" gutterBottom>
-          Organisation
+          <CloseIcon />
+        </IconButton>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Change Password
         </Typography>
-        <Typography
-          variant="body1"
-          gutterBottom
-          sx={{ color: "text.secondary" }}
-        >
-          Your Name
-        </Typography>
-        <Divider sx={{ my: 2 }} />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box>
-            <Typography variant="subtitle1" component="div">
-              Password
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormGroup>
+            <Typography variant="subtitle2" sx={{ mb: -1 }}>
+              Current Password
             </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              Change the password for your account
+            <Controller
+              name="currentPassword"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  placeholder="Enter Current password"
+                  //   type="password"
+                  margin="normal"
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  error={Boolean(errors.currentPassword)}
+                  helperText={
+                    errors.currentPassword ? errors.currentPassword.message : ""
+                  }
+                />
+              )}
+            />
+            <Typography variant="subtitle2" sx={{ mb: -1 }}>
+              New password
             </Typography>
-          </Box>
-          <Button
-            sx={{ color: "primary.main", textTransform: "none" }}
-            endIcon={<ArrowForward />}
-            //   onClick={handleOpenModalResetPass}
-            onClick={handleOpenModalchangePass}
-          >
-            Change password
-          </Button>
-        </Box>
-        <Divider sx={{ my: 2 }} />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Box>
-            <Typography variant="subtitle1" component="div">
-              Two-Factor Authentication
+            <Controller
+              name="newPassword"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: "New password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must have at least 8 characters",
+                },
+                pattern: {
+                  value:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                  message:
+                    "Create a password that consists of a minimum of 8 characters, including a mix of upper and lower case letters, at least one special character, and one number",
+                },
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  placeholder="Enter new password"
+                  type={showPassword ? "text" : "password"}
+                  margin="normal"
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  error={Boolean(errors.newPassword)}
+                  helperText={
+                    errors.newPassword ? errors.newPassword.message : ""
+                  }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
+            <Typography variant="subtitle2" sx={{ mb: -1 }}>
+              Confirm New Password
             </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              Requires an authentication code when you log in with an email and
-              passwords
-            </Typography>
-          </Box>
-          <Box>
-            {" "}
+            <Controller
+              name="confirmPassword"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: "Confirm password is required",
+                validate: (value) =>
+                  value === newPassword || "The passwords do not match",
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  placeholder="Enter Confirm password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  margin="normal"
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  error={Boolean(errors.confirmPassword)}
+                  helperText={
+                    errors.confirmPassword ? errors.confirmPassword.message : ""
+                  }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                          edge="end"
+                        >
+                          {showConfirmPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              )}
+            />
             <Button
-              sx={{ color: "primary.main", textTransform: "none", mr: 2 }}
-              endIcon={<ArrowForward />}
-            >
-              {twoFA === true ? " Enabled" : "Disabled"}
-            </Button>
-            <Button
-              sx={{ textTransform: "none" }}
-              onClick={handleEnable2FA}
+              type="submit"
               variant="contained"
-              color="primary"
+              disabled={isLoading}
+              sx={{
+                mt: 3,
+                mb: 2,
+                textTransform: "none",
+              }}
             >
-              {twoFA === true ? "Disable" : "Enable"}
+              Update Password
             </Button>
-          </Box>
-        </Box>
-
-        <ChangePasswordVerification
-          listData={listData}
-          open={isModalOpenVerifi}
-          onClose={handleCloseModalVerifiPass}
-        />
+          </FormGroup>
+        </form>
       </Box>
-    </>
+    </Modal>
   );
 };
 
-export default Account;
+export default ChangePasswordModal;

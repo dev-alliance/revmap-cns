@@ -22,6 +22,7 @@ import {
 } from "@/service/api/apiMethods";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
+import { useAuth } from "@/hooks/useAuth";
 type FormValues = {
   name: string;
   manager: string;
@@ -39,13 +40,14 @@ const UpdateTeam = () => {
   } = useForm<FormValues>({
     mode: "onBlur",
   });
-
+  const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const [member, setMamber] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [list, setList] = useState<undefined>(undefined);
   const [userList, setUserList] = useState<Array<any>>([]);
+
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -70,7 +72,7 @@ const UpdateTeam = () => {
   const UserlistData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getUserListNameID();
+      const { data } = await getUserListNameID(user?._id);
       console.log({ data });
 
       setUserList(data);

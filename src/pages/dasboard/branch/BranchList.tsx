@@ -32,6 +32,7 @@ import {
   getBranchList,
 } from "@/service/api/apiMethods";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
+import { useAuth } from "@/hooks/useAuth";
 // import MenuButton from "@/components/MenuButton";
 
 interface CellType {
@@ -203,6 +204,7 @@ const defaultColumns: GridColDef[] = [
 const BranchList = () => {
   const navigate = useNavigate();
   // ** State
+  const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -235,7 +237,7 @@ const BranchList = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getBranchList();
+      const { data } = await getBranchList(user?._id);
       setCategorylist(data);
       console.log("branc", data);
     } catch (error) {
@@ -390,7 +392,7 @@ const BranchList = () => {
           <CardHeader title="Branches" />
           <Breadcrumbs
             aria-label="breadcrumb"
-            sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+            sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
             <Link to="/dashboard/branchlist" className="link-no-underline">
               Home

@@ -32,6 +32,7 @@ import {
 } from "@/service/api/apiMethods";
 import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
+import { useAuth } from "@/hooks/useAuth";
 interface CellType {
   row: any;
   _id: any;
@@ -56,9 +57,9 @@ const defaultColumns: any[] = [
   {
     flex: 0.2,
     field: "name ",
-    minWidth: 250,
+    minWidth: 200,
     headerName: "User Name",
-    // headerAlign: "center",
+    headerAlign: "center",
     renderCell: ({ row }: any) => {
       const { name } = row;
       return (
@@ -201,25 +202,26 @@ const defaultColumns: any[] = [
       </>
     ),
   },
-  // {
-  //   flex: 0.2,
-  //   minWidth: 300,
-  //   field: "email",
-  //   headerName: "Email",
-  //   renderCell: ({ row }: { row: any }) => {
-  //     const { email } = row;
-  //     return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
-  //   },
-  // },
+  {
+    flex: 0.2,
+    minWidth: 300,
+    field: "email",
+    headerName: "Email",
+    renderCell: ({ row }: { row: any }) => {
+      const { email } = row;
+      return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
+    },
+  },
 ];
 
 const UserList = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   // ** State
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 8,
+    pageSize: 7,
   });
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -249,13 +251,14 @@ const UserList = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getUserList();
+      const { data } = await getUserList(user?._id);
       console.log({ data });
 
-      const transformedData = data.map((row: any) => ({
+      const transformedData = data.map((row: any, index: number) => ({
         ...row,
-        name: `${row?.firstName || ""} ${row?.lastName || ""}`.trim(),
-        team: `${row?.team?.name || ""} `.trim(),
+        id: index,
+        name: `${row?.firstName || ""} ${row?.lastName || ""}`,
+        team: `${row?.team?.name || ""} `,
         branch: `${row?.branch?.branchName || ""}`,
         // members: row.members ? row.members.length : "",
       }));
@@ -333,8 +336,8 @@ const UserList = () => {
   };
 
   useEffect(() => {
-    listData();
-  }, []);
+    if (user?._id) listData();
+  }, [user?._id]);
 
   console.log(search, "serch");
 
@@ -424,7 +427,7 @@ const UserList = () => {
           <CardHeader title="Users" />
           <Breadcrumbs
             aria-label="breadcrumb"
-            sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+            sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
             <Link to="/dashboard/user-list" className="link-no-underline">
               Home
@@ -500,21 +503,25 @@ const UserList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <DataGrid
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                autoHeight
-                pagination
-                rows={filteredList || []}
-                columns={columns}
-                // checkboxSelection
-                disableRowSelectionOnClick
-                pageSizeOptions={[8, 25, 50]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
-                getRowId={(row) => row._id}
-                // disableColumnMenu
-              />
+              <Box sx={{ maxHeight: 500, width: "100%", overflow: "auto" }}>
+                <DataGrid
+                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
+                  autoHeight
+                  pagination
+                  rows={filteredList || []}
+                  columns={columns}
+                  // checkboxSelection
+                  disableRowSelectionOnClick
+                  pageSizeOptions={[7, 25, 50]}
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                  onRowSelectionModelChange={(rows: any) =>
+                    setSelectedRows(rows)
+                  }
+                  getRowId={(row) => row._id}
+                  // disableColumnMenu
+                />
+              </Box>
             )}
           </Card>
         </Grid>

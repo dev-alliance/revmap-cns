@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import {
@@ -55,6 +56,23 @@ import Setting from "@/pages/dasboard/profile/Setting";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import GroupsIcon from "@mui/icons-material/Groups";
 import CategoryList from "@/pages/dasboard/category/CategoryList";
+import CreateCategory from "@/pages/dasboard/category/CreateCategory";
+import UpdateCategory from "@/pages/dasboard/category/UpdateCategoey";
+import CreateTags from "@/pages/dasboard/tags/CreateTags";
+import TagList from "@/pages/dasboard/tags/TagList";
+import UpdateTags from "@/pages/dasboard/tags/UpdateTags";
+import ClausesList from "@/pages/dasboard/clauses/ClausesList";
+import UpdateClauses from "@/pages/dasboard/clauses/UpdateClauses";
+import CreateClauses from "@/pages/dasboard/clauses/CreateClauses";
+import FolderLIst from "@/pages/dasboard/folders/FolderList";
+import Upload from "@/pages/dasboard/folders/Upload";
+import ComponyList from "@/pages/dasboard/compony/ComponyList";
+import UpdateCompony from "@/pages/dasboard/compony/UpdateCompony";
+import CategoryIcon from "@mui/icons-material/Category";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import TaskIcon from "@mui/icons-material/Task";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import BusinessIcon from "@mui/icons-material/Business";
 
 const drawerWidth = 240;
 export default function Dashboard() {
@@ -144,7 +162,7 @@ export default function Dashboard() {
             <GroupsIcon />
           </ListItemIcon>
           <ListItemText
-            primary="Team"
+            primary="Teams"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
@@ -169,18 +187,51 @@ export default function Dashboard() {
         </ListItemButton>
         <ListItemButton component={Link} to="/dashboard/category-list">
           <ListItemIcon>
-            <PersonIcon />
+            <CategoryIcon />
           </ListItemIcon>
           <ListItemText
-            primary="Category"
+            primary="Categories"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/tags-list">
+          <ListItemIcon>
+            <LocalOfferIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Tags"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/clauses-list">
+          <ListItemIcon>
+            <TaskIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Clauses"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
 
-        {/* Main collapsible list item */}
-
-        {/* Add more links or collapsible items if you have more pages */}
+        <ListItemButton component={Link} to="/dashboard/folder-list">
+          <ListItemIcon>
+            <FolderOpenIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Folders"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
       </List>
+      <ListItemButton component={Link} to="/dashboard/update-compony">
+        <ListItemIcon>
+          <BusinessIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary="Company Profile"
+          primaryTypographyProps={{ variant: "subtitle2" }}
+        />
+      </ListItemButton>
     </div>
   );
 
@@ -191,7 +242,7 @@ export default function Dashboard() {
         position="fixed"
         sx={{
           bgcolor: "#FFFFFF",
-          zIndex: (theme) => theme.zIndex.drawer + 1, // Ensure AppBar is above the Drawer
+          zIndex: (theme: any) => theme.zIndex.drawer + 1, // Ensure AppBar is above the Drawer
           width: { sm: `calc(100% - ${drawerWidth}px)` }, // Adjust the width on larger screens
           ml: { sm: `${drawerWidth}px` }, // Push the AppBar to the right on larger screens
         }}
@@ -338,7 +389,24 @@ export default function Dashboard() {
           <Route path="/user-detail/:id" element={<UserDetail />} />
           <Route path="/profile-setting" element={<Setting />} />
           <Route path="/login-history" element={<LoginHistory />} />
+
           <Route path="/category-list" element={<CategoryList />} />
+          <Route path="/create-cetegory" element={<CreateCategory />} />
+          <Route path="/update-cetegory/:id" element={<UpdateCategory />} />
+
+          <Route path="/create-tags" element={<CreateTags />} />
+          <Route path="/tags-list" element={<TagList />} />
+          <Route path="/update-tags/:id" element={<UpdateTags />} />
+
+          <Route path="/create-clauses" element={<CreateClauses />} />
+          <Route path="/clauses-list" element={<ClausesList />} />
+          <Route path="/update-clauses/:id" element={<UpdateClauses />} />
+
+          <Route path="/compony-list" element={<ComponyList />} />
+          <Route path="/update-compony" element={<UpdateCompony />} />
+          <Route path="/Upload-folder/:id" element={<Upload />} />
+          <Route path="/folder-list" element={<FolderLIst />} />
+
           <Route path="/sub-page-1" element={<SubPage1 />} />
         </Routes>
       </Box>

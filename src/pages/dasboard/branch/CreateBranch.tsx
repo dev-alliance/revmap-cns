@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import { createBranch, getUserListNameID } from "@/service/api/apiMethods";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
+import { useAuth } from "@/hooks/useAuth";
 type FormValues = {
   branchName: string;
   branchId: string;
@@ -44,6 +45,7 @@ const BranchForm = () => {
   } = useForm<FormValues>({
     mode: "onBlur",
   });
+  const { user } = useAuth();
   const navigate = useNavigate();
   const selectedCountry = watch("country");
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
@@ -56,7 +58,7 @@ const BranchForm = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getUserListNameID();
+      const { data } = await getUserListNameID(user?._id);
       console.log({ data });
 
       setUserList(data);
@@ -94,6 +96,7 @@ const BranchForm = () => {
     try {
       setIsLoading(true);
       const payload = {
+        id: user._id,
         branchName: data.branchName,
         branchId: data.branchId,
         address: data.address,

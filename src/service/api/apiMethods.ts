@@ -44,8 +44,8 @@ export const createBranch = async (data: any) => {
   return response.data;
 };
 
-export const getBranchList = async () => {
-  return await baseURL.get("/api/v1/branches/list-branch");
+export const getBranchList = async (id: any) => {
+  return await baseURL.get(`/api/v1/branches/list-branch/${id}`);
 };
 
 export const getBranchByid = async (id: any) => {
@@ -80,8 +80,8 @@ export const createTeam = async (data: any) => {
   return response.data;
 };
 
-export const getTeamsList = async () => {
-  return await baseURL.get("/api/v1/teams/list-teams");
+export const getTeamsList = async (id: any) => {
+  return await baseURL.get(`/api/v1/teams/list-teams/${id}`);
 };
 
 export const deleteTeam = async (id: string) => {
@@ -103,11 +103,11 @@ export const archiveTeam = async (id: any, data: any) => {
   return response.data;
 };
 
-export const getUserList = async () => {
-  return await baseURL.get("/api/v1/users/list-user");
+export const getUserList = async (id: any) => {
+  return await baseURL.get(`/api/v1/users/list-user/${id}`);
 };
-export const getUserListNameID = async () => {
-  return await baseURL.get("/api/v1/users/list-userIDName");
+export const getUserListNameID = async (id: any) => {
+  return await baseURL.get(`/api/v1/users/list-userIDName/${id}`);
 };
 export const deleteUser = async (id: string) => {
   const response = await baseURL.delete(`/api/v1/users/${id}`);
@@ -160,6 +160,7 @@ export const ChangeUserPassword = async (id: any, data: any) => {
   );
   return response.data;
 };
+
 // Function to update user profile
 // export const updateUserProfile = (userId, data) => baseURL.put(`/user/${userId}`, data);
 

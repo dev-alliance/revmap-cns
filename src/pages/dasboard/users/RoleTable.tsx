@@ -30,7 +30,9 @@ import {
   archiveBranch,
   deleteBranch,
   getBranchList,
+  getUserList,
 } from "@/service/api/apiMethods";
+import { useAuth } from "@/hooks/useAuth";
 // import MenuButton from "@/components/MenuButton";
 
 interface CellType {
@@ -103,6 +105,7 @@ const defaultColumns: GridColDef[] = [
 const RoleTable = () => {
   const navigate = useNavigate();
   // ** State
+  const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -135,7 +138,7 @@ const RoleTable = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getBranchList();
+      const { data } = await getUserList(user?._id);
       setCategorylist(data);
       console.log("branc", data);
     } catch (error) {

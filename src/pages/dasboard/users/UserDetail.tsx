@@ -127,7 +127,7 @@ const UserDetail = () => {
   }, [id]);
   const getBrandsData = async () => {
     try {
-      const { data } = await getTeamsList();
+      const { data } = await getTeamsList(user?._id);
       setTeamData(data);
     } catch (error) {
       console.log(error);
@@ -135,7 +135,7 @@ const UserDetail = () => {
   };
   const getBranchData = async () => {
     try {
-      const { data } = await getBranchList();
+      const { data } = await getBranchList(user?._id);
 
       setBranchData(data);
     } catch (error) {
@@ -500,7 +500,7 @@ const UserDetail = () => {
             <Grid item xs={12} md={1} lg={1} sx={{ alignItems: "left" }}>
               <Divider
                 orientation="vertical" // Set the orientation to vertical
-                sx={{ mt: (theme) => `${theme.spacing(1)} !important` }}
+                sx={{ mt: (theme: any) => `${theme.spacing(1)} !important` }}
               />
             </Grid>
             <Grid item xs={12} md={5} lg={5}>
@@ -590,7 +590,9 @@ const UserDetail = () => {
                     </Typography>
                     <Switch
                       checked={isAccessDisabled}
-                      onChange={(e) => setIsAccessDisabled(e.target.checked)}
+                      onChange={(e: any) =>
+                        setIsAccessDisabled(e.target.checked)
+                      }
                       color={isAccessDisabled ? "success" : "primary"} // Change color to 'success' when enabled
                     />
                   </Box>

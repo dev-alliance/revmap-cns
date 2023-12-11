@@ -85,6 +85,7 @@ const UpdateUser = () => {
   } = useForm<FormValues>({
     mode: "onBlur",
   });
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
   const [status, setStatus] = useState<any>("");
@@ -132,7 +133,7 @@ const UpdateUser = () => {
   }, [id]);
   const getTeamsData = async () => {
     try {
-      const { data } = await getTeamsList();
+      const { data } = await getTeamsList(user?._id);
       setTeamData(data);
     } catch (error) {
       console.log(error);
@@ -140,7 +141,7 @@ const UpdateUser = () => {
   };
   const getBranchData = async () => {
     try {
-      const { data } = await getBranchList();
+      const { data } = await getBranchList(user?._id);
 
       setBranchData(data);
     } catch (error) {
@@ -166,6 +167,7 @@ const UpdateUser = () => {
       setEmailError("");
     }
   };
+
   const handleValidation = () => {
     console.log(firstName, lastName, email, "ok");
     if (!firstName || !email || !lastName || emailError) {
@@ -242,7 +244,7 @@ const UpdateUser = () => {
       <CardHeader title=" Update User" />
       <Breadcrumbs
         aria-label="breadcrumb"
-        sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+        sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
       >
         <Link to="/dashboard/user-list" className="link-no-underline">
           Home
@@ -328,7 +330,7 @@ const UpdateUser = () => {
                 placeholder=" Name"
                 fullWidth
                 value={firstName}
-                onChange={(e) => {
+                onChange={(e: any) => {
                   setFirstName(e.target.value);
                 }}
                 error={!!errors.firstName}
@@ -343,7 +345,7 @@ const UpdateUser = () => {
                 placeholder="Last Name"
                 fullWidth
                 value={lastName}
-                onChange={(e) => {
+                onChange={(e: any) => {
                   setLastName(e.target.value);
                 }}
                 error={!!errors.lastName}
@@ -369,7 +371,7 @@ const UpdateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">Job Title</Typography>
+              <Typography variant="subtitle2">Job Title*</Typography>
               <Controller
                 name="job"
                 control={control}

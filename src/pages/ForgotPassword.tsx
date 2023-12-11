@@ -50,16 +50,11 @@ const ForgotPassword: React.FC = () => {
     } catch (error: any) {
       console.log(error);
 
-      let errorMessage = "failed";
-      if (error.response) {
-        errorMessage = error.response.data || error.response.data.message;
-      } else {
-        errorMessage = error.message;
-      }
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Something went wrong!";
       toast.error(errorMessage);
-
-      // Handle error
-      console.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

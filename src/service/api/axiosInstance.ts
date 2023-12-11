@@ -1,11 +1,11 @@
 import axios from "axios";
 
-// const baseURL = axios.create({
-//   baseURL: "http://localhost:1337",
-// });
 const baseURL = axios.create({
-  baseURL: "http://api.contractnsign.com", // Your API base URL11
+  baseURL: "http://localhost:1337",
 });
+// const baseURL = axios.create({
+//   baseURL: "http://api.contractnsign.com", // Your API base URL11
+// });
 
 export default baseURL;
 

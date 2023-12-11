@@ -57,11 +57,13 @@ const SignupPage: React.FC = () => {
       };
 
       const response = await signU(payload);
-      console.log(response.message);
+      console.log(response);
       if (response.ok === true) {
         toast.success(response.message);
         navigate("/emailverification");
-        navigate("/emailvarfication", { state: { email: data.email } });
+        navigate("/emailvarfication", {
+          state: { email: data.email, id: response?.admin?._id },
+        });
       } else {
         const errorMessage = response.data || response.message;
         toast.error(errorMessage);

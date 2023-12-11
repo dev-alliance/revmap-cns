@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Container,
@@ -8,12 +9,16 @@ import {
   Paper,
   Grid,
   TextField,
+  FormControl,
+  Select,
+  MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import logo from "../assets/logo.jpg"; // Ensure this path is correct
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { CreateCompony } from "@/service/api/apiMethods";
-
+import moment from "moment-timezone";
 type FormInputs = {
   companyName: string;
   companySize: string;
@@ -23,6 +28,7 @@ type FormInputs = {
   phoneNumber: string;
   industry: string;
   websiteUrl: string;
+  id: string;
 };
 
 const CompanyDetails: React.FC = () => {
@@ -32,8 +38,24 @@ const CompanyDetails: React.FC = () => {
     formState: { errors },
   } = useForm<FormInputs>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const id = location.state?.id;
+  const [timeZoneList, setTimeZoneList] = useState<Array<any>>([]);
+
+  const getTimeZoneList = () => {
+    const timeZones = moment.tz.names();
+    setTimeZoneList(timeZones);
+  };
+  React.useEffect(() => {
+    getTimeZoneList();
+
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  console.log(id, "idddddd");
+
   const onSubmit = async (data: FormInputs) => {
     try {
+      data.id = id;
       const response = await CreateCompony(data);
       console.log(response.message);
       if (response.ok === true) {
@@ -207,8 +229,7 @@ const CompanyDetails: React.FC = () => {
                     <Typography
                       variant="subtitle2"
                       sx={{
-                        mt: -2,
-                        mb: -1,
+                        mt: -1,
                       }}
                     >
                       Time Zone
@@ -219,18 +240,37 @@ const CompanyDetails: React.FC = () => {
                       defaultValue=""
                       rules={{ required: "Time Zone is required" }}
                       render={({ field }) => (
-                        <TextField
-                          {...field}
-                          margin="normal"
-                          fullWidth
-                          placeholder="Enter your time zone"
-                          error={Boolean(errors.timeZone)}
-                          helperText={
-                            errors.timeZone ? errors.timeZone.message : ""
-                          }
+                        <FormControl
                           variant="outlined"
                           size="small"
-                        />
+                          error={Boolean(errors.timeZone)}
+                          fullWidth
+                        >
+                          <Select
+                            {...field}
+                            labelId="timeZone-select"
+                            displayEmpty
+                            renderValue={(value: any) => {
+                              if (value === "") {
+                                return (
+                                  <em style={{ color: "#9A9A9A" }}>
+                                    Select Time Zone
+                                  </em>
+                                );
+                              }
+                              return value;
+                            }}
+                          >
+                            {timeZoneList?.map((timeZone: any) => (
+                              <MenuItem key={timeZone} value={timeZone}>
+                                {timeZone}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          <FormHelperText>
+                            {errors.timeZone ? errors.timeZone.message : ""}
+                          </FormHelperText>
+                        </FormControl>
                       )}
                     />
                   </Grid>

@@ -34,6 +34,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
+import { deleteTags, getList, updateStatus } from "@/service/api/tags";
 interface CellType {
   row: any;
   _id: any;
@@ -58,8 +59,8 @@ const defaultColumns: any[] = [
   {
     flex: 0.2,
     field: "name",
-    minWidth: 230,
-    headerName: "Team Name",
+    // minWidth: 230,
+    headerName: "Tag Name",
     renderCell: ({ row }: any) => {
       const { name } = row;
 
@@ -72,18 +73,6 @@ const defaultColumns: any[] = [
         </Box>
       );
     },
-  },
-  {
-    flex: 0.3,
-    minWidth: 125,
-    field: "managerFirstName",
-    headerName: "Manager",
-    sortable: true,
-    renderCell: (params: any) => (
-      <Typography sx={{ color: "text.secondary" }}>
-        {params.row.manager ? params.row.manager.firstName : "-"}
-      </Typography>
-    ),
   },
 
   {
@@ -138,100 +127,16 @@ const defaultColumns: any[] = [
       </>
     ),
   },
-  // {
-  //   flex: 0.2,
-  //   minWidth: 125,
-  //   field: "status",
-  //   headerName: "Status",
-  //   renderCell: ({ row }: { row: any }) => (
-  //     <>
-  //       <Chip
-  //         size="small"
-  //         variant="outlined"
-  //         label={
-  //           row.status === "active"
-  //             ? "Active"
-  //             : row.status === "archived"
-  //             ? "Archived"
-  //             : "Inactive"
-  //         }
-  //         sx={{
-  //           backgroundColor:
-  //             row.status === "active"
-  //               ? "#D3FDE4"
-  //               : row.status === "archived"
-  //               ? "#FFF7CB"
-  //               : "#D32F2F",
-  //           color:
-  //             row.status === "active"
-  //               ? "#3F9748"
-  //               : row.status === "archived"
-  //               ? "#D36A2F"
-  //               : "#FFCBCB",
-  //           borderColor:
-  //             row.status === "active"
-  //               ? "#D3FDE4"
-  //               : row.status === "archived"
-  //               ? "#FFF7CB"
-  //               : "#D32F2F", // Optional: to match border color with background
-  //           "& .MuiChip-label": {
-  //             // This targets the label inside the chip for more specific styling
-  //             color:
-  //               row.status === true
-  //                 ? "#3F9748"
-  //                 : row.status === "archived"
-  //                 ? "#D36A2F"
-  //                 : "#FFCBCB",
-  //           },
-  //         }}
-  //       />
-  //     </>
-  //   ),
-  // },
-  {
-    flex: 0.3,
-    minWidth: 125,
-    field: "members",
-    headerName: "No. of Users ",
-    renderCell: ({ row }: { row: any }) => {
-      const { members } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{members}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 120,
-    field: "ctive Contracts ",
-    headerName: "Active Contracts",
-
-    renderCell: ({ row }: { row: RowType }) => {
-      return <Typography sx={{ color: "text.secondary" }}>{"10"}</Typography>;
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 120,
-    field: "Annual value",
-    headerName: "Annual Value",
-    // headerAlign: "center",
-    renderCell: ({ row }: { row: RowType }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
-      );
-    },
-  },
 ];
 
-const BranchList = () => {
+const TagList = () => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 8,
+    pageSize: 7,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
@@ -261,13 +166,9 @@ const BranchList = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getTeamsList(user?._id);
-      const transformedData = data.map((row: any) => ({
-        ...row,
-        managerFirstName: row.manager ? row.manager.firstName : "",
-        members: row.members ? row.members.length : "",
-      }));
-      setCategorylist(transformedData);
+      const { data } = await getList();
+
+      setCategorylist(data);
 
       console.log("teams", data);
     } catch (error) {
@@ -279,15 +180,32 @@ const BranchList = () => {
 
   const ITEM_HEIGHT = 48;
 
-  // const handleEditClick = (row: any) => {
-  //   router.push(`edit/${row.id}`)
-  // }
-
-  const handleArchive = async (id: any) => {
+  const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to archive this item?")) {
+      if (window.confirm("Are you sure you want to delete this tag?")) {
         setIsLoading(true);
-        const res = await archiveTeam(id, { status: "Archived" });
+        const res = await deleteTags(id);
+        if (res.ok === true) {
+          toast.success(res.message);
+          listData();
+        } else {
+          toast.error(res?.message || "");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleActive = async (id: any) => {
+    try {
+      if (
+        window.confirm("Are you sure you want to change the status this item?")
+      ) {
+        setIsLoading(true);
+        const res = await updateStatus(id, { status: "Active" });
         console.log({ res });
 
         if (res.ok === true) {
@@ -303,15 +221,15 @@ const BranchList = () => {
       setIsLoading(false);
     }
   };
-  const handleDelete = async (id: any) => {
+  const handleInactive = async (id: any) => {
     try {
       if (
-        window.confirm(
-          "Deleting Team will delete all the data associated with it."
-        )
+        window.confirm("Are you sure you want to change the status this item?")
       ) {
         setIsLoading(true);
-        const res = await deleteTeam(id);
+        const res = await updateStatus(id, { status: "Inactive" });
+        console.log({ res });
+
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -376,7 +294,7 @@ const BranchList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/Team-edit/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/update-tags/${menuState.row?._id}`); // Use menuState.row._id
               }}
             >
               Edit
@@ -384,10 +302,18 @@ const BranchList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                handleArchive(menuState.row?._id); // Use menuState.row._id
+                handleActive(menuState.row?._id); // Use menuState.row._id
               }}
             >
-              Archive
+              Active
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                handleInactive(menuState.row?._id); // Use menuState.row._id
+              }}
+            >
+              Inactive
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -407,12 +333,12 @@ const BranchList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Teams" />
+          <CardHeader title="Tags" />
           <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
-            <Link to="/dashboard/teamlist" className="link-no-underline">
+            <Link to="/dashboard/tags-list" className="link-no-underline">
               Home
             </Link>
             {/* <Typography color="text.primary">Categories</Typography> */}
@@ -442,7 +368,7 @@ const BranchList = () => {
                     size="small"
                     value={search}
                     placeholder="Search"
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e: any) => setSearch(e.target.value)}
                   />
                 </Box>
               </div>
@@ -452,9 +378,9 @@ const BranchList = () => {
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="contained"
                   component={Link}
-                  to="/dashboard/create-team"
+                  to="/dashboard/create-tags"
                 >
-                  <AddIcon /> Create Team
+                  <AddIcon /> Create Tags
                 </Button>
               </div>
             </Box>
@@ -486,21 +412,24 @@ const BranchList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <DataGrid
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                autoHeight
-                pagination
-                rows={filteredList || []}
-                columns={columns}
-                // checkboxSelection
-                disableRowSelectionOnClick
-                pageSizeOptions={[8, 25, 50]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
-                getRowId={(row) => row._id}
-                // disableColumnMenu
-              />
+              <Box sx={{ maxHeight: 510, width: "100%", overflow: "auto" }}>
+                <DataGrid
+                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
+                  pagination
+                  rows={filteredList || []}
+                  columns={columns}
+                  // checkboxSelection
+                  disableRowSelectionOnClick
+                  pageSizeOptions={[7, 25, 50]}
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                  onRowSelectionModelChange={(rows: any) =>
+                    setSelectedRows(rows)
+                  }
+                  getRowId={(row: any) => row._id}
+                  // disableColumnMenu
+                />
+              </Box>
             )}
           </Card>
         </Grid>
@@ -509,4 +438,4 @@ const BranchList = () => {
   );
 };
 
-export default BranchList;
+export default TagList;

@@ -24,7 +24,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import ArrowDropDownCircleOutlinedIcon from "@mui/icons-material/ArrowDropDownCircleOutlined";
 import toast from "react-hot-toast";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-
+import { formatDistanceToNow } from "date-fns";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,7 +36,11 @@ import {
   getCategoryList,
   updateStatus,
 } from "@/service/api/category";
-// import MenuButton from "@/components/MenuButton";
+import { deleteFile, deleteFolder, getFolderList } from "@/service/api/folder";
+import { json } from "stream/consumers";
+import CreateFolder from "@/pages/dasboard/folders/CreateFolder";
+import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 
 interface CellType {
   row: any;
@@ -67,7 +71,7 @@ interface RowType {
 
 const defaultColumns: GridColDef[] = [];
 
-const CategoryList = () => {
+const FolderLIst = () => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
@@ -76,15 +80,18 @@ const CategoryList = () => {
     page: 0,
     pageSize: 7,
   });
-  const [isLoading, setIsLoading] = useState(false);
+
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
-
   const [categoryMenuState, setCategoryMenuState] = useState<any>({});
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const handleCloseModalResetPass = () => setIsOpenCreate(false);
+  const [itemName, setItemName] = useState({ id: "", name: "" });
 
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
-    row: CellType | null;
+    row: any | null;
   }>({
     anchorEl: null,
     row: null,
@@ -104,12 +111,10 @@ const CategoryList = () => {
 
   const handleDeleteSubcategory = async (id: any, subcategoryId: any) => {
     try {
-      if (
-        window.confirm("Are you sure you want to delete subcategory item?.")
-      ) {
+      if (window.confirm("Are you sure you want to delete this file.")) {
         setIsLoading(true);
         setCategoryMenuState({ ...categoryMenuState, [id]: null });
-        const res = await deleteSubCategory(id, subcategoryId);
+        const res = await deleteFile(id, subcategoryId);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -137,9 +142,15 @@ const CategoryList = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getCategoryList(user?._id);
-      setCategorylist(data);
-      console.log("branc", data);
+      const { data } = await getFolderList(user?._id);
+      const transformedData = data.map((row: any, index: number) => ({
+        ...row,
+        id: index, // Add a unique identifier for each row
+        fileslength: row.files ? row.files.length : "",
+      }));
+      setCategorylist(transformedData);
+
+      console.log("branch", data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -151,9 +162,9 @@ const CategoryList = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete this category?")) {
+      if (window.confirm("Are you sure you want to delete this folder?")) {
         setIsLoading(true);
-        const res = await deleteCategoey(id);
+        const res = await deleteFolder(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -193,9 +204,7 @@ const CategoryList = () => {
   const handleInactive = async (id: any) => {
     try {
       if (
-        window.confirm(
-          "Are you sure you want to change the status of this category?"
-        )
+        window.confirm("Are you sure you want to change the status this item?")
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Inactive" });
@@ -228,6 +237,9 @@ const CategoryList = () => {
     }
     return result;
   }, [search, catategorylist]);
+  const handleFileClick = (fileUrl: any) => {
+    window.open(fileUrl, "_blank");
+  };
 
   const columns: any[] = [
     {
@@ -235,13 +247,16 @@ const CategoryList = () => {
       field: "name",
       minWidth: 180,
       maxWidth: 130,
-      headerName: "Category",
+      headerName: "Folder Name",
       renderCell: ({ row }: { row: any }) => {
+        console.log(row.files, "file");
+
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
+            <FolderOpenIcon sx={{ color: "gray", mr: 1 }} />
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography sx={{ color: "text.secondary" }}>
-                {row?.name}{" "}
+                {row?.name}
               </Typography>
             </Box>
           </Box>
@@ -250,134 +265,179 @@ const CategoryList = () => {
     },
     {
       flex: 0.2,
-      // minWidth: 125,
-      // field: "button",
-      // headerName: "Created By",
-
+      minWidth: 18,
+      renderCell: ({ row }: { row: any }) => {
+        console.log(row.files, "file");
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                <Button
+                  endIcon={
+                    <ArrowDropDownCircleOutlinedIcon
+                      sx={{
+                        transform: categoryMenuState[row._id]
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)",
+                        transition: "transform 0.3s",
+                      }}
+                    />
+                  }
+                  onClick={handleCategoryMenuOpen(row._id)}
+                ></Button>
+                <Menu
+                  anchorEl={categoryMenuState[row._id]}
+                  open={Boolean(categoryMenuState[row._id])}
+                  onClose={handleCategoryMenuClose(row._id)}
+                  PaperProps={{
+                    style: {
+                      maxHeight:
+                        Array.isArray(row?.files) && row.files.length > 5
+                          ? 200
+                          : "auto",
+                      overflow: "auto",
+                    },
+                  }}
+                >
+                  {Array.isArray(row?.files) && row.files.length ? (
+                    row.files.map((file: any) => (
+                      <MenuItem
+                        key={file?._id}
+                        sx={{ display: "flex", alignItems: "center" }}
+                      >
+                        <Grid container spacing={2}>
+                          <Grid item xs={6}>
+                            <Tooltip title={file?.desc}>
+                              <Typography noWrap>
+                                {file?.desc} {/* Description */}
+                              </Typography>
+                            </Tooltip>
+                          </Grid>
+                          <Grid item xs={4} sx={{ mt: -1 }}>
+                            <IconButton
+                              onClick={() => handleFileClick(file?.fileUrl)}
+                              sx={{
+                                color: "#1976d2",
+                                fontSize: "15px",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {file?.name} {/* File Name */}
+                            </IconButton>
+                          </Grid>
+                          <Grid item xs={2} sx={{ mt: -1 }}>
+                            <Button
+                              onClick={() =>
+                                handleDeleteSubcategory(row._id, file._id)
+                              }
+                              sx={{ color: "red", ml: 1 }}
+                            >
+                              <DeleteOutlineOutlinedIcon />
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <Typography sx={{ padding: 2 }}>
+                      No files available
+                    </Typography>
+                  )}
+                </Menu>
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      minWidth: 125,
+      field: "fileslength", // Change the field to "fileslength"
+      headerName: "Documents",
+      sortable: true, // Enable sorting
       renderCell: ({ row }: { row: any }) => {
         return (
           <Typography sx={{ color: "text.secondary" }}>
-            <Button
-              endIcon={
-                <ArrowDropDownCircleOutlinedIcon
-                  sx={{
-                    transform: categoryMenuState[row._id]
-                      ? "rotate(180deg)"
-                      : "rotate(0deg)",
-                    transition: "transform 0.3s",
-                  }}
-                />
-              }
-              onClick={handleCategoryMenuOpen(row._id)}
-            ></Button>
-            <Menu
-              anchorEl={categoryMenuState[row._id]}
-              open={Boolean(categoryMenuState[row._id])}
-              onClose={handleCategoryMenuClose(row._id)}
-              PaperProps={{
-                style: {
-                  maxHeight: row?.subCategories.length > 5 ? 200 : "auto", // adjust 200px to your preference
-                  overflow: "auto",
-                },
-              }}
-            >
-              {Array.isArray(row?.subCategories) && row.subCategories.length ? (
-                row?.subCategories.map((subcategory: any) => (
-                  <MenuItem
-                    key={subcategory._id}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    {subcategory.name}
-                    <Button
-                      sx={{ alignItems: "right", color: "red" }}
-                      onClick={() =>
-                        handleDeleteSubcategory(row._id, subcategory._id)
-                      }
-                    >
-                      <DeleteOutlineOutlinedIcon />
-                    </Button>
-                  </MenuItem>
-                ))
-              ) : (
-                <Typography sx={{ padding: 2 }}>
-                  No subCategories available
-                </Typography>
-              )}
-            </Menu>
+            {row?.fileslength}
           </Typography>
         );
       },
     },
     {
       flex: 0.2,
-      // minWidth: 125,
-      field: "createdByName",
-      headerName: "Created By",
+      field: "createdAt",
+      minWidth: 130,
+      headerName: "Created Date",
+      renderCell: ({ row }: any) => {
+        const { createdAt } = row;
 
-      renderCell: ({ row }: { row: any }) => {
-        const { createdByName } = row;
+        const formattedDate = formatDistanceToNow(new Date(createdAt), {
+          addSuffix: true,
+        });
+
         return (
-          <Typography sx={{ color: "text.secondary" }}>{"shah"}</Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {formattedDate}
+              </Typography>
+            </Box>
+          </Box>
         );
       },
     },
-
-    {
-      flex: 0.2,
-      minWidth: 125,
-      field: "status",
-      headerName: "Status",
-      renderCell: ({ row }: { row: any }) => (
-        <>
-          <Chip
-            size="small"
-            variant="outlined"
-            label={
-              row.status === "Active"
-                ? "Active"
-                : row.status === "Archived"
-                ? "Archived"
-                : "Inactive"
-            }
-            sx={{
-              fontSize: "14px",
-              // fontWeight: "bold",
-              backgroundColor:
-                row.status === "Active"
-                  ? "#D3FDE4"
-                  : row.status === "Archived"
-                  ? "#FFF7CB"
-                  : "#FFCBCB",
-              color:
-                row.status === "Active"
-                  ? "#3F9748"
-                  : row.status === "Archived"
-                  ? "#D32F2F"
-                  : "#red",
-              borderColor:
-                row.status === "Active"
-                  ? "#D3FDE4"
-                  : row.status === "Archived"
-                  ? "#FFF7CB"
-                  : "#FFCBCB", // Optional: to match border color with background
-              "& .MuiChip-label": {
-                // This targets the label inside the chip for more specific styling
-                color:
-                  row.status === "Active"
-                    ? "#3F9748"
-                    : row.status === "Archived"
-                    ? "#D36A2F"
-                    : "#D32F2F",
-              },
-            }}
-          />
-        </>
-      ),
-    },
+    // {
+    //   flex: 0.2,
+    //   field: "status",
+    //   headerName: "Status",
+    //   renderCell: ({ row }: { row: any }) => (
+    //     <>
+    //       <Chip
+    //         size="small"
+    //         variant="outlined"
+    //         label={
+    //           row.status === "active"
+    //             ? "Active"
+    //             : row.status === "archived"
+    //             ? "Archived"
+    //             : "Inactive"
+    //         }
+    //         sx={{
+    //           fontSize: "15px",
+    //           fontWeight: "bold",
+    //           backgroundColor:
+    //             row.status === "active"
+    //               ? "#D3FDE4"
+    //               : row.status === "archived"
+    //               ? "#FFF7CB"
+    //               : "#FFCBCB",
+    //           color:
+    //             row.status === "active"
+    //               ? "#3F9748"
+    //               : row.status === "archived"
+    //               ? "#D32F2F"
+    //               : "#red",
+    //           borderColor:
+    //             row.status === "active"
+    //               ? "#D3FDE4"
+    //               : row.status === "archived"
+    //               ? "#FFF7CB"
+    //               : "#FFCBCB", // Optional: to match border color with background
+    //           "& .MuiChip-label": {
+    //             // This targets the label inside the chip for more specific styling
+    //             color:
+    //               row.status === "active"
+    //                 ? "#3F9748"
+    //                 : row.status === "archived"
+    //                 ? "#D36A2F"
+    //                 : "#D32F2F",
+    //           },
+    //         }}
+    //       />
+    //     </>
+    //   ),
+    // },
 
     {
       flex: 0.02,
@@ -411,27 +471,30 @@ const CategoryList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/update-cetegory/${menuState.row?._id}`); // Use menuState.row._id
+                const folderId = menuState.row?._id;
+                const folderName = encodeURIComponent(
+                  menuState.row?.name || ""
+                );
+                navigate(
+                  `/dashboard/Upload-folder/${folderId}?name=${folderName}`
+                );
               }}
             >
-              Edit
+              Add Document
             </MenuItem>
             <MenuItem
               onClick={() => {
                 handleClose();
-                handleActive(menuState.row?._id); // Use menuState.row._id
+                setIsOpenCreate(true);
+                setItemName({
+                  id: menuState.row?._id || "",
+                  name: menuState.row?.name || "",
+                });
               }}
             >
-              Active
+              Rename
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                handleInactive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Inactive
-            </MenuItem>
+
             <MenuItem
               onClick={() => {
                 handleDelete(menuState.row?._id); // Use menuState.row._id
@@ -450,7 +513,7 @@ const CategoryList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Categories" />
+          <CardHeader title="Folders" />
           <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
@@ -494,10 +557,9 @@ const CategoryList = () => {
                 <Button
                   sx={{ mr: 2, textTransform: "none" }}
                   variant="contained"
-                  component={Link}
-                  to="/dashboard/create-cetegory"
+                  onClick={() => setIsOpenCreate(true)}
                 >
-                  <AddIcon /> Create Category
+                  <AddIcon /> Create Folder
                 </Button>
                 {/* <MenuButton /> */}
               </div>
@@ -525,7 +587,10 @@ const CategoryList = () => {
                   justifyContent: "center",
                   height: "50vh",
                 }}
-              ></Box>
+              >
+                {" "}
+                <ProgressCircularCustomization />
+              </Box>
             ) : (
               <Box sx={{ maxHeight: 500, width: "100%", overflow: "auto" }}>
                 <DataGrid
@@ -550,8 +615,15 @@ const CategoryList = () => {
           </Card>
         </Grid>
       </Grid>
+      <CreateFolder
+        open={isOpenCreate}
+        onClose={handleCloseModalResetPass}
+        itemName={itemName}
+        listData={listData}
+        setItemName={setItemName}
+      />
     </>
   );
 };
 
-export default CategoryList;
+export default FolderLIst;

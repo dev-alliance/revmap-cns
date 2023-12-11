@@ -31,11 +31,12 @@ import {
 } from "@/service/api/apiMethods";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "@/assets/send.png";
-import user from "@/assets/user.png";
+import userLogo from "@/assets/user.png";
 import permission from "@/assets/permission.png";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
 import RoleTable from "@/pages/dasboard/users/RoleTable";
+import { useAuth } from "@/hooks/useAuth";
 type FormValues = {
   firstName: string;
   lastName: string;
@@ -83,6 +84,7 @@ const CreateUser = () => {
     mode: "onBlur",
   });
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [status, setStatus] = useState<any>("");
   const [tabValue, setTabValue] = useState(0);
@@ -93,14 +95,16 @@ const CreateUser = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [job, setJob] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
   const getBrandsData = async () => {
     try {
-      const { data } = await getTeamsList();
+      const { data } = await getTeamsList(user?._id);
       setTeamData(data);
     } catch (error) {
       console.log(error);
@@ -108,7 +112,7 @@ const CreateUser = () => {
   };
   const getBranchData = async () => {
     try {
-      const { data } = await getBranchList();
+      const { data } = await getBranchList(user?._id);
 
       setBranchData(data);
     } catch (error) {
@@ -136,9 +140,27 @@ const CreateUser = () => {
     }
   };
   const handleValidation = () => {
-    console.log(firstName, lastName, email, "ok");
-    if (!firstName || !email || !lastName || emailError) {
-      toast.error("Please fill the require feilds");
+    // Validation check for empty last name
+    if (!firstName.trim()) {
+      toast.error("First name is required");
+      return;
+    }
+    if (!lastName.trim()) {
+      toast.error("Last name is required");
+      return;
+    }
+    if (!email.trim()) {
+      toast.error("Email is required");
+      return;
+    }
+    if (!job.trim()) {
+      toast.error("Job is required");
+      return;
+    }
+
+    // Assuming emailError is a boolean flag indicating email validation issues
+    if (!firstName || !email || emailError) {
+      toast.error("Please fill the required fields");
       return;
     } else {
       setTabValue(1);
@@ -153,10 +175,11 @@ const CreateUser = () => {
       // }
 
       const payload: any = {
+        id: user._id,
         firstName: firstName,
         lastName: lastName,
         email: email,
-        job: data.job,
+        job: job,
         landline: data.landline,
         mobile: data.mobile,
         status: data.status,
@@ -205,7 +228,7 @@ const CreateUser = () => {
       <CardHeader title=" Create User" sx={{}} />
       <Breadcrumbs
         aria-label="breadcrumb"
-        sx={{ pl: 2, mt: -2, mb: 2, fontSize: "13px" }}
+        sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
       >
         <Link to="/dashboard/user-list" className="link-no-underline">
           Home
@@ -230,13 +253,14 @@ const CreateUser = () => {
             <Grid item xs={12} sm={6}>
               <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                 <img
-                  src={user}
+                  src={userLogo}
                   alt="send"
                   style={{ marginRight: 8, height: "20px" }}
                 />
                 <Typography variant="subtitle2">
                   Personal Information
                 </Typography>
+
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
               </Box>
               <Box sx={{ alignItems: "center" }}>
@@ -285,7 +309,7 @@ const CreateUser = () => {
               <TextField
                 placeholder=" Name"
                 fullWidth
-                onChange={(e) => {
+                onChange={(e: any) => {
                   setFirstName(e.target.value);
                 }}
                 error={!!errors.firstName}
@@ -299,7 +323,7 @@ const CreateUser = () => {
               <TextField
                 placeholder="Last Name"
                 fullWidth
-                onChange={(e) => {
+                onChange={(e: any) => {
                   setLastName(e.target.value);
                 }}
                 error={!!errors.lastName}
@@ -323,22 +347,17 @@ const CreateUser = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">Job Title</Typography>
-              <Controller
-                name="job"
-                control={control}
-                // rules={{ required: "Pin Code is required" }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    placeholder="Job Title"
-                    fullWidth
-                    error={!!errors.job}
-                    helperText={errors.job?.message}
-                    size="small"
-                    variant="outlined"
-                  />
-                )}
+              <Typography variant="subtitle2">Job Title*</Typography>
+              <TextField
+                placeholder="Job"
+                fullWidth
+                onChange={(e: any) => {
+                  setJob(e.target.value);
+                }}
+                error={!!errors.firstName}
+                helperText={errors.firstName?.message}
+                size="small"
+                variant="outlined"
               />
             </Grid>
 
@@ -456,7 +475,7 @@ const CreateUser = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="landline"
+                    placeholder="Lanldine"
                     fullWidth
                     variant="outlined"
                     size="small"

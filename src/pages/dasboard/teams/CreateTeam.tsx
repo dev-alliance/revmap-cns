@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { createTeam, getUserListNameID } from "@/service/api/apiMethods";
 import { Link, useNavigate } from "react-router-dom";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
+import { useAuth } from "@/hooks/useAuth";
 type FormValues = {
   name: string;
   manager: string;
@@ -34,6 +35,7 @@ const CreateTeam = () => {
   } = useForm<FormValues>({
     mode: "onBlur",
   });
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [member, setMamber] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +44,7 @@ const CreateTeam = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getUserListNameID();
+      const { data } = await getUserListNameID(user?._id);
       console.log({ data });
 
       setUserList(data);
@@ -59,6 +61,7 @@ const CreateTeam = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       const payload = {
+        id: user._id,
         name: data.name,
         manager: data.manager, // Convert the string to an object
         status: data.status,

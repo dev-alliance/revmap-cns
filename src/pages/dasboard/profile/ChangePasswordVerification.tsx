@@ -198,7 +198,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                   <Box
                     sx={{ mt: 1, alignItems: "center" }}
                     component="form"
-                    onSubmit={(e) => {
+                    onSubmit={(e: any) => {
                       e.preventDefault();
                       onSubmit(); // Call the onSubmit function when the form is submitted
                     }}

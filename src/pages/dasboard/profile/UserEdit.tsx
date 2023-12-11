@@ -35,6 +35,7 @@ import permission from "@/assets/permission.png";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import PersonIcon from "@mui/icons-material/Person";
 import RoleTable from "@/pages/dasboard/users/RoleTable";
+import { useAuth } from "@/hooks/useAuth";
 type FormValues = {
   firstName: string;
   lastName: string;
@@ -79,8 +80,10 @@ const UserEdit = () => {
   } = useForm<FormValues>({
     mode: "onBlur",
   });
+
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user } = useAuth();
   const [status, setStatus] = useState<any>("");
   const [tabValue, setTabValue] = useState(0);
   const [image, setImage] = useState<string>("");
@@ -121,7 +124,7 @@ const UserEdit = () => {
   }, [id]);
   const getTeamsData = async () => {
     try {
-      const { data } = await getTeamsList();
+      const { data } = await getTeamsList(user?._id);
       setTeamData(data);
     } catch (error) {
       console.log(error);
@@ -129,8 +132,7 @@ const UserEdit = () => {
   };
   const getBranchData = async () => {
     try {
-      const { data } = await getBranchList();
-
+      const { data } = await getBranchList(user?._id);
       setBranchData(data);
     } catch (error) {
       console.log(error);
@@ -256,7 +258,7 @@ const UserEdit = () => {
             name="firstName"
             control={control}
             defaultValue=""
-            rules={{ required: "Branch Name is required" }}
+            // rules={{ required: "Branch Name is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -276,7 +278,7 @@ const UserEdit = () => {
           <Controller
             name="lastName"
             control={control}
-            rules={{ required: "Branch ID is required" }}
+            // rules={{ required: "Branch ID is required" }}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -318,7 +320,7 @@ const UserEdit = () => {
           <Controller
             name="job"
             control={control}
-            rules={{ required: "Pin Code is required" }}
+            // rules={{ required: "Pin Code is required" }}
             render={({ field }) => (
               <TextField
                 {...field}

@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/useAuth";
 const SignupPage: React.FC = () => {
   const location = useLocation();
   const email = location.state?.email;
+  const id = location.state?.id;
   const condition = location.state?.condition;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -32,7 +33,7 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const { loginContext } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log(id, "id");
   const onSubmit = async () => {
     // Assuming OTP is of length 5
     if (otp.length === 5) {
@@ -54,6 +55,7 @@ const SignupPage: React.FC = () => {
           };
         }
         const response = await verifyOtp(payload);
+
         if (response.ok === true) {
           toast.success(response.message);
           if (condition === "twoFactorAuth") {
@@ -65,6 +67,9 @@ const SignupPage: React.FC = () => {
             });
           } else {
             navigate("/componydetails");
+            navigate("/componydetails", {
+              state: { id: id },
+            });
           }
         } else {
           toast.error(response.message);
@@ -147,7 +152,7 @@ const SignupPage: React.FC = () => {
               <Box
                 sx={{ mt: 2 }}
                 component="form"
-                onSubmit={(e) => {
+                onSubmit={(e: any) => {
                   e.preventDefault();
                   onSubmit(); // Call the onSubmit function when the form is submitted
                 }}
