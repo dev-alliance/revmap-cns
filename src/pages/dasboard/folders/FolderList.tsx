@@ -28,7 +28,7 @@ import { formatDistanceToNow } from "date-fns";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-
+import { format, utcToZonedTime } from "date-fns-tz";
 import { useAuth } from "@/hooks/useAuth";
 import {
   deleteCategoey,
@@ -111,7 +111,7 @@ const FolderLIst = () => {
 
   const handleDeleteSubcategory = async (id: any, subcategoryId: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete this file.")) {
+      if (window.confirm("Are you sure you want to delete this folder.")) {
         setIsLoading(true);
         setCategoryMenuState({ ...categoryMenuState, [id]: null });
         const res = await deleteFile(id, subcategoryId);
@@ -182,7 +182,9 @@ const FolderLIst = () => {
   const handleActive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm(
+          "Are you sure you want to change the status this folder?"
+        )
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Active" });
@@ -204,7 +206,9 @@ const FolderLIst = () => {
   const handleInactive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm(
+          "Are you sure you want to change the status this folder?"
+        )
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Inactive" });
@@ -237,6 +241,7 @@ const FolderLIst = () => {
     }
     return result;
   }, [search, catategorylist]);
+
   const handleFileClick = (fileUrl: any) => {
     window.open(fileUrl, "_blank");
   };
@@ -372,8 +377,14 @@ const FolderLIst = () => {
       renderCell: ({ row }: any) => {
         const { createdAt } = row;
 
-        const formattedDate = formatDistanceToNow(new Date(createdAt), {
-          addSuffix: true,
+        // Specify the desired time zone, e.g., 'America/New_York'
+
+        const timeZone = "America/New_York";
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
+
+        const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
+          timeZone,
         });
 
         return (

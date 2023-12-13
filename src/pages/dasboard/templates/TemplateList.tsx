@@ -20,16 +20,14 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 // ** Third Party Imports
-import { formatDistanceToNow } from "date-fns";
+// import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
-import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
-import { deletecompanies, getList, updateStatus } from "@/service/api/compony";
-
+import { archiveTemp, deletetemplates, getList } from "@/service/api/template";
+import { format, utcToZonedTime } from "date-fns-tz";
 interface CellType {
   row: any;
   _id: any;
@@ -50,132 +48,7 @@ interface RowType {
 
 // ** Styled components
 
-const defaultColumns: any[] = [
-  {
-    flex: 0.2,
-    field: "companyName",
-    minWidth: 230,
-    headerName: "Company Name",
-    renderCell: ({ row }: any) => {
-      const { companyName } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {companyName}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.2,
-    field: "country",
-    minWidth: 130,
-    headerName: "Country",
-    renderCell: ({ row }: any) => {
-      const { country } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{country}</Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.2,
-    field: "industry",
-    minWidth: 130,
-    headerName: "Industry",
-    renderCell: ({ row }: any) => {
-      const { industry } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{industry}</Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.1,
-    minWidth: 125,
-    field: "status",
-    headerName: "Status",
-    renderCell: ({ row }: { row: any }) => (
-      <>
-        <Chip
-          size="small"
-          variant="outlined"
-          label={
-            row.status === "Active"
-              ? "Active"
-              : row.status === "Archived"
-              ? "Archived"
-              : "Inactive"
-          }
-          sx={{
-            fontSize: "14px",
-            // fontWeight: "bold",
-            backgroundColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB",
-            color:
-              row.status === "Active"
-                ? "#3F9748"
-                : row.status === "Archived"
-                ? "#D32F2F"
-                : "#red",
-            borderColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB", // Optional: to match border color with background
-            "& .MuiChip-label": {
-              // This targets the label inside the chip for more specific styling
-              color:
-                row.status === "Active"
-                  ? "#3F9748"
-                  : row.status === "Archived"
-                  ? "#D36A2F"
-                  : "#D32F2F",
-            },
-          }}
-        />
-      </>
-    ),
-  },
-  {
-    flex: 0.25,
-    field: "email",
-    minWidth: 150,
-    headerName: "Email",
-    renderCell: ({ row }: any) => {
-      const { email } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{email}</Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-];
-
-const ComponyList = () => {
+const TemplateList = () => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
@@ -212,7 +85,7 @@ const ComponyList = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getList(user?._id);
+      const { data } = await getList();
 
       setCategorylist(data);
 
@@ -228,9 +101,9 @@ const ComponyList = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete  this company?.")) {
+      if (window.confirm("Are you sure you want to delete this template?")) {
         setIsLoading(true);
-        const res = await deletecompanies(id);
+        const res = await deletetemplates(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -245,13 +118,11 @@ const ComponyList = () => {
     }
   };
 
-  const handleActive = async (id: any) => {
+  const handleArchive = async (id: any) => {
     try {
-      if (
-        window.confirm("Are you sure you want to change the status this item?")
-      ) {
+      if (window.confirm("Are you sure you want to archive this template?")) {
         setIsLoading(true);
-        const res = await updateStatus(id, { status: "Active" });
+        const res = await archiveTemp(id, { status: "Archived" });
         console.log({ res });
 
         if (res.ok === true) {
@@ -267,15 +138,16 @@ const ComponyList = () => {
       setIsLoading(false);
     }
   };
-  const handleInactive = async (id: any) => {
+  const handleActive = async (id: any) => {
     try {
       if (
         window.confirm(
-          "Are you sure you want to change the status this company?"
+          "Are you sure you want to change the status this template?"
         )
       ) {
         setIsLoading(true);
-        const res = await updateStatus(id, { status: "Inactive" });
+
+        const res = await archiveTemp(id, { status: "Active" });
         console.log({ res });
 
         if (res.ok === true) {
@@ -302,14 +174,192 @@ const ComponyList = () => {
     let result = catategorylist;
     if (search?.trim().length) {
       result = result.filter((item) =>
-        item.companyName?.toLowerCase().includes(search.trim().toLowerCase())
+        item.name?.toLowerCase().includes(search.trim().toLowerCase())
       );
     }
     return result;
   }, [search, catategorylist]);
+  const handleFileClick = (fileUrl: any) => {
+    window.open(fileUrl, "_blank");
+  };
 
   const columns: GridColDef[] = [
-    ...defaultColumns,
+    {
+      flex: 0.2,
+      field: "name",
+      minWidth: 230,
+      headerName: "Name",
+      renderCell: ({ row }: any) => {
+        const { name } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.4,
+      field: "description",
+      minWidth: 250,
+      headerName: "Description",
+      renderCell: ({ row }: any) => {
+        const { description } = row;
+        const displaydescription =
+          description?.length > 60
+            ? `${description?.substring(0, 60)}...`
+            : description;
+
+        return (
+          <Tooltip title={description} arrow>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {displaydescription}
+                </Typography>
+              </Box>
+            </Box>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      minWidth: 125,
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }: { row: any }) => (
+        <>
+          <Chip
+            size="small"
+            variant="outlined"
+            label={
+              row.status === "Active"
+                ? "Active"
+                : row.status === "Archived"
+                ? "Archived"
+                : "Inactive"
+            }
+            sx={{
+              fontSize: "14px",
+              // fontWeight: "bold",
+              backgroundColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB",
+              color:
+                row.status === "Active"
+                  ? "#3F9748"
+                  : row.status === "Archived"
+                  ? "#D32F2F"
+                  : "#red",
+              borderColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB", // Optional: to match border color with background
+              "& .MuiChip-label": {
+                // This targets the label inside the chip for more specific styling
+                color:
+                  row.status === "Active"
+                    ? "#3F9748"
+                    : row.status === "Archived"
+                    ? "#D36A2F"
+                    : "#D32F2F",
+              },
+            }}
+          />
+        </>
+      ),
+    },
+
+    {
+      flex: 0.2,
+      field: "file",
+      minWidth: 130,
+      headerName: "Document Type",
+      renderCell: ({ row }: any) => {
+        const { file } = row;
+        // Extracting the file extension
+        const fileType = file?.substring(file.lastIndexOf("."));
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {
+                  <IconButton
+                    onClick={() => handleFileClick(file)}
+                    sx={{
+                      color: "#1976d2",
+                      fontSize: "15px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {fileType}
+                  </IconButton>
+                }
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+
+    {
+      flex: 0.3,
+      field: "createdAt",
+      minWidth: 150,
+      headerName: "Created Date",
+      renderCell: ({ row }: any) => {
+        const { createdAt } = row;
+
+        // Specify the desired time zone, e.g., 'America/New_York'
+
+        const timeZone = "America/New_York";
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
+
+        const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
+          timeZone,
+        });
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {formattedDate}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      field: "uploaded_by",
+      minWidth: 230,
+      headerName: "Uploaded BY",
+      renderCell: ({ row }: any) => {
+        const { uploaded_by } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {uploaded_by || "-"}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
     {
       flex: 0.02,
       minWidth: 100,
@@ -317,7 +367,7 @@ const ComponyList = () => {
       field: "actions",
       headerName: "Actions",
       headerAlign: "center",
-      renderCell: ({ row }: CellType) => (
+      renderCell: ({ row }: any) => (
         <div>
           <IconButton
             aria-label="more"
@@ -342,7 +392,7 @@ const ComponyList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/update-compony/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/update-template/${menuState.row?._id}`); // Use menuState.row._id
               }}
             >
               Edit
@@ -358,10 +408,10 @@ const ComponyList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                handleInactive(menuState.row?._id); // Use menuState.row._id
+                handleArchive(menuState.row?._id); // Use menuState.row._id
               }}
             >
-              Inactive
+              Archive
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -381,12 +431,12 @@ const ComponyList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Compony" />
+          <CardHeader title="Template" />
           <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
-            <Link to="/dashboard/compony-list" className="link-no-underline">
+            <Link to="/dashboard/template-list" className="link-no-underline">
               Home
             </Link>
             {/* <Typography color="text.primary">Categories</Typography> */}
@@ -422,14 +472,17 @@ const ComponyList = () => {
               </div>
 
               <div>
-                {/* <Button
+                <Button variant="outlined" sx={{ textTransform: "none" }}>
+                  Create Template
+                </Button>
+                <Button
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="contained"
                   component={Link}
-                  to="/dashboard/create-clauses"
+                  to="/dashboard/create-template"
                 >
-                  <AddIcon /> Create Clauses
-                </Button> */}
+                  Upload Template
+                </Button>
               </div>
             </Box>
           </Card>
@@ -487,4 +540,4 @@ const ComponyList = () => {
   );
 };
 
-export default ComponyList;
+export default TemplateList;

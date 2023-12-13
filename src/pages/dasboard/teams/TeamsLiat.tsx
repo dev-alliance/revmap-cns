@@ -285,7 +285,7 @@ const BranchList = () => {
 
   const handleArchive = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to archive this item?")) {
+      if (window.confirm("Are you sure you want to archive this team?")) {
         setIsLoading(true);
         const res = await archiveTeam(id, { status: "Archived" });
         console.log({ res });

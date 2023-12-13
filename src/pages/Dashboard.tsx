@@ -73,6 +73,10 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import TaskIcon from "@mui/icons-material/Task";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import BusinessIcon from "@mui/icons-material/Business";
+import TemplateList from "@/pages/dasboard/templates/TemplateList";
+import CreateTemplate from "@/pages/dasboard/templates/CreateTemplate";
+import UpdateTemplate from "@/pages/dasboard/templates/UpdateTemplate";
+import DescriptionIcon from "@mui/icons-material/Description";
 
 const drawerWidth = 240;
 export default function Dashboard() {
@@ -232,6 +236,15 @@ export default function Dashboard() {
           primaryTypographyProps={{ variant: "subtitle2" }}
         />
       </ListItemButton>
+      <ListItemButton component={Link} to="/dashboard/template-list">
+        <ListItemIcon>
+          <DescriptionIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary="Templates"
+          primaryTypographyProps={{ variant: "subtitle2" }}
+        />
+      </ListItemButton>
     </div>
   );
 
@@ -388,6 +401,7 @@ export default function Dashboard() {
           <Route path="/user-update-user/:id" element={<UserEdit />} />
           <Route path="/user-detail/:id" element={<UserDetail />} />
           <Route path="/profile-setting" element={<Setting />} />
+
           <Route path="/login-history" element={<LoginHistory />} />
 
           <Route path="/category-list" element={<CategoryList />} />
@@ -404,8 +418,13 @@ export default function Dashboard() {
 
           <Route path="/compony-list" element={<ComponyList />} />
           <Route path="/update-compony" element={<UpdateCompony />} />
+
           <Route path="/Upload-folder/:id" element={<Upload />} />
           <Route path="/folder-list" element={<FolderLIst />} />
+
+          <Route path="/template-list" element={<TemplateList />} />
+          <Route path="/create-template" element={<CreateTemplate />} />
+          <Route path="/update-template/:id" element={<UpdateTemplate />} />
 
           <Route path="/sub-page-1" element={<SubPage1 />} />
         </Routes>

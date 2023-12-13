@@ -28,8 +28,9 @@ import { Link, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
-
+import { format, utcToZonedTime } from "date-fns-tz";
 import { deleteClauses, getList, updateStatus } from "@/service/api/clauses";
+
 interface CellType {
   row: any;
   _id: any;
@@ -100,8 +101,14 @@ const defaultColumns: any[] = [
     renderCell: ({ row }: any) => {
       const { createdAt } = row;
 
-      const formattedDate = formatDistanceToNow(new Date(createdAt), {
-        addSuffix: true,
+      // Specify the desired time zone, e.g., 'America/New_York'
+
+      const timeZone = "America/New_York";
+      // Convert UTC date to the specified time zone
+      const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
+
+      const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
+        timeZone,
       });
 
       return (

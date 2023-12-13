@@ -284,7 +284,7 @@ const BranchList = () => {
 
   const handleArchive = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to archive this item?")) {
+      if (window.confirm("Are you sure you want to archive this branch?")) {
         setIsLoading(true);
         const res = await archiveBranch(id, { status: "Archived" });
         console.log({ res });
