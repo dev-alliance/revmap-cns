@@ -202,7 +202,7 @@ const TagList = () => {
   const handleActive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm("Are you sure you want to change the status this tag?")
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Active" });
@@ -224,7 +224,7 @@ const TagList = () => {
   const handleInactive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm("Are you sure you want to change the status this tag?")
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Inactive" });

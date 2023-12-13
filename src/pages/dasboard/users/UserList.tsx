@@ -275,7 +275,7 @@ const UserList = () => {
   const handleActive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm("Are you sure you want to change the status this user?")
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Active" });
@@ -297,7 +297,7 @@ const UserList = () => {
   const handleInactive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm("Are you sure you want to change the status this user?")
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Inactive" });
@@ -318,7 +318,7 @@ const UserList = () => {
   };
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete the user ?")) {
+      if (window.confirm("Are you sure you want to delete the user?")) {
         setIsLoading(true);
         const res = await deleteUser(id);
         if (res.ok === true) {

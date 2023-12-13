@@ -171,7 +171,9 @@ const CategoryList = () => {
   const handleActive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm(
+          "Are you sure you want to change the status this category?"
+        )
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Active" });
