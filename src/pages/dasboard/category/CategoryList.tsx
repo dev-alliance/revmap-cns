@@ -104,9 +104,7 @@ const CategoryList = () => {
 
   const handleDeleteSubcategory = async (id: any, subcategoryId: any) => {
     try {
-      if (
-        window.confirm("Are you sure you want to delete subcategory item?.")
-      ) {
+      if (window.confirm("Are you sure you want to delete subcategory?")) {
         setIsLoading(true);
         setCategoryMenuState({ ...categoryMenuState, [id]: null });
         const res = await deleteSubCategory(id, subcategoryId);
@@ -305,9 +303,7 @@ const CategoryList = () => {
                   </MenuItem>
                 ))
               ) : (
-                <Typography sx={{ padding: 2 }}>
-                  No subCategories available
-                </Typography>
+                <Typography sx={{ padding: 2 }}>Nothing to display</Typography>
               )}
             </Menu>
           </Typography>

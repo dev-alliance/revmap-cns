@@ -154,15 +154,19 @@ const CreateTemplate = () => {
 
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
                 <Link
+                  style={{ marginRight: "-7px" }}
                   to="/dashboard/template-list"
                   className="link-no-underline"
                 >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                <Typography
+                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  color="text.primary"
+                >
                   Upload Template
                 </Typography>
               </Breadcrumbs>
@@ -194,16 +198,16 @@ const CreateTemplate = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={7}>
               <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                Name
+                Name*
               </Typography>
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Agreement Name is required" }}
+                rules={{ required: "Document name is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Agreement Name"
+                    placeholder="Document name"
                     fullWidth
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -281,9 +285,7 @@ const CreateTemplate = () => {
                         marginBottom: "10px", // Adds some space between the image and text
                       }}
                     />
-                    <p>
-                      Drag 'n' drop some files here, or click to select files
-                    </p>
+                    <p>Drag and drop, or click to select</p>
                   </div>
                 )}
               </div>

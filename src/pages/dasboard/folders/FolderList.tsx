@@ -111,7 +111,7 @@ const FolderLIst = () => {
 
   const handleDeleteSubcategory = async (id: any, subcategoryId: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete this folder.")) {
+      if (window.confirm("Are you sure you want to delete this document?")) {
         setIsLoading(true);
         setCategoryMenuState({ ...categoryMenuState, [id]: null });
         const res = await deleteFile(id, subcategoryId);
@@ -345,7 +345,7 @@ const FolderLIst = () => {
                     ))
                   ) : (
                     <Typography sx={{ padding: 2 }}>
-                      No files available
+                      Nothing to display
                     </Typography>
                   )}
                 </Menu>

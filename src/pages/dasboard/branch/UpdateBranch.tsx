@@ -204,12 +204,19 @@ const UpdateBranch = () => {
               </Typography>
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
-                <Link to="/dashboard/branchlist" className="link-no-underline">
+                <Link
+                  style={{ marginRight: "-7px" }}
+                  to="/dashboard/branchlist"
+                  className="link-no-underline"
+                >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                <Typography
+                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  color="text.primary"
+                >
                   Update Branch
                 </Typography>
               </Breadcrumbs>
@@ -344,7 +351,13 @@ const UpdateBranch = () => {
                           renderValue={(value) => {
                             if (value === "") {
                               return (
-                                <em style={{ color: "#9A9A9A" }}>
+                                <em
+                                  style={{
+                                    color: "#C2C2C2",
+                                    fontStyle: "normal",
+                                    fontSize: "15.5px",
+                                  }}
+                                >
                                   Country Code
                                 </em>
                               );
@@ -391,7 +404,7 @@ const UpdateBranch = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle1">Manager*</Typography>
+              <Typography variant="subtitle1">Admin*</Typography>
               <Controller
                 name="manager"
                 control={control}
@@ -423,7 +436,15 @@ const UpdateBranch = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>Select Country</em>
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
+                              Select Country
+                            </em>
                           ); // Placeholder text
                         }
                         return field.value;
@@ -456,7 +477,15 @@ const UpdateBranch = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>Select State</em>
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
+                              Select State
+                            </em>
                           ); // Placeholder text
                         }
                         return state;
@@ -506,7 +535,13 @@ const UpdateBranch = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
                               {" "}
                               Choose a status
                             </em> // Placeholder text with custom color

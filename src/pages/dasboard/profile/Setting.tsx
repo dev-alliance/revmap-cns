@@ -42,6 +42,7 @@ import { log } from "console";
 import LoginHistory from "@/pages/dasboard/users/LoginHistory";
 import { useAuth } from "@/hooks/useAuth";
 import Account from "@/pages/dasboard/profile/Account";
+
 type FormValues = {
   firstName: string;
   lastName: string;
@@ -121,12 +122,13 @@ const Setting = () => {
           <Tab label="Notification" sx={{ fontWeight: "bold" }} />
           <Tab label="Account" sx={{ fontWeight: "bold" }} />
         </Tabs>
-        <Box
+
+        {/* <Box
           sx={{
             ml: "auto",
           }}
         >
-          {/* <Button
+          <Button
             sx={{
               textTransform: "none",
               mr: 5,
@@ -137,15 +139,14 @@ const Setting = () => {
             to={`/dashboard/user-update-user/${id}`}
           >
             Edit
-          </Button> */}
-        </Box>
+          </Button>
+        </Box> */}
       </Box>
 
       <TabPanel value={tabValue} index={0}>
         <h1>Notification comming soon ...</h1>
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        {/* Permissions & Role */}
         <Grid container>
           <Grid
             item

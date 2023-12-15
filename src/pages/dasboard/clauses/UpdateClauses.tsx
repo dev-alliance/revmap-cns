@@ -129,21 +129,25 @@ const UpdateClauses = () => {
               }}
             >
               <Typography variant="h5" sx={{ marginBottom: 2 }}>
-                Update Clauses
+                Update Clause
               </Typography>
 
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
                 <Link
+                  style={{ marginRight: "-7px" }}
                   to="/dashboard/clauses-list"
                   className="link-no-underline"
                 >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
-                  Update Clauses
+                <Typography
+                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  color="text.primary"
+                >
+                  Update Clause
                 </Typography>
               </Breadcrumbs>
             </Box>

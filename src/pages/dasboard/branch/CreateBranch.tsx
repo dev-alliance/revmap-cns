@@ -164,12 +164,19 @@ const BranchForm = () => {
             </Typography>
             <Breadcrumbs
               aria-label="breadcrumb"
-              sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+              sx={{ mt: -2, mb: 2, fontSize: "14px" }}
             >
-              <Link to="/dashboard/branchlist" className="link-no-underline">
+              <Link
+                style={{ marginRight: "-7px" }}
+                to="/dashboard/branchlist"
+                className="link-no-underline"
+              >
                 Home
               </Link>
-              <Typography sx={{ fontSize: "14px" }} color="text.primary">
+              <Typography
+                sx={{ fontSize: "14px", ml: "-7px" }}
+                color="text.primary"
+              >
                 Create Branch
               </Typography>
             </Breadcrumbs>
@@ -207,7 +214,7 @@ const BranchForm = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  placeholder="Branch Name"
+                  placeholder="Branch name"
                   fullWidth
                   error={!!errors.branchName}
                   helperText={errors.branchName?.message}
@@ -226,7 +233,7 @@ const BranchForm = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  placeholder="Registration No"
+                  placeholder="Registration no."
                   fullWidth
                   error={!!errors.branchId}
                   helperText={errors.branchId?.message}
@@ -266,7 +273,7 @@ const BranchForm = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  placeholder="Pin Code"
+                  placeholder="Pin code"
                   fullWidth
                   error={!!errors.pinCode}
                   helperText={errors.pinCode?.message}
@@ -302,7 +309,15 @@ const BranchForm = () => {
                         renderValue={(value) => {
                           if (value === "") {
                             return (
-                              <em style={{ color: "#9A9A9A" }}>Country Code</em>
+                              <em
+                                style={{
+                                  color: "#C2C2C2",
+                                  fontStyle: "normal",
+                                  fontSize: "15.5px",
+                                }}
+                              >
+                                Country code
+                              </em>
                             );
                           }
                           // Display the selected value. You might need to format it or find the corresponding country name
@@ -335,7 +350,7 @@ const BranchForm = () => {
                     <TextField
                       InputProps={{}}
                       {...field}
-                      placeholder="Contact Number"
+                      placeholder="Contact number"
                       fullWidth
                       size="small"
                       variant="outlined"
@@ -347,7 +362,7 @@ const BranchForm = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Manager*</Typography>
+            <Typography variant="subtitle2">Admin*</Typography>
             <Controller
               name="manager"
               control={control}
@@ -362,7 +377,15 @@ const BranchForm = () => {
                     renderValue={(value) => {
                       if (value === "") {
                         return (
-                          <em style={{ color: "#9A9A9A" }}>Select User</em> // Placeholder text with custom color
+                          <em
+                            style={{
+                              color: "#C2C2C2",
+                              fontStyle: "normal",
+                              fontSize: "15.5px",
+                            }}
+                          >
+                            Select user
+                          </em> // Placeholder text with custom color
                         );
                       }
                       // Find the selected manager by ID
@@ -400,7 +423,15 @@ const BranchForm = () => {
                     renderValue={(value) => {
                       if (value === "") {
                         return (
-                          <em style={{ color: "#9A9A9A" }}>Select Country</em>
+                          <em
+                            style={{
+                              color: "#C2C2C2",
+                              fontStyle: "normal",
+                              fontSize: "15.5px",
+                            }}
+                          >
+                            Select country
+                          </em>
                         ); // Placeholder text
                       }
                       return field.value;
@@ -433,7 +464,15 @@ const BranchForm = () => {
                     renderValue={(value) => {
                       if (value === "") {
                         return (
-                          <em style={{ color: "#9A9A9A" }}>Select State</em>
+                          <em
+                            style={{
+                              color: "#C2C2C2",
+                              fontStyle: "normal",
+                              fontSize: "15.5px",
+                            }}
+                          >
+                            Select state
+                          </em>
                         ); // Placeholder text
                       }
                       return state;
@@ -450,7 +489,7 @@ const BranchForm = () => {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Typography variant="subtitle2">Website</Typography>
             <Controller
               name="website"
@@ -459,7 +498,7 @@ const BranchForm = () => {
               render={({ field }) => (
                 <TextField
                   {...field}
-                  placeholder="Website"
+                  placeholder="Website URL"
                   fullWidth
                   variant="outlined"
                   size="small"
@@ -467,7 +506,7 @@ const BranchForm = () => {
               )}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Typography variant="subtitle2">Status</Typography>
             <Controller
               name="status"
@@ -483,7 +522,16 @@ const BranchForm = () => {
                     renderValue={(value) => {
                       if (value === "") {
                         return (
-                          <em style={{ color: "#9A9A9A" }}> Choose a status</em> // Placeholder text with custom color
+                          <em
+                            style={{
+                              color: "#C2C2C2",
+                              fontStyle: "normal",
+                              fontSize: "15.5px",
+                            }}
+                          >
+                            {" "}
+                            Choose a status
+                          </em> // Placeholder text with custom color
                         );
                       }
                       return field.value;

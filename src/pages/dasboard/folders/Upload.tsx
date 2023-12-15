@@ -123,16 +123,23 @@ const Upload = () => {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid item xs={12} sx={{ mb: 4 }}>
-          <CardHeader title="Folders" />
+          <CardHeader title="Upload Document" />
           <Breadcrumbs
             aria-label="breadcrumb"
-            sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
+            sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "14px" }}
           >
-            <Link to="/dashboard/folder-list" className="link-no-underline">
+            <Link
+              style={{ marginRight: "-7px" }}
+              to="/dashboard/folder-list"
+              className="link-no-underline"
+            >
               Home
             </Link>
-            <Typography sx={{ fontSize: "14px" }} color="text.primary">
-              Add Document
+            <Typography
+              sx={{ fontSize: "14px", ml: "-7px" }}
+              color="text.primary"
+            >
+              Upload Document
             </Typography>
           </Breadcrumbs>
           <Card>
@@ -251,9 +258,7 @@ const Upload = () => {
                         marginBottom: "10px", // Adds some space between the image and text
                       }}
                     />
-                    <p>
-                      Drag 'n' drop some files here, or click to select files
-                    </p>
+                    <p>Drag and drop, or click to select</p>
                   </div>
                 )}
               </div>

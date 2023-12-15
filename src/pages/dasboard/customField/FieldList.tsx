@@ -20,20 +20,20 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 // ** Third Party Imports
-import { formatDistanceToNow } from "date-fns";
+// import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
-import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
 import { format, utcToZonedTime } from "date-fns-tz";
-import { deleteClauses, getList, updateStatus } from "@/service/api/clauses";
-
+import { deletecustomFields, getList } from "@/service/api/customFeild";
+import AddIcon from "@mui/icons-material/Add";
+import CreateField from "@/pages/dasboard/customField/CreateField";
 interface CellType {
   row: any;
   _id: any;
+  name: any;
 }
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -51,132 +51,7 @@ interface RowType {
 
 // ** Styled components
 
-const defaultColumns: any[] = [
-  {
-    flex: 0.2,
-    field: "name",
-    minWidth: 230,
-    headerName: "Clause Name",
-    renderCell: ({ row }: any) => {
-      const { name } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.4,
-    field: "content",
-    minWidth: 250,
-    headerName: "Clause Description",
-    renderCell: ({ row }: any) => {
-      const { content } = row;
-      const displayContent =
-        content.length > 60 ? `${content.substring(0, 60)}...` : content;
-
-      return (
-        <Tooltip title={content} arrow>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {displayContent}
-              </Typography>
-            </Box>
-          </Box>
-        </Tooltip>
-      );
-    },
-  },
-
-  {
-    flex: 0.2,
-    field: "createdAt",
-    minWidth: 130,
-    headerName: "Created Date",
-    renderCell: ({ row }: any) => {
-      const { createdAt } = row;
-
-      // Specify the desired time zone, e.g., 'America/New_York'
-
-      const timeZone = "America/New_York";
-      // Convert UTC date to the specified time zone
-      const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
-
-      const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
-        timeZone,
-      });
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {formattedDate}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  // {
-  //   flex: 0.2,
-  //   minWidth: 125,
-  //   field: "status",
-  //   headerName: "Status",
-  //   renderCell: ({ row }: { row: any }) => (
-  //     <>
-  //       <Chip
-  //         size="small"
-  //         variant="outlined"
-  //         label={
-  //           row.status === "Active"
-  //             ? "Active"
-  //             : row.status === "Archived"
-  //             ? "Archived"
-  //             : "Inactive"
-  //         }
-  //         sx={{
-  //           fontSize: "14px",
-  //           // fontWeight: "bold",
-  //           backgroundColor:
-  //             row.status === "Active"
-  //               ? "#D3FDE4"
-  //               : row.status === "Archived"
-  //               ? "#FFF7CB"
-  //               : "#FFCBCB",
-  //           color:
-  //             row.status === "Active"
-  //               ? "#3F9748"
-  //               : row.status === "Archived"
-  //               ? "#D32F2F"
-  //               : "#red",
-  //           borderColor:
-  //             row.status === "Active"
-  //               ? "#D3FDE4"
-  //               : row.status === "Archived"
-  //               ? "#FFF7CB"
-  //               : "#FFCBCB", // Optional: to match border color with background
-  //           "& .MuiChip-label": {
-  //             // This targets the label inside the chip for more specific styling
-  //             color:
-  //               row.status === "Active"
-  //                 ? "#3F9748"
-  //                 : row.status === "Archived"
-  //                 ? "#D36A2F"
-  //                 : "#D32F2F",
-  //           },
-  //         }}
-  //       />
-  //     </>
-  //   ),
-  // },
-];
-
-const ClausesList = () => {
+const FieldList = () => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
@@ -185,10 +60,12 @@ const ClausesList = () => {
     page: 0,
     pageSize: 7,
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
-
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const handleCloseModalResetPass = () => setIsOpenCreate(false);
+  const [itemName, setItemName] = useState({ id: "", name: "" });
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
     row: CellType | null;
@@ -229,54 +106,11 @@ const ClausesList = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete this clause?")) {
-        setIsLoading(true);
-        const res = await deleteClauses(id);
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleActive = async (id: any) => {
-    try {
       if (
-        window.confirm("Are you sure you want to change the status this item?")
+        window.confirm("Are you sure you want to delete this custom field?")
       ) {
         setIsLoading(true);
-        const res = await updateStatus(id, { status: "Active" });
-        console.log({ res });
-
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleInactive = async (id: any) => {
-    try {
-      if (
-        window.confirm("Are you sure you want to change the status this item?")
-      ) {
-        setIsLoading(true);
-        const res = await updateStatus(id, { status: "Inactive" });
-        console.log({ res });
-
+        const res = await deletecustomFields(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -306,9 +140,77 @@ const ClausesList = () => {
     }
     return result;
   }, [search, catategorylist]);
+  const handleFileClick = (fileUrl: any) => {
+    window.open(fileUrl, "_blank");
+  };
 
   const columns: GridColDef[] = [
-    ...defaultColumns,
+    {
+      flex: 0.2,
+      field: "name",
+      minWidth: 230,
+      headerName: "Name",
+      renderCell: ({ row }: any) => {
+        const { name } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+
+    {
+      flex: 0.3,
+      field: "createdAt",
+      minWidth: 150,
+      headerName: "Created Date",
+      renderCell: ({ row }: any) => {
+        const { createdAt } = row;
+
+        // Specify the desired time zone, e.g., 'America/New_York'
+
+        const timeZone = "America/New_York";
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
+
+        const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
+          timeZone,
+        });
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {formattedDate}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      field: "uploaded_by",
+      minWidth: 230,
+      headerName: "Created By",
+      renderCell: ({ row }: any) => {
+        const { uploaded_by } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {uploaded_by || "-"}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
     {
       flex: 0.02,
       minWidth: 100,
@@ -316,7 +218,7 @@ const ClausesList = () => {
       field: "actions",
       headerName: "Actions",
       headerAlign: "center",
-      renderCell: ({ row }: CellType) => (
+      renderCell: ({ row }: any) => (
         <div>
           <IconButton
             aria-label="more"
@@ -341,27 +243,16 @@ const ClausesList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/update-clauses/${menuState.row?._id}`); // Use menuState.row._id
+                setIsOpenCreate(true);
+                setItemName({
+                  id: menuState.row?._id || "",
+                  name: menuState.row?.name || "",
+                });
               }}
             >
-              Edit
+              Rename
             </MenuItem>
-            {/* <MenuItem
-              onClick={() => {
-                handleClose();
-                handleActive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Active
-            </MenuItem> */}
-            {/* <MenuItem
-              onClick={() => {
-                handleClose();
-                handleInactive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Inactive
-            </MenuItem> */}
+
             <MenuItem
               onClick={() => {
                 handleDelete(menuState.row?._id); // Use menuState.row._id
@@ -380,12 +271,12 @@ const ClausesList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Clauses" />
+          <CardHeader title=" Custom Fields" />
           <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
-            <Link to="/dashboard/clauses-list" className="link-no-underline">
+            <Link to="/dashboard/feild-list" className="link-no-underline">
               Home
             </Link>
             {/* <Typography color="text.primary">Categories</Typography> */}
@@ -420,15 +311,16 @@ const ClausesList = () => {
                 </Box>
               </div>
 
-              <div>
+              <div style={{ display: "flex" }}>
                 <Button
-                  sx={{ ml: 2, textTransform: "none" }}
+                  sx={{ mr: 2, textTransform: "none" }}
                   variant="contained"
-                  component={Link}
-                  to="/dashboard/create-clauses"
+                  onClick={() => setIsOpenCreate(true)}
                 >
-                  <AddIcon /> Create Clause
+                  <AddIcon />
+                  Create Field
                 </Button>
+                {/* <MenuButton /> */}
               </div>
             </Box>
           </Card>
@@ -482,8 +374,15 @@ const ClausesList = () => {
           </Card>
         </Grid>
       </Grid>
+      <CreateField
+        open={isOpenCreate}
+        onClose={handleCloseModalResetPass}
+        itemName={itemName}
+        listData={listData}
+        setItemName={setItemName}
+      />
     </>
   );
 };
 
-export default ClausesList;
+export default FieldList;

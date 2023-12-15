@@ -77,7 +77,7 @@ const defaultColumns: any[] = [
     flex: 0.3,
     minWidth: 125,
     field: "managerFirstName",
-    headerName: "Manager",
+    headerName: "Admin",
     sortable: true,
     renderCell: (params: any) => (
       <Typography sx={{ color: "text.secondary" }}>
@@ -425,38 +425,37 @@ const BranchList = () => {
                 pr: 3,
                 width: "100%",
                 display: "flex",
-                flexWrap: "wrap",
+                flexDirection: { xs: "column", sm: "row" }, // Responsive flex direction
                 alignItems: "center",
                 justifyContent: "space-between",
               }}
             >
-              <div style={{ display: "flex" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                  }}
-                >
-                  <TextField
-                    size="small"
-                    value={search}
-                    placeholder="Search"
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </Box>
-              </div>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  mb: { xs: 2, sm: 0 }, // Margin bottom on xs screens
+                  width: { xs: "100%", sm: "auto" }, // Full width on xs screens
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={search}
+                  placeholder="Search"
+                  onChange={(e) => setSearch(e.target.value)}
+                  sx={{ minWidth: "150px", flexGrow: { xs: 1, sm: 0 } }} // TextField takes available space on xs screens
+                />
+              </Box>
 
-              <div>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-team"
-                >
-                  <AddIcon /> Create Team
-                </Button>
-              </div>
+              <Button
+                sx={{ textTransform: "none", width: "fit-content" }} // Button width to fit its content
+                variant="contained"
+                component={Link}
+                to="/dashboard/create-team"
+              >
+                <AddIcon /> Create Team
+              </Button>
             </Box>
           </Card>
         </Grid>
@@ -486,21 +485,24 @@ const BranchList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <DataGrid
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                autoHeight
-                pagination
-                rows={filteredList || []}
-                columns={columns}
-                // checkboxSelection
-                disableRowSelectionOnClick
-                pageSizeOptions={[8, 25, 50]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
-                getRowId={(row) => row._id}
-                // disableColumnMenu
-              />
+              <Box sx={{ maxHeight: 510, width: "100%", overflow: "auto" }}>
+                <DataGrid
+                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
+                  pagination
+                  rows={filteredList || []}
+                  columns={columns}
+                  // checkboxSelection
+                  disableRowSelectionOnClick
+                  pageSizeOptions={[7, 25, 50]}
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                  onRowSelectionModelChange={(rows: any) =>
+                    setSelectedRows(rows)
+                  }
+                  getRowId={(row: any) => row._id}
+                  // disableColumnMenu
+                />
+              </Box>
             )}
           </Card>
         </Grid>

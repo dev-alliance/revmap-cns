@@ -77,7 +77,12 @@ import TemplateList from "@/pages/dasboard/templates/TemplateList";
 import CreateTemplate from "@/pages/dasboard/templates/CreateTemplate";
 import UpdateTemplate from "@/pages/dasboard/templates/UpdateTemplate";
 import DescriptionIcon from "@mui/icons-material/Description";
-
+import FieldList from "@/pages/dasboard/customField/FieldList";
+import InputIcon from "@mui/icons-material/Input";
+import ApprovalList from "@/pages/dasboard/approval/ApprovalList";
+import CreateApproval from "@/pages/dasboard/approval/CreateApproval";
+import UpdateApproval from "@/pages/dasboard/approval/UpdateApproval";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
 const drawerWidth = 240;
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -97,13 +102,8 @@ export default function Dashboard() {
     setAnchorEl(null);
   };
 
-  const handleMenuOptionClick = (option: string) => {
-    console.log(option + " clicked");
-    // You can add logic here for different options
-    handleMenuClose();
-  };
-
   const menuId = "primary-account-menu";
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -125,7 +125,7 @@ export default function Dashboard() {
         />
       </Toolbar>
       <Divider />
-      <List>
+      <List onClick={handleDrawerToggle}>
         <ListItemButton onClick={handleClick}>
           <ListItemIcon>
             <DashboardIcon />
@@ -189,6 +189,15 @@ export default function Dashboard() {
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/approval-list">
+          <ListItemIcon>
+            <HowToRegIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Approvals"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
         <ListItemButton component={Link} to="/dashboard/category-list">
           <ListItemIcon>
             <CategoryIcon />
@@ -226,25 +235,35 @@ export default function Dashboard() {
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
+
+        <ListItemButton component={Link} to="/dashboard/template-list">
+          <ListItemIcon>
+            <DescriptionIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Templates"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/feild-list">
+          <ListItemIcon>
+            <InputIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Custom Fields"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/update-compony">
+          <ListItemIcon>
+            <BusinessIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Company Profile"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
       </List>
-      <ListItemButton component={Link} to="/dashboard/update-compony">
-        <ListItemIcon>
-          <BusinessIcon />
-        </ListItemIcon>
-        <ListItemText
-          primary="Company Profile"
-          primaryTypographyProps={{ variant: "subtitle2" }}
-        />
-      </ListItemButton>
-      <ListItemButton component={Link} to="/dashboard/template-list">
-        <ListItemIcon>
-          <DescriptionIcon />
-        </ListItemIcon>
-        <ListItemText
-          primary="Templates"
-          primaryTypographyProps={{ variant: "subtitle2" }}
-        />
-      </ListItemButton>
     </div>
   );
 
@@ -262,7 +281,6 @@ export default function Dashboard() {
       >
         <Toolbar>
           <IconButton
-            color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
@@ -425,6 +443,12 @@ export default function Dashboard() {
           <Route path="/template-list" element={<TemplateList />} />
           <Route path="/create-template" element={<CreateTemplate />} />
           <Route path="/update-template/:id" element={<UpdateTemplate />} />
+
+          <Route path="/feild-list" element={<FieldList />} />
+
+          <Route path="/approval-list" element={<ApprovalList />} />
+          <Route path="/create-approval" element={<CreateApproval />} />
+          <Route path="/update-approval/:id" element={<UpdateApproval />} />
 
           <Route path="/sub-page-1" element={<SubPage1 />} />
         </Routes>

@@ -109,21 +109,25 @@ const CreateClauses = () => {
               }}
             >
               <Typography variant="h5" sx={{ marginBottom: 2 }}>
-                Create Clauses
+                Create Clause
               </Typography>
 
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
                 <Link
+                  style={{ marginRight: "-7px" }}
                   to="/dashboard/clauses-list"
                   className="link-no-underline"
                 >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
-                  Create Clauses
+                <Typography
+                  style={{ marginRight: "-7px", fontSize: "14px" }}
+                  color="text.primary"
+                >
+                  Create Clause
                 </Typography>
               </Breadcrumbs>
             </Box>
@@ -159,7 +163,7 @@ const CreateClauses = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Add Name"
+                    placeholder="Add name"
                     fullWidth
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -179,7 +183,7 @@ const CreateClauses = () => {
                 render={({ field }) => (
                   <TextareaAutosize
                     {...field}
-                    placeholder="Enter Description"
+                    placeholder="Enter description"
                     minRows={4} // Adjust the number of rows as needed
                     style={{
                       width: "100%",

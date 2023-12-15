@@ -122,12 +122,19 @@ const CreateTags = () => {
 
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
-                <Link to="/dashboard/tags-list" className="link-no-underline">
+                <Link
+                  style={{ marginRight: "-7px" }}
+                  to="/dashboard/tags-list"
+                  className="link-no-underline"
+                >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                <Typography
+                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  color="text.primary"
+                >
                   Create Tags
                 </Typography>
               </Breadcrumbs>
@@ -165,7 +172,7 @@ const CreateTags = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Add Name"
+                    placeholder="Add name"
                     fullWidth
                     error={!!errors.name}
                     helperText={errors.name?.message}

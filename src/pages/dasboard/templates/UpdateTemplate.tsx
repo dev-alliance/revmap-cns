@@ -192,15 +192,19 @@ const UpdateTemplate = () => {
 
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
                 <Link
+                  style={{ marginRight: "-7px" }}
                   to="/dashboard/template-list"
                   className="link-no-underline"
                 >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                <Typography
+                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  color="text.primary"
+                >
                   Update Template
                 </Typography>
               </Breadcrumbs>

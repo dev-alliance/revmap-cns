@@ -244,12 +244,16 @@ const UpdateUser = () => {
       <CardHeader title=" Update User" />
       <Breadcrumbs
         aria-label="breadcrumb"
-        sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
+        sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "14px" }}
       >
-        <Link to="/dashboard/user-list" className="link-no-underline">
+        <Link
+          style={{ marginRight: "-7px" }}
+          to="/dashboard/user-list"
+          className="link-no-underline"
+        >
           Home
         </Link>
-        <Typography sx={{ fontSize: "14px" }} color="text.primary">
+        <Typography sx={{ fontSize: "14px", ml: "-7px" }} color="text.primary">
           Update User
         </Typography>
       </Breadcrumbs>
@@ -407,7 +411,15 @@ const UpdateUser = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>Select Team </em> // Placeholder text with custom color
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
+                              Select Team{" "}
+                            </em> // Placeholder text with custom color
                           );
                         }
 
@@ -445,7 +457,15 @@ const UpdateUser = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>Select Branch</em> // Placeholder text with custom color
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
+                              Select Branch
+                            </em> // Placeholder text with custom color
                           );
                         }
                         const selectedBranch = branchData.find(

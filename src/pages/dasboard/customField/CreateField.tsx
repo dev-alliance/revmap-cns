@@ -18,9 +18,9 @@ import toast from "react-hot-toast";
 import { ChangeUserPassword } from "@/service/api/apiMethods";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { createFolder, updateFolder } from "@/service/api/folder";
+import { create, updatecustomFields } from "@/service/api/customFeild";
 
-interface CreateFolderProps {
+interface CreateFieldProps {
   open: boolean;
   onClose: () => void;
   listData: () => void;
@@ -32,7 +32,7 @@ interface IFormInput {
   name: string;
 }
 
-const CreateFolder: React.FC<CreateFolderProps> = ({
+const CreateField: React.FC<CreateFieldProps> = ({
   open,
   onClose,
   itemName,
@@ -63,12 +63,13 @@ const CreateFolder: React.FC<CreateFolderProps> = ({
       const payload = {
         id: user?._id,
         name: data.name,
+        uploaded_by: user?.firstName,
       };
       let response;
       if (itemName?.id) {
-        response = await updateFolder(itemName?.id, payload);
+        response = await updatecustomFields(itemName?.id, payload);
       } else {
-        response = await createFolder(payload);
+        response = await create(payload);
       }
       console.log(response.message);
       if (response.ok === true) {
@@ -133,16 +134,16 @@ const CreateFolder: React.FC<CreateFolderProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormGroup>
             <Typography variant="subtitle2" sx={{ mb: 2 }}>
-              Folder Name
+              Field Name
             </Typography>
             <Controller
               name="name"
               control={control}
-              rules={{ required: "Folder Name is required" }}
+              rules={{ required: "field Name is required" }}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  placeholder="Add folder name"
+                  placeholder="Add field name"
                   fullWidth
                   error={!!errors.name}
                   helperText={errors.name?.message}
@@ -180,4 +181,4 @@ const CreateFolder: React.FC<CreateFolderProps> = ({
   );
 };
 
-export default CreateFolder;
+export default CreateField;

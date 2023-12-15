@@ -351,6 +351,48 @@ const TagList = () => {
                 pr: 3,
                 width: "100%",
                 display: "flex",
+                flexDirection: { xs: "column", sm: "row" }, // Responsive flex direction
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  mb: { xs: 2, sm: 0 }, // Margin bottom on xs screens
+                  width: { xs: "100%", sm: "auto" }, // Full width on xs screens
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={search}
+                  placeholder="Search"
+                  onChange={(e) => setSearch(e.target.value)}
+                  sx={{ minWidth: "150px", flexGrow: { xs: 1, sm: 0 } }} // TextField takes available space on xs screens
+                />
+              </Box>
+
+              <Button
+                sx={{ textTransform: "none", width: "fit-content" }} // Button width to fit its content
+                variant="contained"
+                component={Link}
+                to="/dashboard/create-tags"
+              >
+                <AddIcon /> Create Tags
+              </Button>
+            </Box>
+          </Card>
+
+          {/* <Card>
+            <Box
+              sx={{
+                pl: 3,
+                p: 2,
+                pr: 3,
+                width: "100%",
+                display: "flex",
                 flexWrap: "wrap",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -384,7 +426,7 @@ const TagList = () => {
                 </Button>
               </div>
             </Box>
-          </Card>
+          </Card> */}
         </Grid>
 
         <Grid item xs={12}>

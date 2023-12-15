@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import logo from "@/assets/contract-logo.png"; // Ensure this path is correct
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { CreateCompony } from "@/service/api/apiMethods";
 import { getcompaniesById, updatecompanies } from "@/service/api/compony";
@@ -37,6 +37,7 @@ type FormInputs = {
   industry: string;
   websiteUrl: string;
   image: string;
+  billing_email: string;
 };
 
 const UpdateCompony = () => {
@@ -70,15 +71,16 @@ const UpdateCompony = () => {
       setIsLoading(true);
       const { data } = await getcompaniesById(user?._id);
       console.log(data);
-      setValue("companyName", data.companyName);
-      setValue("companySize", data.companySize);
-      setValue("country", data.country);
-      setValue("timeZone", data.timeZone);
-      setValue("email", data.email);
-      setValue("country", data.country);
-      setValue("phoneNumber", data.phoneNumber);
-      setValue("industry", data.industry);
-      setValue("websiteUrl", data.websiteUrl);
+      setValue("companyName", data?.companyName);
+      setValue("companySize", data?.companySize);
+      setValue("country", data?.country);
+      setValue("timeZone", data?.timeZone);
+      setValue("email", data?.email);
+      setValue("country", data?.country);
+      setValue("phoneNumber", data?.phoneNumber);
+      setValue("industry", data?.industry);
+      setValue("websiteUrl", data?.websiteUrl);
+      setValue("billing_email", data?.billing_email);
       setImage(data?.image);
     } catch (error) {
       console.log(error);
@@ -510,35 +512,73 @@ const UpdateCompony = () => {
                   )}
                 />
               </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    mt: -2,
+                    mb: -1,
+                  }}
+                >
+                  Email
+                </Typography>
+                <Controller
+                  name="billing_email"
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: "Billing email is required",
+                    pattern: {
+                      value: /^\S+@\S+\.\S+$/,
+                      message: "Invalid email address",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      margin="normal"
+                      fullWidth
+                      type="email"
+                      autoComplete="email"
+                      placeholder="Enter billing email"
+                      error={Boolean(errors.email)}
+                      helperText={errors.email ? errors.email.message : ""}
+                      variant="outlined"
+                      size="small"
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Box
+                  sx={{
+                    display: "flex", // Enable Flexbox for this container
+                    justifyContent: "center", // Center content horizontally
+                    mt: 2.8, // Top margin
+                  }}
+                >
+                  <div>
+                    <Button
+                      variant="outlined"
+                      sx={{ textTransform: "none" }}
+                      component={Link}
+                      to="/dashboard"
+                    >
+                      Cancel
+                    </Button>
+
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </Box>
+              </Grid>
             </Grid>
-
-            <Box
-              sx={{
-                display: "flex", // Enable Flexbox for this container
-                justifyContent: "center", // Center content horizontally
-                mt: 2, // Top margin
-                mb: 2, // Bottom margin
-              }}
-            >
-              <div>
-                <Button
-                  variant="outlined"
-                  onClick={handleBack}
-                  sx={{ textTransform: "none" }}
-                >
-                  Cancel
-                </Button>
-
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                >
-                  Save
-                </Button>
-              </div>
-            </Box>
           </Box>
         </Grid>
       </Grid>

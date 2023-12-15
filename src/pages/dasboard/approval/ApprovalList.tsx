@@ -20,20 +20,20 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 // ** Third Party Imports
-import { formatDistanceToNow } from "date-fns";
+// import { formatDistanceToNow } from "date-fns";
 import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
-import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
 import { format, utcToZonedTime } from "date-fns-tz";
-import { deleteClauses, getList, updateStatus } from "@/service/api/clauses";
-
+import AddIcon from "@mui/icons-material/Add";
+import CreateField from "@/pages/dasboard/customField/CreateField";
+import { deleteapprovals, getList } from "@/service/api/approval";
 interface CellType {
   row: any;
   _id: any;
+  name: any;
 }
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -51,132 +51,7 @@ interface RowType {
 
 // ** Styled components
 
-const defaultColumns: any[] = [
-  {
-    flex: 0.2,
-    field: "name",
-    minWidth: 230,
-    headerName: "Clause Name",
-    renderCell: ({ row }: any) => {
-      const { name } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.4,
-    field: "content",
-    minWidth: 250,
-    headerName: "Clause Description",
-    renderCell: ({ row }: any) => {
-      const { content } = row;
-      const displayContent =
-        content.length > 60 ? `${content.substring(0, 60)}...` : content;
-
-      return (
-        <Tooltip title={content} arrow>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {displayContent}
-              </Typography>
-            </Box>
-          </Box>
-        </Tooltip>
-      );
-    },
-  },
-
-  {
-    flex: 0.2,
-    field: "createdAt",
-    minWidth: 130,
-    headerName: "Created Date",
-    renderCell: ({ row }: any) => {
-      const { createdAt } = row;
-
-      // Specify the desired time zone, e.g., 'America/New_York'
-
-      const timeZone = "America/New_York";
-      // Convert UTC date to the specified time zone
-      const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
-
-      const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
-        timeZone,
-      });
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {formattedDate}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  // {
-  //   flex: 0.2,
-  //   minWidth: 125,
-  //   field: "status",
-  //   headerName: "Status",
-  //   renderCell: ({ row }: { row: any }) => (
-  //     <>
-  //       <Chip
-  //         size="small"
-  //         variant="outlined"
-  //         label={
-  //           row.status === "Active"
-  //             ? "Active"
-  //             : row.status === "Archived"
-  //             ? "Archived"
-  //             : "Inactive"
-  //         }
-  //         sx={{
-  //           fontSize: "14px",
-  //           // fontWeight: "bold",
-  //           backgroundColor:
-  //             row.status === "Active"
-  //               ? "#D3FDE4"
-  //               : row.status === "Archived"
-  //               ? "#FFF7CB"
-  //               : "#FFCBCB",
-  //           color:
-  //             row.status === "Active"
-  //               ? "#3F9748"
-  //               : row.status === "Archived"
-  //               ? "#D32F2F"
-  //               : "#red",
-  //           borderColor:
-  //             row.status === "Active"
-  //               ? "#D3FDE4"
-  //               : row.status === "Archived"
-  //               ? "#FFF7CB"
-  //               : "#FFCBCB", // Optional: to match border color with background
-  //           "& .MuiChip-label": {
-  //             // This targets the label inside the chip for more specific styling
-  //             color:
-  //               row.status === "Active"
-  //                 ? "#3F9748"
-  //                 : row.status === "Archived"
-  //                 ? "#D36A2F"
-  //                 : "#D32F2F",
-  //           },
-  //         }}
-  //       />
-  //     </>
-  //   ),
-  // },
-];
-
-const ClausesList = () => {
+const ApprovalList = () => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
@@ -185,10 +60,12 @@ const ClausesList = () => {
     page: 0,
     pageSize: 7,
   });
-  const [isLoading, setIsLoading] = useState(true);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
-
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const handleCloseModalResetPass = () => setIsOpenCreate(false);
+  const [itemName, setItemName] = useState({ id: "", name: "" });
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
     row: CellType | null;
@@ -229,54 +106,9 @@ const ClausesList = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete this clause?")) {
+      if (window.confirm("Are you sure you want to delete this approval?")) {
         setIsLoading(true);
-        const res = await deleteClauses(id);
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleActive = async (id: any) => {
-    try {
-      if (
-        window.confirm("Are you sure you want to change the status this item?")
-      ) {
-        setIsLoading(true);
-        const res = await updateStatus(id, { status: "Active" });
-        console.log({ res });
-
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleInactive = async (id: any) => {
-    try {
-      if (
-        window.confirm("Are you sure you want to change the status this item?")
-      ) {
-        setIsLoading(true);
-        const res = await updateStatus(id, { status: "Inactive" });
-        console.log({ res });
-
+        const res = await deleteapprovals(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -306,9 +138,115 @@ const ClausesList = () => {
     }
     return result;
   }, [search, catategorylist]);
+  const handleFileClick = (fileUrl: any) => {
+    window.open(fileUrl, "_blank");
+  };
 
   const columns: GridColDef[] = [
-    ...defaultColumns,
+    {
+      flex: 0.2,
+      field: "name",
+      minWidth: 230,
+      headerName: "Name",
+      renderCell: ({ row }: any) => {
+        const { name } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.4,
+      field: "description",
+      minWidth: 250,
+      headerName: "Clause Description",
+      renderCell: ({ row }: any) => {
+        const { description } = row;
+        const displaydescription =
+          description.length > 60
+            ? `${description.substring(0, 60)}...`
+            : description;
+
+        return (
+          <Tooltip title={description} arrow>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {displaydescription}
+                </Typography>
+              </Box>
+            </Box>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      field: "type",
+      minWidth: 230,
+      headerName: "Approval Type",
+      renderCell: ({ row }: any) => {
+        const { type } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {type || "-"}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      field: "approver",
+      minWidth: 230,
+      headerName: "Approver",
+      renderCell: ({ row }: any) => {
+        const { approver } = row;
+        const bubbleColors = ["#FEC85E", "#BC3D89", "#725FE7,#00A7B1"]; // Yellow, Green, Blue
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "row" }}>
+              {approver && approver.length > 0 ? (
+                approver.map((appr: any, index: number) => (
+                  <Box
+                    key={appr._id}
+                    sx={{
+                      width: 35, // Bubble size
+                      height: 35, // Bubble size
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "50%", // Makes the Box circular
+                      backgroundColor:
+                        bubbleColors[index % bubbleColors.length], // Alternating background color
+                      color: "#FFFFFF", // White text color
+                      marginRight: -1,
+                    }}
+                  >
+                    <Typography>
+                      {appr.firstName?.charAt(0).toUpperCase()}
+                    </Typography>
+                  </Box>
+                ))
+              ) : (
+                <Typography sx={{ color: "text.secondary" }}>-</Typography>
+              )}
+            </Box>
+          </Box>
+        );
+      },
+    },
+
     {
       flex: 0.02,
       minWidth: 100,
@@ -316,7 +254,7 @@ const ClausesList = () => {
       field: "actions",
       headerName: "Actions",
       headerAlign: "center",
-      renderCell: ({ row }: CellType) => (
+      renderCell: ({ row }: any) => (
         <div>
           <IconButton
             aria-label="more"
@@ -341,27 +279,12 @@ const ClausesList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/update-clauses/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/update-approval/${menuState.row?._id}`); // Use menuState.row._id
               }}
             >
               Edit
             </MenuItem>
-            {/* <MenuItem
-              onClick={() => {
-                handleClose();
-                handleActive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Active
-            </MenuItem> */}
-            {/* <MenuItem
-              onClick={() => {
-                handleClose();
-                handleInactive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Inactive
-            </MenuItem> */}
+
             <MenuItem
               onClick={() => {
                 handleDelete(menuState.row?._id); // Use menuState.row._id
@@ -380,12 +303,12 @@ const ClausesList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Clauses" />
+          <CardHeader title="Approvals" />
           <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
-            <Link to="/dashboard/clauses-list" className="link-no-underline">
+            <Link to="/dashboard/approval-list" className="link-no-underline">
               Home
             </Link>
             {/* <Typography color="text.primary">Categories</Typography> */}
@@ -420,15 +343,17 @@ const ClausesList = () => {
                 </Box>
               </div>
 
-              <div>
+              <div style={{ display: "flex" }}>
                 <Button
-                  sx={{ ml: 2, textTransform: "none" }}
+                  sx={{ mr: 2, textTransform: "none" }}
                   variant="contained"
                   component={Link}
-                  to="/dashboard/create-clauses"
+                  to="/dashboard/create-approval"
                 >
-                  <AddIcon /> Create Clause
+                  <AddIcon />
+                  Create Approval
                 </Button>
+                {/* <MenuButton /> */}
               </div>
             </Box>
           </Card>
@@ -486,4 +411,4 @@ const ClausesList = () => {
   );
 };
 
-export default ClausesList;
+export default ApprovalList;

@@ -134,18 +134,18 @@ const UpdateTags = () => {
               }}
             >
               <Typography variant="h5" sx={{ marginBottom: 2 }}>
-                Update Tags
+                Update Tag
               </Typography>
 
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
                 <Link to="/dashboard/tags-list" className="link-no-underline">
                   Home
                 </Link>
                 <Typography sx={{ fontSize: "14px" }} color="text.primary">
-                  Update Tags
+                  Update Tag
                 </Typography>
               </Breadcrumbs>
             </Box>

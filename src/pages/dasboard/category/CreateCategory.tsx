@@ -140,12 +140,19 @@ const CreateCategory = () => {
 
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
-                <Link to="/dashboard/teamlist" className="link-no-underline">
+                <Link
+                  style={{ marginRight: "-7px" }}
+                  to="/dashboard/teamlist"
+                  className="link-no-underline"
+                >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                <Typography
+                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  color="text.primary"
+                >
                   Create Category
                 </Typography>
               </Breadcrumbs>
@@ -164,7 +171,7 @@ const CreateCategory = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Add Category Name"
+                    placeholder="Add category name"
                     fullWidth
                     error={!!errors.name}
                     helperText={errors.name?.message}
@@ -181,7 +188,7 @@ const CreateCategory = () => {
                 sx={{ textTransform: "none", mt: 2, float: "right" }}
                 variant="contained"
               >
-                <AddIcon /> Add Sub Category
+                <AddIcon /> Add Subcategory
               </Button>
             </Grid>
             <Grid />
@@ -190,7 +197,7 @@ const CreateCategory = () => {
                 <Grid item xs={12} sm={7}>
                   <div key={index} style={{ display: "flex" }}>
                     <TextField
-                      placeholder={`add Subcategory ${index + 1}`}
+                      placeholder={`Add subcategory ${index + 1}`}
                       value={subCategory.name}
                       onChange={(e: any) => {
                         const updatedSubCategories = [...subCategories];

@@ -209,8 +209,8 @@ const TemplateList = () => {
       renderCell: ({ row }: any) => {
         const { description } = row;
         const displaydescription =
-          description?.length > 60
-            ? `${description?.substring(0, 60)}...`
+          description?.length > 30
+            ? `${description?.substring(0, 30)}...`
             : description;
 
         return (
@@ -345,7 +345,7 @@ const TemplateList = () => {
       flex: 0.2,
       field: "uploaded_by",
       minWidth: 230,
-      headerName: "Uploaded BY",
+      headerName: "Created By",
       renderCell: ({ row }: any) => {
         const { uploaded_by } = row;
 

@@ -174,12 +174,19 @@ const UpdateTeam = () => {
               </Typography>
               <Breadcrumbs
                 aria-label="breadcrumb"
-                sx={{ mt: -2, mb: 2, fontSize: "13px" }}
+                sx={{ mt: -2, mb: 2, fontSize: "14px" }}
               >
-                <Link to="/dashboard/teamlist" className="link-no-underline">
+                <Link
+                  style={{ marginRight: "-7px" }}
+                  to="/dashboard/teamlist"
+                  className="link-no-underline"
+                >
                   Home
                 </Link>
-                <Typography sx={{ fontSize: "14px" }} color="text.primary">
+                <Typography
+                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  color="text.primary"
+                >
                   Update Teams
                 </Typography>
               </Breadcrumbs>
@@ -228,7 +235,7 @@ const UpdateTeam = () => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Team Manger*</Typography>
               <Controller
                 name="manager"
@@ -244,7 +251,15 @@ const UpdateTeam = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>Select User</em> // Placeholder text with custom color
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
+                              Select User
+                            </em> // Placeholder text with custom color
                           );
                         }
                         // Find the selected manager by ID
@@ -267,7 +282,7 @@ const UpdateTeam = () => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Status</Typography>
               <Controller
                 name="status"
@@ -283,7 +298,13 @@ const UpdateTeam = () => {
                       renderValue={(value) => {
                         if (value === "") {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
                               {" "}
                               Choose a status
                             </em> // Placeholder text with custom color
@@ -302,7 +323,7 @@ const UpdateTeam = () => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Team Members</Typography>
               <Controller
                 name="members"
@@ -322,7 +343,15 @@ const UpdateTeam = () => {
                       renderValue={(selected) => {
                         if (selected.length === 0) {
                           return (
-                            <em style={{ color: "#9A9A9A" }}>Select members</em>
+                            <em
+                              style={{
+                                color: "#C2C2C2",
+                                fontStyle: "normal",
+                                fontSize: "15.5px",
+                              }}
+                            >
+                              Select members
+                            </em>
                           );
                         }
                         // Map selected IDs to names
