@@ -82,7 +82,6 @@ const BranchForm = () => {
   }, [selectedCountry, setValue]);
 
   // Watchers for countryCode and contact
-
   // OnChange handler for countryCode - no concatenation logic here
   const handleCountryCodeChange = (e: any) => {
     const newCountryCode = e.target.value;
