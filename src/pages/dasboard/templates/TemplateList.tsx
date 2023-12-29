@@ -228,7 +228,7 @@ const TemplateList = () => {
     },
     {
       flex: 0.2,
-      minWidth: 125,
+      minWidth: 100,
       field: "status",
       headerName: "Status",
       renderCell: ({ row }: { row: any }) => (
@@ -313,9 +313,9 @@ const TemplateList = () => {
     },
 
     {
-      flex: 0.3,
+      flex: 0.2,
       field: "createdAt",
-      minWidth: 150,
+      minWidth: 140,
       headerName: "Created Date",
       renderCell: ({ row }: any) => {
         const { createdAt } = row;
@@ -326,7 +326,7 @@ const TemplateList = () => {
         // Convert UTC date to the specified time zone
         const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
 
-        const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
+        const formattedDate = format(zonedDate, "dd-MM-yyyy ", {
           timeZone,
         });
 
@@ -344,7 +344,7 @@ const TemplateList = () => {
     {
       flex: 0.2,
       field: "uploaded_by",
-      minWidth: 230,
+      minWidth: 140,
       headerName: "Created By",
       renderCell: ({ row }: any) => {
         const { uploaded_by } = row;
@@ -431,7 +431,7 @@ const TemplateList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Template" />
+          <CardHeader title="Templates" />
           <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}

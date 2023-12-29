@@ -117,7 +117,7 @@ const CreateTags = () => {
               }}
             >
               <Typography variant="h5" sx={{ marginBottom: 2 }}>
-                Create Tags
+                Create Tag
               </Typography>
 
               <Breadcrumbs
@@ -135,7 +135,7 @@ const CreateTags = () => {
                   sx={{ fontSize: "14px", ml: "-7px" }}
                   color="text.primary"
                 >
-                  Create Tags
+                  Create Tag
                 </Typography>
               </Breadcrumbs>
             </Box>

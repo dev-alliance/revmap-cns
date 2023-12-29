@@ -18,26 +18,34 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
+import AddIcon from "@mui/icons-material/Add";
 // ** Third Party Imports
-import logo from "@/assets/team_icon.svg";
+
 import toast from "react-hot-toast";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
 import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  archiveTeam,
-  deleteTeam,
-  getTeamsList,
-  resetPaasword,
+  archiveBranch,
+  deleteBranch,
+  getBranchList,
 } from "@/service/api/apiMethods";
-import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
-import { deleteTags, getList, updateStatus } from "@/service/api/tags";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+// import MenuButton from "@/components/MenuButton";
+
 interface CellType {
   row: any;
   _id: any;
+}
+interface CheckedState {
+  name: boolean;
+  manager: boolean;
+  status: boolean;
+  activeContract: boolean;
+  annualValue: boolean;
 }
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -55,26 +63,38 @@ interface RowType {
 
 // ** Styled components
 
-const defaultColumns: any[] = [
+const defaultColumns: GridColDef[] = [
   {
     flex: 0.2,
-    field: "name",
-    // minWidth: 230,
-    headerName: "Tag Name",
+    field: "branchName",
+    minWidth: 220,
+    headerName: "Branch Name",
     renderCell: ({ row }: any) => {
-      const { name } = row;
+      const { branchName } = row;
 
       return (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {/* <Img src={logo} /> */}
+          {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>
+              {branchName}
+            </Typography>
           </Box>
         </Box>
       );
     },
   },
+  {
+    flex: 0.3,
+    minWidth: 170,
+    field: "state",
+    headerName: "Region/State",
 
+    renderCell: ({ row }: { row: any }) => {
+      const { state } = row;
+      return <Typography sx={{ color: "text.secondary" }}>{state}</Typography>;
+    },
+  },
   {
     flex: 0.2,
     minWidth: 125,
@@ -127,20 +147,74 @@ const defaultColumns: any[] = [
       </>
     ),
   },
+
+  // {
+  //   flex: 0.3,
+  //   minWidth: 125,
+  //   field: "branchId",
+  //   headerName: "Branch ID",
+  //   renderCell: ({ row }: { row: any }) => {
+  //     const { branchId } = row;
+  //     return (
+  //       <Typography sx={{ color: "text.secondary" }}>{`${
+  //         branchId || ""
+  //       }`}</Typography>
+  //     );
+  //   },
+  // },
+  {
+    flex: 0.3,
+    minWidth: 125,
+    field: "manager",
+    headerName: "Manager ",
+    renderCell: ({ row }: { row: any }) => {
+      const { manager } = row;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{`${
+          manager?.firstName || "-"
+        }`}</Typography>
+      );
+    },
+  },
+  {
+    flex: 0.3,
+    minWidth: 105,
+    field: "Active Contracts",
+    headerName: "Active Contracts",
+
+    renderCell: ({ row }: { row: RowType }) => {
+      return <Typography sx={{ color: "text.secondary" }}>{"10"}</Typography>;
+    },
+  },
+
+  {
+    flex: 0.3,
+    minWidth: 125,
+    field: "display_name",
+    headerName: "Annual Value ",
+
+    renderCell: ({ row }: { row: RowType }) => {
+      const { display_name } = row;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
+      );
+    },
+  },
 ];
 
-const TagList = () => {
+const ContractList = () => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 7,
+    pageSize: 8,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
+  const [data, setData] = useState([]);
 
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
@@ -161,16 +235,12 @@ const TagList = () => {
     setMenuState({ anchorEl: null, row: null });
   };
 
-  // ** Hooks
-
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getList();
-
+      const { data } = await getBranchList(user?._id);
       setCategorylist(data);
-
-      console.log("teams", data);
+      console.log("branc", data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -182,9 +252,13 @@ const TagList = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete this tag?")) {
+      if (
+        window.confirm(
+          "Deleting branch will delete all the data associated with it."
+        )
+      ) {
         setIsLoading(true);
-        const res = await deleteTags(id);
+        const res = await deleteBranch(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -199,35 +273,11 @@ const TagList = () => {
     }
   };
 
-  const handleActive = async (id: any) => {
+  const handleArchive = async (id: any) => {
     try {
-      if (
-        window.confirm("Are you sure you want to change the status this tag?")
-      ) {
+      if (window.confirm("Are you sure you want to archive this branch?")) {
         setIsLoading(true);
-        const res = await updateStatus(id, { status: "Active" });
-        console.log({ res });
-
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleInactive = async (id: any) => {
-    try {
-      if (
-        window.confirm("Are you sure you want to change the status this tag?")
-      ) {
-        setIsLoading(true);
-        const res = await updateStatus(id, { status: "Inactive" });
+        const res = await archiveBranch(id, { status: "Archived" });
         console.log({ res });
 
         if (res.ok === true) {
@@ -245,22 +295,27 @@ const TagList = () => {
   };
 
   useEffect(() => {
-    listData();
-  }, []);
-
-  console.log(search, "serch");
+    if (user?._id) listData();
+  }, [user?._id]);
 
   const filteredList = useMemo(() => {
     let result = catategorylist;
     if (search?.trim().length) {
       result = result.filter((item) =>
-        item.name?.toLowerCase().includes(search.trim().toLowerCase())
+        item.branchName?.toLowerCase().includes(search.trim().toLowerCase())
       );
     }
     return result;
   }, [search, catategorylist]);
 
-  const columns: GridColDef[] = [
+  const handleApplyFilters = async (filters: CheckedState) => {
+    console.log(filters, "filters");
+
+    // const filteredData = await fetchDataWithFilters(filters);
+    // setData(filteredData);
+  };
+
+  const columns: any[] = [
     ...defaultColumns,
     {
       flex: 0.02,
@@ -275,7 +330,7 @@ const TagList = () => {
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
-            onClick={(e: any) => handleClick(e, row)} // Pass the current row here
+            onClick={(e) => handleClick(e, row)} // Pass the current row here
           >
             <MoreVertIcon />
           </IconButton>
@@ -294,7 +349,7 @@ const TagList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/update-tags/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/branch-edit/${menuState.row?._id}`); // Use menuState.row._id
               }}
             >
               Edit
@@ -302,18 +357,10 @@ const TagList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                handleActive(menuState.row?._id); // Use menuState.row._id
+                handleArchive(menuState.row?._id); // Use menuState.row._id
               }}
             >
-              Active
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                handleInactive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Inactive
+              Archive
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -333,59 +380,44 @@ const TagList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Tags" />
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
+          <Box
+            sx={{
+              pr: 3,
+              width: "100%",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
-            <Link to="/dashboard/tags-list" className="link-no-underline">
-              Home
-            </Link>
-            {/* <Typography color="text.primary">Categories</Typography> */}
-          </Breadcrumbs>
-          <Card>
-            <Box
-              sx={{
-                pl: 3,
-                p: 2,
-                pr: 3,
-                width: "100%",
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" }, // Responsive flex direction
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
-                  mb: { xs: 2, sm: 0 }, // Margin bottom on xs screens
-                  width: { xs: "100%", sm: "auto" }, // Full width on xs screens
-                }}
+            <Box>
+              <CardHeader title="Contracts" />
+              <Breadcrumbs
+                aria-label="breadcrumb"
+                sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
               >
-                <TextField
-                  size="small"
-                  value={search}
-                  placeholder="Search"
-                  onChange={(e) => setSearch(e.target.value)}
-                  sx={{ minWidth: "150px", flexGrow: { xs: 1, sm: 0 } }} // TextField takes available space on xs screens
-                />
-              </Box>
-
+                <Link to="/dashboard/branchlist" className="link-no-underline">
+                  Home
+                </Link>
+                {/* <Typography color="text.primary">Categories</Typography> */}
+              </Breadcrumbs>
+            </Box>
+            <Box>
+              <Button variant="outlined" sx={{ textTransform: "none" }}>
+                <ExitToAppIcon /> Export
+              </Button>
               <Button
-                sx={{ textTransform: "none", width: "fit-content" }} // Button width to fit its content
+                sx={{ ml: 2, mr: 2, textTransform: "none" }}
                 variant="contained"
                 component={Link}
-                to="/dashboard/create-tags"
+                to="/dashboard/create-contract"
               >
-                <AddIcon /> Create Tag
+                <AddIcon /> Create Contract
               </Button>
             </Box>
-          </Card>
+          </Box>
 
-          {/* <Card>
+          <Card>
             <Box
               sx={{
                 pl: 3,
@@ -410,23 +442,29 @@ const TagList = () => {
                     size="small"
                     value={search}
                     placeholder="Search"
-                    onChange={(e: any) => setSearch(e.target.value)}
+                    onChange={(e) => setSearch(e.target.value)}
                   />
                 </Box>
               </div>
 
-              <div>
+              <div style={{ display: "flex" }}>
                 <Button
-                  sx={{ ml: 2, textTransform: "none" }}
+                  sx={{
+                    mr: 2,
+                    textTransform: "none",
+                    backgroundColor: "green", // Set the button color to green
+                    "&:hover": {
+                      backgroundColor: "darkgreen", // Darker green on hover
+                    },
+                  }}
                   variant="contained"
-                  component={Link}
-                  to="/dashboard/create-tags"
                 >
-                  <AddIcon /> Create Tags
+                  Set as a default
                 </Button>
+                {/* <MenuButton /> */}
               </div>
             </Box>
-          </Card> */}
+          </Card>
         </Grid>
 
         <Grid item xs={12}>
@@ -454,24 +492,21 @@ const TagList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <Box sx={{ maxHeight: 510, width: "100%", overflow: "auto" }}>
-                <DataGrid
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                  pagination
-                  rows={filteredList || []}
-                  columns={columns}
-                  // checkboxSelection
-                  disableRowSelectionOnClick
-                  pageSizeOptions={[7, 25, 50]}
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
-                  onRowSelectionModelChange={(rows: any) =>
-                    setSelectedRows(rows)
-                  }
-                  getRowId={(row: any) => row._id}
-                  // disableColumnMenu
-                />
-              </Box>
+              <DataGrid
+                style={{ paddingLeft: "10px", paddingRight: "10px" }}
+                autoHeight
+                pagination
+                rows={filteredList || []}
+                columns={columns}
+                // checkboxSelection
+                disableRowSelectionOnClick
+                pageSizeOptions={[8, 25, 50]}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
+                getRowId={(row) => row._id}
+                // disableColumnMenu
+              />
             )}
           </Card>
         </Grid>
@@ -480,4 +515,4 @@ const TagList = () => {
   );
 };
 
-export default TagList;
+export default ContractList;

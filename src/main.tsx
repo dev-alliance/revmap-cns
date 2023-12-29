@@ -24,6 +24,9 @@ const theme = createTheme({
     subtitle2: {
       fontSize: "17px",
     },
+    body2: {
+      fontSize: "12px",
+    },
     body1: {
       fontSize: "1rem",
       // fontWeight: 400,

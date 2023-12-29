@@ -83,6 +83,15 @@ import ApprovalList from "@/pages/dasboard/approval/ApprovalList";
 import CreateApproval from "@/pages/dasboard/approval/CreateApproval";
 import UpdateApproval from "@/pages/dasboard/approval/UpdateApproval";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
+import ContractList from "@/pages/dasboard/contract/ContractList";
+import ArticleIcon from "@mui/icons-material/Article";
+import CreateContract from "@/pages/dasboard/contract/CreateContract";
+import TinyDahsbord from "@/pages/dasboard/contract/sdk/TinyDahsbord";
+import CustomTextEditor from "@/pages/dasboard/contract/sdk/CustomTextEditor";
+// Usage: <ArticleIcon />
+
+// Usage: <AssignmentIcon />
+
 const drawerWidth = 240;
 export default function Dashboard() {
   const { user, logout } = useAuth();
@@ -158,6 +167,15 @@ export default function Dashboard() {
           </ListItemIcon>
           <ListItemText
             primary="Home"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/contract-list">
+          <ListItemIcon>
+            <ArticleIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Contracts"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
@@ -450,7 +468,11 @@ export default function Dashboard() {
           <Route path="/create-approval" element={<CreateApproval />} />
           <Route path="/update-approval/:id" element={<UpdateApproval />} />
 
+          <Route path="/contract-list" element={<ContractList />} />
+          <Route path="/create-contract" element={<CreateContract />} />
+          <Route path="/tiny-dahsbord" element={<TinyDahsbord />} />
           <Route path="/sub-page-1" element={<SubPage1 />} />
+          <Route path="/editor" element={<CustomTextEditor />} />
         </Routes>
       </Box>
     </Box>

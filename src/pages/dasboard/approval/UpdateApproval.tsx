@@ -239,8 +239,40 @@ const UpdateApproval = () => {
                 )}
               />
             </Grid>
+            <Grid item xs={12} sm={7}>
+              <Typography variant="subtitle2">Description</Typography>
+              <Controller
+                name="description"
+                control={control}
+                // rules={{ required: "Tag Name is required", maxLength: 50 }}
+                render={({ field }) => (
+                  <>
+                    <TextareaAutosize
+                      {...field}
+                      placeholder="50 characters"
+                      minRows={4}
+                      maxLength={50}
+                      onChange={(event) => {
+                        field.onChange(event); // react-hook-form Controller handle onChange
+                        handleCharCount(event); // Handle character count
+                      }}
+                      style={{
+                        width: "100%",
+                        fontSize: "16px",
+                        border: "1px solid #ced4da",
+                        borderRadius: "4px",
+                        padding: "10px",
+                      }}
+                    />
+                    <p style={{ fontSize: "14px", marginTop: "5px" }}>
+                      {charCount}/50 characters
+                    </p>
+                  </>
+                )}
+              />
+            </Grid>
             <Grid item xs={7}>
-              <Typography variant="subtitle2">Approver</Typography>
+              <Typography variant="subtitle2">Approver Name</Typography>
               <Controller
                 name="approver"
                 control={control}
@@ -266,7 +298,7 @@ const UpdateApproval = () => {
                                 fontSize: "15.5px",
                               }}
                             >
-                              Select approver
+                              Select approver name
                             </em>
                           );
                         }
@@ -299,38 +331,6 @@ const UpdateApproval = () => {
                       ))}
                     </Select>
                   </FormControl>
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={7}>
-              <Typography variant="subtitle2">File Description</Typography>
-              <Controller
-                name="description"
-                control={control}
-                // rules={{ required: "Tag Name is required", maxLength: 50 }}
-                render={({ field }) => (
-                  <>
-                    <TextareaAutosize
-                      {...field}
-                      placeholder="50 characters"
-                      minRows={4}
-                      maxLength={50}
-                      onChange={(event) => {
-                        field.onChange(event); // react-hook-form Controller handle onChange
-                        handleCharCount(event); // Handle character count
-                      }}
-                      style={{
-                        width: "100%",
-                        fontSize: "16px",
-                        border: "1px solid #ced4da",
-                        borderRadius: "4px",
-                        padding: "10px",
-                      }}
-                    />
-                    <p style={{ fontSize: "14px", marginTop: "5px" }}>
-                      {charCount}/50 characters
-                    </p>
-                  </>
                 )}
               />
             </Grid>

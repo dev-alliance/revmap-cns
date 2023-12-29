@@ -167,7 +167,7 @@ const UpdateCategory = () => {
               >
                 <Link
                   style={{ marginRight: "-7px" }}
-                  to="/dashboard/teamlist"
+                  to="/dashboard/category-list"
                   className="link-no-underline"
                 >
                   Home

@@ -124,7 +124,7 @@ const CreateClauses = () => {
                   Home
                 </Link>
                 <Typography
-                  style={{ marginRight: "-7px", fontSize: "14px" }}
+                  sx={{ fontSize: "14px", ml: "-7px" }}
                   color="text.primary"
                 >
                   Create Clause
