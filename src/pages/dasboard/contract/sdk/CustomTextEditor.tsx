@@ -1,74 +1,26 @@
-import React, { useEffect, useRef } from "react";
-import ClassicEditorBase from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
-import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials";
-import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph";
-import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold";
-import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic";
-import Image from "@ckeditor/ckeditor5-image/src/image";
-import List from "@ckeditor/ckeditor5-list/src/list";
-import Autoformat from "@ckeditor/ckeditor5-autoformat/src/autoformat";
-import Comments from "@ckeditor/ckeditor5-comments/src/comments";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from "react";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
-// Define a custom editor which extends ClassicEditorBase
-class ClassicEditor extends ClassicEditorBase {}
+const CustomTextEditor: React.FC = () => {
+  const [editorData, setEditorData] = useState<string>("");
 
-// Plugins to include in the build
-ClassicEditor.builtinPlugins = [
-  Essentials,
-  Paragraph,
-  Bold,
-  Italic,
-  Image,
-  Comments,
-  List,
-  Autoformat,
-];
-
-// Editor configuration
-ClassicEditor.defaultConfig = {
-  language: "en",
-  comments: {
-    editorConfig: {
-      extraPlugins: [Bold, Italic, List, Autoformat],
-    },
-  },
-};
-
-function MyCKEditorComponent() {
-  const editorContainerRef = useRef(null);
-
-  useEffect(() => {
-    let editorInstance;
-
-    if (editorContainerRef.current) {
-      ClassicEditor.create(editorContainerRef.current, {
-        licenseKey:
-          "TE5vOVg0YUlLSzYzREpYakZnN1VhNGJqSXpkSUtQMEpWS21SWWlCUmFnbGFtWkdVWGduM2NnUUErWGpNLU1qQXlOREF4TWpjPQ==",
-        // ... other configuration options
-      })
-        .then((editor) => {
-          editorInstance = editor;
-        })
-        .catch((error) => {
-          console.error("Error initializing the CKEditor:", error);
-        });
-    }
-
-    // Cleanup on component unmount
-    return () => {
-      if (editorInstance) {
-        editorInstance.destroy().catch((error) => {
-          console.error("Error destroying editor:", error);
-        });
-      }
-    };
-  }, []);
+  const handleEditorChange = (event: any, editor: any) => {
+    const data = editor.getData();
+    setEditorData(data);
+  };
 
   return (
-    <div ref={editorContainerRef}>
-      <h1> fffffffffff</h1>
+    <div>
+      <CKEditor
+        editor={ClassicEditor}
+        data={editorData}
+        onChange={handleEditorChange}
+      />
+      {/* Other components */}
     </div>
   );
-}
+};
 
-export default MyCKEditorComponent;
+export default CustomTextEditor;

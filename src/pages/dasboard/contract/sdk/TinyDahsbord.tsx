@@ -31,6 +31,7 @@ import ShareComp from "@/pages/dasboard/contract/sdk/ShareComp";
 import ChatIcon from "@mui/icons-material/Chat";
 import Discussion from "@/pages/dasboard/contract/sdk/Discussion";
 import { AnyAction } from "@reduxjs/toolkit";
+import CustomTextEditor from "@/pages/dasboard/contract/sdk/CustomTextEditor";
 
 interface Module {
   icon: ReactNode;
@@ -41,42 +42,6 @@ const MyComponent: React.FC = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const { control, handleSubmit } = useForm();
-  const [editorContent, setEditorContent] = useState<string>(
-    "<p>This is the initial content of the editor.</p>"
-  );
-
-  const processFile = (file: File) => {
-    if (file.type === "text/plain") {
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          setEditorContent(e.target.result as string);
-        }
-      };
-      reader.readAsText(file);
-    } else {
-      // For other file types like PDF, Word, etc., send the file to a server or third-party service
-      // for conversion to HTML, then set the HTML content in the editor.
-    }
-  };
-
-  const handleFileChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        processFile(file);
-      }
-    },
-    []
-  );
-
-  const handleFileDrop = useCallback((editor: any, event: DragEvent) => {
-    event.preventDefault();
-    const file = event.dataTransfer?.files[0];
-    if (file) {
-      processFile(file);
-    }
-  }, []);
 
   const modules: Record<string, Module> = {
     toggle: {
@@ -124,32 +89,9 @@ const MyComponent: React.FC = () => {
   const handleModuleClick = (moduleName: string) => {
     setSelectedModule(moduleName);
   };
-  const contentStyle = `
-  body#tinymce {
-    max-width: 210mm;
-    margin: 0 auto;
-    padding: 20mm;
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
-    min-height: 297mm;
-    background: #fff;
-  }
-`;
+
   return (
     <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
-      <input
-        type="file"
-        id="fileInput"
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
-      <div style={{ height: "100px", width: "100px" }}>
-        <Button
-          variant="contained"
-          onClick={() => document.getElementById("fileInput")?.click()}
-        >
-          Browse Files
-        </Button>
-      </div>
       <Box
         sx={{
           flexGrow: 1,
@@ -158,33 +100,7 @@ const MyComponent: React.FC = () => {
           overflow: "auto",
         }}
       >
-        <Editor
-          apiKey="y2m63gfes71d04w6hzgawtrpuaxtoo9vsgqr2h4xmnwn4dc3"
-          value={editorContent}
-          onEditorChange={(content) => setEditorContent(content)}
-          init={{
-            content_style: contentStyle, // Apply the A4 style
-            setup: (editor) => {
-              editor.on("drop", function (e) {
-                handleFileDrop(editor, e);
-              });
-            },
-            height: 500,
-            menubar: false,
-            plugins: [
-              "advlist autolink lists link image charmap print preview anchor",
-              "searchreplace visualblocks code fullscreen",
-              "insertdatetime media table paste code help wordcount",
-              "image",
-              "table",
-            ],
-            toolbar:
-              "undo redo | formatselect | " +
-              "bold italic backcolor | alignleft aligncenter " +
-              "alignright alignjustify | bullist numlist outdent indent | " +
-              "removeformat | help | image | table",
-          }}
-        />
+        <CustomTextEditor />
       </Box>
 
       <Box
