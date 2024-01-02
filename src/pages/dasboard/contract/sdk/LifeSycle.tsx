@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -19,7 +20,7 @@ const LifeCycle = () => {
 
   const [isEvergreen, setIsEvergreen] = useState(false);
 
-  const handleEvergreenChange = (event) => {
+  const handleEvergreenChange = (event: any) => {
     setIsEvergreen(event.target.checked);
   };
 

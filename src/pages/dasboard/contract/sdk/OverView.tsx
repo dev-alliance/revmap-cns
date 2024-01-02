@@ -616,7 +616,7 @@ const OverView = () => {
         <Controller
           name="tags"
           control={control}
-          defaultValue=""
+          // defaultValue=""
           render={({ field }) => (
             <FormControl fullWidth size="small">
               {/* Optional: add this line if you want a label */}
@@ -625,19 +625,19 @@ const OverView = () => {
                 labelId="manager-label"
                 displayEmpty
                 renderValue={(value) => {
-                  if (value === "") {
-                    return (
-                      <em
-                        style={{
-                          color: "#C2C2C2",
-                          fontStyle: "normal",
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        Select tag
-                      </em> // Placeholder text with custom color
-                    );
-                  }
+                  // if (value === "") {
+                  //   return (
+                  //     <em
+                  //       style={{
+                  //         color: "#C2C2C2",
+                  //         fontStyle: "normal",
+                  //         fontSize: "15.5px",
+                  //       }}
+                  //     >
+                  //       Select tag
+                  //     </em> // Placeholder text with custom color
+                  //   );
+                  // }
                   // Find the selected manager by ID
                   const selectedTag = taglist.find((tag) => tag._id === value);
                   return selectedTag ? `${selectedTag.name} ` : "";
