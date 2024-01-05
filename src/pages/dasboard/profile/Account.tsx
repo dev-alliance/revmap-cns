@@ -124,7 +124,7 @@ const Account: React.FC = () => {
           gutterBottom
           sx={{ color: "text.secondary" }}
         >
-          Your Name
+          Compony Name
         </Typography>
         <Divider sx={{ my: 2 }} />
         <Box
@@ -165,7 +165,7 @@ const Account: React.FC = () => {
             </Typography>
             <Typography variant="body1" sx={{ color: "text.secondary" }}>
               Requires an authentication code when you log in with an email and
-              passwords
+              password
             </Typography>
           </Box>
           <Box

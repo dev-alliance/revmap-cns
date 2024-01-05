@@ -74,10 +74,10 @@ const defaultColumns: any[] = [
     },
   },
   {
-    flex: 0.3,
-    minWidth: 125,
+    flex: 0.2,
+    minWidth: 230,
     field: "managerFirstName",
-    headerName: "Admin",
+    headerName: "Admin Name ",
     sortable: true,
     renderCell: (params: any) => (
       <Typography sx={{ color: "text.secondary" }}>

@@ -179,7 +179,7 @@ const SignupPage: React.FC = () => {
                       },
                     }}
                   >
-                    free 14 days Trial
+                    free 14 days trial
                   </Link>
                 </Typography>
 
@@ -342,12 +342,11 @@ const SignupPage: React.FC = () => {
                     align="center"
                     sx={{}}
                   >
-                    You have already acoount{" "}
+                    Already have an account?
                     <Link
                       underline="none"
                       href="/"
                       sx={{
-                        m: 1,
                         color: "#155BE5",
                         "&:hover": { textDecoration: "none" },
                       }}
@@ -361,9 +360,10 @@ const SignupPage: React.FC = () => {
                 variant="body2"
                 color="text.secondary"
                 align="center"
-                sx={{ mb: 4, mt: 3 }}
+                sx={{ mb: 4, mt: 3, width: "50" }}
               >
-                By signing up, you agree to ContractnSign’s{" "}
+                By signing up, you agree to ContractnSign’s
+                <br />
                 <Link
                   underline="none"
                   sx={{

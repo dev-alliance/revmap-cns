@@ -12,6 +12,7 @@ import {
   Typography,
   Paper,
   Box,
+  FormHelperText,
 } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import toast from "react-hot-toast";
@@ -188,7 +189,7 @@ const CreateTeam = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Team Name is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -205,14 +206,14 @@ const CreateTeam = () => {
             </Grid>
 
             <Grid item xs={12} sm={7}>
-              <Typography variant="subtitle2">Team Manger *</Typography>
+              <Typography variant="subtitle2">Admin Name*</Typography>
               <Controller
                 name="manager"
                 control={control}
+                rules={{ required: "Mandatory is required" }}
                 defaultValue=""
                 render={({ field }) => (
-                  <FormControl fullWidth size="small">
-                    {/* Optional: add this line if you want a label */}
+                  <FormControl fullWidth size="small" error={!!errors.manager}>
                     <Select
                       {...field}
                       labelId="manager-label"
@@ -228,10 +229,9 @@ const CreateTeam = () => {
                               }}
                             >
                               Select user
-                            </em> // Placeholder text with custom color
+                            </em>
                           );
                         }
-                        // Find the selected manager by ID
                         const selectedManager = userList.find(
                           (user) => user._id === value
                         );
@@ -240,12 +240,15 @@ const CreateTeam = () => {
                           : "";
                       }}
                     >
-                      {userList?.map((user: any) => (
+                      {userList?.map((user) => (
                         <MenuItem key={user?._id} value={user?._id}>
                           {user?.firstName} {user?.lastName}
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText>
+                      {errors.manager ? errors.manager.message : ""}
+                    </FormHelperText>
                   </FormControl>
                 )}
               />

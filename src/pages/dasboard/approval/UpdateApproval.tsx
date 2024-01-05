@@ -174,7 +174,7 @@ const UpdateApproval = () => {
               }}
             >
               <Typography variant="h5" sx={{ marginBottom: 2 }}>
-                Create Approval
+                Update Approval
               </Typography>
 
               <Breadcrumbs
@@ -192,7 +192,7 @@ const UpdateApproval = () => {
                   style={{ marginRight: "-7px", fontSize: "14px" }}
                   color="text.primary"
                 >
-                  Create Approval
+                  Update Approval
                 </Typography>
               </Breadcrumbs>
             </Box>
@@ -224,7 +224,7 @@ const UpdateApproval = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Approval name is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}

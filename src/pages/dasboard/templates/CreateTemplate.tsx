@@ -203,7 +203,7 @@ const CreateTemplate = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Document name is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}

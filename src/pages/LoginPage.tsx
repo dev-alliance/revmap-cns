@@ -297,7 +297,7 @@ const LoginPage: React.FC = () => {
                     }}
                     size="small"
                   >
-                    Sign In
+                    Sign in
                   </Button>
 
                   {/* Sign Up Link */}
@@ -312,12 +312,11 @@ const LoginPage: React.FC = () => {
                       href="/signup"
                       underline="none"
                       sx={{
-                        m: 1,
                         color: "#155BE5",
                         "&:hover": { textDecoration: "none" },
                       }}
                     >
-                      Sign Up
+                      Sign up
                     </Link>
                   </Typography>
                 </Box>

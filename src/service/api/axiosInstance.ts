@@ -4,7 +4,7 @@ import axios from "axios";
 //   baseURL: "http://localhost:1337",
 // });
 const baseURL = axios.create({
-  baseURL: "http://api.contractnsign.com", // Your API base URL11111
+  baseURL: "http://api.contractnsign.com",
 });
 
 export default baseURL;

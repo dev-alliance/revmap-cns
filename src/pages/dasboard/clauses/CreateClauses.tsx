@@ -159,7 +159,7 @@ const CreateClauses = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Clause Name is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}

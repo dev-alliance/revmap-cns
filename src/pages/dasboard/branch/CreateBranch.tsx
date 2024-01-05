@@ -13,6 +13,7 @@ import {
   Typography,
   Paper,
   Box,
+  FormHelperText,
 } from "@mui/material";
 import { countries, getStatesByCountry } from "@/utils/CounteryState";
 import { Country } from "country-state-city";
@@ -209,7 +210,7 @@ const BranchForm = () => {
             <Controller
               name="branchName"
               control={control}
-              rules={{ required: "Branch Name is required" }}
+              rules={{ required: "Mandatory field is required" }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -228,7 +229,7 @@ const BranchForm = () => {
             <Controller
               name="branchId"
               control={control}
-              rules={{ required: "Branch ID is required" }}
+              rules={{ required: "Mandatory field is required" }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -248,7 +249,7 @@ const BranchForm = () => {
             <Controller
               name="address"
               control={control}
-              rules={{ required: "Address is required" }}
+              rules={{ required: "Mandatory field is required" }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -268,7 +269,7 @@ const BranchForm = () => {
             <Controller
               name="pinCode"
               control={control}
-              rules={{ required: "Pin Code is required" }}
+              rules={{ required: "Mandatory field is required" }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -361,13 +362,14 @@ const BranchForm = () => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <Typography variant="subtitle2">Admin*</Typography>
+            <Typography variant="subtitle2">Admin Name*</Typography>
             <Controller
               name="manager"
               control={control}
+              rules={{ required: "Mandatory is required" }}
               defaultValue=""
               render={({ field }) => (
-                <FormControl fullWidth size="small">
+                <FormControl fullWidth size="small" error={!!errors.manager}>
                   {/* Optional: add this line if you want a label */}
                   <Select
                     {...field}
@@ -402,16 +404,20 @@ const BranchForm = () => {
                       </MenuItem>
                     ))}
                   </Select>
+                  <FormHelperText>
+                    {errors.manager ? errors.manager.message : ""}
+                  </FormHelperText>
                 </FormControl>
               )}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="subtitle2">Country*</Typography>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" error={!!errors.country}>
               <Controller
                 name="country"
                 control={control}
+                rules={{ required: "Mandatory is required" }}
                 defaultValue=""
                 render={({ field }) => (
                   <Select
@@ -444,6 +450,9 @@ const BranchForm = () => {
                   </Select>
                 )}
               />
+              <FormHelperText>
+                {errors.country ? errors.country.message : ""}
+              </FormHelperText>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>

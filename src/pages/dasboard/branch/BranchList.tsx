@@ -85,13 +85,16 @@ const defaultColumns: GridColDef[] = [
   },
   {
     flex: 0.3,
-    minWidth: 170,
-    field: "state",
-    headerName: "Region/State",
-
+    minWidth: 125,
+    field: "manager",
+    headerName: "Admin Name ",
     renderCell: ({ row }: { row: any }) => {
-      const { state } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{state}</Typography>;
+      const { manager } = row;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{`${
+          manager?.firstName || "-"
+        }`}</Typography>
+      );
     },
   },
   {
@@ -146,6 +149,17 @@ const defaultColumns: GridColDef[] = [
       </>
     ),
   },
+  {
+    flex: 0.3,
+    minWidth: 170,
+    field: "state",
+    headerName: "Region/State",
+
+    renderCell: ({ row }: { row: any }) => {
+      const { state } = row;
+      return <Typography sx={{ color: "text.secondary" }}>{state}</Typography>;
+    },
+  },
 
   // {
   //   flex: 0.3,
@@ -161,20 +175,7 @@ const defaultColumns: GridColDef[] = [
   //     );
   //   },
   // },
-  {
-    flex: 0.3,
-    minWidth: 125,
-    field: "manager",
-    headerName: "Manager ",
-    renderCell: ({ row }: { row: any }) => {
-      const { manager } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          manager?.firstName || "-"
-        }`}</Typography>
-      );
-    },
-  },
+
   {
     flex: 0.3,
     minWidth: 105,

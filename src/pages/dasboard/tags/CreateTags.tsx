@@ -168,7 +168,7 @@ const CreateTags = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Tag Name is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}

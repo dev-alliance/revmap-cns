@@ -10,6 +10,7 @@ import {
   Grid,
   useMediaQuery,
   useTheme,
+  Link,
 } from "@mui/material";
 import logo from "../assets/logo.jpg"; // Adjust the path to your logo image
 import loginBanner from "@/assets/login_banner.png"; // Adjust the path to your background image
@@ -95,6 +96,14 @@ const ForgotPassword: React.FC = () => {
               >
                 Forgot password !
               </Typography>
+              <Typography
+                variant="body1"
+                component="h1"
+                sx={{ mb: 2, textAlign: "center" }}
+              >
+                Provide the email address registered with your ContractnSign
+                account, and we'll send you instructions to reset your password.
+              </Typography>
 
               <Box
                 component="form"
@@ -122,7 +131,7 @@ const ForgotPassword: React.FC = () => {
                       fullWidth
                       type="email"
                       autoComplete="email"
-                      placeholder="Enter Your email"
+                      placeholder="Enter your email"
                       error={Boolean(errors.email)}
                       helperText={errors.email ? errors.email.message : ""}
                       variant="outlined"
@@ -151,6 +160,23 @@ const ForgotPassword: React.FC = () => {
                 >
                   Submit
                 </Button>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  align="center"
+                  sx={{}}
+                >
+                  <Link
+                    underline="none"
+                    href="/"
+                    sx={{
+                      color: "#155BE5",
+                      "&:hover": { textDecoration: "none" },
+                    }}
+                  >
+                    Back to Sign in
+                  </Link>
+                </Typography>
               </Box>
             </Paper>
           </Box>

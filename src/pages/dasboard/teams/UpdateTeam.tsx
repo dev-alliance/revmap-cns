@@ -12,6 +12,7 @@ import {
   Typography,
   Paper,
   Box,
+  FormHelperText,
 } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import toast from "react-hot-toast";
@@ -170,7 +171,7 @@ const UpdateTeam = () => {
                 variant="h5"
                 sx={{ textAlign: "left", marginBottom: 2 }}
               >
-                Update Teams
+                Update Team
               </Typography>
               <Breadcrumbs
                 aria-label="breadcrumb"
@@ -187,7 +188,7 @@ const UpdateTeam = () => {
                   sx={{ fontSize: "14px", ml: "-7px" }}
                   color="text.primary"
                 >
-                  Update Teams
+                  Update Team
                 </Typography>
               </Breadcrumbs>
             </Box>
@@ -236,14 +237,14 @@ const UpdateTeam = () => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle2">Team Manger*</Typography>
+              <Typography variant="subtitle2">Admin Name*</Typography>
               <Controller
                 name="manager"
                 control={control}
+                rules={{ required: "Mandatory is required" }}
                 defaultValue=""
                 render={({ field }) => (
-                  <FormControl fullWidth size="small">
-                    {/* Optional: add this line if you want a label */}
+                  <FormControl fullWidth size="small" error={!!errors.manager}>
                     <Select
                       {...field}
                       labelId="manager-label"
@@ -258,11 +259,10 @@ const UpdateTeam = () => {
                                 fontSize: "15.5px",
                               }}
                             >
-                              Select User
-                            </em> // Placeholder text with custom color
+                              Select user
+                            </em>
                           );
                         }
-                        // Find the selected manager by ID
                         const selectedManager = userList.find(
                           (user) => user._id === value
                         );
@@ -271,12 +271,15 @@ const UpdateTeam = () => {
                           : "";
                       }}
                     >
-                      {userList?.map((user: any) => (
+                      {userList?.map((user) => (
                         <MenuItem key={user?._id} value={user?._id}>
                           {user?.firstName} {user?.lastName}
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText>
+                      {errors.manager ? errors.manager.message : ""}
+                    </FormHelperText>
                   </FormControl>
                 )}
               />

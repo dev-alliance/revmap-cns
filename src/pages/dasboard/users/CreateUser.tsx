@@ -142,19 +142,19 @@ const CreateUser = () => {
   const handleValidation = () => {
     // Validation check for empty last name
     if (!firstName.trim()) {
-      toast.error("First name is required");
+      toast.error("Mandatory fields are required");
       return;
     }
     if (!lastName.trim()) {
-      toast.error("Last name is required");
+      toast.error("Mandatory fields are required");
       return;
     }
     if (!email.trim()) {
-      toast.error("Email is required");
+      toast.error("Mandatory fields are required");
       return;
     }
     if (!job.trim()) {
-      toast.error("Job is required");
+      toast.error("Mandatory fields are required");
       return;
     }
 
@@ -249,7 +249,7 @@ const CreateUser = () => {
             aria-label="basic tabs example"
           >
             <Tab label="User" sx={{ fontWeight: "bold" }} />
-            <Tab label="Role & Permissions" sx={{ fontWeight: "bold" }} />
+            <Tab label="Roles & Permissions" sx={{ fontWeight: "bold" }} />
           </Tabs>
         </Box>
         <TabPanel value={tabValue} index={0}>
@@ -261,9 +261,7 @@ const CreateUser = () => {
                   alt="send"
                   style={{ marginRight: 8, height: "20px" }}
                 />
-                <Typography variant="subtitle2">
-                  Personal Information
-                </Typography>
+                <Typography variant="subtitle2">User Details</Typography>
 
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
               </Box>
@@ -311,7 +309,7 @@ const CreateUser = () => {
               <Typography variant="subtitle2">First Name*</Typography>
 
               <TextField
-                placeholder=" First name"
+                placeholder="Add first name"
                 fullWidth
                 onChange={(e: any) => {
                   setFirstName(e.target.value);
@@ -325,7 +323,7 @@ const CreateUser = () => {
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Last Name*</Typography>
               <TextField
-                placeholder="Last name"
+                placeholder="Add last name"
                 fullWidth
                 onChange={(e: any) => {
                   setLastName(e.target.value);
@@ -340,7 +338,7 @@ const CreateUser = () => {
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Email*</Typography>
               <TextField
-                placeholder="Email"
+                placeholder="Add email address"
                 fullWidth
                 error={!!emailError}
                 onChange={handleEmailChange}
@@ -353,7 +351,7 @@ const CreateUser = () => {
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Job Title*</Typography>
               <TextField
-                placeholder="Job"
+                placeholder="Add job title"
                 fullWidth
                 onChange={(e: any) => {
                   setJob(e.target.value);
@@ -475,7 +473,7 @@ const CreateUser = () => {
                   <>
                     <TextField
                       {...field}
-                      placeholder="Mobile"
+                      placeholder="Add mobile number"
                       fullWidth
                       variant="outlined"
                       size="small"
@@ -495,7 +493,7 @@ const CreateUser = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Landline"
+                    placeholder="Add landline number"
                     fullWidth
                     variant="outlined"
                     size="small"
@@ -583,8 +581,8 @@ const CreateUser = () => {
                       variant="subtitle2"
                       sx={{ whiteSpace: "nowrap" }}
                     >
-                      Send invitation to the above email to complete login
-                      process
+                      Send an invitation to the email above to complete the
+                      login process.
                     </Typography>
                   }
                 />

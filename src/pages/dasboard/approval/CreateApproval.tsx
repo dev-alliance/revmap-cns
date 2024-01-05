@@ -196,7 +196,7 @@ const CreateApproval = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Approval name is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
