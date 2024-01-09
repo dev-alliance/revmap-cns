@@ -347,6 +347,7 @@ const SignupPage: React.FC = () => {
                       underline="none"
                       href="/"
                       sx={{
+                        ml: 0.5,
                         color: "#155BE5",
                         "&:hover": { textDecoration: "none" },
                       }}
@@ -367,7 +368,7 @@ const SignupPage: React.FC = () => {
                 <Link
                   underline="none"
                   sx={{
-                    m: 1,
+                    m: 0.5,
                     color: "#155BE5",
                     "&:hover": { textDecoration: "none" },
                   }}
@@ -379,7 +380,7 @@ const SignupPage: React.FC = () => {
                   underline="none"
                   // href="/signup"
                   sx={{
-                    m: 2,
+                    m: 0.5,
                     color: "#155BE5",
                     "&:hover": { textDecoration: "underline" },
                   }}

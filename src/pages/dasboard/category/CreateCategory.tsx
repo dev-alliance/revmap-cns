@@ -167,7 +167,7 @@ const CreateCategory = () => {
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Category Name is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}

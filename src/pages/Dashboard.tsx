@@ -88,6 +88,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import CreateContract from "@/pages/dasboard/contract/CreateContract";
 import TinyDahsbord from "@/pages/dasboard/contract/sdk/TinyDahsbord";
 import CustomTextEditor from "@/pages/dasboard/contract/sdk/CustomTextEditor";
+import CardsSubscription from "@/pages/dasboard/billing/CardsSubcription";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -204,6 +205,15 @@ export default function Dashboard() {
           </ListItemIcon>
           <ListItemText
             primary="Users"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/billing">
+          <ListItemIcon>
+            <PersonIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Billing"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
@@ -472,6 +482,7 @@ export default function Dashboard() {
           <Route path="/create-contract" element={<CreateContract />} />
           <Route path="/tiny-dahsbord" element={<TinyDahsbord />} />
           <Route path="/sub-page-1" element={<SubPage1 />} />
+          <Route path="/billing" element={<CardsSubscription />} />
           <Route path="/editor" element={<CustomTextEditor />} />
         </Routes>
       </Box>
