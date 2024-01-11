@@ -33,6 +33,7 @@ import {
 } from "@/service/api/apiMethods";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
+import DetailDialog from "@/pages/dasboard/branch/DetailDialog";
 // import MenuButton from "@/components/MenuButton";
 
 interface CellType {
@@ -62,145 +63,7 @@ interface RowType {
 
 // ** Styled components
 
-const defaultColumns: GridColDef[] = [
-  {
-    flex: 0.2,
-    field: "branchName",
-    minWidth: 220,
-    headerName: "Branch Name",
-    renderCell: ({ row }: any) => {
-      const { branchName } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {branchName}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 125,
-    field: "manager",
-    headerName: "Admin Name ",
-    renderCell: ({ row }: { row: any }) => {
-      const { manager } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          manager?.firstName || "-"
-        }`}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.2,
-    minWidth: 125,
-    field: "status",
-    headerName: "Status",
-    renderCell: ({ row }: { row: any }) => (
-      <>
-        <Chip
-          size="small"
-          variant="outlined"
-          label={
-            row.status === "Active"
-              ? "Active"
-              : row.status === "Archived"
-              ? "Archived"
-              : "Inactive"
-          }
-          sx={{
-            fontSize: "14px",
-            // fontWeight: "bold",
-            backgroundColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB",
-            color:
-              row.status === "Active"
-                ? "#3F9748"
-                : row.status === "Archived"
-                ? "#D32F2F"
-                : "#red",
-            borderColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB", // Optional: to match border color with background
-            "& .MuiChip-label": {
-              // This targets the label inside the chip for more specific styling
-              color:
-                row.status === "Active"
-                  ? "#3F9748"
-                  : row.status === "Archived"
-                  ? "#D36A2F"
-                  : "#D32F2F",
-            },
-          }}
-        />
-      </>
-    ),
-  },
-  {
-    flex: 0.3,
-    minWidth: 170,
-    field: "state",
-    headerName: "Region/State",
-
-    renderCell: ({ row }: { row: any }) => {
-      const { state } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{state}</Typography>;
-    },
-  },
-
-  // {
-  //   flex: 0.3,
-  //   minWidth: 125,
-  //   field: "branchId",
-  //   headerName: "Branch ID",
-  //   renderCell: ({ row }: { row: any }) => {
-  //     const { branchId } = row;
-  //     return (
-  //       <Typography sx={{ color: "text.secondary" }}>{`${
-  //         branchId || ""
-  //       }`}</Typography>
-  //     );
-  //   },
-  // },
-
-  {
-    flex: 0.3,
-    minWidth: 105,
-    field: "Active Contracts",
-    headerName: "Active Contracts",
-
-    renderCell: ({ row }: { row: RowType }) => {
-      return <Typography sx={{ color: "text.secondary" }}>{"10"}</Typography>;
-    },
-  },
-
-  {
-    flex: 0.3,
-    minWidth: 125,
-    field: "display_name",
-    headerName: "Annual Value ",
-
-    renderCell: ({ row }: { row: RowType }) => {
-      const { display_name } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
-      );
-    },
-  },
-];
+const defaultColumns: GridColDef[] = [];
 
 const BranchList = () => {
   const navigate = useNavigate();
@@ -215,6 +78,18 @@ const BranchList = () => {
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
   const [data, setData] = useState([]);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedData, setSelectedData] = useState({});
+
+  const handleOpenDialog = (row: any) => {
+    setSelectedData(row._id); // Set the data you want to display
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
@@ -305,8 +180,8 @@ const BranchList = () => {
   };
 
   useEffect(() => {
-    listData();
-  }, []);
+    if (user?._id) listData();
+  }, [user?._id]);
 
   const filteredList = useMemo(() => {
     let result = catategorylist;
@@ -326,7 +201,133 @@ const BranchList = () => {
   };
 
   const columns: any[] = [
-    ...defaultColumns,
+    {
+      flex: 0.2,
+      field: "branchName",
+      minWidth: 220,
+      headerName: "Branch Name",
+      renderCell: ({ row }: any) => {
+        const { branchName } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography
+                sx={{ color: "text.secondary", cursor: "pointer" }}
+                onClick={() => handleOpenDialog(row)}
+              >
+                {branchName}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      minWidth: 125,
+      field: "manager",
+      headerName: "Admin Name ",
+      renderCell: ({ row }: { row: any }) => {
+        const { manager } = row;
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{`${
+            manager?.firstName || "-"
+          }`}</Typography>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      minWidth: 125,
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }: { row: any }) => (
+        <>
+          <Chip
+            size="small"
+            variant="outlined"
+            label={
+              row.status === "Active"
+                ? "Active"
+                : row.status === "Archived"
+                ? "Archived"
+                : "Inactive"
+            }
+            sx={{
+              fontSize: "14px",
+              // fontWeight: "bold",
+              backgroundColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB",
+              color:
+                row.status === "Active"
+                  ? "#3F9748"
+                  : row.status === "Archived"
+                  ? "#D32F2F"
+                  : "#red",
+              borderColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB", // Optional: to match border color with background
+              "& .MuiChip-label": {
+                // This targets the label inside the chip for more specific styling
+                color:
+                  row.status === "Active"
+                    ? "#3F9748"
+                    : row.status === "Archived"
+                    ? "#D36A2F"
+                    : "#D32F2F",
+              },
+            }}
+          />
+        </>
+      ),
+    },
+    {
+      flex: 0.3,
+      minWidth: 170,
+      field: "state",
+      headerName: "Region/State",
+
+      renderCell: ({ row }: { row: any }) => {
+        const { state } = row;
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{state}</Typography>
+        );
+      },
+    },
+
+    {
+      flex: 0.3,
+      minWidth: 105,
+      field: "Active Contracts",
+      headerName: "Active Contracts",
+
+      renderCell: ({ row }: { row: RowType }) => {
+        return <Typography sx={{ color: "text.secondary" }}>{"10"}</Typography>;
+      },
+    },
+
+    {
+      flex: 0.3,
+      minWidth: 125,
+      field: "display_name",
+      headerName: "Annual Value ",
+
+      renderCell: ({ row }: { row: RowType }) => {
+        const { display_name } = row;
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
+        );
+      },
+    },
     {
       flex: 0.02,
       minWidth: 100,
@@ -471,24 +472,25 @@ const BranchList = () => {
               </Box>
             ) : (
               <DataGrid
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                autoHeight
+                style={{ maxHeight: 500 }}
                 pagination
                 rows={filteredList || []}
                 columns={columns}
-                // checkboxSelection
-                disableRowSelectionOnClick
-                pageSizeOptions={[8, 25, 50]}
+                pageSizeOptions={[7, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
+                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
                 getRowId={(row) => row._id}
-                // disableColumnMenu
               />
             )}
           </Card>
         </Grid>
       </Grid>
+      <DetailDialog
+        open={openDialog}
+        id={selectedData}
+        onClose={handleCloseDialog}
+      />
     </>
   );
 };

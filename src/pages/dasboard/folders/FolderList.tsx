@@ -371,6 +371,25 @@ const FolderLIst = () => {
     },
     {
       flex: 0.2,
+      field: "createdByName",
+      minWidth: 230,
+      headerName: "Created By",
+      renderCell: ({ row }: any) => {
+        const { createdByName } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {createdByName || "-"}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.2,
       field: "createdAt",
       minWidth: 130,
       headerName: "Created Date",
@@ -603,25 +622,17 @@ const FolderLIst = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <Box sx={{ maxHeight: 500, width: "100%", overflow: "auto" }}>
-                <DataGrid
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                  autoHeight
-                  pagination
-                  rows={filteredList || []}
-                  columns={columns}
-                  // checkboxSelection
-                  disableRowSelectionOnClick
-                  pageSizeOptions={[7, 25, 50]}
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
-                  onRowSelectionModelChange={(rows: any) =>
-                    setSelectedRows(rows)
-                  }
-                  getRowId={(row) => row._id}
-                  // disableColumnMenu
-                />
-              </Box>
+              <DataGrid
+                style={{ maxHeight: 500 }}
+                pagination
+                rows={filteredList || []}
+                columns={columns}
+                pageSizeOptions={[7, 25, 50]}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
+                getRowId={(row) => row._id}
+              />
             )}
           </Card>
         </Grid>

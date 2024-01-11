@@ -127,6 +127,25 @@ const defaultColumns: any[] = [
       </>
     ),
   },
+  {
+    flex: 0.2,
+    field: "createdByName",
+    minWidth: 230,
+    headerName: "Created By",
+    renderCell: ({ row }: any) => {
+      const { createdByName } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {createdByName || "-"}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
 ];
 
 const TagList = () => {
@@ -202,7 +221,9 @@ const TagList = () => {
   const handleActive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this tag?")
+        window.confirm(
+          "Are you sure you want to change the status of this tag?"
+        )
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Active" });
@@ -224,7 +245,9 @@ const TagList = () => {
   const handleInactive = async (id: any) => {
     try {
       if (
-        window.confirm("Are you sure you want to change the status this tag?")
+        window.confirm(
+          "Are you sure you want to change the status of this tag?"
+        )
       ) {
         setIsLoading(true);
         const res = await updateStatus(id, { status: "Inactive" });
@@ -454,24 +477,17 @@ const TagList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <Box sx={{ maxHeight: 510, width: "100%", overflow: "auto" }}>
-                <DataGrid
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                  pagination
-                  rows={filteredList || []}
-                  columns={columns}
-                  // checkboxSelection
-                  disableRowSelectionOnClick
-                  pageSizeOptions={[7, 25, 50]}
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
-                  onRowSelectionModelChange={(rows: any) =>
-                    setSelectedRows(rows)
-                  }
-                  getRowId={(row: any) => row._id}
-                  // disableColumnMenu
-                />
-              </Box>
+              <DataGrid
+                style={{ maxHeight: 500 }}
+                pagination
+                rows={filteredList || []}
+                columns={columns}
+                pageSizeOptions={[7, 25, 50]}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
+                getRowId={(row) => row._id}
+              />
             )}
           </Card>
         </Grid>

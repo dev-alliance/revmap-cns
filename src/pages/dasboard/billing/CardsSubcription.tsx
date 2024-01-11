@@ -83,10 +83,18 @@ const CardsSubscription: React.FC = () => {
                 marginTop: "10px",
               }}
             >
-              <Button variant="text" onClick={handleOpenDialog}>
+              <Button
+                variant="text"
+                onClick={handleOpenDialog}
+                sx={{ textTransform: "none" }}
+              >
                 Change plan
               </Button>
-              <Button variant="text" onClick={handleCancelOpenDialog}>
+              <Button
+                variant="text"
+                onClick={handleCancelOpenDialog}
+                sx={{ textTransform: "none" }}
+              >
                 Cancel subscription{" "}
               </Button>
             </div>
@@ -121,10 +129,18 @@ const CardsSubscription: React.FC = () => {
                 marginTop: "10px",
               }}
             >
-              <Button variant="text" onClick={handleLicencesOpenDialog}>
+              <Button
+                variant="text"
+                onClick={handleLicencesOpenDialog}
+                sx={{ textTransform: "none" }}
+              >
                 Add user licences
               </Button>
-              <Button variant="text" onClick={handleReducelicencesOpenDialog}>
+              <Button
+                variant="text"
+                onClick={handleReducelicencesOpenDialog}
+                sx={{ textTransform: "none" }}
+              >
                 Reduce user licences
               </Button>
             </div>
@@ -151,7 +167,7 @@ const CardsSubscription: React.FC = () => {
                 maxWidth: isMobile ? "150px" : "350px",
                 marginTop: "5px",
                 height: isMobile ? "150px" : "40px",
-                marginBottom: "8px",
+                marginBottom: "5px",
               }}
             />
             <Typography variant="body1" gutterBottom>
@@ -165,7 +181,10 @@ const CardsSubscription: React.FC = () => {
                 marginTop: "10px",
               }}
             >
-              <Button variant="text"> Edit payment info</Button>
+              <Button variant="text" sx={{ textTransform: "none" }}>
+                {" "}
+                Edit payment info
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -205,7 +224,11 @@ const CardsSubscription: React.FC = () => {
                 marginTop: "10px",
               }}
             >
-              <Button variant="text" onClick={handleOwnerOpenDialog}>
+              <Button
+                variant="text"
+                onClick={handleOwnerOpenDialog}
+                sx={{ textTransform: "none" }}
+              >
                 Change billing owner
               </Button>
             </div>
@@ -231,7 +254,9 @@ const CardsSubscription: React.FC = () => {
             <Typography variant="body1">
               <strong>$120</strong> / Month
             </Typography>
-            <Button variant="text">Switch to an annual subscription</Button>
+            <Button variant="text" sx={{ textTransform: "none" }}>
+              Switch to an annual subscription
+            </Button>
             <Divider />
             <div
               style={{
@@ -240,8 +265,14 @@ const CardsSubscription: React.FC = () => {
                 marginTop: "10px",
               }}
             >
-              <Button variant="text">View latest invoice</Button>
-              <Button variant="text" onClick={handleInvoiceOpenDialog}>
+              <Button variant="text" sx={{ textTransform: "none" }}>
+                View latest invoice
+              </Button>
+              <Button
+                variant="text"
+                onClick={handleInvoiceOpenDialog}
+                sx={{ textTransform: "none" }}
+              >
                 View invoice history
               </Button>
             </div>
@@ -274,7 +305,9 @@ const CardsSubscription: React.FC = () => {
                 marginTop: "10px",
               }}
             >
-              <Button variant="text">Contact support</Button>
+              <Button variant="text" sx={{ textTransform: "none" }}>
+                Contact support
+              </Button>
             </div>
           </CardContent>
         </Card>

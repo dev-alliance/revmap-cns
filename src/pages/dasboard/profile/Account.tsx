@@ -124,7 +124,7 @@ const Account: React.FC = () => {
           gutterBottom
           sx={{ color: "text.secondary" }}
         >
-          Compony Name
+          Company Name
         </Typography>
         <Divider sx={{ my: 2 }} />
         <Box

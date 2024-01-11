@@ -29,13 +29,17 @@ const PlanDialog: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           <Card
             style={{
               margin: "7px",
-              padding: "20px",
+              padding: "7px",
               textAlign: "center",
               width: "30%",
               height: "300px", // Fixed height for the card
             }}
           >
-            <Typography variant="h5" color="primary">
+            <Typography
+              variant="h5"
+              color="primary"
+              sx={{ fontWeight: "bold" }}
+            >
               Essentials
             </Typography>
             <Typography
@@ -49,13 +53,17 @@ const PlanDialog: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               Essential features for efficient contract management
             </Typography>
             <Typography variant="subtitle1" color="primary">
-              $20
+              299 USD
             </Typography>
             <Typography variant="body2" sx={{ mb: 3 }}>
               per/1 month
             </Typography>
-            <Button variant="contained" color="primary" sx={{ mb: 2 }}>
-              Select Plan 1
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ mb: 1, textTransform: "none", fontSize: "20px" }}
+            >
+              Current plan
             </Button>
             <Button variant="text" sx={{ mb: -2, textTransform: "none" }}>
               See plan details
@@ -66,38 +74,45 @@ const PlanDialog: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           <Card
             style={{
               margin: "7px",
-              padding: "20px",
+              padding: "7px",
               textAlign: "center",
               width: "30%",
               height: "300px",
             }}
           >
-            <Typography variant="h5" color="primary">
+            <Typography
+              variant="h5"
+              color="primary"
+              sx={{ fontWeight: "bold" }}
+            >
               Professional
             </Typography>
             <Typography
               variant="body1"
               style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
                 height: "80px",
               }}
             >
               Take your contract management to the next level with advanced
               tools and customization
             </Typography>
-            <Typography variant="subtitle1" color="primary" sx={{ mt: 1 }}>
-              $20
+            <Typography variant="subtitle1" color="primary">
+              599 USD
             </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ mb: 3 }}>
               per/1 month
             </Typography>
             <Button
               variant="contained"
               color="primary"
-              sx={{ mb: 1, textTransform: "none" }}
+              sx={{ mb: 1, textTransform: "none", fontSize: "20px" }}
             >
-              Current plan
+              Upgrade
             </Button>
-            <Button variant="text" sx={{ mb: -3, textTransform: "none" }}>
+            <br></br>
+            <Button variant="text" sx={{ mb: -2, textTransform: "none" }}>
               See plan details
             </Button>
           </Card>
@@ -106,13 +121,17 @@ const PlanDialog: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           <Card
             style={{
               margin: "7px",
-              padding: "20px",
+              padding: "7px",
               textAlign: "center",
               width: "30%",
               height: "300px",
             }}
           >
-            <Typography variant="h5" color="primary">
+            <Typography
+              variant="h5"
+              color="primary"
+              sx={{ fontWeight: "bold" }}
+            >
               Enterprise
             </Typography>
             <Typography
@@ -121,22 +140,27 @@ const PlanDialog: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 marginBottom: "10px",
-                height: "112px",
+                height: "80px",
               }}
             >
               Powerful solutions tailored for large-scale contract management
               needs
             </Typography>
-            <Typography variant="subtitle1" color="primary">
+            <Typography
+              variant="subtitle1"
+              color="primary"
+              sx={{ height: "66.5px" }}
+            >
               Custom
             </Typography>
             <Button
               variant="contained"
               color="primary"
-              sx={{ mb: 2, textTransform: "none" }}
+              sx={{ mb: 1, textTransform: "none", fontSize: "20px" }}
             >
-              Current plan
+              Contact us
             </Button>
+
             <Button variant="text" sx={{ mb: -2, textTransform: "none" }}>
               See plan details
             </Button>

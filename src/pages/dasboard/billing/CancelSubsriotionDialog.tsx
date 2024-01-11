@@ -67,6 +67,15 @@ const CancelSubscriptionDialog: React.FC<{
 
         <div style={{ textAlign: "right", marginTop: "10px" }}>
           <Button
+            sx={{ textTransform: "none" }}
+            onClick={onClose}
+            variant="outlined"
+            color="secondary"
+            style={{ marginRight: "10px" }}
+          >
+            Cancel
+          </Button>
+          <Button
             variant="contained"
             color="primary"
             sx={{ textTransform: "none" }}

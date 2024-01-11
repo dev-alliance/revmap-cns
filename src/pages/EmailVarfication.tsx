@@ -137,7 +137,7 @@ const SignupPage: React.FC = () => {
                 component="h1"
                 sx={{ mb: 4, textAlign: "center" }}
               >
-                we've sent a code to {email}
+                We've sent a code to {email}
               </Typography>
               <img
                 src={logoVerification}

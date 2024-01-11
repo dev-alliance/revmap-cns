@@ -33,7 +33,7 @@ const CreateCategory = () => {
   const {
     control,
     handleSubmit,
-
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     mode: "onBlur",
@@ -42,8 +42,8 @@ const CreateCategory = () => {
   const navigate = useNavigate();
   const [member, setMamber] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [subCategories, setSubCategories] = useState([{ name: "" }]);
-
+  const [subCategories, setSubCategories] = useState<Array<any>>([]);
+  const categoryName = watch("name");
   const handleAddSubCategory = () => {
     setSubCategories([...subCategories, { name: "" }]);
   };
@@ -71,23 +71,24 @@ const CreateCategory = () => {
         toast.success(response.message);
         navigate("/dashboard/category-list");
       } else {
-        const errorMessage = response.data || response.message;
+        const errorMessage = response.message || "An error occurred";
         toast.error(errorMessage);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
 
-      let errorMessage = "failed";
-      if (error.response) {
-        errorMessage = error.response.data || error.response.data.message;
-      } else {
+      let errorMessage = "Failed to create clause.";
+      if (error.response && error.response.data) {
+        errorMessage =
+          error.response.data.message ||
+          error.response.data ||
+          "An error occurred";
+      } else if (error.message) {
         errorMessage = error.message;
       }
       toast.error(errorMessage);
-
-      // Handle error
-      console.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -187,6 +188,7 @@ const CreateCategory = () => {
                 onClick={handleAddSubCategory}
                 sx={{ textTransform: "none", mt: 2, float: "right" }}
                 variant="contained"
+                disabled={!categoryName}
               >
                 <AddIcon /> Add Subcategory
               </Button>
@@ -221,6 +223,7 @@ const CreateCategory = () => {
                 </Grid>
               </>
             ))}
+
             <Grid item xs={12} sm={7}>
               <Box sx={{ float: "right" }}>
                 <Box sx={{ mt: 2, mr: -2 }}>

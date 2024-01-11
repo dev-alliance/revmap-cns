@@ -63,6 +63,7 @@ const UpdateTags = () => {
       const payload = {
         id: user._id,
         name: data.name,
+        createdByName: user?.firstName,
       };
 
       const response = await updateTags(id, payload);

@@ -513,25 +513,17 @@ const TemplateList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <Box sx={{ maxHeight: 500, width: "100%", overflow: "auto" }}>
-                <DataGrid
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                  autoHeight
-                  pagination
-                  rows={filteredList || []}
-                  columns={columns}
-                  // checkboxSelection
-                  disableRowSelectionOnClick
-                  pageSizeOptions={[7, 25, 50]}
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
-                  onRowSelectionModelChange={(rows: any) =>
-                    setSelectedRows(rows)
-                  }
-                  getRowId={(row: any) => row._id}
-                  // disableColumnMenu
-                />
-              </Box>
+              <DataGrid
+                style={{ maxHeight: 500 }}
+                pagination
+                rows={filteredList || []}
+                columns={columns}
+                pageSizeOptions={[7, 25, 50]}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
+                getRowId={(row) => row._id}
+              />
             )}
           </Card>
         </Grid>

@@ -102,7 +102,7 @@ const UpdateCompony = () => {
       console.log(response.message);
       if (response.ok === true) {
         toast.success(response.message);
-        // navigate("/dashboard/compony-list");
+        navigate("/dashboard");
       } else {
         const errorMessage = response.data || response.message;
         toast.error(errorMessage);

@@ -184,7 +184,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
                     color={"#9A9A9A"}
                     sx={{ mb: 1, textAlign: "center", fontSize: "15px" }}
                   >
-                    we've sent a code to {user?.email}
+                    We've sent a code to {user?.email}
                   </Typography>
                   <img
                     src={logoVerification}

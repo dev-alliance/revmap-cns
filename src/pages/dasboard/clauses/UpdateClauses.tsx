@@ -56,6 +56,7 @@ const UpdateClauses = () => {
         id: user._id,
         name: data.name,
         content: data.content,
+        createdByName: user?.firstName,
       };
 
       const response = await updateClauses(id, payload);

@@ -112,7 +112,7 @@ const OwnerDialog: React.FC<{
           <Controller
             name="name"
             control={control}
-            rules={{ required: "Mandatory is required" }}
+            rules={{ required: "Mandatory field is required" }}
             render={({ field, fieldState: { error } }) => (
               <FormControl fullWidth size="small" error={!!error}>
                 <Autocomplete
@@ -152,10 +152,26 @@ const OwnerDialog: React.FC<{
               </FormControl>
             )}
           />
-          <FormControlLabel
-            control={<Checkbox {...register("checkboxName")} />}
-            label="By designating someone else as the billing owner, I acknowledge that the current billing owner will cease to receive emails related to billing for my organization."
+          <Controller
+            name="checkboxName"
+            control={control}
+            rules={{ required: "This field is required" }}
+            render={({ field }) => (
+              <FormControlLabel
+                control={<Checkbox {...field} color="primary" />}
+                label="By designating someone else as the billing owner, I acknowledge that the current billing owner will cease to receive emails related to billing for my organization."
+                style={{
+                  alignItems: "center",
+                  marginTop: "10px",
+                }}
+              />
+            )}
           />
+          {errors.checkboxName && (
+            <FormHelperText error>
+              {errors.checkboxName.message as string}
+            </FormHelperText>
+          )}
 
           <Divider />
 
@@ -173,11 +189,9 @@ const OwnerDialog: React.FC<{
               variant="contained"
               color="primary"
               type="submit"
-              component={Link}
-              to="/dashboard/user-list"
               sx={{ textTransform: "none" }}
             >
-              Change billing ownerwwww
+              Change billing owner
             </Button>
           </div>
         </form>

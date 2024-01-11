@@ -71,8 +71,8 @@ const BranchForm = () => {
   };
 
   React.useEffect(() => {
-    listData();
-  }, []);
+    if (user?._id) listData();
+  }, [user?._id]);
   const countries = Country.getAllCountries().map((country) => ({
     code: country.isoCode,
     name: country.name,
@@ -107,34 +107,33 @@ const BranchForm = () => {
         website: data.website,
         country: data.country,
         status: data.status,
+        createdByName: user?.firstName,
       };
       const response = await createBranch(payload);
       if (response.ok === true) {
         toast.success(response.message);
         navigate("/dashboard/branchlist");
       } else {
-        const errorMessage = response.data || response.message;
+        const errorMessage = response.message || "An error occurred";
         toast.error(errorMessage);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
 
-      let errorMessage = "failed";
-      if (error.response) {
-        errorMessage = error.response.data || error.response.message;
-      } else {
+      let errorMessage = "Failed to create clause.";
+      if (error.response && error.response.data) {
+        errorMessage =
+          error.response.data.message ||
+          error.response.data ||
+          "An error occurred";
+      } else if (error.message) {
         errorMessage = error.message;
       }
       toast.error(errorMessage);
-
-      // Handle error
-      console.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box
@@ -366,7 +365,7 @@ const BranchForm = () => {
             <Controller
               name="manager"
               control={control}
-              rules={{ required: "Mandatory is required" }}
+              rules={{ required: "Mandatory field is required" }}
               defaultValue=""
               render={({ field }) => (
                 <FormControl fullWidth size="small" error={!!errors.manager}>
@@ -417,7 +416,7 @@ const BranchForm = () => {
               <Controller
                 name="country"
                 control={control}
-                rules={{ required: "Mandatory is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 defaultValue=""
                 render={({ field }) => (
                   <Select

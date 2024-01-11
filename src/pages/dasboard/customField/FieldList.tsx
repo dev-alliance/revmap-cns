@@ -146,7 +146,7 @@ const FieldList = () => {
 
   const columns: GridColDef[] = [
     {
-      flex: 0.2,
+      flex: 0.3,
       field: "name",
       minWidth: 230,
       headerName: "Name",
@@ -177,7 +177,7 @@ const FieldList = () => {
         // Convert UTC date to the specified time zone
         const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
 
-        const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
+        const formattedDate = format(zonedDate, "dd-MM-yyyy ", {
           timeZone,
         });
 
@@ -351,25 +351,17 @@ const FieldList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <Box sx={{ maxHeight: 500, width: "100%", overflow: "auto" }}>
-                <DataGrid
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                  autoHeight
-                  pagination
-                  rows={filteredList || []}
-                  columns={columns}
-                  // checkboxSelection
-                  disableRowSelectionOnClick
-                  pageSizeOptions={[7, 25, 50]}
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
-                  onRowSelectionModelChange={(rows: any) =>
-                    setSelectedRows(rows)
-                  }
-                  getRowId={(row: any) => row._id}
-                  // disableColumnMenu
-                />
-              </Box>
+              <DataGrid
+                style={{ maxHeight: 500 }}
+                pagination
+                rows={filteredList || []}
+                columns={columns}
+                pageSizeOptions={[7, 25, 50]}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
+                getRowId={(row) => row._id}
+              />
             )}
           </Card>
         </Grid>

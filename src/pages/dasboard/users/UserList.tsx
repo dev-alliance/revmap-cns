@@ -33,6 +33,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
+import DetailDialog from "@/pages/dasboard/users/DetailDialog";
 interface CellType {
   row: any;
   _id: any;
@@ -53,166 +54,7 @@ interface RowType {
 
 // ** Styled components
 
-const defaultColumns: any[] = [
-  {
-    flex: 0.3,
-    field: "name ",
-    minWidth: 230,
-    headerName: "User Name",
-    headerAlign: "left",
-    renderCell: ({ row }: any) => {
-      const { name } = row;
-      return (
-        <Box sx={{ display: "flex" }}>
-          <Img src={logo} />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography
-              sx={{
-                color: "text.secondary",
-              }}
-            >
-              {name}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-
-  {
-    flex: 0.2,
-    minWidth: 125,
-    field: "job",
-    headerName: "Job Title ",
-
-    renderCell: ({ row }: { row: any }) => {
-      const { job } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{job}</Typography>;
-    },
-  },
-
-  {
-    flex: 0.2,
-    minWidth: 130,
-    field: "team",
-    headerName: "Team ",
-
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>
-          {row?.team || "-"}
-        </Typography>
-      );
-    },
-  },
-  {
-    flex: 0.2,
-    minWidth: 130,
-    field: "branch",
-    headerName: "Branch ",
-
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>
-          {row?.branch || "-"}
-        </Typography>
-      );
-    },
-  },
-
-  // {
-  //   flex: 0.2,
-  //   minWidth: 200,
-  //   field: "loginHistory",
-  //   headerName: "Last Login",
-  //   renderCell: ({ row }: { row: any }) => {
-  //     const createdAt = new Date(row?.createdAt);
-
-  //     // Check if createdAt is a valid date
-  //     if (isNaN(createdAt.getTime())) {
-  //       return <Typography sx={{ color: "text.secondary" }}>-</Typography>;
-  //     }
-
-  //     const formattedDate = createdAt.toLocaleString("en-US", {
-  //       day: "numeric",
-  //       month: "short",
-  //       year: "numeric",
-  //       hour: "numeric",
-  //       minute: "numeric",
-  //       hour12: true,
-  //     });
-
-  //     return (
-  //       <Typography sx={{ color: "text.secondary" }}>
-  //         {formattedDate}
-  //       </Typography>
-  //     );
-  //   },
-  // },
-
-  {
-    flex: 0.2,
-    minWidth: 125,
-    field: "status",
-    headerName: "Status",
-    renderCell: ({ row }: { row: any }) => (
-      <>
-        <Chip
-          size="small"
-          variant="outlined"
-          label={
-            row.status === "Active"
-              ? "Active"
-              : row.status === "Archived"
-              ? "Archived"
-              : "Inactive"
-          }
-          sx={{
-            fontSize: "14px",
-            // fontWeight: "bold",
-            backgroundColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB",
-            color:
-              row.status === "Active"
-                ? "#3F9748"
-                : row.status === "Archived"
-                ? "#D32F2F"
-                : "#red",
-            borderColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB", // Optional: to match border color with background
-            "& .MuiChip-label": {
-              // This targets the label inside the chip for more specific styling
-              color:
-                row.status === "Active"
-                  ? "#3F9748"
-                  : row.status === "Archived"
-                  ? "#D36A2F"
-                  : "#D32F2F",
-            },
-          }}
-        />
-      </>
-    ),
-  },
-  {
-    flex: 0.2,
-    minWidth: 300,
-    field: "email",
-    headerName: "Email",
-    renderCell: ({ row }: { row: any }) => {
-      const { email } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
-    },
-  },
-];
+const defaultColumns: any[] = [];
 
 const UserList = () => {
   const navigate = useNavigate();
@@ -226,6 +68,18 @@ const UserList = () => {
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedData, setSelectedData] = useState({});
+
+  const handleOpenDialog = (row: any) => {
+    setSelectedData(row._id); // Set the data you want to display
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
@@ -352,7 +206,133 @@ const UserList = () => {
   }, [search, catategorylist]);
 
   const columns: GridColDef[] = [
-    ...defaultColumns,
+    {
+      flex: 0.3,
+      field: "name ",
+      minWidth: 230,
+      headerName: "User Name",
+      headerAlign: "left",
+      renderCell: ({ row }: any) => {
+        const { name } = row;
+        return (
+          <Box sx={{ display: "flex" }}>
+            <Img src={logo} />
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography
+                sx={{ color: "text.secondary", cursor: "pointer" }}
+                onClick={() => handleOpenDialog(row)}
+              >
+                {name}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+
+    {
+      flex: 0.2,
+      minWidth: 125,
+      field: "job",
+      headerName: "Job Title ",
+
+      renderCell: ({ row }: { row: any }) => {
+        const { job } = row;
+        return <Typography sx={{ color: "text.secondary" }}>{job}</Typography>;
+      },
+    },
+
+    {
+      flex: 0.2,
+      minWidth: 130,
+      field: "team",
+      headerName: "Team ",
+
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>
+            {row?.team || "-"}
+          </Typography>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      minWidth: 130,
+      field: "branch",
+      headerName: "Branch ",
+
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>
+            {row?.branch || "-"}
+          </Typography>
+        );
+      },
+    },
+
+    {
+      flex: 0.2,
+      minWidth: 125,
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }: { row: any }) => (
+        <>
+          <Chip
+            size="small"
+            variant="outlined"
+            label={
+              row.status === "Active"
+                ? "Active"
+                : row.status === "Archived"
+                ? "Archived"
+                : "Inactive"
+            }
+            sx={{
+              fontSize: "14px",
+              // fontWeight: "bold",
+              backgroundColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB",
+              color:
+                row.status === "Active"
+                  ? "#3F9748"
+                  : row.status === "Archived"
+                  ? "#D32F2F"
+                  : "#red",
+              borderColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB", // Optional: to match border color with background
+              "& .MuiChip-label": {
+                // This targets the label inside the chip for more specific styling
+                color:
+                  row.status === "Active"
+                    ? "#3F9748"
+                    : row.status === "Archived"
+                    ? "#D36A2F"
+                    : "#D32F2F",
+              },
+            }}
+          />
+        </>
+      ),
+    },
+    // {
+    //   flex: 0.2,
+    //   minWidth: 300,
+    //   field: "email",
+    //   headerName: "Email",
+    //   renderCell: ({ row }: { row: any }) => {
+    //     const { email } = row;
+    //     return <Typography sx={{ color: "text.secondary" }}>{email}</Typography>;
+    //   },
+    // },
     {
       flex: 0.02,
       minWidth: 100,
@@ -360,7 +340,7 @@ const UserList = () => {
       field: "actions",
       headerName: "Actions",
       headerAlign: "center",
-      renderCell: ({ row }: CellType) => (
+      renderCell: ({ row }: any) => (
         <div>
           <IconButton
             aria-label="more"
@@ -504,7 +484,7 @@ const UserList = () => {
               </Box>
             ) : (
               <DataGrid
-                style={{ height: 500 }} // Set a fixed height
+                style={{ maxHeight: 500 }}
                 pagination
                 rows={filteredList || []}
                 columns={columns}
@@ -518,6 +498,11 @@ const UserList = () => {
           </Card>
         </Grid>
       </Grid>
+      <DetailDialog
+        open={openDialog}
+        id={selectedData}
+        onClose={handleCloseDialog}
+      />
     </>
   );
 };

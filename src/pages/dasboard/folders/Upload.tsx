@@ -64,6 +64,10 @@ const Upload = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       setIsLoading(true);
+      if (!data.dec) {
+        toast.error("Mandatory fields are required");
+        return;
+      }
       const formData: any = new FormData();
       if (selectedFile) {
         formData.append("file", selectedFile);
@@ -193,7 +197,7 @@ const Upload = () => {
         <Paper sx={{ padding: 4 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={7}>
-              <Typography variant="subtitle2">File Description</Typography>
+              <Typography variant="subtitle2">File Description*</Typography>
               <Controller
                 name="dec"
                 control={control}

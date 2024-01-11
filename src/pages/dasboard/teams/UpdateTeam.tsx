@@ -241,7 +241,7 @@ const UpdateTeam = () => {
               <Controller
                 name="manager"
                 control={control}
-                rules={{ required: "Mandatory is required" }}
+                rules={{ required: "Mandatory field is required" }}
                 defaultValue=""
                 render={({ field }) => (
                   <FormControl fullWidth size="small" error={!!errors.manager}>

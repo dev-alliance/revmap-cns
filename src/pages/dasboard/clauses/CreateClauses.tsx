@@ -36,6 +36,7 @@ const CreateClauses = () => {
         id: user._id,
         name: data.name,
         content: data.content,
+        createdByName: user?.firstName,
       };
 
       const response = await create(payload);
@@ -43,23 +44,22 @@ const CreateClauses = () => {
         toast.success(response.message);
         navigate("/dashboard/clauses-list");
       } else {
-        const errorMessage = response.data || response.message;
+        const errorMessage = response.message || "An error occurred";
         toast.error(errorMessage);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log(error);
 
-      let errorMessage = "failed";
-      if (error.response) {
-        errorMessage = error.response.data || error.response.data.message;
-      } else {
+      let errorMessage = "Failed to create clause.";
+      if (error.response && error.response.data) {
+        errorMessage =
+          error.response.data.message ||
+          error.response.data ||
+          "An error occurred";
+      } else if (error.message) {
         errorMessage = error.message;
       }
       toast.error(errorMessage);
-
-      // Handle error
-      console.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -70,14 +70,14 @@ const defaultColumns: any[] = [
     },
   },
   {
-    flex: 0.4,
+    flex: 0.3,
     field: "content",
-    minWidth: 250,
+    minWidth: 230,
     headerName: "Clause Description",
     renderCell: ({ row }: any) => {
       const { content } = row;
       const displayContent =
-        content.length > 60 ? `${content.substring(0, 60)}...` : content;
+        content.length > 40 ? `${content.substring(0, 40)}...` : content;
 
       return (
         <Tooltip title={content} arrow>
@@ -107,7 +107,7 @@ const defaultColumns: any[] = [
       // Convert UTC date to the specified time zone
       const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
 
-      const formattedDate = format(zonedDate, "dd-MM-yyyy HH:mm", {
+      const formattedDate = format(zonedDate, "dd-MM-yyyy ", {
         timeZone,
       });
 
@@ -116,6 +116,25 @@ const defaultColumns: any[] = [
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography sx={{ color: "text.secondary" }}>
               {formattedDate}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+  {
+    flex: 0.2,
+    field: "createdByName",
+    minWidth: 180,
+    headerName: "Created By",
+    renderCell: ({ row }: any) => {
+      const { createdByName } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {createdByName || "-"}
             </Typography>
           </Box>
         </Box>
@@ -459,25 +478,17 @@ const ClausesList = () => {
                 <ProgressCircularCustomization />
               </Box>
             ) : (
-              <Box sx={{ maxHeight: 500, width: "100%", overflow: "auto" }}>
-                <DataGrid
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                  autoHeight
-                  pagination
-                  rows={filteredList || []}
-                  columns={columns}
-                  // checkboxSelection
-                  disableRowSelectionOnClick
-                  pageSizeOptions={[7, 25, 50]}
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
-                  onRowSelectionModelChange={(rows: any) =>
-                    setSelectedRows(rows)
-                  }
-                  getRowId={(row: any) => row._id}
-                  // disableColumnMenu
-                />
-              </Box>
+              <DataGrid
+                style={{ maxHeight: 500 }}
+                pagination
+                rows={filteredList || []}
+                columns={columns}
+                pageSizeOptions={[7, 25, 50]}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
+                getRowId={(row) => row._id}
+              />
             )}
           </Card>
         </Grid>

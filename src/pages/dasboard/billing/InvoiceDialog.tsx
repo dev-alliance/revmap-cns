@@ -66,8 +66,8 @@ const defaultColumns: any[] = [
   {
     flex: 0.2,
     field: "name",
-    minWidth: 230,
-    headerName: "Team Name",
+    minWidth: 150,
+    headerName: "Invoice number",
     renderCell: ({ row }: any) => {
       const { name } = row;
 
@@ -75,7 +75,47 @@ const defaultColumns: any[] = [
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {/* <Img src={logo} /> */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>
+              {"1272442251"}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+  {
+    flex: 0.2,
+    field: "date",
+    minWidth: 150,
+    headerName: "Invoice date",
+    renderCell: ({ row }: any) => {
+      const { name } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          {/* <Img src={logo} /> */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {"24 Apr 2023"}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+  {
+    flex: 0.2,
+    field: "amount",
+    minWidth: 150,
+    headerName: "Amount",
+    renderCell: ({ row }: any) => {
+      const { name } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          {/* <Img src={logo} /> */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>{"US$499"}</Typography>
           </Box>
         </Box>
       );
@@ -133,90 +173,6 @@ const defaultColumns: any[] = [
         />
       </>
     ),
-  },
-  // {
-  //   flex: 0.2,
-  //   minWidth: 125,
-  //   field: "status",
-  //   headerName: "Status",
-  //   renderCell: ({ row }: { row: any }) => (
-  //     <>
-  //       <Chip
-  //         size="small"
-  //         variant="outlined"
-  //         label={
-  //           row.status === "active"
-  //             ? "Active"
-  //             : row.status === "archived"
-  //             ? "Archived"
-  //             : "Inactive"
-  //         }
-  //         sx={{
-  //           backgroundColor:
-  //             row.status === "active"
-  //               ? "#D3FDE4"
-  //               : row.status === "archived"
-  //               ? "#FFF7CB"
-  //               : "#D32F2F",
-  //           color:
-  //             row.status === "active"
-  //               ? "#3F9748"
-  //               : row.status === "archived"
-  //               ? "#D36A2F"
-  //               : "#FFCBCB",
-  //           borderColor:
-  //             row.status === "active"
-  //               ? "#D3FDE4"
-  //               : row.status === "archived"
-  //               ? "#FFF7CB"
-  //               : "#D32F2F", // Optional: to match border color with background
-  //           "& .MuiChip-label": {
-  //             // This targets the label inside the chip for more specific styling
-  //             color:
-  //               row.status === true
-  //                 ? "#3F9748"
-  //                 : row.status === "archived"
-  //                 ? "#D36A2F"
-  //                 : "#FFCBCB",
-  //           },
-  //         }}
-  //       />
-  //     </>
-  //   ),
-  // },
-  {
-    flex: 0.3,
-    minWidth: 125,
-    field: "members",
-    headerName: "No. of Users ",
-    renderCell: ({ row }: { row: any }) => {
-      const { members } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{members}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 120,
-    field: "ctive Contracts ",
-    headerName: "Active Contracts",
-
-    renderCell: ({ row }: { row: RowType }) => {
-      return <Typography sx={{ color: "text.secondary" }}>{"10"}</Typography>;
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 120,
-    field: "Annual value",
-    headerName: "Annual Value",
-    // headerAlign: "center",
-    renderCell: ({ row }: { row: RowType }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
-      );
-    },
   },
 ];
 const InvoiceDialog: React.FC<{

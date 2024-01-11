@@ -72,7 +72,8 @@ const CreateApproval = () => {
         name: data.name,
         approver: approver,
         description: data?.description,
-        type: "compony approval",
+        createdByName: user?.firstName,
+        type: "Compony Approval",
       };
 
       const response = await create(payload);

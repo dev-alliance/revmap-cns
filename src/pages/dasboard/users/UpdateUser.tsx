@@ -198,6 +198,7 @@ const UpdateUser = () => {
         disabled: false,
         team: data.team ? data.team : null,
         branch: data.branch ? data.branch : null,
+        createdByName: user?.firstName,
       };
       if (imageBase64) {
         payload.image = imageBase64;
