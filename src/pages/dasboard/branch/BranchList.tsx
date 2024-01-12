@@ -72,7 +72,7 @@ const BranchList = () => {
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 8,
+    pageSize: 7,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
@@ -476,11 +476,14 @@ const BranchList = () => {
                 pagination
                 rows={filteredList || []}
                 columns={columns}
+                // checkboxSelection
+                disableRowSelectionOnClick
                 pageSizeOptions={[7, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
+                onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
                 getRowId={(row) => row._id}
+                // disableColumnMenu
               />
             )}
           </Card>
