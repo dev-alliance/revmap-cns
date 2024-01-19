@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { changepasReq, getUserId } from "@/service/api/apiMethods";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
-
+import Tooltip from "@mui/material/Tooltip";
 const Account: React.FC = () => {
   const { user, setVerification, twoFA, setTwoFA } = useAuth();
 
@@ -142,14 +142,26 @@ const Account: React.FC = () => {
               Change the password for your account
             </Typography>
           </Box>
-          <Button
-            sx={{ color: "primary.main", textTransform: "none" }}
-            endIcon={<ArrowForward />}
-            //   onClick={handleOpenModalResetPass}
-            onClick={handleOpenModalchangePass}
+          <Tooltip
+            title={
+              user?.role?.permissions?.reset_password
+                ? ""
+                : "You have no permission"
+            }
+            arrow
           >
-            Change password
-          </Button>
+            <span>
+              <Button
+                disabled={!user?.role?.permissions?.reset_password}
+                sx={{ color: "primary.main", textTransform: "none" }}
+                endIcon={<ArrowForward />}
+                //   onClick={handleOpenModalResetPass}
+                onClick={handleOpenModalchangePass}
+              >
+                Change password
+              </Button>
+            </span>
+          </Tooltip>
         </Box>
         <Divider sx={{ my: 2 }} />
         <Box
@@ -176,20 +188,44 @@ const Account: React.FC = () => {
             }}
           >
             {" "}
-            <Button
-              sx={{ color: "primary.main", textTransform: "none", mr: 2 }}
-              endIcon={<ArrowForward />}
+            <Tooltip
+              title={
+                user?.role?.permissions?.enable_2fa
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              {twoFA === true ? " Enabled" : "Disabled"}
-            </Button>
-            <Button
-              sx={{ textTransform: "none" }}
-              onClick={handleEnable2FA}
-              variant="contained"
-              color="primary"
+              <span>
+                <Button
+                  disabled={!user?.role?.permissions?.enable_2fa}
+                  sx={{ color: "primary.main", textTransform: "none", mr: 2 }}
+                  endIcon={<ArrowForward />}
+                >
+                  {twoFA === true ? " Enabled" : "Disabled"}
+                </Button>
+              </span>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.enable_2fa
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              {twoFA === true ? "Disable" : "Enable"}
-            </Button>
+              <span>
+                <Button
+                  disabled={!user?.role?.permissions?.enable_2fa}
+                  sx={{ textTransform: "none" }}
+                  onClick={handleEnable2FA}
+                  variant="contained"
+                  color="primary"
+                >
+                  {twoFA === true ? "Disable" : "Enable"}
+                </Button>
+              </span>
+            </Tooltip>
           </Box>
         </Box>
 

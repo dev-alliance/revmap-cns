@@ -52,7 +52,7 @@ const SignupPage: React.FC = () => {
       const payload = {
         email: data.email,
         password: data.confirmPassword,
-        role: 1,
+        role: "65a7d392b1df3e0517bb7055",
         emailVerified: true,
       };
 
@@ -234,9 +234,10 @@ const SignupPage: React.FC = () => {
                       pattern: {
                         // This is a simple regex for at least one uppercase, one lowercase, one number, and one special character
                         value:
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+
                         message:
-                          "Password must include uppercase, lowercase, number, and special char",
+                          "Ensure your password includes at least one uppercase letter, one lowercase letter, one number, and one special character",
                       },
                     }}
                     render={({ field }) => (

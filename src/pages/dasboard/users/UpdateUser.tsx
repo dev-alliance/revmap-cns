@@ -100,6 +100,7 @@ const UpdateUser = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [roleId, setRoleId] = useState("");
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -109,11 +110,12 @@ const UpdateUser = () => {
       setIsLoading(true);
       const { user } = await getUserId(id);
       setList(user);
+      setRoleId(user?.role);
       setValue("firstName", user.firstName);
       setValue("lastName", user.lastName);
       setValue("job", user.job);
       setValue("mobile", user.mobile);
-      setValue("landline", user.team);
+      setValue("landline", user.landline);
       setValue("team", user.team);
       setValue("branch", user.branch);
       setValue("status", user.status);
@@ -193,7 +195,7 @@ const UpdateUser = () => {
         landline: data.landline,
         mobile: data.mobile,
         status: data.status,
-        role: 1,
+        role: roleId,
         emailVerified: false,
         disabled: false,
         team: data.team ? data.team : null,
@@ -227,7 +229,7 @@ const UpdateUser = () => {
       setIsLoading(false);
     }
   };
-
+  console.log(roleId, "roleId");
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -332,7 +334,7 @@ const UpdateUser = () => {
               <Typography variant="subtitle2">First Name*</Typography>
 
               <TextField
-                placeholder=" Name"
+                placeholder="Add first name"
                 fullWidth
                 value={firstName}
                 onChange={(e: any) => {
@@ -347,7 +349,7 @@ const UpdateUser = () => {
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Last Name*</Typography>
               <TextField
-                placeholder="Last Name"
+                placeholder="Add last name"
                 fullWidth
                 value={lastName}
                 onChange={(e: any) => {
@@ -363,7 +365,7 @@ const UpdateUser = () => {
             <Grid item xs={12} sm={6}>
               <Typography variant="subtitle2">Email*</Typography>
               <TextField
-                placeholder="Email"
+                placeholder=" add email"
                 fullWidth
                 value={email}
                 error={!!emailError}
@@ -380,11 +382,11 @@ const UpdateUser = () => {
               <Controller
                 name="job"
                 control={control}
-                rules={{ required: "Pin Code is required" }}
+                rules={{ required: "Pin code is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="Job Title"
+                    placeholder=" add job title"
                     fullWidth
                     error={!!errors.job}
                     helperText={errors.job?.message}
@@ -419,7 +421,7 @@ const UpdateUser = () => {
                                 fontSize: "15.5px",
                               }}
                             >
-                              Select Team{" "}
+                              Select Team
                             </em> // Placeholder text with custom color
                           );
                         }
@@ -493,7 +495,7 @@ const UpdateUser = () => {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "Phone number is required",
+                  // required: "Phone number is required",
                   pattern: {
                     value: /^\+?[0-9]+$/,
                     message: "Invalid phone number",
@@ -503,7 +505,7 @@ const UpdateUser = () => {
                   <>
                     <TextField
                       {...field}
-                      placeholder="Mobile"
+                      placeholder="Add mobile number"
                       fullWidth
                       variant="outlined"
                       size="small"
@@ -523,7 +525,7 @@ const UpdateUser = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    placeholder="landline"
+                    placeholder="Add landline number"
                     fullWidth
                     variant="outlined"
                     size="small"
@@ -557,17 +559,8 @@ const UpdateUser = () => {
               xl={10}
               sx={{ width: "100%" }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <img
-                  src={permission}
-                  alt="send"
-                  style={{ marginRight: 8, height: "20px" }}
-                />
-                <Typography variant="subtitle1">Permission</Typography>
-                <Divider sx={{ flexGrow: 1, ml: 2 }} />
-              </Box>
               <Grid sx={{ mb: 3 }}>
-                <RoleTable />
+                <RoleTable setRoleId={setRoleId} roleId={roleId} />
               </Grid>
 
               <Box sx={{ width: "100%", textAlign: "right" }}>

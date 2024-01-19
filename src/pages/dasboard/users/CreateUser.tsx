@@ -98,7 +98,7 @@ const CreateUser = () => {
   const [job, setJob] = useState("");
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-
+  const [roleId, setRoleId] = useState("");
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -166,13 +166,15 @@ const CreateUser = () => {
       setTabValue(1);
     }
   };
+  console.log("idddddrole", roleId);
+
   const onSubmit = async (data: FormValues) => {
     try {
+      if (!roleId.trim()) {
+        toast.error("Please select role");
+        return;
+      }
       setIsLoading(true);
-      // if (!imageBase64 || image === "") {
-      //   await toast.error("Please select an Image!");
-      //   return;
-      // }
 
       const payload: any = {
         id: user._id,
@@ -183,7 +185,7 @@ const CreateUser = () => {
         landline: data.landline,
         mobile: data.mobile,
         status: data.status,
-        role: 1,
+        role: roleId,
         emailVerified: false,
         disabled: false,
         team: data.team ? data.team : null,
@@ -528,17 +530,8 @@ const CreateUser = () => {
               xl={10}
               sx={{ width: "100%" }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <img
-                  src={permission}
-                  alt="send"
-                  style={{ marginRight: 8, height: "20px" }}
-                />
-                <Typography variant="subtitle1">Permission</Typography>
-                <Divider sx={{ flexGrow: 1, ml: 2 }} />
-              </Box>
               <Grid sx={{ mb: 3 }}>
-                <RoleTable />
+                <RoleTable setRoleId={setRoleId} roleId={roleId} />
               </Grid>
 
               <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>

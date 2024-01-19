@@ -248,10 +248,10 @@ const FolderLIst = () => {
 
   const columns: any[] = [
     {
-      flex: 0.3,
+      flex: 0.4,
       field: "name",
       minWidth: 180,
-      maxWidth: 130,
+      maxWidth: 200,
       headerName: "Folder Name",
       renderCell: ({ row }: { row: any }) => {
         console.log(row.files, "file");
@@ -498,33 +498,54 @@ const FolderLIst = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                const folderId = menuState.row?._id;
-                const folderName = encodeURIComponent(
-                  menuState.row?.name || ""
-                );
-                navigate(
-                  `/dashboard/Upload-folder/${folderId}?name=${folderName}`
-                );
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.create_docs
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Add Document
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                setIsOpenCreate(true);
-                setItemName({
-                  id: menuState.row?._id || "",
-                  name: menuState.row?.name || "",
-                });
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.create_docs) {
+                    handleClose();
+                    const folderId = menuState.row?._id;
+                    const folderName = encodeURIComponent(
+                      menuState.row?.name || ""
+                    );
+                    navigate(
+                      `/dashboard/Upload-folder/${folderId}?name=${folderName}`
+                    );
+                  }
+                }}
+              >
+                Add Document
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_folder
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Rename
-            </MenuItem>
-
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_folder) {
+                    handleClose();
+                    setIsOpenCreate(true);
+                    setItemName({
+                      id: menuState.row?._id || "",
+                      name: menuState.row?.name || "",
+                    });
+                  }
+                }}
+              >
+                Rename
+              </MenuItem>
+            </Tooltip>
             <MenuItem
               onClick={() => {
                 handleDelete(menuState.row?._id); // Use menuState.row._id
@@ -582,16 +603,28 @@ const FolderLIst = () => {
                   />
                 </Box>
               </div>
-
-              <div style={{ display: "flex" }}>
-                <Button
-                  sx={{ mr: 2, textTransform: "none" }}
-                  variant="contained"
-                  onClick={() => setIsOpenCreate(true)}
+              <div>
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.create_folder
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
                 >
-                  <AddIcon /> Create Folder
-                </Button>
-                {/* <MenuButton /> */}
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      // component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      disabled={!user?.role?.permissions?.create_folder}
+                      onClick={() => setIsOpenCreate(true)}
+                    >
+                      <AddIcon /> Create Folder
+                    </Button>
+                  </span>
+                </Tooltip>
               </div>
             </Box>
           </Card>

@@ -20,20 +20,27 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 // ** Third Party Imports
-// import { formatDistanceToNow } from "date-fns";
+import logo from "@/assets/team_icon.svg";
 import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
+import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  archiveTeam,
+  deleteTeam,
+  getTeamsList,
+  resetPaasword,
+  updateStatus,
+} from "@/service/api/apiMethods";
+import AddIcon from "@mui/icons-material/Add";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
-import { format, utcToZonedTime } from "date-fns-tz";
-import { deletecustomFields, getList } from "@/service/api/customFeild";
-import AddIcon from "@mui/icons-material/Add";
-import CreateField from "@/pages/dasboard/customField/CreateField";
+import { deleterole, getList } from "@/service/api/role&perm";
+import { deleteTags } from "@/service/api/tags";
+
 interface CellType {
   row: any;
   _id: any;
-  name: any;
 }
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -51,7 +58,67 @@ interface RowType {
 
 // ** Styled components
 
-const FieldList = () => {
+const defaultColumns: any[] = [
+  {
+    flex: 0.2,
+    field: "name",
+    // minWidth: 230,
+    headerName: "Custom Role",
+    renderCell: ({ row }: any) => {
+      const { name } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          {/* <Img src={logo} /> */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+
+  {
+    flex: 0.2,
+    field: "desc",
+    minWidth: 230,
+    headerName: "Role Description",
+    renderCell: ({ row }: any) => {
+      const { desc } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {desc || "-"}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+  {
+    flex: 0.2,
+    field: "uploaded_by",
+    minWidth: 140,
+    headerName: "Created By",
+    renderCell: ({ row }: any) => {
+      const { createdByName } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {createdByName || "-"}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+];
+
+const RoleList = () => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
@@ -60,12 +127,10 @@ const FieldList = () => {
     page: 0,
     pageSize: 7,
   });
+  const [isLoading, setIsLoading] = useState(true);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
-  const [isOpenCreate, setIsOpenCreate] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const handleCloseModalResetPass = () => setIsOpenCreate(false);
-  const [itemName, setItemName] = useState({ id: "", name: "" });
+
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
     row: CellType | null;
@@ -92,9 +157,18 @@ const FieldList = () => {
       setIsLoading(true);
       const { data } = await getList();
 
-      setCategorylist(data);
+      const excludedIds = [
+        "65a7b5af40c7294e7706aac8",
+        "65a7d392b1df3e0517bb7055",
+        "65a7d271bcf56486353dc195",
+      ];
+      const filteredData = data.filter(
+        (item: any) => !excludedIds.includes(item._id)
+      );
 
-      console.log("teams", data);
+      setCategorylist(filteredData);
+
+      console.log("dataaaa", filteredData);
     } catch (error) {
       console.log(error);
     } finally {
@@ -106,11 +180,58 @@ const FieldList = () => {
 
   const handleDelete = async (id: any) => {
     try {
+      if (window.confirm("Are you sure you want to delete this role?")) {
+        setIsLoading(true);
+        const res = await deleterole(id);
+        if (res.ok === true) {
+          toast.success(res.message);
+          listData();
+        } else {
+          toast.error(res?.message || "");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleActive = async (id: any) => {
+    try {
       if (
-        window.confirm("Are you sure you want to delete this custom field?")
+        window.confirm(
+          "Are you sure you want to change the status of this tag?"
+        )
       ) {
         setIsLoading(true);
-        const res = await deletecustomFields(id);
+        const res = await updateStatus(id, { status: "Active" });
+        console.log({ res });
+
+        if (res.ok === true) {
+          toast.success(res.message);
+          listData();
+        } else {
+          toast.error(res?.message || "");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleInactive = async (id: any) => {
+    try {
+      if (
+        window.confirm(
+          "Are you sure you want to change the status of this tag?"
+        )
+      ) {
+        setIsLoading(true);
+        const res = await updateStatus(id, { status: "Inactive" });
+        console.log({ res });
+
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -129,8 +250,6 @@ const FieldList = () => {
     listData();
   }, []);
 
-  console.log(search, "serch");
-
   const filteredList = useMemo(() => {
     let result = catategorylist;
     if (search?.trim().length) {
@@ -140,77 +259,9 @@ const FieldList = () => {
     }
     return result;
   }, [search, catategorylist]);
-  const handleFileClick = (fileUrl: any) => {
-    window.open(fileUrl, "_blank");
-  };
 
   const columns: GridColDef[] = [
-    {
-      flex: 0.3,
-      field: "name",
-      minWidth: 230,
-      headerName: "Name",
-      renderCell: ({ row }: any) => {
-        const { name } = row;
-
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
-            </Box>
-          </Box>
-        );
-      },
-    },
-
-    {
-      flex: 0.3,
-      field: "createdAt",
-      minWidth: 150,
-      headerName: "Created Date",
-      renderCell: ({ row }: any) => {
-        const { createdAt } = row;
-
-        // Specify the desired time zone, e.g., 'America/New_York'
-
-        const timeZone = "America/New_York";
-        // Convert UTC date to the specified time zone
-        const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
-
-        const formattedDate = format(zonedDate, "dd-MM-yyyy ", {
-          timeZone,
-        });
-
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {formattedDate}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      },
-    },
-    {
-      flex: 0.2,
-      field: "uploaded_by",
-      minWidth: 230,
-      headerName: "Created By",
-      renderCell: ({ row }: any) => {
-        const { uploaded_by } = row;
-
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {uploaded_by || "-"}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      },
-    },
+    ...defaultColumns,
     {
       flex: 0.02,
       minWidth: 100,
@@ -218,7 +269,7 @@ const FieldList = () => {
       field: "actions",
       headerName: "Actions",
       headerAlign: "center",
-      renderCell: ({ row }: any) => (
+      renderCell: ({ row }: CellType) => (
         <div>
           <IconButton
             aria-label="more"
@@ -240,48 +291,23 @@ const FieldList = () => {
               },
             }}
           >
-            <Tooltip
-              title={
-                user?.role?.permissions?.edit_fields
-                  ? ""
-                  : "You have no permission"
-              }
-              arrow
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                navigate(`/dashboard/crete-custom-role/${menuState.row?._id}`); // Use menuState.row._id
+              }}
             >
-              <MenuItem
-                onClick={() => {
-                  if (user?.role?.permissions?.edit_fields) {
-                    handleClose();
-                    setIsOpenCreate(true);
-                    setItemName({
-                      id: menuState.row?._id || "",
-                      name: menuState.row?.name || "",
-                    });
-                  }
-                }}
-              >
-                Rename
-              </MenuItem>
-            </Tooltip>
-            <Tooltip
-              title={
-                user?.role?.permissions?.delete_teams
-                  ? ""
-                  : "You have no permission"
-              }
-              arrow
+              Edit
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                handleDelete(menuState.row?._id); // Use menuState.row._id
+                handleClose();
+              }}
             >
-              <MenuItem
-                onClick={() => {
-                  if (user?.role?.permissions?.delete_teams) {
-                    handleDelete(menuState.row?._id); // Use menuState.row._id
-                    handleClose();
-                  }
-                }}
-              >
-                Delete
-              </MenuItem>
-            </Tooltip>
+              Delete
+            </MenuItem>
           </Menu>
         </div>
       ),
@@ -292,17 +318,69 @@ const FieldList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title=" Custom Fields" />
-          <Breadcrumbs
+          {/* <CardHeader title="Tags" /> */}
+          {/* <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
-            <Link to="/dashboard/feild-list" className="link-no-underline">
+            <Link to="/dashboard/tags-list" className="link-no-underline">
               Home
-            </Link>
-            {/* <Typography color="text.primary">Categories</Typography> */}
-          </Breadcrumbs>
+            </Link> */}
+          {/* <Typography color="text.primary">Categories</Typography> */}
+          {/* </Breadcrumbs> */}
           <Card>
+            <Box
+              sx={{
+                pl: 3,
+                p: 2,
+                pr: 3,
+                width: "100%",
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" }, // Responsive flex direction
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  mb: { xs: 2, sm: 0 }, // Margin bottom on xs screens
+                  width: { xs: "100%", sm: "auto" }, // Full width on xs screens
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={search}
+                  placeholder="Search"
+                  onChange={(e) => setSearch(e.target.value)}
+                  sx={{ minWidth: "150px", flexGrow: { xs: 1, sm: 0 } }} // TextField takes available space on xs screens
+                />
+              </Box>
+              <div>
+                <Button
+                  sx={{ textTransform: "none", width: "fit-content", mr: 2 }}
+                  variant="outlined"
+                  component={Link}
+                  to="/dashboard/system-role"
+                >
+                  System Roles
+                </Button>
+
+                <Button
+                  sx={{ textTransform: "none", width: "fit-content" }}
+                  variant="contained"
+                  component={Link}
+                  to="/dashboard/crete-custom-role"
+                >
+                  <AddIcon /> Create Custom Role
+                </Button>
+              </div>
+            </Box>
+          </Card>
+
+          {/* <Card>
             <Box
               sx={{
                 pl: 3,
@@ -331,31 +409,19 @@ const FieldList = () => {
                   />
                 </Box>
               </div>
+
               <div>
-                <Tooltip
-                  title={
-                    user?.role?.permissions?.create_fields
-                      ? ""
-                      : "You have no permission"
-                  }
-                  arrow
+                <Button
+                  sx={{ ml: 2, textTransform: "none" }}
+                  variant="contained"
+                  component={Link}
+                  to="/dashboard/create-tags"
                 >
-                  <span>
-                    <Button
-                      sx={{ ml: 2, textTransform: "none" }}
-                      variant="contained"
-                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-                      disabled={!user?.role?.permissions?.create_fields}
-                      onClick={() => setIsOpenCreate(true)}
-                    >
-                      <AddIcon />
-                      Create Field
-                    </Button>
-                  </span>
-                </Tooltip>
+                  <AddIcon /> Create Tags
+                </Button>
               </div>
             </Box>
-          </Card>
+          </Card> */}
         </Grid>
 
         <Grid item xs={12}>
@@ -398,15 +464,8 @@ const FieldList = () => {
           </Card>
         </Grid>
       </Grid>
-      <CreateField
-        open={isOpenCreate}
-        onClose={handleCloseModalResetPass}
-        itemName={itemName}
-        listData={listData}
-        setItemName={setItemName}
-      />
     </>
   );
 };
 
-export default FieldList;
+export default RoleList;

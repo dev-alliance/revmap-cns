@@ -152,14 +152,14 @@ const LoginPage: React.FC = () => {
                   color={"#155BE5"}
                   sx={{ fontWeight: "bold", textAlign: "center" }}
                 >
-                  Welcome Back !
+                  Welcome Back!
                 </Typography>
                 <Typography
                   variant="subtitle2"
                   component="h1"
                   sx={{ mb: 2, textAlign: "center" }}
                 >
-                  Sign in to Continue
+                  Sign in to continue
                 </Typography>
 
                 <Box
@@ -273,7 +273,7 @@ const LoginPage: React.FC = () => {
                           href="/forgotpassword"
                           variant="subtitle2"
                         >
-                          Forgot password?
+                          Forgotten password?
                         </Link>
                       </Grid>
                     </Grid>

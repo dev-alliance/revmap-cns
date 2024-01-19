@@ -202,7 +202,7 @@ const BranchList = () => {
 
   const columns: any[] = [
     {
-      flex: 0.2,
+      flex: 0.3,
       field: "branchName",
       minWidth: 220,
       headerName: "Branch Name",
@@ -226,7 +226,7 @@ const BranchList = () => {
     },
     {
       flex: 0.3,
-      minWidth: 125,
+      minWidth: 200,
       field: "manager",
       headerName: "Admin Name ",
       renderCell: ({ row }: { row: any }) => {
@@ -291,7 +291,7 @@ const BranchList = () => {
       ),
     },
     {
-      flex: 0.3,
+      flex: 0.2,
       minWidth: 170,
       field: "state",
       headerName: "Region/State",
@@ -305,7 +305,7 @@ const BranchList = () => {
     },
 
     {
-      flex: 0.3,
+      flex: 0.2,
       minWidth: 105,
       field: "Active Contracts",
       headerName: "Active Contracts",
@@ -316,7 +316,7 @@ const BranchList = () => {
     },
 
     {
-      flex: 0.3,
+      flex: 0.2,
       minWidth: 125,
       field: "display_name",
       headerName: "Annual Value ",
@@ -357,30 +357,63 @@ const BranchList = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(`/dashboard/branch-edit/${menuState.row?._id}`); // Use menuState.row._id
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_branches
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Edit
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                handleArchive(menuState.row?._id); // Use menuState.row._id
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_branches) {
+                    handleClose();
+                    navigate(`/dashboard/branch-edit/${menuState.row?._id}`); // Use menuState.row._id
+                  }
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.archive_branches
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Archive
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
-                handleClose();
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.archive_branches) {
+                    handleClose();
+                    handleArchive(menuState.row?._id); // Use menuState.row._id
+                  }
+                }}
+              >
+                Archive
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.delete_branches
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Delete
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.delete_branches) {
+                    handleDelete(menuState.row?._id);
+                    handleClose();
+                  }
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Tooltip>
           </Menu>
         </div>
       ),
@@ -430,17 +463,28 @@ const BranchList = () => {
                   />
                 </Box>
               </div>
-
-              <div style={{ display: "flex" }}>
-                <Button
-                  sx={{ mr: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-branch"
+              <div>
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.create_branches
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
                 >
-                  <AddIcon /> Create Branch
-                </Button>
-                {/* <MenuButton /> */}
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      to="/dashboard/create-branch"
+                      disabled={!user?.role?.permissions?.create_branches}
+                    >
+                      <AddIcon /> Create Branch
+                    </Button>
+                  </span>
+                </Tooltip>
               </div>
             </Box>
           </Card>

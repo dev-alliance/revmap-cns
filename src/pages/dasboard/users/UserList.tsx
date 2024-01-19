@@ -193,7 +193,7 @@ const UserList = () => {
     if (user?._id) listData();
   }, [user?._id]);
 
-  console.log(search, "serch");
+  console.log(user?.role?.permissions, "permision");
 
   const filteredList = useMemo(() => {
     let result = catategorylist;
@@ -208,7 +208,7 @@ const UserList = () => {
   const columns: GridColDef[] = [
     {
       flex: 0.3,
-      field: "name ",
+      field: "name",
       minWidth: 230,
       headerName: "User Name",
       headerAlign: "left",
@@ -362,14 +362,26 @@ const UserList = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(`/dashboard/user-edit/${menuState.row?._id}`); // Use menuState.row._id
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_users
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Edit
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_users) {
+                    handleClose();
+                    navigate(`/dashboard/user-edit/${menuState.row?._id}`);
+                  }
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Tooltip>
+
             <MenuItem
               onClick={() => {
                 handleClose();
@@ -379,6 +391,11 @@ const UserList = () => {
               Active
             </MenuItem>
             <MenuItem
+              title={
+                user?.role?.permissions?.delete_users
+                  ? "" // Empty string for no tooltip message when permission is present
+                  : "You have no permission"
+              }
               onClick={() => {
                 handleClose();
                 handleInactive(menuState.row?._id); // Use menuState.row._id
@@ -386,14 +403,27 @@ const UserList = () => {
             >
               Inactive
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
-                handleClose();
-              }}
-            >
-              Delete
-            </MenuItem>
+            <span>
+              <Tooltip
+                title={
+                  user?.role?.permissions?.delete_users
+                    ? "ssssssss" // Empty string for no tooltip message when permission is present
+                    : "You have no permission"
+                }
+                arrow
+              >
+                <MenuItem
+                  onClick={() => {
+                    if (user?.role?.permissions?.delete_users) {
+                      handleDelete(menuState.row?._id);
+                      handleClose();
+                    }
+                  }}
+                >
+                  Delete
+                </MenuItem>
+              </Tooltip>
+            </span>
           </Menu>
         </div>
       ),
@@ -445,14 +475,27 @@ const UserList = () => {
               </div>
 
               <div>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-user"
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.add_users
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
                 >
-                  <AddIcon /> Add User
-                </Button>
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      to="/dashboard/create-user"
+                      disabled={!user?.role?.permissions?.add_users}
+                    >
+                      <AddIcon /> Add User
+                    </Button>
+                  </span>
+                </Tooltip>
               </div>
             </Box>
           </Card>

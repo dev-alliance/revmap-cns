@@ -37,7 +37,13 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, id, onClose }) => {
   console.log(data, "data user");
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      sx={{ alignItems: "center" }}
+    >
       <DialogTitle>
         {" "}
         <strong>User Details</strong>

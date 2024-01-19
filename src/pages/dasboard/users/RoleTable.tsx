@@ -13,154 +13,79 @@ import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { DataGrid, GridColDef, GridRowId } from "@mui/x-data-grid";
-import Chip from "@mui/material/Chip";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import AddIcon from "@mui/icons-material/Add";
+import { getList } from "@/service/api/role&perm";
 // ** Third Party Imports
 
 import toast from "react-hot-toast";
-
+import permission from "@/assets/permission.png";
 import Button from "@mui/material/Button";
-import { Checkbox, FormControl } from "@mui/material";
+import { Checkbox, Divider, FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  archiveBranch,
-  deleteBranch,
-  getBranchList,
-  getUserList,
-} from "@/service/api/apiMethods";
+import { getUserList } from "@/service/api/apiMethods";
 import { useAuth } from "@/hooks/useAuth";
-// import MenuButton from "@/components/MenuButton";
+import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 
-interface CellType {
-  row: any;
-  _id: any;
-}
-interface CheckedState {
-  name: boolean;
-  manager: boolean;
-  status: boolean;
-  activeContract: boolean;
-  annualValue: boolean;
-}
-const Img = styled("img")(({ theme }) => ({
-  width: 32,
-  height: 32,
-  borderRadius: "50%",
-  marginRight: theme.spacing(3),
-}));
-interface RowType {
-  category: string;
-  status: boolean;
-  type: string;
-  display_name: string;
-  description: string;
-}
-
-// ** Styled components
-
-const defaultColumns: GridColDef[] = [
-  {
-    flex: 0.2,
-    minWidth: 125,
-    field: "Role Name",
-    headerName: "Role Name",
-
-    renderCell: ({ row }: { row: any }) => {
-      const { state } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>
-          <Checkbox
-            sx={{ mr: 1 }}
-            // Include any logic for determining if the checkbox should be checked
-            // checked={/* your logic here, e.g., row.isChecked */}
-            // Include any additional props or event handlers
-            // onChange={/* your event handler here, if needed */}
-          />
-          {"full access , ets "}
-        </Typography>
-      );
-    },
-  },
-
-  {
-    flex: 0.2,
-    minWidth: 500,
-    field: "description",
-    headerName: "Description",
-    renderCell: ({ row }: { row: any }) => {
-      const { branchId } = row;
-      return (
-        <Typography
-          sx={{ color: "text.secondar" }}
-        >{`${"Lorem ipsum dolor sit amet, ConnectEDU adipose elite"}`}</Typography>
-      );
-    },
-  },
-];
-
-const RoleTable = () => {
+const RoleTable: React.FC<{
+  setRoleId: React.Dispatch<React.SetStateAction<string>>;
+  roleId: string;
+}> = ({ setRoleId, roleId }) => {
   const navigate = useNavigate();
   // ** State
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10,
+    pageSize: 4,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
+  const [systemsRolelist, setsystemsRolelist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
-  const [data, setData] = useState([]);
 
-  const [menuState, setMenuState] = useState<{
-    anchorEl: null | HTMLElement;
-    row: CellType | null;
-  }>({
-    anchorEl: null,
-    row: null,
-  });
+  const [selectedId, setSelectedId] = useState<any | null>(null);
 
-  const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    row: CellType
-  ) => {
-    setMenuState({ anchorEl: event.currentTarget, row: row });
-  };
-
-  const handleClose = () => {
-    setMenuState({ anchorEl: null, row: null });
+  const handleCheckboxChange = (id: string) => {
+    console.log(id);
+    setRoleId(id);
+    setSelectedId(id === selectedId ? null : id);
   };
 
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getUserList(user?._id);
-      setCategorylist(data);
-      console.log("branc", data);
+      const { data } = await getList();
+      const excludedIds = [
+        "65a7b5af40c7294e7706aac8",
+        "65a7d392b1df3e0517bb7055",
+        "65a7d271bcf56486353dc195",
+        "65a62aeaf326bd32e198fbce",
+      ];
+      const filteredCustom = data.filter(
+        (item: any) => !excludedIds.includes(item._id)
+      );
+      setCategorylist(filteredCustom);
+
+      const includedIds = [
+        "65a7b5af40c7294e7706aac8",
+        "65a7d392b1df3e0517bb7055",
+        "65a7d271bcf56486353dc195",
+        "65a62aeaf326bd32e198fbce",
+      ];
+      const filteredSystem = data.filter((item: any) =>
+        includedIds.includes(item._id)
+      );
+
+      setsystemsRolelist(filteredSystem);
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const options: any[] = [
-    {
-      text: "Edit",
-      // onClick: handleEditClick,
-    },
-    {
-      text: "Delete",
-      // onClick: handleDelete,
-    },
-  ];
-  const ITEM_HEIGHT = 48;
+  console.log(roleId, "roleId");
 
   useEffect(() => {
+    setSelectedId(roleId);
     listData();
   }, []);
 
@@ -173,111 +98,122 @@ const RoleTable = () => {
     }
     return result;
   }, [search, catategorylist]);
+  const defaultColumns: GridColDef[] = [
+    {
+      flex: 0.2,
+      minWidth: 125,
+      field: "Role Name",
+      headerName: "Role Name",
+      renderCell: ({ row }: { row: any }) => {
+        const { _id, name } = row;
+        return (
+          <Typography sx={{ color: "text.secondary" }}>
+            <Checkbox
+              sx={{ mr: 1 }}
+              checked={_id === selectedId}
+              onChange={() => handleCheckboxChange(_id)}
+            />
+            {name}
+          </Typography>
+        );
+      },
+    },
 
-  //   const columns: any[] = [
-  //     ...defaultColumns,
-  //     {
-  //       flex: 0.1,
-  //       minWidth: 130,
-  //       sortable: false,
-  //       field: "actions",
-  //       headerName: "Actions",
-  //       renderCell: ({ row }: CellType) => (
-  //         <div>
-  //           <IconButton
-  //             aria-label="more"
-  //             aria-controls="long-menu"
-  //             aria-haspopup="true"
-  //             onClick={(e) => handleClick(e, row)} // Pass the current row here
-  //           >
-  //             <MoreVertIcon />
-  //           </IconButton>
-  //           <Menu
-  //             id="long-menu"
-  //             anchorEl={menuState.anchorEl}
-  //             open={Boolean(menuState.anchorEl)}
-  //             onClose={handleClose}
-  //             PaperProps={{
-  //               style: {
-  //                 maxHeight: ITEM_HEIGHT * 4.5,
-  //                 width: "20ch",
-  //               },
-  //             }}
-  //           >
-  //             <MenuItem
-  //               onClick={() => {
-  //                 handleClose();
-  //                 navigate(`/dashboard/Team-edit/${menuState.row?._id}`); // Use menuState.row._id
-  //               }}
-  //             >
-  //               Edit
-  //             </MenuItem>
-  //             <MenuItem
-  //               onClick={() => {
-  //                 handleClose();
-  //                 handleArchive(menuState.row?._id); // Use menuState.row._id
-  //               }}
-  //             >
-  //               Archive
-  //             </MenuItem>
-  //             <MenuItem
-  //               onClick={() => {
-  //                 handleDelete(menuState.row?._id); // Use menuState.row._id
-  //                 handleClose();
-  //               }}
-  //             >
-  //               Delete
-  //             </MenuItem>
-  //           </Menu>
-  //         </div>
-  //       ),
-  //     },
-  //   ];
-
+    {
+      flex: 0.2,
+      minWidth: 500,
+      field: "desc",
+      headerName: "Description",
+      renderCell: ({ row }: { row: any }) => {
+        const { desc } = row;
+        return (
+          <Typography sx={{ color: "text.secondar" }}>{`${desc}`}</Typography>
+        );
+      },
+    },
+  ];
   return (
     <>
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <Card>
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            ></Box>
-            {isLoading ? (
+      {isLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "50vh",
+          }}
+        >
+          {" "}
+          <ProgressCircularCustomization />
+        </Box>
+      ) : (
+        <Grid container spacing={6}>
+          <Grid item xs={12}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+              <img
+                src={permission}
+                alt="send"
+                style={{ marginRight: 8, height: "20px" }}
+              />
+              <Typography variant="subtitle1">
+                System roles and permissions
+              </Typography>
+              <Divider sx={{ flexGrow: 1, ml: 2 }} />
+            </Box>
+            <div>
+              {systemsRolelist?.map((list: any) => (
+                <Typography sx={{ color: "text.secondary" }}>
+                  <Checkbox
+                    sx={{ mr: 1 }}
+                    checked={list._id === selectedId}
+                    onChange={() => handleCheckboxChange(list._id)}
+                  />
+                  {list.name}
+                </Typography>
+              ))}
+            </div>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 3 }}>
+              <img
+                src={permission}
+                alt="send"
+                style={{ marginRight: 8, height: "20px" }}
+              />
+              <Typography variant="subtitle1">
+                {" "}
+                Custom roles and Permission
+              </Typography>
+              <Divider sx={{ flexGrow: 1, ml: 2 }} />
+            </Box>
+            <Card>
               <Box
                 sx={{
+                  width: "100%",
                   display: "flex",
                   flexWrap: "wrap",
                   alignItems: "center",
-                  justifyContent: "center",
-                  height: "50vh",
+                  justifyContent: "space-between",
                 }}
               ></Box>
-            ) : (
+
               <DataGrid
-                autoHeight
-                pagination
+                style={{ maxHeight: 340 }}
                 rows={filteredList || []}
                 columns={defaultColumns}
                 // checkboxSelection
                 // hideSelectAll={true}
                 disableRowSelectionOnClick
-                pageSizeOptions={[10, 25, 50]}
+                pageSizeOptions={[4, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
                 onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
                 getRowId={(row) => row._id}
                 // disableColumnMenu
               />
-            )}
-          </Card>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </>
   );
 };

@@ -412,22 +412,44 @@ const CategoryList = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(`/dashboard/update-cetegory/${menuState.row?._id}`); // Use menuState.row._id
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_categories
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Edit
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                handleActive(menuState.row?._id); // Use menuState.row._id
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_categories) {
+                    handleClose();
+                    navigate(
+                      `/dashboard/update-cetegory/${menuState.row?._id}`
+                    ); // Use menuState.row._id
+                  }
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_categories
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Active
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  handleClose();
+                  handleActive(menuState.row?._id); // Use menuState.row._id
+                }}
+              >
+                Active
+              </MenuItem>
+            </Tooltip>
             <MenuItem
               onClick={() => {
                 handleClose();
@@ -436,14 +458,25 @@ const CategoryList = () => {
             >
               Inactive
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
-                handleClose();
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.delete_categories
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Delete
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.delete_categories) {
+                    handleDelete(menuState.row?._id); // Use menuState.row._id
+                    handleClose();
+                  }
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Tooltip>
           </Menu>
         </div>
       ),
@@ -493,17 +526,28 @@ const CategoryList = () => {
                   />
                 </Box>
               </div>
-
-              <div style={{ display: "flex" }}>
-                <Button
-                  sx={{ mr: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-cetegory"
+              <div>
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.create_categories
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
                 >
-                  <AddIcon /> Create Category
-                </Button>
-                {/* <MenuButton /> */}
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      disabled={!user?.role?.permissions?.create_categories}
+                      to="/dashboard/create-cetegory"
+                    >
+                      <AddIcon /> Create Category
+                    </Button>
+                  </span>
+                </Tooltip>
               </div>
             </Box>
           </Card>

@@ -56,7 +56,7 @@ interface RowType {
 
 const defaultColumns: any[] = [
   {
-    flex: 0.2,
+    flex: 0.3,
     field: "name",
     minWidth: 230,
     headerName: "Team Name",
@@ -74,7 +74,7 @@ const defaultColumns: any[] = [
     },
   },
   {
-    flex: 0.2,
+    flex: 0.3,
     minWidth: 230,
     field: "managerFirstName",
     headerName: "Admin Name ",
@@ -189,7 +189,7 @@ const defaultColumns: any[] = [
   //   ),
   // },
   {
-    flex: 0.3,
+    flex: 0.2,
     minWidth: 125,
     field: "members",
     headerName: "No. of Users ",
@@ -201,7 +201,7 @@ const defaultColumns: any[] = [
     },
   },
   {
-    flex: 0.3,
+    flex: 0.2,
     minWidth: 120,
     field: "ctive Contracts ",
     headerName: "Active Contracts",
@@ -211,7 +211,7 @@ const defaultColumns: any[] = [
     },
   },
   {
-    flex: 0.3,
+    flex: 0.2,
     minWidth: 120,
     field: "Annual value",
     headerName: "Annual Value",
@@ -373,30 +373,63 @@ const BranchList = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(`/dashboard/Team-edit/${menuState.row?._id}`); // Use menuState.row._id
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_teams
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Edit
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                handleArchive(menuState.row?._id); // Use menuState.row._id
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_teams) {
+                    handleClose();
+                    navigate(`/dashboard/Team-edit/${menuState.row?._id}`); // Use menuState.row._id
+                  }
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.archive_teams
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Archive
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
-                handleClose();
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.archive_teams) {
+                    handleClose();
+                    handleArchive(menuState.row?._id); // Use menuState.row._id
+                  }
+                }}
+              >
+                Archive
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.delete_teams
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Delete
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.delete_teams) {
+                    handleDelete(menuState.row?._id); // Use menuState.row._id
+                    handleClose();
+                  }
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Tooltip>
           </Menu>
         </div>
       ),
@@ -447,15 +480,29 @@ const BranchList = () => {
                   sx={{ minWidth: "150px", flexGrow: { xs: 1, sm: 0 } }} // TextField takes available space on xs screens
                 />
               </Box>
-
-              <Button
-                sx={{ textTransform: "none", width: "fit-content" }} // Button width to fit its content
-                variant="contained"
-                component={Link}
-                to="/dashboard/create-team"
-              >
-                <AddIcon /> Create Team
-              </Button>
+              <div>
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.create_teams
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
+                >
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      to="/dashboard/create-user"
+                      disabled={!user?.role?.permissions?.create_teams}
+                    >
+                      <AddIcon /> Create Team
+                    </Button>
+                  </span>
+                </Tooltip>
+              </div>
             </Box>
           </Card>
         </Grid>

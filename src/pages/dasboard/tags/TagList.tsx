@@ -314,14 +314,25 @@ const TagList = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(`/dashboard/update-tags/${menuState.row?._id}`); // Use menuState.row._id
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_any_tags
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Edit
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_any_tags) {
+                    handleClose();
+                    navigate(`/dashboard/update-tags/${menuState.row?._id}`); // Use menuState.row._id
+                  }
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Tooltip>
             <MenuItem
               onClick={() => {
                 handleClose();
@@ -338,14 +349,25 @@ const TagList = () => {
             >
               Inactive
             </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
-                handleClose();
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.delete_tags
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Delete
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.delete_tags) {
+                    handleDelete(menuState.row?._id); // Use menuState.row._id
+                    handleClose();
+                  }
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Tooltip>
           </Menu>
         </div>
       ),
@@ -396,15 +418,29 @@ const TagList = () => {
                   sx={{ minWidth: "150px", flexGrow: { xs: 1, sm: 0 } }} // TextField takes available space on xs screens
                 />
               </Box>
-
-              <Button
-                sx={{ textTransform: "none", width: "fit-content" }} // Button width to fit its content
-                variant="contained"
-                component={Link}
-                to="/dashboard/create-tags"
-              >
-                <AddIcon /> Create Tag
-              </Button>
+              <div>
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.create_tags
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
+                >
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      disabled={!user?.role?.permissions?.create_tags}
+                      to="/dashboard/create-tags"
+                    >
+                      <AddIcon /> Create Tag
+                    </Button>
+                  </span>
+                </Tooltip>
+              </div>
             </Box>
           </Card>
 

@@ -295,23 +295,46 @@ const ApprovalList = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(`/dashboard/update-approval/${menuState.row?._id}`); // Use menuState.row._id
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_approvals
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Edit
-            </MenuItem>
-
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
-                handleClose();
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_approvals) {
+                    handleClose();
+                    navigate(
+                      `/dashboard/update-approval/${menuState.row?._id}`
+                    );
+                  }
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Tooltip>
+            <Tooltip
+              title={
+                user?.role?.permissions?.delete_approvals
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Delete
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.delete_approvals) {
+                    handleDelete(menuState.row?._id); // Use menuState.row._id
+                    handleClose();
+                  }
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Tooltip>
           </Menu>
         </div>
       ),
@@ -362,17 +385,28 @@ const ApprovalList = () => {
                 </Box>
               </div>
 
-              <div style={{ display: "flex" }}>
-                <Button
-                  sx={{ mr: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-approval"
+              <div>
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.create_approvals
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
                 >
-                  <AddIcon />
-                  Create Approval
-                </Button>
-                {/* <MenuButton /> */}
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      to="/dashboard/create-approval"
+                      disabled={!user?.role?.permissions?.create_approvals}
+                    >
+                      <AddIcon /> Create Approval
+                    </Button>
+                  </span>
+                </Tooltip>
               </div>
             </Box>
           </Card>

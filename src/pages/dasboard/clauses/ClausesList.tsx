@@ -77,7 +77,7 @@ const defaultColumns: any[] = [
     renderCell: ({ row }: any) => {
       const { content } = row;
       const displayContent =
-        content.length > 40 ? `${content.substring(0, 40)}...` : content;
+        content?.length > 40 ? `${content.substring(0, 40)}...` : content;
 
       return (
         <Tooltip title={content} arrow>
@@ -233,9 +233,7 @@ const ClausesList = () => {
     try {
       setIsLoading(true);
       const { data } = await getList();
-
       setCategorylist(data);
-
       console.log("teams", data);
     } catch (error) {
       console.log(error);
@@ -318,7 +316,7 @@ const ClausesList = () => {
 
   const filteredList = useMemo(() => {
     let result = catategorylist;
-    if (search?.trim().length) {
+    if (search?.trim()?.length) {
       result = result.filter((item) =>
         item.name?.toLowerCase().includes(search.trim().toLowerCase())
       );
@@ -357,38 +355,45 @@ const ClausesList = () => {
               },
             }}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(`/dashboard/update-clauses/${menuState.row?._id}`); // Use menuState.row._id
-              }}
+            <Tooltip
+              title={
+                user?.role?.permissions?.edit_clauses
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Edit
-            </MenuItem>
-            {/* <MenuItem
-              onClick={() => {
-                handleClose();
-                handleActive(menuState.row?._id); // Use menuState.row._id
-              }}
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.edit_clauses) {
+                    handleClose();
+                    navigate(`/dashboard/update-clauses/${menuState.row?._id}`); // Use menuState.row._id
+                  }
+                }}
+              >
+                Edit
+              </MenuItem>
+            </Tooltip>
+
+            <Tooltip
+              title={
+                user?.role?.permissions?.delete_any_clauses
+                  ? ""
+                  : "You have no permission"
+              }
+              arrow
             >
-              Active
-            </MenuItem> */}
-            {/* <MenuItem
-              onClick={() => {
-                handleClose();
-                handleInactive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Inactive
-            </MenuItem> */}
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
-                handleClose();
-              }}
-            >
-              Delete
-            </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  if (user?.role?.permissions?.delete_any_clauses) {
+                    handleDelete(menuState.row?._id); // Use menuState.row._id
+                    handleClose();
+                  }
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Tooltip>
           </Menu>
         </div>
       ),
@@ -438,16 +443,28 @@ const ClausesList = () => {
                   />
                 </Box>
               </div>
-
               <div>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-clauses"
+                <Tooltip
+                  title={
+                    user?.role?.permissions?.create_clauses
+                      ? ""
+                      : "You have no permission"
+                  }
+                  arrow
                 >
-                  <AddIcon /> Create Clause
-                </Button>
+                  <span>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      variant="contained"
+                      component={Link}
+                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                      disabled={!user?.role?.permissions?.create_clauses}
+                      to="/dashboard/create-clauses"
+                    >
+                      <AddIcon /> Create Clause
+                    </Button>
+                  </span>
+                </Tooltip>
               </div>
             </Box>
           </Card>

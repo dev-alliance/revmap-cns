@@ -101,7 +101,7 @@ const ChangePasswordVerification: React.FC<ChangePasswordVerification> = ({
         setIsLoading(false);
       }
     } else {
-      toast.error("Please enter a valid 5-digit OTP.");
+      toast.error("Please enter 5 digit verification code");
     }
   };
   return (

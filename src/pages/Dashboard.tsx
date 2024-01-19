@@ -89,6 +89,9 @@ import CreateContract from "@/pages/dasboard/contract/CreateContract";
 import TinyDahsbord from "@/pages/dasboard/contract/sdk/TinyDahsbord";
 import CustomTextEditor from "@/pages/dasboard/contract/sdk/CustomTextEditor";
 import CardsSubscription from "@/pages/dasboard/billing/CardsSubcription";
+import RoleList from "@/pages/dasboard/role_permission/RoleList";
+import CreateCustomRole from "@/pages/dasboard/role_permission/CreateCustomRole";
+import SystemsRole from "@/pages/dasboard/role_permission/SystemsRole";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -205,6 +208,15 @@ export default function Dashboard() {
           </ListItemIcon>
           <ListItemText
             primary="Users"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+        <ListItemButton component={Link} to="/dashboard/role-list">
+          <ListItemIcon>
+            <PersonIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Roles & Permissions"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
@@ -483,6 +495,11 @@ export default function Dashboard() {
           <Route path="/tiny-dahsbord" element={<TinyDahsbord />} />
           <Route path="/sub-page-1" element={<SubPage1 />} />
           <Route path="/billing" element={<CardsSubscription />} />
+
+          <Route path="/role-list" element={<RoleList />} />
+          <Route path="/crete-custom-role/:id" element={<CreateCustomRole />} />
+          <Route path="/crete-custom-role" element={<CreateCustomRole />} />
+          <Route path="/system-role" element={<SystemsRole />} />
           <Route path="/editor" element={<CustomTextEditor />} />
         </Routes>
       </Box>
