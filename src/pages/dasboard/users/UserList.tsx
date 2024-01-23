@@ -220,7 +220,9 @@ const UserList = () => {
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
                 sx={{ color: "text.secondary", cursor: "pointer" }}
-                onClick={() => handleOpenDialog(row)}
+                // onClick={() => handleOpenDialog(row)}
+                component={Link}
+                to={`/dashboard/user-detail-single/${row._id}`}
               >
                 {name}
               </Typography>

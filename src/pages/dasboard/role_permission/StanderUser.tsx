@@ -245,7 +245,7 @@ const StanderUser = () => {
 
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} sx={{ display: "table" }}>
-          <Typography variant="subtitle1">StanderUser</Typography>
+          <Typography variant="subtitle1">Collaborator</Typography>
           <Typography variant="subtitle2" sx={{ fontSize: "15px", mb: 2 }}>
             This role is system-defined and cannot be edited or deleted. If
             custom roles with specific permissions are required, a new role can
@@ -278,6 +278,8 @@ const StanderUser = () => {
                         label="Can view own profile"
                         control={
                           <Checkbox
+                            disabled
+                            sx={{ fontWeight: "bold" }}
                             checked={permissions.create_profile}
                             onChange={() =>
                               handleCheckboxChange("create_profile")
@@ -292,6 +294,7 @@ const StanderUser = () => {
                         label="Can edit own profile"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_profile}
                             onChange={() =>
                               handleCheckboxChange("edit_profile")
@@ -306,6 +309,7 @@ const StanderUser = () => {
                         label="Can reset his own password"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.reset_password}
                             onChange={() =>
                               handleCheckboxChange("reset_password")
@@ -321,6 +325,7 @@ const StanderUser = () => {
                         label="Can enable own 2FA"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.enable_2fa}
                             onChange={() => handleCheckboxChange("enable_2fa")}
                             color="primary"
@@ -333,6 +338,7 @@ const StanderUser = () => {
                         label="Can view any document folder"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edisable_2fa}
                             onChange={() =>
                               handleCheckboxChange("edisable_2fa")
@@ -370,6 +376,7 @@ const StanderUser = () => {
                         label="Can view own dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_dashboard}
                             onChange={() =>
                               handleCheckboxChange("view_dashboard")
@@ -384,6 +391,7 @@ const StanderUser = () => {
                         label="Can edit own dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_dashboard}
                             onChange={() =>
                               handleCheckboxChange("edit_dashboard")
@@ -398,6 +406,7 @@ const StanderUser = () => {
                         label="Can view own team's dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_teams_dashboard}
                             onChange={() =>
                               handleCheckboxChange("view_teams_dashboard")
@@ -413,6 +422,7 @@ const StanderUser = () => {
                         label="Can edit own team’s dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_team_dashboard}
                             onChange={() =>
                               handleCheckboxChange("edit_team_dashboard")
@@ -427,6 +437,7 @@ const StanderUser = () => {
                         label="Can view own team members dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_teams_member_dashboard}
                             onChange={() =>
                               handleCheckboxChange(
@@ -443,6 +454,7 @@ const StanderUser = () => {
                         label="Can view executive dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_exective_dashboard}
                             onChange={() =>
                               handleCheckboxChange("view_exective_dashboard")
@@ -457,6 +469,7 @@ const StanderUser = () => {
                         label="Can view any dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_any_dashboard}
                             onChange={() =>
                               handleCheckboxChange("view_any_dashboard")
@@ -494,6 +507,7 @@ const StanderUser = () => {
                         label="Can create own documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_docs}
                             onChange={() => handleCheckboxChange("create_docs")}
                             color="primary"
@@ -506,6 +520,7 @@ const StanderUser = () => {
                         label="Can view own documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_docs}
                             onChange={() => handleCheckboxChange("view_docs")}
                             color="primary"
@@ -518,6 +533,7 @@ const StanderUser = () => {
                         label="Can edit own documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_docs}
                             onChange={() => handleCheckboxChange("edit_docs")}
                             color="primary"
@@ -531,6 +547,7 @@ const StanderUser = () => {
                         label="Can edit own team’s dashboard"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_team_dashboard}
                             onChange={() =>
                               handleCheckboxChange("edit_team_dashboard")
@@ -545,6 +562,7 @@ const StanderUser = () => {
                         label="Can duplicate own documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.dublicate_docs}
                             onChange={() =>
                               handleCheckboxChange("dublicate_docs")
@@ -559,6 +577,7 @@ const StanderUser = () => {
                         label="Can download own documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.download_docs}
                             onChange={() =>
                               handleCheckboxChange("download_docs")
@@ -573,6 +592,7 @@ const StanderUser = () => {
                         label="Can share own documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.share_docs}
                             onChange={() => handleCheckboxChange("share_docs")}
                             color="primary"
@@ -585,6 +605,7 @@ const StanderUser = () => {
                         label="Can view shared documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_share_docs}
                             onChange={() =>
                               handleCheckboxChange("view_share_docs")
@@ -599,6 +620,7 @@ const StanderUser = () => {
                         label="Can edit shared documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_share_doc}
                             onChange={() =>
                               handleCheckboxChange("edit_share_doc")
@@ -613,6 +635,7 @@ const StanderUser = () => {
                         label="Can comment on shared documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.comment_shere_doc}
                             onChange={() =>
                               handleCheckboxChange("comment_shere_doc")
@@ -627,6 +650,7 @@ const StanderUser = () => {
                         label="Can view any document"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_any_doc}
                             onChange={() =>
                               handleCheckboxChange("view_any_doc")
@@ -641,6 +665,7 @@ const StanderUser = () => {
                         label="Can edit any document"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_docs}
                             onChange={() =>
                               handleCheckboxChange("edit_any_docs")
@@ -655,6 +680,7 @@ const StanderUser = () => {
                         label="Can duplicate any document"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.dublicate_any_docs}
                             onChange={() =>
                               handleCheckboxChange("dublicate_any_docs")
@@ -669,6 +695,7 @@ const StanderUser = () => {
                         label="Can share any document"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.share_any_docs}
                             onChange={() =>
                               handleCheckboxChange("share_any_docs")
@@ -683,6 +710,7 @@ const StanderUser = () => {
                         label="Can delete any document"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_any_docs}
                             onChange={() =>
                               handleCheckboxChange("delete_any_docs")
@@ -720,6 +748,7 @@ const StanderUser = () => {
                         label="Can sign own documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.sign_doc}
                             onChange={() => handleCheckboxChange("sign_doc")}
                             color="primary"
@@ -732,6 +761,7 @@ const StanderUser = () => {
                         label="Can sign shared documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.sign_share_doc}
                             onChange={() =>
                               handleCheckboxChange("sign_share_doc")
@@ -746,6 +776,7 @@ const StanderUser = () => {
                         label="Can sign documents on team's behalf"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.sign_team_doc}
                             onChange={() =>
                               handleCheckboxChange("sign_team_doc")
@@ -761,6 +792,7 @@ const StanderUser = () => {
                         label="Can sign any document"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.sign_any_doc}
                             onChange={() =>
                               handleCheckboxChange("sign_any_doc")
@@ -785,7 +817,7 @@ const StanderUser = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>Folder</span>
+                  <span>Folders</span>
                   {openSections.folder ? <ExpandLess /> : <ExpandMore />}
                 </Typography>
 
@@ -800,6 +832,7 @@ const StanderUser = () => {
                         label="Can create own folders"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_folder}
                             onChange={() =>
                               handleCheckboxChange("create_folder")
@@ -814,6 +847,7 @@ const StanderUser = () => {
                         label="Can edit own folders"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_folder}
                             onChange={() => handleCheckboxChange("edit_folder")}
                             color="primary"
@@ -826,6 +860,7 @@ const StanderUser = () => {
                         label="Can delete own folders"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_folder}
                             onChange={() =>
                               handleCheckboxChange("delete_folder")
@@ -841,6 +876,7 @@ const StanderUser = () => {
                         label="Can edit any document folder"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_document_folder}
                             onChange={() =>
                               handleCheckboxChange("edit_any_document_folder")
@@ -855,6 +891,7 @@ const StanderUser = () => {
                         label="Can view any document folder"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_any_document_folder}
                             onChange={() =>
                               handleCheckboxChange("view_any_document_folder")
@@ -869,6 +906,7 @@ const StanderUser = () => {
                         label="Can delete any document folder"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_any_document_folder}
                             onChange={() =>
                               handleCheckboxChange("delete_any_document_folder")
@@ -883,6 +921,7 @@ const StanderUser = () => {
                         label="Can move any document to any folder"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.move_any_document_folder}
                             onChange={() =>
                               handleCheckboxChange("move_any_document_folder")
@@ -897,6 +936,7 @@ const StanderUser = () => {
                         label="Can create documents in any folder"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_any_document_folder}
                             onChange={() =>
                               handleCheckboxChange("create_any_document_folder")
@@ -921,7 +961,7 @@ const StanderUser = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>templates</span>
+                  <span>Templates</span>
                   {openSections.templates ? <ExpandLess /> : <ExpandMore />}
                 </Typography>
 
@@ -936,6 +976,7 @@ const StanderUser = () => {
                         label="Can create templates"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_template}
                             onChange={() =>
                               handleCheckboxChange("create_template")
@@ -950,6 +991,7 @@ const StanderUser = () => {
                         label="Can view any template"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_template}
                             onChange={() =>
                               handleCheckboxChange("view_template")
@@ -961,9 +1003,10 @@ const StanderUser = () => {
                     </Grid>
                     <Grid item>
                       <FormControlLabel
-                        label="Can use any templates to create documents"
+                        label="Can use any template to create documents"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_any_template}
                             onChange={() =>
                               handleCheckboxChange("create_any_template")
@@ -979,6 +1022,7 @@ const StanderUser = () => {
                         label="Can duplicate any template"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.dublicate_any_template}
                             onChange={() =>
                               handleCheckboxChange("dublicate_any_template")
@@ -993,6 +1037,7 @@ const StanderUser = () => {
                         label="Can edit own templates"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_template}
                             onChange={() =>
                               handleCheckboxChange("edit_template")
@@ -1007,6 +1052,7 @@ const StanderUser = () => {
                         label="Can share own templates"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.share_template}
                             onChange={() =>
                               handleCheckboxChange("share_template")
@@ -1021,6 +1067,7 @@ const StanderUser = () => {
                         label="Can upload public templates"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.upload_public_template}
                             onChange={() =>
                               handleCheckboxChange("upload_public_template")
@@ -1035,6 +1082,7 @@ const StanderUser = () => {
                         label="Can delete own templates"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_template}
                             onChange={() =>
                               handleCheckboxChange("delete_template")
@@ -1049,6 +1097,7 @@ const StanderUser = () => {
                         label="Can edit any templates"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_template}
                             onChange={() =>
                               handleCheckboxChange("edit_any_template")
@@ -1063,9 +1112,10 @@ const StanderUser = () => {
                         label="Can edit any template folder"
                         control={
                           <Checkbox
-                            checked={permissions.edit_any_document_folder}
+                            disabled
+                            checked={permissions.edit_any_template}
                             onChange={() =>
-                              handleCheckboxChange("edit_any_document_folder")
+                              handleCheckboxChange("edit_any_template")
                             }
                             color="primary"
                           />
@@ -1077,6 +1127,7 @@ const StanderUser = () => {
                         label="Can delete any template folder"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_template_folder}
                             onChange={() =>
                               handleCheckboxChange("delete_template_folder")
@@ -1101,7 +1152,7 @@ const StanderUser = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>reports</span>
+                  <span>Reports</span>
                   {openSections.reports ? <ExpandLess /> : <ExpandMore />}
                 </Typography>
 
@@ -1116,6 +1167,7 @@ const StanderUser = () => {
                         label="Can view reports"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_reports}
                             onChange={() =>
                               handleCheckboxChange("view_reports")
@@ -1130,6 +1182,7 @@ const StanderUser = () => {
                         label="Can download reports"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.download_reports}
                             onChange={() =>
                               handleCheckboxChange("download_reports")
@@ -1144,6 +1197,7 @@ const StanderUser = () => {
                         label="Can create reports"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_reports}
                             onChange={() =>
                               handleCheckboxChange("create_reports")
@@ -1181,6 +1235,7 @@ const StanderUser = () => {
                         label="Can create branches"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_branches}
                             onChange={() =>
                               handleCheckboxChange("create_branches")
@@ -1195,6 +1250,7 @@ const StanderUser = () => {
                         label="Can edit branches"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_branches}
                             onChange={() =>
                               handleCheckboxChange("edit_branches")
@@ -1209,6 +1265,7 @@ const StanderUser = () => {
                         label="Can archive branches"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.archive_branches}
                             onChange={() =>
                               handleCheckboxChange("archive_branches")
@@ -1224,6 +1281,7 @@ const StanderUser = () => {
                         label="Can delete branches"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_branches}
                             onChange={() =>
                               handleCheckboxChange("delete_branches")
@@ -1238,6 +1296,7 @@ const StanderUser = () => {
                         label="Can create teams"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_teams}
                             onChange={() =>
                               handleCheckboxChange("create_teams")
@@ -1252,6 +1311,7 @@ const StanderUser = () => {
                         label="Can edit teams"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_teams}
                             onChange={() => handleCheckboxChange("edit_teams")}
                             color="primary"
@@ -1264,6 +1324,7 @@ const StanderUser = () => {
                         label="Can delete teams"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_teams}
                             onChange={() =>
                               handleCheckboxChange("delete_teams")
@@ -1278,6 +1339,7 @@ const StanderUser = () => {
                         label="Can archive teams"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.archive_teams}
                             onChange={() =>
                               handleCheckboxChange("archive_teams")
@@ -1292,6 +1354,7 @@ const StanderUser = () => {
                         label="Can add users"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.add_users}
                             onChange={() => handleCheckboxChange("add_users")}
                             color="primary"
@@ -1305,6 +1368,7 @@ const StanderUser = () => {
                         label="Can edit users"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_users}
                             onChange={() => handleCheckboxChange("edit_users")}
                             color="primary"
@@ -1317,6 +1381,7 @@ const StanderUser = () => {
                         label="Can delete users"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_users}
                             onChange={() =>
                               handleCheckboxChange("delete_users")
@@ -1331,6 +1396,7 @@ const StanderUser = () => {
                         label="Can view any user's profile"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_profile_users}
                             onChange={() =>
                               handleCheckboxChange("view_profile_users")
@@ -1345,6 +1411,7 @@ const StanderUser = () => {
                         label="Can access billing"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.access_billing}
                             onChange={() =>
                               handleCheckboxChange("access_billing")
@@ -1359,6 +1426,7 @@ const StanderUser = () => {
                         label="Can upgrade plans"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.upgrade_plans}
                             onChange={() =>
                               handleCheckboxChange("upgrade_plans")
@@ -1373,6 +1441,7 @@ const StanderUser = () => {
                         label="Can change payment info"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.change_payment_info}
                             onChange={() =>
                               handleCheckboxChange("change_payment_info")
@@ -1388,6 +1457,7 @@ const StanderUser = () => {
                         label="Can change billing owner"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.change_billing_owner}
                             onChange={() =>
                               handleCheckboxChange("change_billing_owner")
@@ -1402,6 +1472,7 @@ const StanderUser = () => {
                         label="Can view invoices history"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_invoice_history}
                             onChange={() =>
                               handleCheckboxChange("view_invoice_history")
@@ -1416,6 +1487,7 @@ const StanderUser = () => {
                         label="Can add user licences"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.add_user_licences}
                             onChange={() =>
                               handleCheckboxChange("add_user_licences")
@@ -1460,6 +1532,7 @@ const StanderUser = () => {
                         label="Can edit company info"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_company}
                             onChange={() =>
                               handleCheckboxChange("edit_company")
@@ -1482,7 +1555,7 @@ const StanderUser = () => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span>configrations</span>
+                  <span>Configrations</span>
                   {openSections.configrations ? <ExpandLess /> : <ExpandMore />}
                 </Typography>
 
@@ -1497,6 +1570,7 @@ const StanderUser = () => {
                         label="Can view approvals"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_approvals}
                             onChange={() =>
                               handleCheckboxChange("view_approvals")
@@ -1511,6 +1585,7 @@ const StanderUser = () => {
                         label="Can create approvals"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_approvals}
                             onChange={() =>
                               handleCheckboxChange("create_approvals")
@@ -1525,6 +1600,7 @@ const StanderUser = () => {
                         label="Can edit own approvals"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_approvals}
                             onChange={() =>
                               handleCheckboxChange("edit_approvals")
@@ -1540,6 +1616,7 @@ const StanderUser = () => {
                         label="Can delete own approvals"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_approvals}
                             onChange={() =>
                               handleCheckboxChange("delete_approvals")
@@ -1554,6 +1631,7 @@ const StanderUser = () => {
                         label="Can edit any approval"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_approvals}
                             onChange={() =>
                               handleCheckboxChange("edit_any_approvals")
@@ -1568,6 +1646,7 @@ const StanderUser = () => {
                         label="Can delete any approval"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_any_approvals}
                             onChange={() =>
                               handleCheckboxChange("delete_any_approvals")
@@ -1582,6 +1661,7 @@ const StanderUser = () => {
                         label="Can view categories"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_categories}
                             onChange={() =>
                               handleCheckboxChange("view_categories")
@@ -1596,6 +1676,7 @@ const StanderUser = () => {
                         label="Can create categories"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_categories}
                             onChange={() =>
                               handleCheckboxChange("create_categories")
@@ -1610,6 +1691,7 @@ const StanderUser = () => {
                         label="Can edit own categories"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_categories}
                             onChange={() =>
                               handleCheckboxChange("edit_categories")
@@ -1625,6 +1707,7 @@ const StanderUser = () => {
                         label="Can delete own categories"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_categories}
                             onChange={() =>
                               handleCheckboxChange("delete_categories")
@@ -1639,6 +1722,7 @@ const StanderUser = () => {
                         label="Can edit any category"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_categories}
                             onChange={() =>
                               handleCheckboxChange("edit_any_categories")
@@ -1653,6 +1737,7 @@ const StanderUser = () => {
                         label="Can delete any category"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_any_categories}
                             onChange={() =>
                               handleCheckboxChange("delete_any_categories")
@@ -1667,6 +1752,7 @@ const StanderUser = () => {
                         label="Can view clauses"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_clauses}
                             onChange={() =>
                               handleCheckboxChange("view_clauses")
@@ -1681,6 +1767,7 @@ const StanderUser = () => {
                         label="Can create clauses"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_clauses}
                             onChange={() =>
                               handleCheckboxChange("create_clauses")
@@ -1695,6 +1782,7 @@ const StanderUser = () => {
                         label="Can edit own clauses"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_clauses}
                             onChange={() =>
                               handleCheckboxChange("edit_clauses")
@@ -1709,6 +1797,7 @@ const StanderUser = () => {
                         label="Can delete own clauses"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_clauses}
                             onChange={() =>
                               handleCheckboxChange("delete_clauses")
@@ -1723,6 +1812,7 @@ const StanderUser = () => {
                         label="Can edit any clause"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_clauses}
                             onChange={() =>
                               handleCheckboxChange("edit_any_clauses")
@@ -1737,6 +1827,7 @@ const StanderUser = () => {
                         label="Can delete any clause"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_any_clauses}
                             onChange={() =>
                               handleCheckboxChange("delete_any_clauses")
@@ -1751,6 +1842,7 @@ const StanderUser = () => {
                         label="Can view custom fields"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_fields}
                             onChange={() => handleCheckboxChange("view_fields")}
                             color="primary"
@@ -1763,6 +1855,7 @@ const StanderUser = () => {
                         label="Can create custom fields"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_fields}
                             onChange={() =>
                               handleCheckboxChange("create_fields")
@@ -1777,6 +1870,7 @@ const StanderUser = () => {
                         label="Can edit own custom fields"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_fields}
                             onChange={() => handleCheckboxChange("edit_fields")}
                             color="primary"
@@ -1789,6 +1883,7 @@ const StanderUser = () => {
                         label="Can delete own custom fields"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_fields}
                             onChange={() =>
                               handleCheckboxChange("delete_fields")
@@ -1803,6 +1898,7 @@ const StanderUser = () => {
                         label="Can edit any custom field"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_fields}
                             onChange={() =>
                               handleCheckboxChange("edit_any_fields")
@@ -1818,6 +1914,8 @@ const StanderUser = () => {
                         label="Can delete any custom field"
                         control={
                           <Checkbox
+                            disabled
+                            sx={{ fontWeight: "bold" }}
                             checked={permissions.delete_any_fields}
                             onChange={() =>
                               handleCheckboxChange("delete_any_fields")
@@ -1832,6 +1930,7 @@ const StanderUser = () => {
                         label="Can view tags"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.view_tags}
                             onChange={() => handleCheckboxChange("view_tags")}
                             color="primary"
@@ -1844,6 +1943,7 @@ const StanderUser = () => {
                         label="Can create tags"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.create_tags}
                             onChange={() => handleCheckboxChange("create_tags")}
                             color="primary"
@@ -1857,6 +1957,7 @@ const StanderUser = () => {
                         label="Can edit own tags"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_tags}
                             onChange={() => handleCheckboxChange("edit_tags")}
                             color="primary"
@@ -1869,6 +1970,7 @@ const StanderUser = () => {
                         label="Can delete own tags"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_tags}
                             onChange={() => handleCheckboxChange("delete_tags")}
                             color="primary"
@@ -1882,6 +1984,7 @@ const StanderUser = () => {
                         label="Can edit any tag"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.edit_any_tags}
                             onChange={() =>
                               handleCheckboxChange("edit_any_tags")
@@ -1896,6 +1999,7 @@ const StanderUser = () => {
                         label="Can delete any tag"
                         control={
                           <Checkbox
+                            disabled
                             checked={permissions.delete_any_tags}
                             onChange={() =>
                               handleCheckboxChange("delete_any_tags")

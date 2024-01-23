@@ -495,7 +495,7 @@ const BranchList = () => {
                       variant="contained"
                       component={Link}
                       // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-                      to="/dashboard/create-user"
+                      to="/dashboard/create-team"
                       disabled={!user?.role?.permissions?.create_teams}
                     >
                       <AddIcon /> Create Team

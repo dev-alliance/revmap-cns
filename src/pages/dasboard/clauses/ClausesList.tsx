@@ -30,6 +30,7 @@ import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircul
 import { useAuth } from "@/hooks/useAuth";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { deleteClauses, getList, updateStatus } from "@/service/api/clauses";
+import DetailDialog from "@/pages/dasboard/clauses/DetailDialog";
 
 interface CellType {
   row: any;
@@ -52,95 +53,6 @@ interface RowType {
 // ** Styled components
 
 const defaultColumns: any[] = [
-  {
-    flex: 0.2,
-    field: "name",
-    minWidth: 230,
-    headerName: "Clause Name",
-    renderCell: ({ row }: any) => {
-      const { name } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    field: "content",
-    minWidth: 230,
-    headerName: "Clause Description",
-    renderCell: ({ row }: any) => {
-      const { content } = row;
-      const displayContent =
-        content?.length > 40 ? `${content.substring(0, 40)}...` : content;
-
-      return (
-        <Tooltip title={content} arrow>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {displayContent}
-              </Typography>
-            </Box>
-          </Box>
-        </Tooltip>
-      );
-    },
-  },
-
-  {
-    flex: 0.2,
-    field: "createdAt",
-    minWidth: 130,
-    headerName: "Created Date",
-    renderCell: ({ row }: any) => {
-      const { createdAt } = row;
-
-      // Specify the desired time zone, e.g., 'America/New_York'
-
-      const timeZone = "America/New_York";
-      // Convert UTC date to the specified time zone
-      const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
-
-      const formattedDate = format(zonedDate, "dd-MM-yyyy ", {
-        timeZone,
-      });
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {formattedDate}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.2,
-    field: "createdByName",
-    minWidth: 180,
-    headerName: "Created By",
-    renderCell: ({ row }: any) => {
-      const { createdByName } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {createdByName || "-"}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
   // {
   //   flex: 0.2,
   //   minWidth: 125,
@@ -207,7 +119,8 @@ const ClausesList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
-
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedData, setSelectedData] = useState("");
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
     row: CellType | null;
@@ -216,6 +129,14 @@ const ClausesList = () => {
     row: null,
   });
 
+  const handleOpenDialog = (row: any) => {
+    setSelectedData(row); // Set the data you want to display
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
     row: CellType
@@ -263,51 +184,6 @@ const ClausesList = () => {
     }
   };
 
-  const handleActive = async (id: any) => {
-    try {
-      if (
-        window.confirm("Are you sure you want to change the status this item?")
-      ) {
-        setIsLoading(true);
-        const res = await updateStatus(id, { status: "Active" });
-        console.log({ res });
-
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleInactive = async (id: any) => {
-    try {
-      if (
-        window.confirm("Are you sure you want to change the status this item?")
-      ) {
-        setIsLoading(true);
-        const res = await updateStatus(id, { status: "Inactive" });
-        console.log({ res });
-
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
     listData();
   }, []);
@@ -325,7 +201,98 @@ const ClausesList = () => {
   }, [search, catategorylist]);
 
   const columns: GridColDef[] = [
-    ...defaultColumns,
+    {
+      flex: 0.2,
+      field: "name",
+      minWidth: 230,
+      headerName: "Clause Name",
+      renderCell: ({ row }: any) => {
+        const { name } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      field: "content",
+      minWidth: 230,
+      headerName: "Clause Description",
+      renderCell: ({ row }: any) => {
+        const { content } = row;
+        const displayContent =
+          content?.length > 40 ? `${content.substring(0, 40)}...` : content;
+
+        return (
+          <Tooltip title={content} arrow>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography
+                  sx={{ color: "text.secondary", cursor: "pointer" }}
+                  onClick={() => handleOpenDialog(row.content)}
+                >
+                  {displayContent}
+                </Typography>
+              </Box>
+            </Box>
+          </Tooltip>
+        );
+      },
+    },
+
+    {
+      flex: 0.2,
+      field: "createdAt",
+      minWidth: 130,
+      headerName: "Created Date",
+      renderCell: ({ row }: any) => {
+        const { createdAt } = row;
+
+        // Specify the desired time zone, e.g., 'America/New_York'
+
+        const timeZone = "America/New_York";
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
+
+        const formattedDate = format(zonedDate, "dd-MM-yyyy ", {
+          timeZone,
+        });
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {formattedDate}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.2,
+      field: "createdByName",
+      minWidth: 180,
+      headerName: "Created By",
+      renderCell: ({ row }: any) => {
+        const { createdByName } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {createdByName || "-"}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
     {
       flex: 0.02,
       minWidth: 100,
@@ -333,7 +300,7 @@ const ClausesList = () => {
       field: "actions",
       headerName: "Actions",
       headerAlign: "center",
-      renderCell: ({ row }: CellType) => (
+      renderCell: ({ row }: any) => (
         <div>
           <IconButton
             aria-label="more"
@@ -469,7 +436,6 @@ const ClausesList = () => {
             </Box>
           </Card>
         </Grid>
-
         <Grid item xs={12}>
           <Card>
             <Box
@@ -510,6 +476,11 @@ const ClausesList = () => {
           </Card>
         </Grid>
       </Grid>
+      <DetailDialog
+        open={openDialog}
+        data={selectedData}
+        onClose={handleCloseDialog}
+      />
     </>
   );
 };

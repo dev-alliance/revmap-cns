@@ -205,7 +205,7 @@ const UpdateBranch = () => {
               variant="h5"
               sx={{ textAlign: "left", marginBottom: 2 }}
             >
-              Create Branch
+              Update Branch
             </Typography>
             <Breadcrumbs
               aria-label="breadcrumb"
@@ -222,7 +222,7 @@ const UpdateBranch = () => {
                 sx={{ fontSize: "14px", ml: "-7px" }}
                 color="text.primary"
               >
-                Create Branch
+                Update Branch
               </Typography>
             </Breadcrumbs>
           </Box>

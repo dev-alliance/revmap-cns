@@ -114,7 +114,11 @@ const BranchList = () => {
     try {
       setIsLoading(true);
       const { data } = await getBranchList(user?._id);
-      setCategorylist(data);
+      const excludedIds = ["65ae573e0d864a2902d16e73"];
+      const filteredData = data.filter(
+        (item: any) => !excludedIds.includes(item._id)
+      );
+      setCategorylist(filteredData);
       console.log("branc", data);
     } catch (error) {
       console.log(error);
@@ -214,8 +218,10 @@ const BranchList = () => {
             {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
+                component={Link}
+                to={`/dashboard/branch-edit/${row._id}`}
                 sx={{ color: "text.secondary", cursor: "pointer" }}
-                onClick={() => handleOpenDialog(row)}
+                // onClick={() => handleOpenDialog(row)}
               >
                 {branchName}
               </Typography>

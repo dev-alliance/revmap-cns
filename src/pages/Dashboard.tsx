@@ -92,6 +92,7 @@ import CardsSubscription from "@/pages/dasboard/billing/CardsSubcription";
 import RoleList from "@/pages/dasboard/role_permission/RoleList";
 import CreateCustomRole from "@/pages/dasboard/role_permission/CreateCustomRole";
 import SystemsRole from "@/pages/dasboard/role_permission/SystemsRole";
+import UserDetailSingleUser from "@/pages/dasboard/users/UserDetailSingleUser";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -216,7 +217,7 @@ export default function Dashboard() {
             <PersonIcon />
           </ListItemIcon>
           <ListItemText
-            primary="Roles & Permissions"
+            primary="Roles"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
@@ -458,6 +459,10 @@ export default function Dashboard() {
           <Route path="/user-edit/:id" element={<UpdateUser />} />
           <Route path="/user-update-user/:id" element={<UserEdit />} />
           <Route path="/user-detail/:id" element={<UserDetail />} />
+          <Route
+            path="/user-detail-single/:id"
+            element={<UserDetailSingleUser />}
+          />
           <Route path="/profile-setting" element={<Setting />} />
 
           <Route path="/login-history" element={<LoginHistory />} />

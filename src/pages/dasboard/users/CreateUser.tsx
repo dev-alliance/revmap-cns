@@ -439,7 +439,7 @@ const CreateUser = () => {
                               }}
                             >
                               Select branch
-                            </em> // Placeholder text with custom color
+                            </em>
                           );
                         }
                         const selectedBranch = branchData.find(
@@ -448,6 +448,13 @@ const CreateUser = () => {
                         return selectedBranch ? selectedBranch.branchName : "";
                       }}
                     >
+                      {/* Display Main Entity dynamically based on the provided ID */}
+                      <MenuItem value={"65ae573e0d864a2902d16e73"}>
+                        {branchData.find(
+                          (branch) => branch._id === "65ae573e0d864a2902d16e73"
+                        )?.branchName || "Main Entity"}
+                      </MenuItem>
+                      <Divider />
                       {branchData?.map((branch: any) => (
                         <MenuItem key={branch?._id} value={branch?._id}>
                           {branch?.branchName}
@@ -530,11 +537,11 @@ const CreateUser = () => {
               xl={10}
               sx={{ width: "100%" }}
             >
-              <Grid sx={{ mb: 3 }}>
+              <Grid sx={{ mb: 1 }}>
                 <RoleTable setRoleId={setRoleId} roleId={roleId} />
               </Grid>
 
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+              {/* <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
                 <img
                   src={logo}
                   alt="send"
@@ -542,23 +549,52 @@ const CreateUser = () => {
                 />
                 <Typography variant="subtitle2">Send Invitation</Typography>
                 <Divider sx={{ flexGrow: 1, ml: 2 }} />
-              </Box>
+              </Box> */}
 
-              <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle2">Email*</Typography>
-                <TextField
-                  placeholder="Email"
-                  fullWidth
-                  value={email}
-                  error={!!emailError}
-                  onChange={handleEmailChange}
-                  helperText={emailError}
-                  size="small"
-                  variant="outlined"
-                />
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle2">Email*</Typography>
+                  <TextField
+                    placeholder="Email"
+                    fullWidth
+                    value={email}
+                    error={!!emailError}
+                    onChange={handleEmailChange}
+                    helperText={emailError}
+                    size="small"
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={() => navigate(-1)}
+                    sx={{ textTransform: "none" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    sx={{ ml: 2, textTransform: "none" }}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    disabled={isLoading}
+                  >
+                    Create User
+                  </Button>
+                </Grid>
               </Grid>
 
-              <Grid sx={{ mt: 1 }}>
+              <Grid>
                 <FormControlLabel
                   control={
                     <Controller
@@ -581,26 +617,6 @@ const CreateUser = () => {
                   }
                 />
               </Grid>
-              <Box sx={{ width: "100%", textAlign: "right" }}>
-                {" "}
-                {/* Container with full width */}
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate(-1)}
-                  sx={{ textTransform: "none" }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  disabled={isLoading}
-                >
-                  Create User
-                </Button>
-              </Box>
             </Grid>
           </Grid>
         </TabPanel>

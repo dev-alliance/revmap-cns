@@ -1257,11 +1257,9 @@ const CreateCustomRole = () => {
                             label="Can edit any template folder"
                             control={
                               <Checkbox
-                                checked={permissions.edit_any_document_folder}
+                                checked={permissions.edit_any_template}
                                 onChange={() =>
-                                  handleCheckboxChange(
-                                    "edit_any_document_folder"
-                                  )
+                                  handleCheckboxChange("edit_any_template")
                                 }
                                 color="primary"
                               />

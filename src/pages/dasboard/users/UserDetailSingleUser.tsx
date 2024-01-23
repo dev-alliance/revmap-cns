@@ -77,7 +77,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const UserDetail = () => {
+const UserDetailSingleUser = () => {
   const {
     control,
     handleSubmit,
@@ -212,9 +212,9 @@ const UserDetail = () => {
             aria-label="basic tabs example"
           >
             <Tab label="Profile" sx={{ fontWeight: "bold" }} />
-            <Tab label="Login History" sx={{ fontWeight: "bold" }} />
+            {/* <Tab label="Login History" sx={{ fontWeight: "bold" }} /> */}
           </Tabs>
-          <Button
+          {/* <Button
             sx={{
               ml: "auto",
               textTransform: "none",
@@ -228,7 +228,7 @@ const UserDetail = () => {
             to={`/dashboard/user-update-user/${id}`}
           >
             Edit
-          </Button>
+          </Button> */}
         </Box>
 
         <TabPanel value={tabValue} index={0}>
@@ -494,26 +494,6 @@ const UserDetail = () => {
                       {list?.role?.name}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        mr: 2,
-
-                        color: "text.secondary",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      Disable Access to ContractnSign
-                    </Typography>
-                    <Switch
-                      checked={isAccessDisabled}
-                      onChange={(e: any) =>
-                        setIsAccessDisabled(e.target.checked)
-                      }
-                      color={isAccessDisabled ? "success" : "primary"} // Change color to 'success' when enabled
-                    />
-                  </Box>
                 </Box>
               </CardContent>
             </Grid>
@@ -595,6 +575,27 @@ const UserDetail = () => {
                       -
                     </Typography>
                   </Box> */}
+                  {/* <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        minWidth: 120,
+                        mr: 2,
+
+                        color: "text.secondary",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Disable Access to ContractnSign
+                    </Typography>
+                    <Switch
+                      checked={isAccessDisabled}
+                      onChange={(e: any) =>
+                        setIsAccessDisabled(e.target.checked)
+                      }
+                      color={isAccessDisabled ? "success" : "primary"} 
+                    />
+                  </Box> */}
                 </Box>
               </CardContent>
             </Grid>
@@ -612,9 +613,9 @@ const UserDetail = () => {
               xl={10}
               sx={{ width: "100%" }}
             >
-              <Grid sx={{ mb: 3 }}>
+              {/* <Grid sx={{ mb: 3 }}>
                 <LoginHistory />
-              </Grid>
+              </Grid> */}
 
               {/* <Box sx={{ width: "100%", textAlign: "right" }}>
                 {" "}
@@ -634,4 +635,4 @@ const UserDetail = () => {
   );
 };
 
-export default UserDetail;
+export default UserDetailSingleUser;

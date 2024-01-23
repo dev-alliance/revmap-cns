@@ -120,7 +120,7 @@ const Setting = () => {
           aria-label="basic tabs example"
         >
           <Tab label="Notification" sx={{ fontWeight: "bold" }} />
-          <Tab label="Account" sx={{ fontWeight: "bold" }} />
+          <Tab label="Security" sx={{ fontWeight: "bold" }} />
         </Tabs>
 
         {/* <Box

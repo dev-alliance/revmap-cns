@@ -35,7 +35,7 @@ const RoleTable: React.FC<{
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 4,
+    pageSize: 3,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
@@ -150,7 +150,7 @@ const RoleTable: React.FC<{
       ) : (
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <img
                 src={permission}
                 alt="send"
@@ -161,9 +161,14 @@ const RoleTable: React.FC<{
               </Typography>
               <Divider sx={{ flexGrow: 1, ml: 2 }} />
             </Box>
-            <div>
+            <div style={{ display: "flex", alignItems: "center" }}>
               {systemsRolelist?.map((list: any) => (
-                <Typography sx={{ color: "text.secondary" }}>
+                <Typography
+                  key={list._id}
+                  sx={{
+                    color: "text.secondary",
+                  }}
+                >
                   <Checkbox
                     sx={{ mr: 1 }}
                     checked={list._id === selectedId}
@@ -173,7 +178,7 @@ const RoleTable: React.FC<{
                 </Typography>
               ))}
             </div>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 3 }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <img
                 src={permission}
                 alt="send"
@@ -203,7 +208,7 @@ const RoleTable: React.FC<{
                 // checkboxSelection
                 // hideSelectAll={true}
                 disableRowSelectionOnClick
-                pageSizeOptions={[4, 25, 50]}
+                pageSizeOptions={[3, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
                 onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}

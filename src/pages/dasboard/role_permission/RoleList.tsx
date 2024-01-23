@@ -161,6 +161,7 @@ const RoleList = () => {
         "65a7b5af40c7294e7706aac8",
         "65a7d392b1df3e0517bb7055",
         "65a7d271bcf56486353dc195",
+        "65a62aeaf326bd32e198fbce",
       ];
       const filteredData = data.filter(
         (item: any) => !excludedIds.includes(item._id)

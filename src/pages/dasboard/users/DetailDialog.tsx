@@ -50,11 +50,11 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, id, onClose }) => {
       </DialogTitle>
       <DialogContent>
         <p>
-          <strong>Email:</strong> {data?.email}
+          <strong>Email:</strong> {data?.det}
         </p>
-        <p>
-          <strong>First Name:</strong> {data?.firstName}
-        </p>
+        {/* <p>
+          <strong>First Name:</strong> {data?.firstName} */}
+        {/* </p>
         <p>
           <strong>LastName:</strong> {data?.lastName}
         </p>
@@ -66,7 +66,7 @@ const DetailDialog: React.FC<DetailDialogProps> = ({ open, id, onClose }) => {
         </p>
         <p>
           <strong>Created By:</strong> {data?.createdByName}
-        </p>
+        </p> */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
