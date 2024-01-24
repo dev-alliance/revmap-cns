@@ -219,7 +219,7 @@ const BranchList = () => {
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
                 component={Link}
-                to={`/dashboard/branch-edit/${row._id}`}
+                to={`/dashboard/branch-detail/${row._id}`}
                 sx={{ color: "text.secondary", cursor: "pointer" }}
                 // onClick={() => handleOpenDialog(row)}
               >

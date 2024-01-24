@@ -212,7 +212,7 @@ const UserDetail = () => {
             aria-label="basic tabs example"
           >
             <Tab label="Profile" sx={{ fontWeight: "bold" }} />
-            <Tab label="Login History" sx={{ fontWeight: "bold" }} />
+            {/* <Tab label="Login History" sx={{ fontWeight: "bold" }} /> */}
           </Tabs>
           <Button
             sx={{
@@ -319,7 +319,7 @@ const UserDetail = () => {
             <Grid item xs={12} md={4.5} lg={4.5} sx={{ alignItems: "left" }}>
               <CardContent sx={{ mt: 2, mb: 2 }}>
                 <Typography variant="subtitle1" sx={{ mr: 2 }}>
-                  Contact Information
+                  User Details
                 </Typography>
 
                 <Box sx={{ pt: 2, pb: 1 }}>
@@ -410,6 +410,18 @@ const UserDetail = () => {
                       {list?.team}
                     </Typography>
                   </Box>
+                </Box>
+              </CardContent>
+            </Grid>
+            {/* <Grid item xs={12} md={1} lg={1} sx={{ alignItems: "left" }}>
+              <Divider
+                orientation="vertical" // Set the orientation to vertical
+                sx={{ mt: (theme: any) => `${theme.spacing(1)} !important` }}
+              />
+            </Grid> */}
+            <Grid item xs={12} md={5} lg={5}>
+              <CardContent sx={{ p: 3, mt: 2, mb: 2, ml: 2 }}>
+                <Box sx={{ pt: 5.4, pb: 1 }}>
                   <Box sx={{ display: "flex", mb: 2 }}>
                     <Typography
                       variant="subtitle2"
@@ -494,7 +506,7 @@ const UserDetail = () => {
                       {list?.role?.name}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+                  {/* <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
                     <Typography
                       variant="subtitle2"
                       sx={{
@@ -513,19 +525,7 @@ const UserDetail = () => {
                       }
                       color={isAccessDisabled ? "success" : "primary"} // Change color to 'success' when enabled
                     />
-                  </Box>
-                </Box>
-              </CardContent>
-            </Grid>
-            {/* <Grid item xs={12} md={1} lg={1} sx={{ alignItems: "left" }}>
-              <Divider
-                orientation="vertical" // Set the orientation to vertical
-                sx={{ mt: (theme: any) => `${theme.spacing(1)} !important` }}
-              />
-            </Grid> */}
-            <Grid item xs={12} md={5} lg={5}>
-              <CardContent sx={{ p: 3, mt: 2, mb: 2, ml: 2 }}>
-                <Box sx={{ pt: 2, pb: 1 }}>
+                  </Box> */}
                   {/* <Box sx={{ display: "flex", mb: 2 }}>
                     <Typography
                       variant="subtitle2"
@@ -612,9 +612,9 @@ const UserDetail = () => {
               xl={10}
               sx={{ width: "100%" }}
             >
-              <Grid sx={{ mb: 3 }}>
+              {/* <Grid sx={{ mb: 3 }}>
                 <LoginHistory />
-              </Grid>
+              </Grid> */}
 
               {/* <Box sx={{ width: "100%", textAlign: "right" }}>
                 {" "}

@@ -967,7 +967,7 @@ const CreateCustomRole = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <span>Folder</span>
+                      <span>Folders</span>
                       {openSections.folder ? <ExpandLess /> : <ExpandMore />}
                     </Typography>
 
@@ -1115,7 +1115,7 @@ const CreateCustomRole = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <span>templates</span>
+                      <span>Templates</span>
                       {openSections.templates ? <ExpandLess /> : <ExpandMore />}
                     </Typography>
 
@@ -1295,7 +1295,7 @@ const CreateCustomRole = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <span>reports</span>
+                      <span>Reports</span>
                       {openSections.reports ? <ExpandLess /> : <ExpandMore />}
                     </Typography>
 
@@ -1682,7 +1682,7 @@ const CreateCustomRole = () => {
                         justifyContent: "space-between",
                       }}
                     >
-                      <span>configrations</span>
+                      <span>Configrations</span>
                       {openSections.configrations ? (
                         <ExpandLess />
                       ) : (

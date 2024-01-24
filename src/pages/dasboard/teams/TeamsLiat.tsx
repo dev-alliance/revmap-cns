@@ -303,6 +303,50 @@ const BranchList = () => {
       setIsLoading(false);
     }
   };
+  const handleActive = async (id: any) => {
+    try {
+      if (
+        window.confirm("Are you sure you want to change the status this team?")
+      ) {
+        setIsLoading(true);
+        const res = await archiveTeam(id, { status: "Active" });
+        console.log({ res });
+
+        if (res.ok === true) {
+          toast.success(res.message);
+          listData();
+        } else {
+          toast.error(res?.message || "");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleInactive = async (id: any) => {
+    try {
+      if (
+        window.confirm("Are you sure you want to change the status this team?")
+      ) {
+        setIsLoading(true);
+        const res = await archiveTeam(id, { status: "Inactive" });
+        console.log({ res });
+
+        if (res.ok === true) {
+          toast.success(res.message);
+          listData();
+        } else {
+          toast.error(res?.message || "");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleDelete = async (id: any) => {
     try {
       if (
@@ -392,6 +436,7 @@ const BranchList = () => {
                 Edit
               </MenuItem>
             </Tooltip>
+
             <Tooltip
               title={
                 user?.role?.permissions?.archive_teams
@@ -411,6 +456,27 @@ const BranchList = () => {
                 Archive
               </MenuItem>
             </Tooltip>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                handleActive(menuState.row?._id); // Use menuState.row._id
+              }}
+            >
+              Active
+            </MenuItem>
+            <MenuItem
+              title={
+                user?.role?.permissions?.delete_users
+                  ? "" // Empty string for no tooltip message when permission is present
+                  : "You have no permission"
+              }
+              onClick={() => {
+                handleClose();
+                handleInactive(menuState.row?._id); // Use menuState.row._id
+              }}
+            >
+              Inactive
+            </MenuItem>
             <Tooltip
               title={
                 user?.role?.permissions?.delete_teams

@@ -22,6 +22,7 @@ import {
   CardContent,
   Switch,
   CardHeader,
+  Breadcrumbs,
 } from "@mui/material";
 
 import toast from "react-hot-toast";
@@ -197,6 +198,15 @@ const UserDetailSingleUser = () => {
         title={`${list?.firstName} ${list?.lastName}`}
         sx={{ ml: -2 }}
       />
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        sx={{ pl: 0.5, mt: -2, mb: 2, fontSize: "13px" }}
+      >
+        <Link to="/dashboard/user-list" className="link-no-underline">
+          Home
+        </Link>
+        {/* <Typography color="text.primary">Categories</Typography> */}
+      </Breadcrumbs>
       <Paper sx={{ width: "100%" }}>
         <Box
           sx={{
@@ -212,7 +222,7 @@ const UserDetailSingleUser = () => {
             aria-label="basic tabs example"
           >
             <Tab label="Profile" sx={{ fontWeight: "bold" }} />
-            {/* <Tab label="Login History" sx={{ fontWeight: "bold" }} /> */}
+            <Tab label="Login History" sx={{ fontWeight: "bold" }} />
           </Tabs>
           {/* <Button
             sx={{
@@ -319,7 +329,7 @@ const UserDetailSingleUser = () => {
             <Grid item xs={12} md={4.5} lg={4.5} sx={{ alignItems: "left" }}>
               <CardContent sx={{ mt: 2, mb: 2 }}>
                 <Typography variant="subtitle1" sx={{ mr: 2 }}>
-                  Contact Information
+                  User Details
                 </Typography>
 
                 <Box sx={{ pt: 2, pb: 1 }}>
@@ -431,6 +441,18 @@ const UserDetailSingleUser = () => {
                       {list?.email}
                     </Typography>
                   </Box>
+                </Box>
+              </CardContent>
+            </Grid>
+            {/* <Grid item xs={12} md={1} lg={1} sx={{ alignItems: "left" }}>
+              <Divider
+                orientation="vertical" // Set the orientation to vertical
+                sx={{ mt: (theme: any) => `${theme.spacing(1)} !important` }}
+              />
+            </Grid> */}
+            <Grid item xs={12} md={5} lg={5}>
+              <CardContent sx={{ p: 3, mt: 2, mb: 2, ml: 2 }}>
+                <Box sx={{ pt: 5.4, pb: 1 }}>
                   <Box sx={{ display: "flex", mb: 2 }}>
                     <Typography
                       variant="subtitle2"
@@ -494,18 +516,26 @@ const UserDetailSingleUser = () => {
                       {list?.role?.name}
                     </Typography>
                   </Box>
-                </Box>
-              </CardContent>
-            </Grid>
-            {/* <Grid item xs={12} md={1} lg={1} sx={{ alignItems: "left" }}>
-              <Divider
-                orientation="vertical" // Set the orientation to vertical
-                sx={{ mt: (theme: any) => `${theme.spacing(1)} !important` }}
-              />
-            </Grid> */}
-            <Grid item xs={12} md={5} lg={5}>
-              <CardContent sx={{ p: 3, mt: 2, mb: 2, ml: 2 }}>
-                <Box sx={{ pt: 2, pb: 1 }}>
+                  <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        mr: 2,
+
+                        color: "text.secondary",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Disable Access to ContractnSign
+                    </Typography>
+                    <Switch
+                      checked={isAccessDisabled}
+                      onChange={(e: any) =>
+                        setIsAccessDisabled(e.target.checked)
+                      }
+                      color={isAccessDisabled ? "success" : "primary"} // Change color to 'success' when enabled
+                    />
+                  </Box>
                   {/* <Box sx={{ display: "flex", mb: 2 }}>
                     <Typography
                       variant="subtitle2"
@@ -575,27 +605,6 @@ const UserDetailSingleUser = () => {
                       -
                     </Typography>
                   </Box> */}
-                  {/* <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        minWidth: 120,
-                        mr: 2,
-
-                        color: "text.secondary",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      Disable Access to ContractnSign
-                    </Typography>
-                    <Switch
-                      checked={isAccessDisabled}
-                      onChange={(e: any) =>
-                        setIsAccessDisabled(e.target.checked)
-                      }
-                      color={isAccessDisabled ? "success" : "primary"} 
-                    />
-                  </Box> */}
                 </Box>
               </CardContent>
             </Grid>
@@ -613,9 +622,9 @@ const UserDetailSingleUser = () => {
               xl={10}
               sx={{ width: "100%" }}
             >
-              {/* <Grid sx={{ mb: 3 }}>
+              <Grid sx={{ mb: 3 }}>
                 <LoginHistory />
-              </Grid> */}
+              </Grid>
 
               {/* <Box sx={{ width: "100%", textAlign: "right" }}>
                 {" "}

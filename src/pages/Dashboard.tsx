@@ -93,6 +93,7 @@ import RoleList from "@/pages/dasboard/role_permission/RoleList";
 import CreateCustomRole from "@/pages/dasboard/role_permission/CreateCustomRole";
 import SystemsRole from "@/pages/dasboard/role_permission/SystemsRole";
 import UserDetailSingleUser from "@/pages/dasboard/users/UserDetailSingleUser";
+import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -453,6 +454,7 @@ export default function Dashboard() {
           <Route path="/create-branch" element={<CreateBranch />} />
           <Route path="/branchlist" element={<BranchList />} />
           <Route path="/branch-edit/:id" element={<UpdateBranch />} />
+          <Route path="/branch-detail/:id" element={<DetailBranch />} />
           <Route path="/user-list" element={<UserList />} />
           <Route path="/create-user" element={<CreateUser />} />
           <Route path="/create-password/:token" element={<ResetPassword />} />

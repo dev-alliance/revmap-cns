@@ -245,7 +245,7 @@ const GlobalAdmin = () => {
 
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} sx={{ display: "table" }}>
-          <Typography variant="subtitle1">Collaborator</Typography>
+          <Typography variant="subtitle1">Global Admin</Typography>
           <Typography variant="subtitle2" sx={{ fontSize: "15px", mb: 2 }}>
             This role is system-defined and cannot be edited or deleted. If
             custom roles with specific permissions are required, a new role can
