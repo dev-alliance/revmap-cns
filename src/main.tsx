@@ -8,13 +8,10 @@ import { store } from "./store";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Components } from "@mui/material/styles/components";
 import { DataGrid } from "@mui/x-data-grid";
-interface Theme {
-  components?: Components;
-}
-interface ThemeOptions {
-  components?: Components;
-}
-
+import { registerLicense } from "@syncfusion/ej2-base";
+registerLicense(
+  "ORg4AjUWIQA/Gnt2UVhhQlVFfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTX5SdENjWHpZdXNXRmJa"
+);
 const theme = createTheme({
   typography: {
     fontFamily: ["Nunito Sans", "sans-serif"].join(","),

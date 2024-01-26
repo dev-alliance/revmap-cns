@@ -229,18 +229,18 @@ const ClausesList = () => {
           content?.length > 40 ? `${content.substring(0, 40)}...` : content;
 
         return (
-          <Tooltip title={content} arrow>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography
-                  sx={{ color: "text.secondary", cursor: "pointer" }}
-                  onClick={() => handleOpenDialog(row.content)}
-                >
-                  {displayContent}
-                </Typography>
-              </Box>
+          // <Tooltip title={content} arrow>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography
+                sx={{ color: "text.secondary", cursor: "pointer" }}
+                onClick={() => handleOpenDialog(row.content)}
+              >
+                {displayContent}
+              </Typography>
             </Box>
-          </Tooltip>
+          </Box>
+          // </Tooltip>
         );
       },
     },

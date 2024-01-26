@@ -168,7 +168,7 @@ const CreateContract = () => {
               <Button
                 variant="contained"
                 component={Link}
-                to="/dashboard/tiny-dahsbord"
+                to="/dashboard/editor-dahsbord"
                 sx={{
                   display: "table-cell",
                   padding: "20px",

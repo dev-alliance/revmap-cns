@@ -86,7 +86,7 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import ContractList from "@/pages/dasboard/contract/ContractList";
 import ArticleIcon from "@mui/icons-material/Article";
 import CreateContract from "@/pages/dasboard/contract/CreateContract";
-import TinyDahsbord from "@/pages/dasboard/contract/sdk/TinyDahsbord";
+import TinyDahsbord from "@/pages/dasboard/contract/sdk/EditorDahsbord";
 import CustomTextEditor from "@/pages/dasboard/contract/sdk/CustomTextEditor";
 import CardsSubscription from "@/pages/dasboard/billing/CardsSubcription";
 import RoleList from "@/pages/dasboard/role_permission/RoleList";
@@ -499,7 +499,7 @@ export default function Dashboard() {
 
           <Route path="/contract-list" element={<ContractList />} />
           <Route path="/create-contract" element={<CreateContract />} />
-          <Route path="/tiny-dahsbord" element={<TinyDahsbord />} />
+          <Route path="/editor-dahsbord" element={<TinyDahsbord />} />
           <Route path="/sub-page-1" element={<SubPage1 />} />
           <Route path="/billing" element={<CardsSubscription />} />
 

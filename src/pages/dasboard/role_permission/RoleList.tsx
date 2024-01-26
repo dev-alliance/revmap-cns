@@ -319,16 +319,16 @@ const RoleList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          {/* <CardHeader title="Tags" /> */}
-          {/* <Breadcrumbs
+          <CardHeader title="Roles" />
+          <Breadcrumbs
             aria-label="breadcrumb"
             sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
           >
-            <Link to="/dashboard/tags-list" className="link-no-underline">
+            <Link to="/dashboard/role-list" className="link-no-underline">
               Home
-            </Link> */}
-          {/* <Typography color="text.primary">Categories</Typography> */}
-          {/* </Breadcrumbs> */}
+            </Link>
+            {/* <Typography color="text.primary">Categories</Typography> */}
+          </Breadcrumbs>
           <Card>
             <Box
               sx={{
@@ -380,49 +380,6 @@ const RoleList = () => {
               </div>
             </Box>
           </Card>
-
-          {/* <Card>
-            <Box
-              sx={{
-                pl: 3,
-                p: 2,
-                pr: 3,
-                width: "100%",
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ display: "flex" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                  }}
-                >
-                  <TextField
-                    size="small"
-                    value={search}
-                    placeholder="Search"
-                    onChange={(e: any) => setSearch(e.target.value)}
-                  />
-                </Box>
-              </div>
-
-              <div>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-tags"
-                >
-                  <AddIcon /> Create Tags
-                </Button>
-              </div>
-            </Box>
-          </Card> */}
         </Grid>
 
         <Grid item xs={12}>

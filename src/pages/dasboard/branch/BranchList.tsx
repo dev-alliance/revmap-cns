@@ -218,10 +218,10 @@ const BranchList = () => {
             {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
-                component={Link}
-                to={`/dashboard/branch-detail/${row._id}`}
+                // component={Link}
+                // to={`/dashboard/branch-detail/${row._id}`}
                 sx={{ color: "text.secondary", cursor: "pointer" }}
-                // onClick={() => handleOpenDialog(row)}
+                onClick={() => handleOpenDialog(row)}
               >
                 {branchName}
               </Typography>

@@ -12,7 +12,6 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import ApprovalIcon from "@mui/icons-material/CheckCircle";
-import { Editor } from "@tinymce/tinymce-react";
 import { useForm, Controller } from "react-hook-form";
 import OverView from "@/pages/dasboard/contract/sdk/OverView";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
@@ -31,7 +30,23 @@ import ShareComp from "@/pages/dasboard/contract/sdk/ShareComp";
 import ChatIcon from "@mui/icons-material/Chat";
 import Discussion from "@/pages/dasboard/contract/sdk/Discussion";
 import { AnyAction } from "@reduxjs/toolkit";
-import CustomTextEditor from "@/pages/dasboard/contract/sdk/CustomTextEditor";
+
+import {
+  DocumentEditorContainerComponent,
+  Toolbar,
+  Inject,
+} from "@syncfusion/ej2-react-documenteditor";
+import "@syncfusion/ej2-base/styles/material.css";
+import "@syncfusion/ej2-buttons/styles/material.css";
+import "@syncfusion/ej2-calendars/styles/material.css";
+import "@syncfusion/ej2-dropdowns/styles/material.css";
+import "@syncfusion/ej2-inputs/styles/material.css";
+import "@syncfusion/ej2-lists/styles/material.css";
+import "@syncfusion/ej2-navigations/styles/material.css";
+import "@syncfusion/ej2-popups/styles/material.css";
+import "@syncfusion/ej2-splitbuttons/styles/material.css";
+import "@syncfusion/ej2-react-documenteditor/styles/material.css";
+import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
 
 interface Module {
   icon: ReactNode;
@@ -100,12 +115,23 @@ const MyComponent: React.FC = () => {
           overflow: "auto",
         }}
       >
-        <CustomTextEditor />
+        <SyncFesion></SyncFesion>
+
+        {/* <DocumentEditorContainerComponent
+          height="720"
+          enableToolbar={true}
+          serviceUrl={
+            "https://services.syncfusion.com/js/production/api/documenteditor/"
+          }
+        >
+          {" "}
+          <Inject services={[Toolbar]}></Inject>
+        </DocumentEditorContainerComponent> */}
       </Box>
 
       <Box
         sx={{
-          width: sidebarExpanded ? 380 : 60,
+          width: sidebarExpanded ? 320 : 60,
           flexShrink: 0,
           display: "flex",
           border: "1px solid #BEBEBE",
@@ -122,6 +148,7 @@ const MyComponent: React.FC = () => {
             <List>
               {Object.keys(modules).map((key) => (
                 <ListItemButton
+                  sx={{ mb: 2.5 }}
                   key={key}
                   selected={selectedModule === key}
                   onClick={() =>

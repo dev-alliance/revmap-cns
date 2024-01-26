@@ -21,6 +21,7 @@
     "@mui/x-data-grid": "^6.18.3",
     "@mui/x-date-pickers": "^6.18.2",
     "@reduxjs/toolkit": "^1.9.7",
+    "@syncfusion/ej2-react-documenteditor": "^24.1.47",
     "@tinymce/tinymce-react": "^4.3.2",
     "@types/react-dropzone": "^5.1.0",
     "axios": "^1.6.0",
