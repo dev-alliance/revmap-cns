@@ -20,7 +20,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 // ** Third Party Imports
-
+import { useContract } from "@/hooks/useContract";
 import toast from "react-hot-toast";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
@@ -205,11 +205,13 @@ const defaultColumns: GridColDef[] = [
 const ContractList = () => {
   const navigate = useNavigate();
   // ** State
+  const { contractStatus, setContractStatus } = useContract();
+
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 8,
+    pageSize: 7,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
@@ -237,6 +239,7 @@ const ContractList = () => {
 
   const listData = async () => {
     try {
+      setContractStatus("okkkkkk");
       setIsLoading(true);
       const { data } = await getBranchList(user?._id);
       setCategorylist(data);
@@ -493,19 +496,15 @@ const ContractList = () => {
               </Box>
             ) : (
               <DataGrid
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                autoHeight
+                style={{ maxHeight: 500 }}
                 pagination
                 rows={filteredList || []}
                 columns={columns}
-                // checkboxSelection
-                disableRowSelectionOnClick
-                pageSizeOptions={[8, 25, 50]}
+                pageSizeOptions={[7, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                onRowSelectionModelChange={(rows: any) => setSelectedRows(rows)}
+                onRowSelectionModelChange={(rows) => setSelectedRows(rows)}
                 getRowId={(row) => row._id}
-                // disableColumnMenu
               />
             )}
           </Card>

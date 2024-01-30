@@ -31,6 +31,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { format, utcToZonedTime } from "date-fns-tz";
 import { deleteClauses, getList, updateStatus } from "@/service/api/clauses";
 import DetailDialog from "@/pages/dasboard/clauses/DetailDialog";
+import { useContract } from "@/hooks/useContract";
 
 interface CellType {
   row: any;
@@ -110,6 +111,7 @@ const defaultColumns: any[] = [
 const ClausesList = () => {
   const navigate = useNavigate();
   // ** State
+  const { contractStatus } = useContract();
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
@@ -152,6 +154,8 @@ const ClausesList = () => {
 
   const listData = async () => {
     try {
+      console.log(contractStatus, "contractStatus");
+
       setIsLoading(true);
       const { data } = await getList();
       setCategorylist(data);

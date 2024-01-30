@@ -94,6 +94,7 @@ import CreateCustomRole from "@/pages/dasboard/role_permission/CreateCustomRole"
 import SystemsRole from "@/pages/dasboard/role_permission/SystemsRole";
 import UserDetailSingleUser from "@/pages/dasboard/users/UserDetailSingleUser";
 import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
+import { useContract } from "@/hooks/useContract";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -101,14 +102,60 @@ import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
 const drawerWidth = 240;
 export default function Dashboard() {
   const { user, logout } = useAuth();
+  const { contractStatus, setContractStatus } = useContract();
   const theme = useTheme();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(true);
+  const [leftSideBar, setLeftSideBar] = useState(true);
   const [open, setOpen] = useState(true);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
+  const [openSections, setOpenSections] = useState<any>({
+    dashboard: false,
+    contract: false,
+  });
+  const statuses = [
+    "All",
+    "Draft",
+    "Review",
+    "Signature pending",
+    "Signed",
+    "Active",
+  ];
+  const expireDate = [
+    "All",
+    "Next 30 days",
+    "Next 60 days",
+    "Next 90 days",
+    "Expired/Terminated",
+    "Active",
+  ];
+  const ExpireColors: any = {
+    All: "#155BE5",
+    "Next 30 days": "#FFAA04",
+    "Next 60 days": "#725FE7",
+    "Next 90 days": "#CDAD00",
+    "Expired/Terminated": "#BC3D89",
 
+    // Add more status-color mappings as needed
+  };
+  const statusColors: any = {
+    All: "#155BE5",
+    Draft: "#FFAA04",
+    Review: "#725FE7",
+    "Signature pending": "#CDAD00",
+    Signed: "#BC3D89",
+    Active: "#3F9748",
+    // Add more status-color mappings as needed
+  };
+  // Properly type the section parameter
+  const handleSectionClick = (section: keyof any) => {
+    setOpenSections((prevSections: any) => ({
+      ...prevSections,
+      [section]: !prevSections[section],
+    }));
+  };
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -121,12 +168,18 @@ export default function Dashboard() {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+    setLeftSideBar(!leftSideBar);
   };
 
-  const handleClick = () => {
+  const handleStatusClick = (newStatus: string) => {
+    setContractStatus({ status: newStatus });
+  };
+  const handleExpireClick = (expire: string) => {
+    setContractStatus({ expire: expire });
+  };
+  const handleToggleExpire = () => {
     setOpen(!open);
   };
-
   const drawer = (
     <div>
       <Toolbar sx={{ justifyContent: "center", height: "64px" }}>
@@ -141,7 +194,7 @@ export default function Dashboard() {
       </Toolbar>
       <Divider />
       <List onClick={handleDrawerToggle}>
-        <ListItemButton onClick={handleClick}>
+        <ListItemButton onClick={() => handleSectionClick("dashboard")}>
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
@@ -149,10 +202,10 @@ export default function Dashboard() {
             primary="Dashboard"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {openSections.dashboard ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         {/* Collapsible sub-items */}
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse in={openSections.dashboard} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
               sx={{ pl: 4 }}
@@ -167,6 +220,104 @@ export default function Dashboard() {
             {/* You can add more sub-items here */}
           </List>
         </Collapse>
+
+        <ListItemButton
+          onClick={() => handleSectionClick("contract")}
+          component={Link}
+          to="/dashboard/contract-list"
+        >
+          <ListItemIcon>
+            <ArticleIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary="Contract"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+          {openSections.contract ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        {/* Collapsible sub-items */}
+        <Collapse in={openSections.contract} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {statuses?.map((statusItem) => (
+              <ListItemButton
+                key={statusItem}
+                sx={{ pl: 4 }}
+                onClick={() => handleStatusClick(statusItem)}
+              >
+                <div
+                  style={{
+                    height: "10px",
+                    width: "10px",
+                    backgroundColor: statusColors[statusItem],
+                    borderRadius: "50%",
+                    marginRight: "10px",
+                    alignSelf: "center",
+                  }}
+                />
+                <ListItemText
+                  primary={statusItem}
+                  sx={{
+                    color:
+                      statusItem === contractStatus.status
+                        ? "#1976d2"
+                        : "initial",
+                  }}
+                  primaryTypographyProps={{ variant: "subtitle2" }}
+                />
+              </ListItemButton>
+            ))}
+            <ListItemButton
+              key="expireItem"
+              sx={{
+                pl: 4,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+              onClick={handleToggleExpire}
+            >
+              <ListItemText
+                primary="Expire"
+                primaryTypographyProps={{ variant: "subtitle2" }}
+              />
+              {open ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {/* Sublist items */}
+                {expireDate?.map((expireItem) => (
+                  <ListItemButton
+                    key={expireItem}
+                    sx={{ pl: 4 }}
+                    onClick={() => handleExpireClick(expireItem)}
+                  >
+                    <div
+                      style={{
+                        height: "10px",
+                        width: "10px",
+                        backgroundColor: ExpireColors[expireItem],
+                        borderRadius: "50%",
+                        marginRight: "10px",
+                        alignSelf: "center",
+                      }}
+                    />
+                    <ListItemText
+                      primary={expireItem}
+                      sx={{
+                        color:
+                          expireItem === contractStatus.expire
+                            ? "#1976d2"
+                            : "initial",
+                      }}
+                      primaryTypographyProps={{ variant: "subtitle2" }}
+                    />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
+          </List>
+        </Collapse>
+
         <ListItemButton component={Link} to="/dashboard">
           <ListItemIcon>
             <HomeIcon />
@@ -406,10 +557,15 @@ export default function Dashboard() {
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
         aria-label="mailbox folders"
       >
+        {!leftSideBar && (
+          <IconButton onClick={handleDrawerToggle}>
+            <MenuIcon />
+          </IconButton>
+        )}
         <Drawer
           container={window.document.body}
           variant="temporary"
-          open={mobileOpen}
+          open={mobileOpen && leftSideBar}
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
@@ -431,7 +587,7 @@ export default function Dashboard() {
               width: drawerWidth,
             },
           }}
-          open
+          open={leftSideBar}
         >
           {drawer}
         </Drawer>

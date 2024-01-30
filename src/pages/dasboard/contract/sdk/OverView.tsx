@@ -28,7 +28,6 @@ import AddIcon from "@mui/icons-material/Add";
 
 type FormValues = {
   name: string;
-  vendor: string;
   currency: string;
   value: number;
   category: string;
@@ -211,49 +210,6 @@ const OverView = () => {
               size="small"
               variant="outlined"
             />
-          )}
-        />
-      </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
-        <Typography
-          variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
-        >
-          Vendor
-        </Typography>
-        <Controller
-          name="vendor"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <FormControl fullWidth size="small">
-              {/* Optional: add this line if you want a label */}
-              <Select
-                {...field}
-                labelId="status-label"
-                displayEmpty
-                renderValue={(value) => {
-                  if (value === "") {
-                    return (
-                      <em
-                        style={{
-                          color: "#C2C2C2",
-                          fontStyle: "normal",
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        {" "}
-                        Choose Vendor
-                      </em> // Placeholder text with custom color
-                    );
-                  }
-                  return field.value;
-                }}
-              >
-                {/* Placeholder */}
-                <MenuItem value="name">name</MenuItem>
-              </Select>
-            </FormControl>
           )}
         />
       </Box>
@@ -508,51 +464,6 @@ const OverView = () => {
                     {subCategory.name}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
-          )}
-        />
-      </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
-        <Typography
-          variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
-        >
-          Contract Type*
-        </Typography>
-        <Controller
-          name="contractType"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <FormControl fullWidth size="small">
-              {/* Optional: add this line if you want a label */}
-              <Select
-                {...field}
-                labelId="status-label"
-                displayEmpty
-                renderValue={(value) => {
-                  if (value === "") {
-                    return (
-                      <em
-                        style={{
-                          color: "#C2C2C2",
-                          fontStyle: "normal",
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        {" "}
-                        Choose contract type
-                      </em> // Placeholder text with custom color
-                    );
-                  }
-                  return field.value;
-                }}
-              >
-                {/* Placeholder */}
-                <MenuItem value="Sale">Sale</MenuItem>
-                <MenuItem value="Purchase">Purchase</MenuItem>
-                <MenuItem value="Others">Others</MenuItem>
               </Select>
             </FormControl>
           )}

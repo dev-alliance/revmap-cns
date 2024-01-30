@@ -8,11 +8,15 @@ import {
   Box,
   Button,
   Typography,
+  Divider,
+  Tooltip,
+  TextField,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import ApprovalIcon from "@mui/icons-material/CheckCircle";
 import { useForm, Controller } from "react-hook-form";
+import AddIcon from "@mui/icons-material/Add";
 import OverView from "@/pages/dasboard/contract/sdk/OverView";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import ApprovalsComp from "@/pages/dasboard/contract/sdk/ApprovalsComp";
@@ -47,6 +51,7 @@ import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
 import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
+import { Link } from "react-router-dom";
 
 interface Module {
   icon: ReactNode;
@@ -54,7 +59,7 @@ interface Module {
 }
 
 const MyComponent: React.FC = () => {
-  const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
+  const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const { control, handleSubmit } = useForm();
 
@@ -82,10 +87,10 @@ const MyComponent: React.FC = () => {
       icon: <TimelineIcon />,
       content: <TimelineComp />,
     },
-    lifeSycle: {
-      icon: <HistoryIcon />,
-      content: <LifeSycle />,
-    },
+    // lifeSycle: {
+    //   icon: <HistoryIcon />,
+    //   content: <LifeSycle />,
+    // },
     shere: {
       icon: <ShareIcon />,
       content: <ShareComp />,
@@ -106,7 +111,7 @@ const MyComponent: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
+    <Box sx={{ display: "flex", width: "100%", height: "87vh" }}>
       <Box
         sx={{
           flexGrow: 1,
@@ -115,6 +120,93 @@ const MyComponent: React.FC = () => {
           overflow: "auto",
         }}
       >
+        <Box
+          sx={{
+            py: 2,
+            pr: 3,
+            width: "100%",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              <TextField
+                size="small"
+                // value={search}
+                placeholder="Add contract name"
+                // onChange={(e: any) => setSearch(e.target.value)}
+              />
+              <Button
+                sx={{ ml: 2, textTransform: "none" }}
+                variant="contained"
+                // component={Link}
+                // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                // disabled={!user?.role?.permissions?.create_clauses}
+                // to="/dashboard/create-clauses"
+              >
+                Draft
+              </Button>
+            </Box>
+          </div>
+          <div>
+            <Box
+              sx={{
+                width: 30,
+                height: 30,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                backgroundColor: "green",
+                color: "#FFFFFF",
+                ml: "-13px",
+                fontSize: "10px",
+                mb: "-32px",
+              }}
+            >
+              <Typography>pk</Typography>
+            </Box>
+            <Tooltip
+              title={
+                ""
+                // user?.role?.permissions?.create_clauses
+                //   ? ""
+                //   : "You have no permission"
+              }
+              arrow
+            >
+              <span>
+                <Button
+                  sx={{ ml: 2, textTransform: "none" }}
+                  variant="contained"
+                  color="success"
+                >
+                  Owner
+                </Button>
+              </span>
+            </Tooltip>
+            <Button
+              sx={{ ml: 2, textTransform: "none" }}
+              variant="contained"
+              // component={Link}
+              // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+              // disabled={!user?.role?.permissions?.create_clauses}
+              // to="/dashboard/create-clauses"
+            >
+              <AddIcon /> Share
+            </Button>
+          </div>
+        </Box>
+        <Divider />
         <SyncFesion></SyncFesion>
 
         {/* <DocumentEditorContainerComponent
@@ -135,6 +227,8 @@ const MyComponent: React.FC = () => {
           flexShrink: 0,
           display: "flex",
           border: "1px solid #BEBEBE",
+          height: "87vh",
+          overflowY: "scroll",
         }}
       >
         <Grid container>

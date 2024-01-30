@@ -136,7 +136,7 @@ const CreateContract = () => {
           </Box>
         </div>
 
-        <div>
+        {/* <div>
           <Button
             variant="outlined"
             onClick={handleBack}
@@ -153,9 +153,11 @@ const CreateContract = () => {
           >
             Save
           </Button>
-        </div>
+        </div> */}
       </Box>
-      <Paper sx={{ padding: 4, display: "table", width: "100%" }}>
+      <Paper
+        sx={{ padding: 4, display: "table", width: "100%", minHeight: "550px" }}
+      >
         <Grid container spacing={2} justifyContent="center" alignItems="center">
           <Grid
             item
@@ -164,7 +166,12 @@ const CreateContract = () => {
             justifyContent="center"
             alignItems="center"
           >
-            <Box>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              sx={{ mt: 12 }}
+            >
               <Button
                 variant="contained"
                 component={Link}
