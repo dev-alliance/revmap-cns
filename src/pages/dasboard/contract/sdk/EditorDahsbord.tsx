@@ -11,6 +11,10 @@ import {
   Divider,
   Tooltip,
   TextField,
+  Menu,
+  MenuItem,
+  Card,
+  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AssessmentIcon from "@mui/icons-material/Assessment";
@@ -34,7 +38,8 @@ import ShareComp from "@/pages/dasboard/contract/sdk/ShareComp";
 import ChatIcon from "@mui/icons-material/Chat";
 import Discussion from "@/pages/dasboard/contract/sdk/Discussion";
 import { AnyAction } from "@reduxjs/toolkit";
-
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import DrawIcon from "@mui/icons-material/Draw";
 import {
   DocumentEditorContainerComponent,
   Toolbar,
@@ -52,6 +57,7 @@ import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
 import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
 import { Link } from "react-router-dom";
+import SignatureDialog from "@/pages/dasboard/contract/sdk/SignatureDialog";
 
 interface Module {
   icon: ReactNode;
@@ -62,7 +68,24 @@ const MyComponent: React.FC = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const { control, handleSubmit } = useForm();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const [openDialog, setOpenDialog] = useState(false);
 
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+  const handleClick = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const modules: Record<string, Module> = {
     toggle: {
       icon: <MenuIcon />,
@@ -111,105 +134,144 @@ const MyComponent: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", width: "100%", height: "87vh" }}>
-      <Box
-        sx={{
-          flexGrow: 1,
-          pr: 1,
-          height: "calc(100vh - 64px)",
-          overflow: "auto",
-        }}
-      >
+    <>
+      <Box sx={{ display: "flex", width: "100%", height: "87vh" }}>
         <Box
           sx={{
-            py: 2,
-            pr: 3,
-            width: "100%",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
+            flexGrow: 1,
+            pr: 1,
+            height: "calc(100vh - 64px)",
+            overflow: "auto",
           }}
         >
-          <div style={{ display: "flex" }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                size="small"
-                // value={search}
-                placeholder="Add contract name"
-                // onChange={(e: any) => setSearch(e.target.value)}
-              />
-              <Button
-                sx={{ ml: 2, textTransform: "none" }}
-                variant="contained"
-                // component={Link}
-                // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-                // disabled={!user?.role?.permissions?.create_clauses}
-                // to="/dashboard/create-clauses"
+          <Box
+            sx={{
+              py: 2,
+              pr: 3,
+              width: "100%",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                }}
               >
-                Draft
-              </Button>
-            </Box>
-          </div>
-          <div>
-            <Box
-              sx={{
-                width: 30,
-                height: 30,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "50%",
-                backgroundColor: "green",
-                color: "#FFFFFF",
-                ml: "-13px",
-                fontSize: "10px",
-                mb: "-32px",
-              }}
-            >
-              <Typography>pk</Typography>
-            </Box>
-            <Tooltip
-              title={
-                ""
-                // user?.role?.permissions?.create_clauses
-                //   ? ""
-                //   : "You have no permission"
-              }
-              arrow
-            >
-              <span>
+                <TextField
+                  size="small"
+                  // value={search}
+                  placeholder="Add contract name"
+                  // onChange={(e: any) => setSearch(e.target.value)}
+                />
                 <Button
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="contained"
-                  color="success"
+                  // component={Link}
+                  // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                  // disabled={!user?.role?.permissions?.create_clauses}
+                  // to="/dashboard/create-clauses"
                 >
-                  Owner
+                  Draft
                 </Button>
-              </span>
-            </Tooltip>
-            <Button
-              sx={{ ml: 2, textTransform: "none" }}
-              variant="contained"
-              // component={Link}
-              // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-              // disabled={!user?.role?.permissions?.create_clauses}
-              // to="/dashboard/create-clauses"
-            >
-              <AddIcon /> Share
-            </Button>
-          </div>
-        </Box>
-        <Divider />
-        <SyncFesion></SyncFesion>
+              </Box>
+            </div>
+            <div>
+              <Box
+                sx={{
+                  width: 30,
+                  height: 30,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
+                  backgroundColor: "green",
+                  color: "#FFFFFF",
+                  ml: "-13px",
+                  fontSize: "10px",
+                  mb: "-32px",
+                }}
+              >
+                <Typography>pk</Typography>
+              </Box>
+              <Tooltip
+                title={
+                  ""
+                  // user?.role?.permissions?.create_clauses
+                  //   ? ""
+                  //   : "You have no permission"
+                }
+                arrow
+              >
+                <span>
+                  <Button
+                    sx={{ ml: 2, textTransform: "none" }}
+                    variant="contained"
+                    color="success"
+                  >
+                    Owner
+                  </Button>
+                </span>
+              </Tooltip>
+              <Button
+                sx={{ ml: 2, textTransform: "none" }}
+                variant="contained"
+                onClick={handleClick}
+              >
+                <AddIcon /> Share
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                sx={{ marginLeft: "-7rem", marginTop: "0.5rem" }}
+              >
+                <Card sx={{ m: 1.5, backgroundColor: "#9FBFC" }}>
+                  <MenuItem onClick={handleClose}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center" }}
+                      onClick={() => handleOpenDialog()}
+                    >
+                      <DrawIcon sx={{ color: "blue" }} />
+                      {/* Replace with your logo path */}
+                      <Box sx={{ ml: 2 }}>
+                        <Typography variant="subtitle1">
+                          Add signatory
+                        </Typography>
+                        <Typography variant="body2">
+                          Can sign and receive a copy of the document
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </MenuItem>
 
-        {/* <DocumentEditorContainerComponent
+                  <MenuItem onClick={handleClose}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <PersonAddAltIcon sx={{ color: "blue" }} />
+                      {/* Replace with your logo path */}
+                      <Box sx={{ ml: 2 }}>
+                        <Typography variant="subtitle1">
+                          Add collaborator
+                        </Typography>
+                        <Typography variant="body2">
+                          Collaborator can view, edit and comment.
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </MenuItem>
+                </Card>
+              </Menu>
+            </div>
+          </Box>
+          <Divider />
+          <SyncFesion></SyncFesion>
+
+          {/* <DocumentEditorContainerComponent
           height="720"
           enableToolbar={true}
           serviceUrl={
@@ -219,49 +281,53 @@ const MyComponent: React.FC = () => {
           {" "}
           <Inject services={[Toolbar]}></Inject>
         </DocumentEditorContainerComponent> */}
-      </Box>
+        </Box>
 
-      <Box
-        sx={{
-          width: sidebarExpanded ? 320 : 60,
-          flexShrink: 0,
-          display: "flex",
-          border: "1px solid #BEBEBE",
-          height: "87vh",
-          overflowY: "scroll",
-        }}
-      >
-        <Grid container>
-          <Grid
-            item
-            xs={2}
-            sx={{
-              borderRight: sidebarExpanded ? "1px solid #BEBEBE" : "none",
-            }}
-          >
-            <List>
-              {Object.keys(modules).map((key) => (
-                <ListItemButton
-                  sx={{ mb: 2.5 }}
-                  key={key}
-                  selected={selectedModule === key}
-                  onClick={() =>
-                    key === "toggle" ? toggleSidebar() : handleModuleClick(key)
-                  }
-                >
-                  <ListItemIcon>{modules[key].icon}</ListItemIcon>
-                </ListItemButton>
-              ))}
-            </List>
+        <Box
+          sx={{
+            width: sidebarExpanded ? 320 : 60,
+            flexShrink: 0,
+            display: "flex",
+            border: "1px solid #BEBEBE",
+            height: "87vh",
+            overflowY: "scroll",
+          }}
+        >
+          <Grid container>
+            <Grid
+              item
+              xs={2}
+              sx={{
+                borderRight: sidebarExpanded ? "1px solid #BEBEBE" : "none",
+              }}
+            >
+              <List>
+                {Object.keys(modules).map((key) => (
+                  <ListItemButton
+                    sx={{ mb: 2.5 }}
+                    key={key}
+                    selected={selectedModule === key}
+                    onClick={() =>
+                      key === "toggle"
+                        ? toggleSidebar()
+                        : handleModuleClick(key)
+                    }
+                  >
+                    <ListItemIcon>{modules[key].icon}</ListItemIcon>
+                  </ListItemButton>
+                ))}
+              </List>
+            </Grid>
+            <Grid item xs={10}>
+              {sidebarExpanded && selectedModule !== "toggle" && (
+                <Box sx={{ padding: 2 }}>{modules[selectedModule].content}</Box>
+              )}
+            </Grid>
           </Grid>
-          <Grid item xs={10}>
-            {sidebarExpanded && selectedModule !== "toggle" && (
-              <Box sx={{ padding: 2 }}>{modules[selectedModule].content}</Box>
-            )}
-          </Grid>
-        </Grid>
+        </Box>
       </Box>
-    </Box>
+      <SignatureDialog open={openDialog} onClose={handleCloseDialog} />
+    </>
   );
 };
 
