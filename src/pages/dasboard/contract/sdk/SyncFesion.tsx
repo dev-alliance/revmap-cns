@@ -40,6 +40,7 @@ function SyncFusionEditor() {
     view: false,
     signature: false,
     export: false,
+    attach: false,
   });
 
   const toggleDropdown = (dropdown: any) => {
@@ -48,6 +49,7 @@ function SyncFusionEditor() {
       view: false,
       signature: false,
       export: false,
+      attach: false,
       [dropdown]: !prevState[dropdown],
     }));
   };
@@ -108,13 +110,13 @@ function SyncFusionEditor() {
         {/* File Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-5 hover:bg-blue-700 hover:text-white"
+            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
             onClick={() => toggleDropdown("file")}
           >
             File
           </button>
           {openDropdowns.file && (
-            <ul className="absolute left-0 mt-2 w-40 bg-white shadow-lg rounded z-10">
+            <ul className="absolute left-0 mt-2 w-40 bg-red shadow-lg rounded z-10">
               <li
                 className="p-2 hover:bg-gray-100 cursor-pointer"
                 onClick={() => {
@@ -132,7 +134,7 @@ function SyncFusionEditor() {
         {/* View Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-5 hover:bg-blue-700 hover:text-white"
+            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
             onClick={() => toggleDropdown("view")}
           >
             View
@@ -170,7 +172,7 @@ function SyncFusionEditor() {
         {/* Signature Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-5 hover:bg-blue-700 hover:text-white"
+            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
             onClick={() => toggleDropdown("signature")}
           >
             Signature
@@ -193,12 +195,33 @@ function SyncFusionEditor() {
         {/* Export Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-5 hover:bg-blue-700 hover:text-white"
+            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
             onClick={() => toggleDropdown("export")}
           >
             Export
           </button>
           {openDropdowns.export && (
+            <ul className="absolute left-0 mt-2 w-40 bg-white shadow-lg rounded z-10">
+              <li className="p-2 hover:bg-gray-100 cursor-pointer">
+                Download PDF
+              </li>
+              <li className="p-2 hover:bg-gray-100 cursor-pointer">
+                Download Word
+              </li>
+              <li className="p-2 hover:bg-gray-100 cursor-pointer">
+                Download signature certificate
+              </li>
+            </ul>
+          )}
+        </div>
+        <div className="relative">
+          <button
+            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
+            onClick={() => toggleDropdown("attach")}
+          >
+            Attach
+          </button>
+          {openDropdowns.attach && (
             <ul className="absolute left-0 mt-2 w-40 bg-white shadow-lg rounded z-10">
               <li className="p-2 hover:bg-gray-100 cursor-pointer">
                 Download PDF

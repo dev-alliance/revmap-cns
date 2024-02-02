@@ -128,7 +128,7 @@ export default function Dashboard() {
     "Next 30 days",
     "Next 60 days",
     "Next 90 days",
-    "Expired/Terminated",
+    "Expired",
     "Active",
   ];
   const ExpireColors: any = {
@@ -136,7 +136,7 @@ export default function Dashboard() {
     "Next 30 days": "#FFAA04",
     "Next 60 days": "#725FE7",
     "Next 90 days": "#CDAD00",
-    "Expired/Terminated": "#BC3D89",
+    Expired: "#BC3D89",
 
     // Add more status-color mappings as needed
   };
@@ -208,7 +208,7 @@ export default function Dashboard() {
         <Collapse in={openSections.dashboard} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             <ListItemButton
-              sx={{ pl: 4 }}
+              sx={{ pl: 10 }}
               component={Link}
               to="/dashboard/sub-page-1"
             >
@@ -241,13 +241,14 @@ export default function Dashboard() {
             {statuses?.map((statusItem) => (
               <ListItemButton
                 key={statusItem}
-                sx={{ pl: 4 }}
+                sx={{ pl: 9, fontSize: "10px" }}
                 onClick={() => handleStatusClick(statusItem)}
               >
                 <div
                   style={{
                     height: "10px",
                     width: "10px",
+
                     backgroundColor: statusColors[statusItem],
                     borderRadius: "50%",
                     marginRight: "10px",
@@ -257,19 +258,23 @@ export default function Dashboard() {
                 <ListItemText
                   primary={statusItem}
                   sx={{
+                    fontSize: "10px",
                     color:
                       statusItem === contractStatus.status
                         ? "#1976d2"
                         : "initial",
                   }}
-                  primaryTypographyProps={{ variant: "subtitle2" }}
+                  primaryTypographyProps={{
+                    variant: "subtitle2",
+                    fontSize: "14px",
+                  }}
                 />
               </ListItemButton>
             ))}
             <ListItemButton
               key="expireItem"
               sx={{
-                pl: 4,
+                pl: 9,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -278,7 +283,10 @@ export default function Dashboard() {
             >
               <ListItemText
                 primary="Expire"
-                primaryTypographyProps={{ variant: "subtitle2" }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "16px",
+                }}
               />
               {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
@@ -288,7 +296,7 @@ export default function Dashboard() {
                 {expireDate?.map((expireItem) => (
                   <ListItemButton
                     key={expireItem}
-                    sx={{ pl: 4 }}
+                    sx={{ pl: 8 }}
                     onClick={() => handleExpireClick(expireItem)}
                   >
                     <div
@@ -309,7 +317,10 @@ export default function Dashboard() {
                             ? "#1976d2"
                             : "initial",
                       }}
-                      primaryTypographyProps={{ variant: "subtitle2" }}
+                      primaryTypographyProps={{
+                        variant: "subtitle2",
+                        fontSize: "14px",
+                      }}
                     />
                   </ListItemButton>
                 ))}
