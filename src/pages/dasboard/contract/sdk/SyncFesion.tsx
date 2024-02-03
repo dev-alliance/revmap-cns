@@ -99,12 +99,23 @@ function SyncFusionEditor() {
     "RestrictEditing",
   ];
 
-  $(".e-toolbar-item").css("display", "none");
-  $(".e-btn-icon").css("display", "none");
+  const toolbarItems =
+    document.querySelectorAll<HTMLElement>(".e-toolbar-item");
+  toolbarItems.forEach((item) => {
+    item.style.display = "none";
+  });
 
-  const triggerClick = (id: string) => {
-    $(`#${id}`).trigger("click");
-    // $("#container_toolbar_open").parent().css("display", "block");
+  // Select elements with class "e-btn-icon" and hide them
+  const btnIcons = document.querySelectorAll<HTMLElement>(".e-btn-icon");
+  btnIcons.forEach((icon) => {
+    icon.style.display = "none";
+  });
+
+  const triggerClick = (id: any) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.click();
+    }
   };
 
   return (
