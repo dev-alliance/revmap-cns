@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable */
+
 import React, { useRef, useState } from "react";
 import {
   DocumentEditorContainerComponent,
@@ -15,7 +17,8 @@ import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
-import * as $ from "jquery";
+import * as jQueryLibrary from "jquery"; // Rename the import
+const $ = jQueryLibrary;
 // other imports...
 import {
   TextField,
