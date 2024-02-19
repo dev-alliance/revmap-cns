@@ -10,3 +10,40 @@
 .link-no-underline:hover {
   text-decoration: underline;
 }
+
+.e-de-ctnr-segment {
+  /* display: inline-flex !important; */
+  position: absolute !important;
+  left: -150px !important;
+  top: -101px !important;
+  height: 100px;
+  /* overflow-y: scroll; */
+}
+
+.e-tab {
+  display: block;
+  position: absolute !important;
+}
+
+.e-btn-group {
+  position: absolute !important;
+  left: -160px !important;
+  /* top: -101px !important; */
+
+  /* display: inline-flex ;
+  border-radius: 2px;
+  flex-direction: row;
+  position: relative; */
+}
+
+.e-tab .e-content .e-item {
+  background: inherit;
+  color: #000;
+  font-size: 56px;
+}
+
+.e-input-group,
+.e-input-group.e-control-wrapper {
+  display: flex;
+  vertical-align: middle;
+}

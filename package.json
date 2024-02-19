@@ -26,6 +26,7 @@
     "@syncfusion/ej2-react-dropdowns": "^24.1.47",
     "@syncfusion/ej2-react-inputs": "^24.2.3",
     "@syncfusion/ej2-react-navigations": "^24.2.3",
+    "@syncfusion/ej2-react-splitbuttons": "^24.2.5",
     "@tinymce/tinymce-react": "^4.3.2",
     "@types/react-dropzone": "^5.1.0",
     "axios": "^1.6.0",

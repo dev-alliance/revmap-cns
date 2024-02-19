@@ -33,8 +33,26 @@ import {
   Info as InfoIcon,
 } from "@mui/icons-material";
 import logo from "../assets/logo.jpg";
-// import userIcon from "../assets/userLogo.png";
+import home from "../assets/fi-rs-home.svg";
+import template from "../assets/temlate.svg";
+import reports from "../assets/reports.png";
+import docoment from "../assets/document.svg";
+import folder from "../assets/fi-rs-folder.svg";
+import setting from "../assets/fi-rs-settings.png";
+import billing from "../assets/billing.png";
+import compony from "../assets/comony-profile.svg";
+import userIcon from "../assets/user.png";
+import configration from "../assets/configration.svg";
+import approval from "../assets/approval_icon.png";
+import categories from "../assets/categories.png";
+import customfeild from "../assets/customfeild.png";
+import clause from "../assets/clause.png";
+import roles from "../assets/Roles.png";
+import teamsIcon from "../assets/teams.png";
+import tagsIcon from "../assets/tags.png";
+import logoutIcon from "../assets/logout_icon.png";
 import PersonIcon from "@mui/icons-material/Person";
+
 // Import your page components
 import HomePage from "@/pages/dasboard/Dashboard";
 import TeamsList from "@/pages/dasboard/teams/TeamsLiat";
@@ -95,6 +113,7 @@ import SystemsRole from "@/pages/dasboard/role_permission/SystemsRole";
 import UserDetailSingleUser from "@/pages/dasboard/users/UserDetailSingleUser";
 import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
 import { useContract } from "@/hooks/useContract";
+
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -114,15 +133,15 @@ export default function Dashboard() {
   const [openSections, setOpenSections] = useState<any>({
     dashboard: false,
     contract: false,
+    setting: false,
+    configuration: false,
   });
-  const statuses = [
-    "All",
-    "Draft",
-    "Review",
-    "Signature pending",
-    "Signed",
-    "Active",
-  ];
+  const [selectedModule, setSelectedModule] = useState(null);
+
+  const handleModuleClick = (moduleName: any) => {
+    setSelectedModule(moduleName);
+  };
+  const statuses = ["Draft", "Review", "Signing", "Signed", "Active"];
   const expireDate = [
     "All",
     "Next 30 days",
@@ -141,10 +160,9 @@ export default function Dashboard() {
     // Add more status-color mappings as needed
   };
   const statusColors: any = {
-    All: "#155BE5",
     Draft: "#FFAA04",
     Review: "#725FE7",
-    "Signature pending": "#CDAD00",
+    Signing: "#CDAD00",
     Signed: "#BC3D89",
     Active: "#3F9748",
     // Add more status-color mappings as needed
@@ -194,54 +212,59 @@ export default function Dashboard() {
       </Toolbar>
       <Divider />
       <List onClick={handleDrawerToggle}>
-        <ListItemButton onClick={() => handleSectionClick("dashboard")}>
+        <ListItemButton
+          component={Link}
+          to="/dashboard"
+          sx={{
+            backgroundColor:
+              selectedModule === "home" ? "lightblue" : "transparent",
+          }}
+          onClick={() => handleModuleClick("home")}
+        >
           <ListItemIcon>
-            <DashboardIcon />
+            <img
+              src={home}
+              alt="home"
+              style={{ width: "24px", height: "24px" }}
+            />
           </ListItemIcon>
           <ListItemText
-            primary="Dashboard"
+            sx={{ ml: -1.2 }}
+            primary="Home"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
-          {openSections.dashboard ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        {/* Collapsible sub-items */}
-        <Collapse in={openSections.dashboard} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItemButton
-              sx={{ pl: 10 }}
-              component={Link}
-              to="/dashboard/sub-page-1"
-            >
-              <ListItemText
-                primary="Sub Page 1"
-                primaryTypographyProps={{ variant: "subtitle2" }}
-              />
-            </ListItemButton>
-            {/* You can add more sub-items here */}
-          </List>
-        </Collapse>
 
         <ListItemButton
           onClick={() => handleSectionClick("contract")}
           component={Link}
           to="/dashboard/contract-list"
+          sx={{
+            backgroundColor:
+              selectedModule === "docoments" ? "lightblue" : "transparent",
+          }}
         >
           <ListItemIcon>
-            <ArticleIcon />
+            <img
+              src={docoment}
+              alt="docoments"
+              style={{ width: "24px", height: "24px" }}
+            />
           </ListItemIcon>
           <ListItemText
-            primary="Contract"
+            sx={{ ml: -1.2 }}
+            primary="Documents"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
           {openSections.contract ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
-        {/* Collapsible sub-items */}
+
         <Collapse in={openSections.contract} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {statuses?.map((statusItem) => (
               <ListItemButton
                 key={statusItem}
-                sx={{ pl: 9, fontSize: "10px" }}
+                sx={{ pl: 7, fontSize: "10px" }}
                 onClick={() => handleStatusClick(statusItem)}
               >
                 <div
@@ -271,10 +294,10 @@ export default function Dashboard() {
                 />
               </ListItemButton>
             ))}
-            <ListItemButton
+            {/* <ListItemButton
               key="expireItem"
               sx={{
-                pl: 9,
+                pl: 7,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
@@ -289,10 +312,10 @@ export default function Dashboard() {
                 }}
               />
               {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
+            </ListItemButton> */}
+            {/* <Collapse in={open} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {/* Sublist items */}
+            
                 {expireDate?.map((expireItem) => (
                   <ListItemButton
                     key={expireItem}
@@ -325,48 +348,395 @@ export default function Dashboard() {
                   </ListItemButton>
                 ))}
               </List>
-            </Collapse>
+            </Collapse> */}
           </List>
         </Collapse>
 
-        <ListItemButton component={Link} to="/dashboard">
+        <ListItemButton
+          component={Link}
+          to="/dashboard/template-list"
+          sx={{
+            backgroundColor:
+              selectedModule === "template" ? "lightblue" : "transparent",
+          }}
+          onClick={() => handleModuleClick("template")}
+        >
           <ListItemIcon>
-            <HomeIcon />
+            <img
+              src={template}
+              alt="Template"
+              style={{ width: "24px", height: "24px" }}
+            />
           </ListItemIcon>
           <ListItemText
-            primary="Home"
+            sx={{ ml: -1.2 }}
+            primary="Templates"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
-        <ListItemButton component={Link} to="/dashboard/contract-list">
+        <ListItemButton
+          component={Link}
+          to="/dashboard/folder-list"
+          sx={{
+            backgroundColor:
+              selectedModule === "folder" ? "lightblue" : "transparent",
+          }}
+          onClick={() => handleModuleClick("folder")}
+        >
           <ListItemIcon>
-            <ArticleIcon />
+            <img
+              src={folder}
+              alt="Folder"
+              style={{ width: "24px", height: "24px" }}
+            />
           </ListItemIcon>
           <ListItemText
-            primary="Contracts"
-            primaryTypographyProps={{ variant: "subtitle2" }}
-          />
-        </ListItemButton>
-        <ListItemButton component={Link} to="/dashboard/teamlist">
-          <ListItemIcon>
-            <GroupsIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Teams"
-            primaryTypographyProps={{ variant: "subtitle2" }}
-          />
-        </ListItemButton>
-        <ListItemButton component={Link} to="/dashboard/branchlist">
-          <ListItemIcon>
-            <AccountTreeIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Branches"
+            sx={{ ml: -1.2 }}
+            primary="Folders"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
         </ListItemButton>
 
-        <ListItemButton component={Link} to="/dashboard/user-list">
+        <ListItemButton
+          component={Link}
+          to="/dashboard/folder-list"
+          sx={{
+            backgroundColor:
+              selectedModule === "reports" ? "lightblue" : "transparent",
+          }}
+          onClick={() => handleModuleClick("reports")}
+        >
+          <ListItemIcon>
+            <img
+              src={reports}
+              alt="reports"
+              style={{ width: "24px", height: "24px" }}
+            />
+          </ListItemIcon>
+          <ListItemText
+            sx={{ ml: -1.2 }}
+            primary="Reports"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={() => handleSectionClick("setting")}
+          // component={Link}
+          // to="/dashboard/contract-list"
+        >
+          <ListItemIcon>
+            <img
+              src={setting}
+              alt="setting"
+              style={{ width: "24px", height: "24px" }}
+            />
+          </ListItemIcon>
+          <ListItemText
+            sx={{ ml: -1.2 }}
+            primary="Settings"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+          {openSections.setting ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+
+        <Collapse in={openSections.setting} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{
+                pl: 8,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "billing" ? "lightblue" : "transparent",
+              }}
+              onClick={() => handleModuleClick("billing")}
+              component={Link}
+              to="/dashboard/billing"
+            >
+              <img
+                src={billing}
+                alt="billing"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Billing"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                pl: 8,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "teams" ? "lightblue" : "transparent",
+              }}
+              onClick={() => handleModuleClick("teams")}
+              component={Link}
+              to="/dashboard/update-compony"
+            >
+              <img
+                src={compony}
+                alt="compony"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Company Profile"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "user" ? "lightblue" : "transparent",
+              }}
+              onClick={() => handleModuleClick("user")}
+              component={Link}
+              to="/dashboard/user-list"
+            >
+              <img
+                src={userIcon}
+                alt="user"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Users"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+          </List>
+        </Collapse>
+
+        <ListItemButton
+          onClick={() => handleSectionClick("configuration")}
+          // component={Link}
+          // to="/dashboard/contract-list"
+        >
+          <ListItemIcon>
+            <img
+              src={configration}
+              alt="configration"
+              style={{ width: "24px", height: "24px" }}
+            />
+          </ListItemIcon>
+          <ListItemText
+            sx={{ ml: -1.2 }}
+            primary="Configuration"
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+          {openSections.configuration ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+
+        <Collapse in={openSections.configuration} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "approval" ? "lightblue" : "transparent",
+              }}
+              onClick={() => handleModuleClick("approval")}
+              component={Link}
+              to="/dashboard/approval-list"
+            >
+              <img
+                src={approval}
+                alt="approval"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Approvals"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "categories" ? "lightblue" : "transparent",
+              }}
+              component={Link}
+              to="/dashboard/category-list"
+              onClick={() => handleModuleClick("categories")}
+            >
+              <img
+                src={categories}
+                alt="categories"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Categories"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "clauses" ? "lightblue" : "transparent",
+              }}
+              component={Link}
+              to="/dashboard/clauses-list"
+              onClick={() => handleModuleClick("clauses")}
+            >
+              <img
+                src={clause}
+                alt="user"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Clauses"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "custom-feild"
+                    ? "lightblue"
+                    : "transparent",
+              }}
+              component={Link}
+              to="/dashboard/feild-list"
+              onClick={() => handleModuleClick("custom-feild")}
+            >
+              <img
+                src={customfeild}
+                alt="customfeild"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Custom Fields"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "teams" ? "lightblue" : "transparent",
+              }}
+              onClick={() => handleModuleClick("teams")}
+              component={Link}
+              to="/dashboard/teamlist"
+            >
+              <img
+                src={teamsIcon}
+                alt="teams"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Teams"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
+                  selectedModule === "tags" ? "lightblue" : "transparent",
+              }}
+              onClick={() => handleModuleClick("tags")}
+              component={Link}
+              to="/dashboard/tags-list"
+            >
+              <img
+                src={tagsIcon}
+                alt="tags"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Tags"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+          </List>
+        </Collapse>
+
+        <ListItemButton component={Link} to="/dashboard/teamlist">
+          <ListItemIcon>
+            <img
+              src={logoutIcon}
+              alt="logout"
+              style={{ width: "24px", height: "24px" }}
+            />
+          </ListItemIcon>
+          <ListItemText
+            sx={{ ml: -1.2 }}
+            primary="logout"
+            onClick={() => {
+              navigate(`/`);
+              logout();
+            }}
+            primaryTypographyProps={{ variant: "subtitle2" }}
+          />
+        </ListItemButton>
+
+        {/* <ListItemButton component={Link} to="/dashboard/user-list">
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
@@ -440,15 +810,6 @@ export default function Dashboard() {
           />
         </ListItemButton>
 
-        <ListItemButton component={Link} to="/dashboard/template-list">
-          <ListItemIcon>
-            <DescriptionIcon />
-          </ListItemIcon>
-          <ListItemText
-            primary="Templates"
-            primaryTypographyProps={{ variant: "subtitle2" }}
-          />
-        </ListItemButton>
         <ListItemButton component={Link} to="/dashboard/feild-list">
           <ListItemIcon>
             <InputIcon />
@@ -466,7 +827,7 @@ export default function Dashboard() {
             primary="Company Profile"
             primaryTypographyProps={{ variant: "subtitle2" }}
           />
-        </ListItemButton>
+        </ListItemButton> */}
       </List>
     </div>
   );
