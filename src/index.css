@@ -11,30 +11,149 @@
   text-decoration: underline;
 }
 
-.e-de-ctnr-segment {
-  /* display: inline-flex !important; */
+#container_editor_font_properties_leftDiv {
   position: absolute !important;
-  left: -150px !important;
-  top: -101px !important;
-  height: 100px;
-  /* overflow-y: scroll; */
+  left: -25% !important;
+  top: -90px !important;
 }
 
+/* style */
+#container_editor_font_properties_leftDiv {
+  position: absolute !important;
+  left: -50% !important;
+  top: -90px !important;
+}
+/* align */
+#container_editor_font_properties_indentWholeDiv {
+  position: absolute !important;
+  left: -42% !important;
+  top: -90px !important;
+}
+
+/* font */
+#container_editor_font_properties_sizeStyle {
+  position: absolute !important;
+  left: -30% !important;
+  top: -90px !important;
+}
+
+/* font color */
+#container_editor_font_properties_colorDiv {
+  position: absolute !important;
+  left: -18% !important;
+  top: -90px !important;
+}
+
+/* bulits  */
+#container_editor_font_properties_listDiv {
+  position: absolute !important;
+  left: -10% !important;
+  top: -110px !important;
+}
+
+/* paragraph heading etc  */
+#container_editor_font_properties_styleDiv {
+  position: absolute !important;
+  left: -1% !important;
+  top: -80px !important;
+}
+
+/* X power  */
+#container_editor_font_properties_rightDiv {
+  position: absolute !important;
+  left: -7% !important;
+  top: -110px !important;
+}
+
+/* uppercase  */
+#container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+  position: absolute !important;
+  left: -10% !important;
+  top: -70px !important;
+}
+
+/* table  */
+/* .e-de-property-div-padding {
+  border-bottom: 0.5px solid #e0e0e0;
+  padding: 12.5px;
+  position: absolute;
+  top: -141px;
+  left: -400px;
+}
+
+.e-de-grp-btn-ctnr .e-de-ctnr-group-btn {
+  height: 85px !important;
+  position: absolute;
+  top: 50px;
+  left: -291px;
+}
+.e-de-prop-pane .e-de-ctnr-group-btn.e-btn-group:not(.e-outline) {
+  box-shadow: none;
+  height: 28px;
+  position: absolute;
+  top: 53px;
+}
+.e-split-btn-wrapper {
+  display: inline-flex;
+  white-space: nowrap;
+  width: -moz-min-content;
+  width: min-content;
+  position: absolute;
+  left: -90px;
+  top: 93px;
+}
+.de-tbl-fill-clr {
+  position: absolute;
+  top: 62px;
+}
+.e-de-insert-del-cell {
+  display: inline-flex;
+  position: absolute;
+  top: 0px;
+  left: -170px;
+} */
+/* end */
+
+@media screen and (max-width: 1480px) {
+  #container_editor_font_properties_leftDiv {
+    left: 10% !important;
+  }
+}
+
+@media screen and (max-width: 1600px) {
+  #container_editor_font_properties_leftDiv {
+    left: 10% !important;
+  }
+}
+
+@media screen and (max-width: 1600px) {
+  #container_editor_font_properties_leftDiv {
+    left: 10% !important;
+  }
+}
+
+/* sidebar hidden  */
+.e-de-pane {
+}
+
+/* .e-de-ctnr-segment { 
+  position: absolute !important;
+  left: -20% !important;
+  top: 121px !important;
+  height: 100px; 
+} */
 .e-tab {
   display: block;
   position: absolute !important;
 }
 
-.e-btn-group {
+/* 
+ 
+/* .e-btn-group {
   position: absolute !important;
   left: -160px !important;
-  /* top: -101px !important; */
-
-  /* display: inline-flex ;
-  border-radius: 2px;
-  flex-direction: row;
-  position: relative; */
-}
+  
+} */
 
 .e-tab .e-content .e-item {
   background: inherit;

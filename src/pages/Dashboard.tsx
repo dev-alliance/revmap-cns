@@ -717,7 +717,7 @@ export default function Dashboard() {
           </List>
         </Collapse>
 
-        <ListItemButton component={Link} to="/dashboard/teamlist">
+        <ListItemButton>
           <ListItemIcon>
             <img
               src={logoutIcon}

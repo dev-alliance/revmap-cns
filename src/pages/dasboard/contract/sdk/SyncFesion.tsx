@@ -77,7 +77,7 @@ function SyncFusionEditor() {
   // Full list of toolbar items
   const items: any = [
     // customItem,
-    "Open",
+    // "Open",
     "Undo",
     "Redo",
     // "Separator",
@@ -86,8 +86,8 @@ function SyncFusionEditor() {
     "Hyperlink",
     "TrackChanges",
     "Comments",
-    "TableOfContents",
-    "Separator",
+    // "TableOfContents",
+    // "Separator",
     "Header",
     "Footer",
     "PageSetup",
