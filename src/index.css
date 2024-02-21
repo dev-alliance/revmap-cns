@@ -2,6 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* for now  */
+
+/* for now end  */
+
 .link-no-underline {
   text-decoration: none;
   color: inherit;
@@ -11,66 +15,357 @@
   text-decoration: underline;
 }
 
-#container_editor_font_properties_leftDiv {
+/* topbar height  */
+.e-de-ctnr-toolbar {
+  height: 150px !important;
+}
+
+/* #container_editor_font_properties_leftDiv {
   position: absolute !important;
   left: -25% !important;
   top: -90px !important;
-}
+} */
+
+/* paragraph  */
 
 /* style */
 #container_editor_font_properties_leftDiv {
   position: absolute !important;
-  left: -50% !important;
-  top: -90px !important;
+  left: -81% !important;
+  top: -115px !important;
 }
+
 /* align */
 #container_editor_font_properties_indentWholeDiv {
   position: absolute !important;
-  left: -42% !important;
-  top: -90px !important;
+  left: -81% !important;
+  top: -80px !important;
 }
 
-/* font */
+/* font FAMILY AND SIZE*/
 #container_editor_font_properties_sizeStyle {
   position: absolute !important;
-  left: -30% !important;
-  top: -90px !important;
+  left: -62% !important;
+  top: -80px !important;
 }
 
 /* font color */
 #container_editor_font_properties_colorDiv {
   position: absolute !important;
-  left: -18% !important;
-  top: -90px !important;
+  left: -68% !important;
+  top: -115px !important;
 }
 
 /* bulits  */
 #container_editor_font_properties_listDiv {
   position: absolute !important;
-  left: -10% !important;
-  top: -110px !important;
+  left: -46% !important;
+  top: -115px !important;
 }
 
 /* paragraph heading etc  */
 #container_editor_font_properties_styleDiv {
   position: absolute !important;
-  left: -1% !important;
-  top: -80px !important;
+  left: -43% !important;
+  top: -115px !important;
 }
 
 /* X power  */
 #container_editor_font_properties_rightDiv {
   position: absolute !important;
-  left: -7% !important;
-  top: -110px !important;
+  left: -52% !important;
+  top: -115px !important;
 }
 
 /* uppercase  */
 #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
   position: absolute !important;
-  left: -10% !important;
-  top: -70px !important;
+  left: -56% !important;
+  top: -115px !important;
 }
+
+/************** paragraph end   ********************** */
+
+/******************** table start ******************************** */
+
+/* dell and insert cell  */
+.e-de-insert-del-cell {
+  position: absolute !important;
+  left: -81% !important;
+  top: -115px !important;
+}
+
+.e-de-ctnr-group-btn-top {
+  position: absolute !important;
+  left: -81% !important;
+  top: -80px !important;
+}
+
+.e-de-ctnr-group-btn-middle {
+  position: absolute !important;
+  left: -75% !important;
+  top: -80px !important;
+}
+
+.e-de-ctnr-group-btn-bottom {
+  position: absolute !important;
+  left: -69% !important;
+  top: -80px !important;
+}
+
+/* fill color  */
+.e-de-prop-font-colorpicker {
+  position: absolute !important;
+  left: -63% !important;
+  top: -80px !important;
+}
+
+/* font color  */
+.e-de-border-clr-picker {
+  position: absolute !important;
+  left: -69% !important;
+  top: -115px !important;
+}
+
+/* border width  */
+#container_editor_tableBorderSize {
+  position: absolute !important;
+  left: -64% !important;
+  top: -128px !important;
+}
+
+/* cell margin  */
+.e-de-cellmargin-text {
+  position: absolute !important;
+  left: -57% !important;
+  top: -170px !important;
+}
+
+/* =========================================================================== */
+/* *****MEDIA QUESRRY ************** */
+@media screen and (max-width: 1450px) {
+  /* style */
+  #container_editor_font_properties_leftDiv {
+    left: -68% !important;
+    top: -115px !important;
+  }
+
+  /* align */
+  #container_editor_font_properties_indentWholeDiv {
+    left: -68% !important;
+    top: -80px !important;
+  }
+
+  /* font color */
+  #container_editor_font_properties_colorDiv {
+    position: absolute !important;
+    left: -48.5% !important;
+    top: -115px !important;
+  }
+
+  /* font FAMILY AND SIZE*/
+  #container_editor_font_properties_sizeStyle {
+    left: -38% !important;
+    top: -80px !important;
+  }
+
+  /* uppercase  */
+  #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+    position: absolute !important;
+    left: -30% !important;
+    top: -115px !important;
+  }
+
+  /* X power  */
+  #container_editor_font_properties_rightDiv {
+    position: absolute !important;
+    left: -24% !important;
+    top: -115px !important;
+  }
+
+  /* bulits  */
+  #container_editor_font_properties_listDiv {
+    position: absolute !important;
+    left: -15% !important;
+    top: -115px !important;
+  }
+
+  /* paragraph heading etc  */
+  #container_editor_font_properties_styleDiv {
+    left: -9% !important;
+    top: -115px !important;
+  }
+
+  /******************** table start ******************************** */
+  /* dell and insert cell  */
+  .e-de-insert-del-cell {
+    position: absolute !important;
+    left: -65% !important;
+    top: -115px !important;
+  }
+
+  .e-de-ctnr-group-btn-top {
+    position: absolute !important;
+    left: -65% !important;
+    top: -80px !important;
+  }
+
+  .e-de-ctnr-group-btn-middle {
+    position: absolute !important;
+    left: -50% !important;
+    top: -80px !important;
+  }
+
+  .e-de-ctnr-group-btn-bottom {
+    position: absolute !important;
+    left: -35% !important;
+    top: -80px !important;
+  }
+
+  /* fill color  */
+  .e-de-prop-font-colorpicker {
+    position: absolute !important;
+    left: -20% !important;
+    top: -80px !important;
+  }
+
+  /* font color  */
+  .e-de-border-clr-picker {
+    position: absolute !important;
+    left: -35% !important;
+    top: -115px !important;
+  }
+
+  /* border width  */
+  #container_editor_tableBorderSize {
+    position: absolute !important;
+    left: -22% !important;
+    top: -128px !important;
+  }
+
+  /* cell margin  */
+  .e-de-cellmargin-text {
+    position: absolute !important;
+    left: -12% !important;
+    top: -170px !important;
+  }
+}
+
+@media screen and (min-width: 1450px) and (max-width: 1700px) {
+  /* paragraph  */
+
+  /* style */
+  #container_editor_font_properties_leftDiv {
+    left: -75% !important;
+    top: -115px !important;
+  }
+
+  /* align */
+  #container_editor_font_properties_indentWholeDiv {
+    left: -75% !important;
+    top: -80px !important;
+  }
+
+  /* font color */
+  #container_editor_font_properties_colorDiv {
+    position: absolute !important;
+    left: -60% !important;
+    top: -115px !important;
+  }
+
+  /* font FAMILY AND SIZE*/
+  #container_editor_font_properties_sizeStyle {
+    left: -51% !important;
+    top: -80px !important;
+  }
+
+  /* uppercase  */
+  #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+    position: absolute !important;
+    left: -45% !important;
+    top: -115px !important;
+  }
+
+  /* X power  */
+  #container_editor_font_properties_rightDiv {
+    position: absolute !important;
+    left: -40% !important;
+    top: -115px !important;
+  }
+
+  /* bulits  */
+  #container_editor_font_properties_listDiv {
+    position: absolute !important;
+    left: -33% !important;
+    top: -115px !important;
+  }
+
+  /* paragraph heading etc  */
+  #container_editor_font_properties_styleDiv {
+    left: -28% !important;
+    top: -115px !important;
+  }
+
+  /******************** table start ******************************** */
+  /* dell and insert cell  */
+  .e-de-insert-del-cell {
+    position: absolute !important;
+    left: -75% !important;
+    top: -115px !important;
+  }
+
+  .e-de-ctnr-group-btn-top {
+    position: absolute !important;
+    left: -75% !important;
+    top: -80px !important;
+  }
+
+  .e-de-ctnr-group-btn-middle {
+    position: absolute !important;
+    left: -63% !important;
+    top: -80px !important;
+  }
+
+  .e-de-ctnr-group-btn-bottom {
+    position: absolute !important;
+    left: -51% !important;
+    top: -80px !important;
+  }
+
+  /* fill color  */
+  .e-de-prop-font-colorpicker {
+    position: absolute !important;
+    left: -39% !important;
+    top: -80px !important;
+  }
+
+  /* font color  */
+  .e-de-border-clr-picker {
+    position: absolute !important;
+    left: -51% !important;
+    top: -115px !important;
+  }
+
+  /* border width  */
+  #container_editor_tableBorderSize {
+    position: absolute !important;
+    left: -40% !important;
+    top: -128px !important;
+  }
+
+  /* cell margin  */
+  .e-de-cellmargin-text {
+    position: absolute !important;
+    left: -20% !important;
+    top: -190px !important;
+  }
+}
+
+/* @media screen and (max-width: 1600px) {
+  #container_editor_font_properties_leftDiv {
+    left: 10% !important;
+  }
+} */
 
 /* table  */
 /* .e-de-property-div-padding {
@@ -113,24 +408,6 @@
   left: -170px;
 } */
 /* end */
-
-@media screen and (max-width: 1480px) {
-  #container_editor_font_properties_leftDiv {
-    left: 10% !important;
-  }
-}
-
-@media screen and (max-width: 1600px) {
-  #container_editor_font_properties_leftDiv {
-    left: 10% !important;
-  }
-}
-
-@media screen and (max-width: 1600px) {
-  #container_editor_font_properties_leftDiv {
-    left: 10% !important;
-  }
-}
 
 /* sidebar hidden  */
 .e-de-pane {
