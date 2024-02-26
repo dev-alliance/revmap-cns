@@ -208,8 +208,22 @@ function SyncFusionEditor() {
       // Implement any default action or log an unhandled case
     }
   };
+  // text color highlight 
+  const [highlightColor, setHighlightColor] = useState('#FF5733');
+  const applyHighlightColor = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      // Apply the selected highlight color
+      documentEditor.selection.characterFormat.highlightColor = highlightColor;
+    }
+  };
 
+  const handleColorChange = (args) => {
+    setHighlightColor(args.currentValue.hex);
+    applyHighlightColor();
+  };
 
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   // tables formatting 
 
@@ -266,8 +280,14 @@ function SyncFusionEditor() {
         break;
     }
   }
-
-
+  // fill cell color 
+  const handleCellFillColorChange = (args) => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection && documentEditor.selection.isInTable) {
+      // Apply the selected color as the cell's background color
+      documentEditor.selection.cellFormat.background = args.currentValue.hex;
+    }
+  };
 
 
 
@@ -730,19 +750,7 @@ function SyncFusionEditor() {
       ></ComboBoxComponent>
     );
   }
-  const [highlightColor, setHighlightColor] = useState('#FF5733'); // Default color
-  const applyHighlightColor = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      // Apply the selected highlight color
-      documentEditor.selection.characterFormat.highlightColor = highlightColor;
-    }
-  };
 
-  const handleColorChange = (args) => {
-    setHighlightColor(args.currentValue.hex);
-    applyHighlightColor();
-  };
   return (
     <div>
       {/* 
@@ -883,9 +891,14 @@ function SyncFusionEditor() {
             <ItemDirective id="delete_columns" prefixIcon="e-de-ctnr-deletecolumns e-icons" />
             <ItemDirective type="Separator" />
             <ItemDirective text="Dialog" />
+
+
           </ItemsDirective>
 
+          <ColorPickerComponent id="cellFillColorPicker" mode="Palette"
+            showButtons={false} change={handleCellFillColorChange} />
         </ToolbarComponent>
+
 
         {/* <DocumentEditorComponent
           id="container"
