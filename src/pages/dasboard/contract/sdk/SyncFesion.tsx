@@ -236,6 +236,7 @@ function SyncFusionEditor() {
   // }
 
   function toolbarButtonClick(arg) {
+    console.log('arg', arg)
     const documentEditor = editorContainerRef.current.documentEditor;
     switch (arg.item.id) {
       case 'table':
@@ -278,18 +279,28 @@ function SyncFusionEditor() {
         //Opens insert table dialog
         documentEditor.showDialog('Table');
         break;
+      default:
+        console.warn("Unhandled toolbar item:", arg.item.id);
     }
   }
-  // fill cell color 
-  const handleCellFillColorChange = (args) => {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    if (documentEditor && documentEditor.selection && documentEditor.selection.isInTable) {
-      // Apply the selected color as the cell's background color
-      documentEditor.selection.cellFormat.background = args.currentValue.hex;
-    }
+
+
+
+  // State for the cell fill color
+  const [cellFillColor, setCellFillColor] = useState(''); // Default color
+
+  const applyCellFillColor = () => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+
+    documentEditor.selection.cellFormat.background = cellFillColor;
+
   };
 
-
+  const handleFillColorChange = (args) => {
+    console.log(args)
+    setCellFillColor(args.currentValue.hex);
+    applyCellFillColor();
+  };
 
 
 
@@ -751,6 +762,9 @@ function SyncFusionEditor() {
     );
   }
 
+
+
+
   return (
     <div>
       {/* 
@@ -892,12 +906,17 @@ function SyncFusionEditor() {
             <ItemDirective type="Separator" />
             <ItemDirective text="Dialog" />
 
-
+            <ItemDirective id="fillCellColor" tooltipText="Fill Cell Color" prefixIcon="e-icons e-fill-color" />
           </ItemsDirective>
-
-          <ColorPickerComponent id="cellFillColorPicker" mode="Palette"
-            showButtons={false} change={handleCellFillColorChange} />
         </ToolbarComponent>
+
+
+        <ColorPickerComponent
+          id="cellFillColorPicker"
+          mode="Palette"
+          showButtons={false}
+          change={handleFillColorChange}
+        />
 
 
         {/* <DocumentEditorComponent
