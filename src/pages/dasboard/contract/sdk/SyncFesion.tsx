@@ -201,12 +201,84 @@ function SyncFusionEditor() {
         documentEditor.documentEditorSettings.showHiddenMarks =
           !documentEditor.documentEditorSettings.showHiddenMarks;
         break;
+
       // Removed the duplicated 'Custom' case as it seems unnecessary
       default:
         console.warn("Unhandled toolbar item:", args.item.id);
       // Implement any default action or log an unhandled case
     }
   };
+
+
+
+  // tables formatting 
+
+  // let documenteditor: DocumentEditorComponent;
+  // React.useEffect(() => {
+  //   ComponentDidMount();
+  // }, []);
+  // function ComponentDidMount() {
+  //   documenteditor.editor.insertTable(2, 2);
+  // }
+
+  function toolbarButtonClick(arg) {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    switch (arg.item.id) {
+      case 'table':
+        //Insert table API to add table
+        documentEditor.editor.insertTable(3, 2);
+        break;
+      case 'insert_above':
+        //Insert the specified number of rows to the table above to the row at cursor position
+        documentEditor.editor.insertRow(true, 2);
+        break;
+      case 'insert_below':
+        //Insert the specified number of rows to the table below to the row at cursor position
+        documentEditor.editor.insertRow();
+        break;
+      case 'insert_left':
+        //Insert the specified number of columns to the table left to the column at cursor position
+        documentEditor.editor.insertColumn(true, 2);
+        break;
+      case 'insert_right':
+        //Insert the specified number of columns to the table right to the column at cursor position
+        documentEditor.editor.insertColumn();
+        break;
+      case 'delete_table':
+        //Delete the entire table
+        documentEditor.editor.deleteTable();
+        break;
+      case 'delete_rows':
+        //Delete the selected number of rows
+        documentEditor.editor.deleteRow();
+        break;
+      case 'delete_columns':
+        //Delete the selected number of columns
+        documentEditor.editor.deleteColumn();
+        break;
+      case 'merge_cell':
+        //Merge the selected cells into one (both vertically and horizontally)
+        documentEditor.editor.mergeCells();
+        break;
+      case 'table_dialog':
+        //Opens insert table dialog
+        documentEditor.showDialog('Table');
+        break;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // const onToolbarClick = (args: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
@@ -793,6 +865,28 @@ function SyncFusionEditor() {
         </ToolbarComponent>
 
         <ColorPickerComponent value={highlightColor} change={handleColorChange} />
+
+
+        <ToolbarComponent clicked={toolbarButtonClick}>
+          <ItemsDirective>
+            <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
+            <ItemDirective type="Separator" />
+            <ItemDirective id="insert_above" prefixIcon="e-de-ctnr-insertabove e-icons" />
+            <ItemDirective id="insert_below" prefixIcon="e-de-ctnr-insertbelow e-icons" />
+            <ItemDirective type="Separator" />
+            <ItemDirective id="insert_left" prefixIcon="e-de-ctnr-insertleft e-icons" />
+            <ItemDirective id="insert_right" prefixIcon="e-de-ctnr-insertright e-icons" />
+            <ItemDirective type="Separator" />
+            <ItemDirective id="delete_table" tooltipText="Delete" text='Delete' prefixIcon="custom-delete-icon" />
+
+            <ItemDirective id="delete_rows" prefixIcon="e-de-ctnr-deleterows e-icons" />
+            <ItemDirective id="delete_columns" prefixIcon="e-de-ctnr-deletecolumns e-icons" />
+            <ItemDirective type="Separator" />
+            <ItemDirective text="Dialog" />
+          </ItemsDirective>
+
+        </ToolbarComponent>
+
         {/* <DocumentEditorComponent
           id="container"
           height={"100px"}
