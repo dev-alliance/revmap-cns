@@ -1,74 +1,97 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from "react";
 
-interface User {
-  id: string;
+interface Overview {
   name: string;
-  email: string;
+  vendor: string;
+  currency: string;
+  value: number;
+  category: string;
+  tags: string[];
+  branch: string;
+  team: string;
+  contractType: string;
+  status: string;
+}
+
+interface Lifecycle {
+  startDate: string; // Using string for simplicity, conversion to Date can be handled when needed
+  endDate: string;
+  noticePeriodDate: string;
+  renewalOwners: string[];
+}
+
+interface ContractStatus {
+  status: string;
+  expire: string;
+}
+
+interface Contract {
+  overview: Overview;
+  lifecycle: Lifecycle;
 }
 
 interface ContractContextProps {
-  contract: any | null;
-  loginContext: (userData: User) => void;
-  logout: () => void;
-  contractStatus: any | null;
-  setContractStatus: (code: any | null) => void;
-  setTwoFA: (abc: any | null) => void;
-  twoFA: any | null;
+  contract: Contract | null;
+  setContract: Dispatch<SetStateAction<Contract | null>>;
+  contractStatus: ContractStatus;
+  setContractStatus: Dispatch<SetStateAction<ContractStatus>>;
+  updateContractOverview: (overview: Overview) => void;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
   contract: null,
-  loginContext: () => {},
-  logout: () => {},
-  contractStatus: null,
+  setContract: () => {},
+  contractStatus: { status: "", expire: "" },
   setContractStatus: () => {},
-  setTwoFA: () => {},
-  twoFA: null,
+  updateContractOverview: () => {},
 });
 
-interface ContractProviderProps {
-  children: ReactNode;
-}
-
-export const ContractProvider: React.FC<ContractProviderProps> = ({
+export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [contract, setContract] = useState<string | null>(null);
-  const [contractStatus, setContractStatus] = useState<any>({
+  const [contract, setContract] = useState<Contract | null>(null);
+  const [contractStatus, setContractStatus] = useState<ContractStatus>({
     status: "",
     expire: "",
   });
-  const [twoFA, setTwoFA] = useState<string | null>(null);
-  // Load user data from localStorage when component mounts
+
+  const updateContractOverview = (overview: Overview) => {
+    if (contract) {
+      setContract({
+        ...contract,
+        overview,
+      });
+      // Optionally update to local storage or backend
+    }
+  };
 
   useEffect(() => {
-    const storeContractData = localStorage.getItem("contract");
-    if (storeContractData) {
-      setContract(JSON.parse(storeContractData));
+    const storedContractData = localStorage.getItem("contract");
+    if (storedContractData) {
+      setContract(JSON.parse(storedContractData));
+    }
+
+    const storedContractStatus = localStorage.getItem("contractStatus");
+    if (storedContractStatus) {
+      setContractStatus(JSON.parse(storedContractStatus));
     }
   }, []);
-
-  const loginContext = (userData: any) => {
-    setContract(userData);
-    localStorage.setItem("user", JSON.stringify(userData)); // Save user data to localStorage
-  };
-
-  const logout = () => {
-    setContract(null);
-    localStorage.removeItem("user"); // Clear user data from localStorage
-  };
 
   return (
     <ContractContext.Provider
       value={{
         contract,
+        setContract,
         contractStatus,
         setContractStatus,
-        loginContext,
-        logout,
-        setTwoFA,
-        twoFA,
+        updateContractOverview,
       }}
     >
       {children}

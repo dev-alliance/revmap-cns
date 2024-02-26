@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+
 import { useForm, Controller } from "react-hook-form";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -25,6 +26,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getCategoryList } from "@/service/api/category";
 import { getList } from "@/service/api/tags";
 import AddIcon from "@mui/icons-material/Add";
+import { ContractContext } from "@/context/ContractContext";
 
 type FormValues = {
   name: string;
@@ -49,8 +51,10 @@ const OverView = () => {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<FormValues>();
   const navigate = useNavigate();
+  const { updateContractOverview } = useContext(ContractContext);
   const { user } = useAuth();
   const [teamData, setTeamData] = useState<Array<any>>([]);
   const [branchData, setBranchData] = useState<Array<any>>([]);
@@ -97,14 +101,52 @@ const OverView = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      // Submit logic
-      toast.success("Success message");
-      navigate("/nextRoute");
+      // Assuming data contains the updated overview fields
+      const updatedOverview: any = {
+        name: data.name,
+        vendor: "Vendor Name", // Modify as needed
+        currency: data.currency,
+        value: data.value,
+        category: data.category,
+        tags: data.tags,
+        branch: data.branch,
+        team: data.team,
+        contractType: "Type1", // Modify as needed
+        status: "Active", // Modify as needed
+        // Add other fields as necessary
+      };
+
+      updateContractOverview(updatedOverview);
+
+      // Success toast and navigation as before
+      toast.success("Contract overview updated successfully");
     } catch (error) {
-      // Error handling
-      toast.error("Error message");
+      // Error handling as before
+      toast.error("Failed to update contract overview");
     }
   };
+  useEffect(() => {
+    // Define a function to handle the logic you want to run on unmount
+    const handleUnload = async () => {
+      const formData = getValues();
+      await onSubmit(formData);
+    };
+
+    return () => {
+      // Set a timeout to delay the unload operation
+      const timeoutId = setTimeout(() => {
+        handleUnload().catch((error) => {
+          console.error("Failed to update on unmount", error);
+          // Ensure toast is available in this scope or imported if necessary
+          toast.error("Failed to save changes.");
+        });
+      }, 3000); // Delay by 3000 milliseconds (3 seconds)
+
+      return () => clearTimeout(timeoutId);
+    };
+    // Assuming you want this to run only once, on mount and unmount
+  }, [getValues, onSubmit]);
+
   useEffect(() => {
     const category = catategorylist.find((c) => c._id === selectedCategory);
     setSubCategories(category ? category.subCategories : []);

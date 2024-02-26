@@ -86,7 +86,6 @@ function SyncFusionEditor() {
     }));
   };
 
-
   // To change the font style of selected content
   function changeFontFamily(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -109,7 +108,8 @@ function SyncFusionEditor() {
   function changeFontColor(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontColor = args.currentValue.hex;
+      documentEditor.selection.characterFormat.fontColor =
+        args.currentValue.hex;
       documentEditor.focusIn();
     }
   }
@@ -126,7 +126,7 @@ function SyncFusionEditor() {
   }
   const onToolbarClick = (args: any) => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    console.log('args :', args.item.id)
+    console.log("args :", args.item.id);
     // if (!documentEditor) {
     //   console.error("Document Editor is not initialized yet.");
     //   return;
@@ -149,13 +149,13 @@ function SyncFusionEditor() {
       case "highlight":
         if (documentEditor && documentEditor.selection) {
           // Check if the selected text is already highlighted
-          let highlightColor: HighlightColor = documentEditor.selection.characterFormat.highlightColor;
+          let highlightColor: HighlightColor =
+            documentEditor.selection.characterFormat.highlightColor;
           //Sets highlightColor formatting for selected text.
-          documentEditor.selection.characterFormat.highlightColor = 'Pink';
+          documentEditor.selection.characterFormat.highlightColor = "Pink";
           documentEditor.focusIn();
         }
         break;
-
 
       case "strikethrough":
         // Toggles the strikethrough of selected content
@@ -209,9 +209,7 @@ function SyncFusionEditor() {
     }
   };
 
-
-
-  // tables formatting 
+  // tables formatting
 
   // let documenteditor: DocumentEditorComponent;
   // React.useEffect(() => {
@@ -224,61 +222,48 @@ function SyncFusionEditor() {
   function toolbarButtonClick(arg) {
     const documentEditor = editorContainerRef.current.documentEditor;
     switch (arg.item.id) {
-      case 'table':
+      case "table":
         //Insert table API to add table
         documentEditor.editor.insertTable(3, 2);
         break;
-      case 'insert_above':
+      case "insert_above":
         //Insert the specified number of rows to the table above to the row at cursor position
         documentEditor.editor.insertRow(true, 2);
         break;
-      case 'insert_below':
+      case "insert_below":
         //Insert the specified number of rows to the table below to the row at cursor position
         documentEditor.editor.insertRow();
         break;
-      case 'insert_left':
+      case "insert_left":
         //Insert the specified number of columns to the table left to the column at cursor position
         documentEditor.editor.insertColumn(true, 2);
         break;
-      case 'insert_right':
+      case "insert_right":
         //Insert the specified number of columns to the table right to the column at cursor position
         documentEditor.editor.insertColumn();
         break;
-      case 'delete_table':
+      case "delete_table":
         //Delete the entire table
         documentEditor.editor.deleteTable();
         break;
-      case 'delete_rows':
+      case "delete_rows":
         //Delete the selected number of rows
         documentEditor.editor.deleteRow();
         break;
-      case 'delete_columns':
+      case "delete_columns":
         //Delete the selected number of columns
         documentEditor.editor.deleteColumn();
         break;
-      case 'merge_cell':
+      case "merge_cell":
         //Merge the selected cells into one (both vertically and horizontally)
         documentEditor.editor.mergeCells();
         break;
-      case 'table_dialog':
+      case "table_dialog":
         //Opens insert table dialog
-        documentEditor.showDialog('Table');
+        documentEditor.showDialog("Table");
         break;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // const onToolbarClick = (args: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
@@ -660,8 +645,6 @@ function SyncFusionEditor() {
   //   }
   // }
 
-
-
   const fontStyle: string[] = [
     "Algerian",
     "Arial",
@@ -730,7 +713,7 @@ function SyncFusionEditor() {
       ></ComboBoxComponent>
     );
   }
-  const [highlightColor, setHighlightColor] = useState('#FF5733'); // Default color
+  const [highlightColor, setHighlightColor] = useState("#FF5733"); // Default color
   const applyHighlightColor = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
@@ -811,10 +794,26 @@ function SyncFusionEditor() {
       <div>
         <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
           <ItemsDirective>
-            <ItemDirective id="bold" prefixIcon="e-icons e-bold" tooltipText="Bold" />
-            <ItemDirective id="italic" prefixIcon="e-icons e-italic" tooltipText="Italic" />
-            <ItemDirective id="underline" prefixIcon="e-icons e-underline" tooltipText="Underline" />
-            <ItemDirective id="highlight" prefixIcon="e-icons e-highlight" tooltipText="Highlight" />
+            <ItemDirective
+              id="bold"
+              prefixIcon="e-icons e-bold"
+              tooltipText="Bold"
+            />
+            <ItemDirective
+              id="italic"
+              prefixIcon="e-icons e-italic"
+              tooltipText="Italic"
+            />
+            <ItemDirective
+              id="underline"
+              prefixIcon="e-icons e-underline"
+              tooltipText="Underline"
+            />
+            <ItemDirective
+              id="highlight"
+              prefixIcon="e-icons e-highlight"
+              tooltipText="Highlight"
+            />
             <ItemDirective
               id="strikethrough"
               prefixIcon="e-de-icon-Strikethrough"
@@ -864,27 +863,51 @@ function SyncFusionEditor() {
           </ItemsDirective>
         </ToolbarComponent>
 
-        <ColorPickerComponent value={highlightColor} change={handleColorChange} />
-
+        <ColorPickerComponent
+          value={highlightColor}
+          change={handleColorChange}
+        />
 
         <ToolbarComponent clicked={toolbarButtonClick}>
           <ItemsDirective>
             <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
             <ItemDirective type="Separator" />
-            <ItemDirective id="insert_above" prefixIcon="e-de-ctnr-insertabove e-icons" />
-            <ItemDirective id="insert_below" prefixIcon="e-de-ctnr-insertbelow e-icons" />
+            <ItemDirective
+              id="insert_above"
+              prefixIcon="e-de-ctnr-insertabove e-icons"
+            />
+            <ItemDirective
+              id="insert_below"
+              prefixIcon="e-de-ctnr-insertbelow e-icons"
+            />
             <ItemDirective type="Separator" />
-            <ItemDirective id="insert_left" prefixIcon="e-de-ctnr-insertleft e-icons" />
-            <ItemDirective id="insert_right" prefixIcon="e-de-ctnr-insertright e-icons" />
+            <ItemDirective
+              id="insert_left"
+              prefixIcon="e-de-ctnr-insertleft e-icons"
+            />
+            <ItemDirective
+              id="insert_right"
+              prefixIcon="e-de-ctnr-insertright e-icons"
+            />
             <ItemDirective type="Separator" />
-            <ItemDirective id="delete_table" tooltipText="Delete" text='Delete' prefixIcon="custom-delete-icon" />
+            <ItemDirective
+              id="delete_table"
+              tooltipText="Delete"
+              text="Delete"
+              prefixIcon="custom-delete-icon"
+            />
 
-            <ItemDirective id="delete_rows" prefixIcon="e-de-ctnr-deleterows e-icons" />
-            <ItemDirective id="delete_columns" prefixIcon="e-de-ctnr-deletecolumns e-icons" />
+            <ItemDirective
+              id="delete_rows"
+              prefixIcon="e-de-ctnr-deleterows e-icons"
+            />
+            <ItemDirective
+              id="delete_columns"
+              prefixIcon="e-de-ctnr-deletecolumns e-icons"
+            />
             <ItemDirective type="Separator" />
             <ItemDirective text="Dialog" />
           </ItemsDirective>
-
         </ToolbarComponent>
 
         {/* <DocumentEditorComponent
@@ -1112,7 +1135,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-      // showPropertiesPane={false}
+        // showPropertiesPane={false}
       />
     </div>
   );
