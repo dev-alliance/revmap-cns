@@ -50,6 +50,7 @@ import {
 } from "@syncfusion/ej2-react-navigations";
 import { ComboBoxComponent } from "@syncfusion/ej2-react-dropdowns";
 import { ColorPickerComponent } from "@syncfusion/ej2-react-inputs";
+
 import {
   DropDownButtonComponent,
   ItemModel,
@@ -114,6 +115,16 @@ function SyncFusionEditor() {
     }
   }
 
+  // To change the highlight color of selected content
+  function changeHighlightColor(color: string) {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      // Sets the highlight color of the selection
+      // Possible color values: 'Yellow', 'Green', 'Blue', 'Red', etc., or HEX color codes
+      documentEditor.selection.characterFormat.highlightColor = color;
+      documentEditor.focusIn();
+    }
+  }
   const onToolbarClick = (args: any) => {
     const documentEditor = editorContainerRef.current.documentEditor;
     console.log('args :', args.item.id)
@@ -135,6 +146,18 @@ function SyncFusionEditor() {
         // Toggles the underline of selected content
         documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
         break;
+
+      case "highlight":
+        if (documentEditor && documentEditor.selection) {
+          // Check if the selected text is already highlighted
+          let highlightColor: HighlightColor = documentEditor.selection.characterFormat.highlightColor;
+          //Sets highlightColor formatting for selected text.
+          documentEditor.selection.characterFormat.highlightColor = 'Pink';
+          documentEditor.focusIn();
+        }
+        break;
+
+
       case "strikethrough":
         // Toggles the strikethrough of selected content
         documentEditor.editor.toggleStrikethrough();
@@ -178,15 +201,6 @@ function SyncFusionEditor() {
         //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
         documentEditor.documentEditorSettings.showHiddenMarks =
           !documentEditor.documentEditorSettings.showHiddenMarks;
-        break;
-      case "fontFamily":
-        changeFontFamily({ value: args.value });
-        break;
-      case "fontSize":
-        changeFontSize({ value: parseFloat(args.value) }); // Assuming args.value is a string that needs conversion to number
-        break;
-      case "fontColor":
-        changeFontColor({ currentValue: { hex: args.value } });
         break;
       // Removed the duplicated 'Custom' case as it seems unnecessary
       default:
@@ -645,7 +659,19 @@ function SyncFusionEditor() {
       ></ComboBoxComponent>
     );
   }
+  const [highlightColor, setHighlightColor] = useState('#FF5733'); // Default color
+  const applyHighlightColor = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      // Apply the selected highlight color
+      documentEditor.selection.characterFormat.highlightColor = highlightColor;
+    }
+  };
 
+  const handleColorChange = (args) => {
+    setHighlightColor(args.currentValue.hex);
+    applyHighlightColor();
+  };
   return (
     <div>
       {/* 
@@ -717,6 +743,7 @@ function SyncFusionEditor() {
             <ItemDirective id="bold" prefixIcon="e-icons e-bold" tooltipText="Bold" />
             <ItemDirective id="italic" prefixIcon="e-icons e-italic" tooltipText="Italic" />
             <ItemDirective id="underline" prefixIcon="e-icons e-underline" tooltipText="Underline" />
+            <ItemDirective id="highlight" prefixIcon="e-icons e-highlight" tooltipText="Highlight" />
             <ItemDirective
               id="strikethrough"
               prefixIcon="e-de-icon-Strikethrough"
@@ -747,6 +774,7 @@ function SyncFusionEditor() {
               prefixIcon="e-de-ctnr-alignleft e-icons"
               tooltipText="Align Left"
             />
+
             <ItemDirective
               id="AlignCenter"
               prefixIcon="e-de-ctnr-aligncenter e-icons"
@@ -764,7 +792,9 @@ function SyncFusionEditor() {
             />
           </ItemsDirective>
         </ToolbarComponent>
-
+        <Tooltip content="Select highlight color" position="BottomCenter">
+          <ColorPickerComponent value={highlightColor} change={handleColorChange} />
+        </Tooltip>
         {/* <DocumentEditorComponent
           id="container"
           height={"100px"}
