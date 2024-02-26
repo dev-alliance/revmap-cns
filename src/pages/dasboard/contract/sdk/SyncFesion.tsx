@@ -35,6 +35,34 @@ import {
   Divider,
 } from "@mui/material";
 
+import {
+  DocumentEditorComponent,
+  Selection,
+  Editor,
+  EditorHistory,
+  ContextMenu,
+  TableDialog,
+} from "@syncfusion/ej2-react-documenteditor";
+import {
+  ToolbarComponent,
+  ItemDirective,
+  ItemsDirective,
+} from "@syncfusion/ej2-react-navigations";
+import { ComboBoxComponent } from "@syncfusion/ej2-react-dropdowns";
+import { ColorPickerComponent } from "@syncfusion/ej2-react-inputs";
+import {
+  DropDownButtonComponent,
+  ItemModel,
+} from "@syncfusion/ej2-react-splitbuttons";
+
+DocumentEditorComponent.Inject(
+  Selection,
+  Editor,
+  EditorHistory,
+  ContextMenu,
+  TableDialog
+);
+
 DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFusionEditor() {
@@ -59,12 +87,109 @@ function SyncFusionEditor() {
   };
 
   const onToolbarClick = (args: any) => {
-    if (args.item.id === "Custom") {
-      // Logic for the custom toolbar item
-      editorContainerRef.current.toolbarModule.enableItems(4, false);
+    const documentEditor = editorContainerRef.current.documentEditor;
+
+    if (!documentEditor) {
+      console.error("Document Editor is not initialized yet.");
+      return;
     }
-    // Add additional logic for other toolbar items if needed
+
+    switch (args.item.id) {
+      case "bold":
+        // Toggles the bold of selected content
+        documentEditor.editor.toggleBold();
+        break;
+      case "italic":
+        // Toggles the Italic of selected content
+        documentEditor.editor.toggleItalic();
+        break;
+      case "underline":
+        // Toggles the underline of selected content
+        documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
+        break;
+      case "strikethrough":
+        // Toggles the strikethrough of selected content
+        documentEditor.editor.toggleStrikethrough();
+        break;
+      case "subscript":
+        // Toggles the subscript of selected content
+        documentEditor.editor.toggleSubscript();
+        break;
+      case "superscript":
+        // Toggles the superscript of selected content
+        documentEditor.editor.toggleSuperscript();
+        break;
+      case "AlignLeft":
+        //Toggle the Left alignment for selected or current paragraph
+        documenteditor.editor.toggleTextAlignment("Left");
+        break;
+      case "AlignRight":
+        //Toggle the Right alignment for selected or current paragraph
+        documenteditor.editor.toggleTextAlignment("Right");
+        break;
+      case "AlignCenter":
+        //Toggle the Center alignment for selected or current paragraph
+        documenteditor.editor.toggleTextAlignment("Center");
+        break;
+      case "Justify":
+        //Toggle the Justify alignment for selected or current paragraph
+        documenteditor.editor.toggleTextAlignment("Justify");
+        break;
+      case "IncreaseIndent":
+        //Increase the left indent of selected or current paragraph
+        documenteditor.editor.increaseIndent();
+        break;
+      case "DecreaseIndent":
+        //Decrease the left indent of selected or current paragraph
+        documenteditor.editor.decreaseIndent();
+        break;
+      case "ClearFormat":
+        documenteditor.editor.clearFormatting();
+        break;
+      case "ShowParagraphMark":
+        //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
+        documenteditor.documentEditorSettings.showHiddenMarks =
+          !documenteditor.documentEditorSettings.showHiddenMarks;
+        break;
+      case "fontFamily":
+        changeFontFamily({ value: args.value });
+        break;
+      case "fontSize":
+        changeFontSize({ value: args.value });
+        break;
+      case "fontColor":
+        changeFontColor({ currentValue: { hex: args.value } });
+        break;
+      // Removed the duplicated 'Custom' case as it seems unnecessary
+      default:
+        console.warn("Unhandled toolbar item:", args.item.id);
+      // Implement any default action or log an unhandled case
+    }
   };
+
+  // const onToolbarClick = (args: any) => {
+  //   const documentEditor = editorContainerRef.current.documentEditor;
+
+  //   if (!documentEditor) {
+  //     console.error('Document Editor is not initialized yet.');
+  //     return;
+  //   }
+
+  //   switch (args.item.id) {
+  //     case 'bold':
+  //       documentEditor.editor.toggleBold();
+  //       break;
+  //     case 'italic':
+  //       documentEditor.editor.toggleItalic();
+  //       break;
+  //     case 'underline':
+  //       documentEditor.editor.toggleUnderline();
+  //       break;
+  //     // add other cases
+  //     default:
+  //       console.warn('Unhandled toolbar item:', args.item.id);
+  //   }
+  // };
 
   // Define custom toolbar item
   const customItem = {
@@ -154,8 +279,490 @@ function SyncFusionEditor() {
   //   }
   // }
 
+  // paragraph
+
+  // let documenteditor: DocumentEditorComponent;
+  // React.useEffect(() => {
+  //   componentDidMount()
+  // }, []);
+  // function componentDidMount() {
+  //   documenteditor.selectionChange = () => {
+  //     setTimeout(() => { onSelectionChange(); }, 20);
+  //   };
+  // }
+
+  // function toolbarButtonClick(arg) {
+  //   switch (arg.item.id) {
+  //     case 'bold':
+  //       //Toggles the bold of selected content
+  //       documenteditor.editor.toggleBold();
+  //       break;
+  //     case 'italic':
+  //       //Toggles the Italic of selected content
+  //       documenteditor.editor.toggleItalic();
+  //       break;
+  //     case 'underline':
+  //       //Toggles the underline of selected content
+  //       documenteditor.editor.toggleUnderline('Single');
+  //       break;
+  //     case 'strikethrough':
+  //       //Toggles the strikethrough of selected content
+  //       documenteditor.editor.toggleStrikethrough();
+  //       break;
+  //     case 'subscript':
+  //       //Toggles the subscript of selected content
+  //       documenteditor.editor.toggleSubscript();
+  //       break;
+  //     case 'superscript':
+  //       //Toggles the superscript of selected content
+  //       documenteditor.editor.toggleSuperscript();
+  //       break;
+  //   }
+  // }
+  // //To change the font Style of selected content
+  // function changeFontFamily(args): void {
+  //   documenteditor.selection.characterFormat.fontFamily = args.value;
+  //   documenteditor.focusIn();
+  // }
+  // //To Change the font Size of selected content
+  // function changeFontSize(args): void {
+  //   documenteditor.selection.characterFormat.fontSize = args.value;
+  //   documenteditor.focusIn();
+  // }
+  // //To Change the font Color of selected content
+  // function changeFontColor(args) {
+  //   documenteditor.selection.characterFormat.fontColor = args.currentValue.hex;
+  //   documenteditor.focusIn();
+  // }
+
+  // //Selection change to retrieve formatting
+  // function onSelectionChange() {
+  //   if (documenteditor.selection) {
+  //     enableDisableFontOptions();
+  //     // #endregion
+  //   }
+  // }
+  // function enableDisableFontOptions() {
+  //   var characterformat = documenteditor.selection.characterFormat;
+  //   var properties = [characterformat.bold, characterformat.italic, characterformat.underline, characterformat.strikethrough];
+  //   var toggleBtnId = ["bold", "italic", "underline", "strikethrough"];
+  //   for (let i = 0; i < properties.length; i++) {
+  //     changeActiveState(properties[i], toggleBtnId[i]);
+  //   }
+  // }
+  // function changeActiveState(property, btnId) {
+  //   let toggleBtn: HTMLElement = document.getElementById(btnId);
+  //   if ((typeof (property) == 'boolean' && property == true) || (typeof (property) == 'string' && property !== 'None'))
+  //     toggleBtn.classList.add("e-btn-toggle");
+  //   else {
+  //     if (toggleBtn.classList.contains("e-btn-toggle"))
+  //       toggleBtn.classList.remove("e-btn-toggle");
+  //   }
+  // }
+  // let fontStyle: string[] = ['Algerian', 'Arial', 'Calibri', 'Cambria', 'Cambria Math', 'Candara', 'Courier New', 'Georgia', 'Impact', 'Segoe Print', 'Segoe Script', 'Segoe UI', 'Symbol', 'Times New Roman', 'Verdana', 'Windings'
+  // ];
+  // let fontSize: string[] = ['8', '9', '10', '11', '12', '14', '16', '18',
+  //   '20', '22', '24', '26', '28', '36', '48', '72', '96'];
+  // function contentTemplate1() {
+  //   return (<ColorPickerComponent showButtons={true} value='#000000' change={changeFontColor}></ColorPickerComponent>);
+  // }
+  // function contentTemplate2() {
+  //   return (<ComboBoxComponent dataSource={fontStyle} change={changeFontFamily} index={2} allowCustom={true} showClearButton={false} ></ComboBoxComponent>);
+  // }
+  // function contentTemplate3() {
+  //   return (<ComboBoxComponent dataSource={fontSize} change={changeFontSize} index={2} allowCustom={true} showClearButton={false} ></ComboBoxComponent>);
+  // }
+
+  // paragraph alignment
+
+  // let documenteditor: DocumentEditorComponent;
+  // React.useEffect(() => {
+  //   componentDidMount()
+  // }, []);
+  // let items3: ItemModel[] = [
+  //   {
+  //     text: 'Single',
+  //   },
+  //   {
+  //     text: '1.15',
+  //   },
+  //   {
+  //     text: '1.5',
+  //   },
+  //   {
+  //     text: 'Double',
+  //   },
+  // ];
+
+  // function contentTemplate1() {
+  //   return (<DropDownButtonComponent items={items3} iconCss="e-de-icon-LineSpacing" select={lineSpacingAction} ></DropDownButtonComponent>);
+  // }
+  // function componentDidMount(): void {
+  //   documenteditor.selectionChange = () => {
+  //     setTimeout(() => { onSelectionChange(); }, 20);
+  //   };
+  // }
+
+  // function toolbarButtonClick(arg): void {
+  //   switch (arg.item.id) {
+  //     case 'AlignLeft':
+  //       //Toggle the Left alignment for selected or current paragraph
+  //       documenteditor.editor.toggleTextAlignment('Left');
+  //       break;
+  //     case 'AlignRight':
+  //       //Toggle the Right alignment for selected or current paragraph
+  //       documenteditor.editor.toggleTextAlignment('Right');
+  //       break;
+  //     case 'AlignCenter':
+  //       //Toggle the Center alignment for selected or current paragraph
+  //       documenteditor.editor.toggleTextAlignment('Center');
+  //       break;
+  //     case 'Justify':
+  //       //Toggle the Justify alignment for selected or current paragraph
+  //       documenteditor.editor.toggleTextAlignment('Justify');
+  //       break;
+  //     case 'IncreaseIndent':
+  //       //Increase the left indent of selected or current paragraph
+  //       documenteditor.editor.increaseIndent();
+  //       break;
+  //     case 'DecreaseIndent':
+  //       //Decrease the left indent of selected or current paragraph
+  //       documenteditor.editor.decreaseIndent();
+  //       break;
+  //     case 'ClearFormat':
+  //       documenteditor.editor.clearFormatting();
+  //       break;
+  //     case 'ShowParagraphMark':
+  //       //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
+  //       documenteditor.documentEditorSettings.showHiddenMarks = !documenteditor.documentEditorSettings.showHiddenMarks;
+  //       break;
+  //   }
+  // }
+  // //Change the line spacing of selected or current paragraph
+  // function lineSpacingAction(args: any) {
+  //   let text: string = args.item.text;
+  //   switch (text) {
+  //     case 'Single':
+  //       documenteditor.selection.paragraphFormat.lineSpacing = 1;
+  //       break;
+  //     case '1.15':
+  //       documenteditor.selection.paragraphFormat.lineSpacing = 1.15;
+  //       break;
+  //     case '1.5':
+  //       documenteditor.selection.paragraphFormat.lineSpacing = 1.5;
+  //       break;
+  //     case 'Double':
+  //       documenteditor.selection.paragraphFormat.lineSpacing = 2;
+  //       break;
+  //   }
+  //   setTimeout((): void => {
+  //     documenteditor.focusIn();
+  //   }, 30);
+  // }
+  // // Selection change to retrieve formatting
+  // function onSelectionChange() {
+  //   if (documenteditor.selection) {
+  //     var paragraphFormat = documenteditor.selection.paragraphFormat;
+  //     var toggleBtnId = ['AlignLeft', 'AlignCenter', 'AlignRight', 'Justify', 'ShowParagraphMark'];
+  //     //Remove toggle state.
+  //     for (var i = 0; i < toggleBtnId.length; i++) {
+  //       let toggleBtn: HTMLElement = document.getElementById(toggleBtnId[i]);
+  //       toggleBtn.classList.remove('e-btn-toggle');
+  //     }
+  //     //Add toggle state based on selection paragraph format.
+  //     if (paragraphFormat.textAlignment === 'Left') {
+  //       document.getElementById('AlignLeft').classList.add('e-btn-toggle');
+  //     } else if (paragraphFormat.textAlignment === 'Right') {
+  //       document.getElementById('AlignRight').classList.add('e-btn-toggle');
+  //     } else if (paragraphFormat.textAlignment === 'Center') {
+  //       document.getElementById('AlignCenter').classList.add('e-btn-toggle');
+  //     } else {
+  //       document.getElementById('Justify').classList.add('e-btn-toggle');
+  //     }
+  //     if (documenteditor.documentEditorSettings.showHiddenMarks) {
+  //       document.getElementById('ShowParagraphMark').classList.add('e-btn-toggle');
+  //     }
+  //     // #endregion
+  //   }
+  // }
+
+  let documenteditor: DocumentEditorComponent;
+  React.useEffect(() => {
+    componentDidMount();
+  }, []);
+  function componentDidMount() {
+    documenteditor.selectionChange = () => {
+      setTimeout(() => {
+        onSelectionChange();
+      }, 20);
+    };
+  }
+
+  //To change the font Style of selected content
+  function changeFontFamily(args: any): void {
+    documenteditor.selection.characterFormat.fontFamily = args.value;
+    documenteditor.focusIn();
+  }
+  //To Change the font Size of selected content
+  function changeFontSize(args: any): void {
+    documenteditor.selection.characterFormat.fontSize = args.value;
+    documenteditor.focusIn();
+  }
+  //To Change the font Color of selected content
+  function changeFontColor(args: any) {
+    documenteditor.selection.characterFormat.fontColor = args.currentValue.hex;
+    documenteditor.focusIn();
+  }
+
+  //Selection change to retrieve formatting
+  function onSelectionChange() {
+    if (documenteditor.selection) {
+      enableDisableFontOptions();
+      // #endregion
+    }
+  }
+  function enableDisableFontOptions() {
+    const characterformat = documenteditor.selection.characterFormat;
+    const properties = [
+      characterformat.bold,
+      characterformat.italic,
+      characterformat.underline,
+      characterformat.strikethrough,
+    ];
+    const toggleBtnId = ["bold", "italic", "underline", "strikethrough"];
+    for (let i = 0; i < properties.length; i++) {
+      changeActiveState(properties[i], toggleBtnId[i]);
+    }
+  }
+  function changeActiveState(property: any, btnId: any) {
+    const toggleBtn: any | null = document.getElementById(btnId);
+    if (
+      (typeof property == "boolean" && property == true) ||
+      (typeof property == "string" && property !== "None")
+    )
+      toggleBtn.classList.add("e-btn-toggle");
+    else {
+      if (toggleBtn.classList.contains("e-btn-toggle"))
+        toggleBtn.classList.remove("e-btn-toggle");
+    }
+  }
+  const fontStyle: string[] = [
+    "Algerian",
+    "Arial",
+    "Calibri",
+    "Cambria",
+    "Cambria Math",
+    "Candara",
+    "Courier New",
+    "Georgia",
+    "Impact",
+    "Segoe Print",
+    "Segoe Script",
+    "Segoe UI",
+    "Symbol",
+    "Times New Roman",
+    "Verdana",
+    "Windings",
+  ];
+  const fontSize: string[] = [
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "14",
+    "16",
+    "18",
+    "20",
+    "22",
+    "24",
+    "26",
+    "28",
+    "36",
+    "48",
+    "72",
+    "96",
+  ];
+  function contentTemplate1() {
+    return (
+      <ColorPickerComponent
+        showButtons={true}
+        value="#000000"
+        change={changeFontColor}
+      ></ColorPickerComponent>
+    );
+  }
+  function contentTemplate2() {
+    return (
+      <ComboBoxComponent
+        dataSource={fontStyle}
+        change={changeFontFamily}
+        index={2}
+        allowCustom={true}
+        showClearButton={false}
+      ></ComboBoxComponent>
+    );
+  }
+  function contentTemplate3() {
+    return (
+      <ComboBoxComponent
+        dataSource={fontSize}
+        change={changeFontSize}
+        index={2}
+        allowCustom={true}
+        showClearButton={false}
+      ></ComboBoxComponent>
+    );
+  }
+
   return (
     <div>
+      {/* 
+      <div>
+        <ToolbarComponent id='toolbar' clicked={toolbarButtonClick}>
+          <ItemsDirective>
+            <ItemDirective id="bold" prefixIcon="e-de-icon-Bold" text="Bold" tooltipText="Bold" />
+            <ItemDirective id="italic" prefixIcon="e-de-icon-Italic" text="Italic" tooltipText="Italic" />
+            <ItemDirective id="underline" prefixIcon="e-de-icon-Underline" text="Underline" tooltipText="Underline" />
+            <ItemDirective id="strikethrough" prefixIcon="e-de-icon-Strikethrough" text="Strikethrough" tooltipText="Strikethrough" />
+            <ItemDirective id="subscript" prefixIcon="e-de-icon-Subscript" text="Subscript" tooltipText="Subscript" />
+            <ItemDirective id="superscript" prefixIcon="e-de-icon-Superscript" text="Superscript" tooltipText="Superscript" />
+            <ItemDirective type="Separator" />
+
+            <ItemDirective template={contentTemplate1} />
+            <ItemDirective type="Separator" />
+             
+          </ItemsDirective>
+        </ToolbarComponent>
+
+        <DocumentEditorComponent
+          id="container"
+          height={'330px'}
+          ref={scope => {
+            documenteditor = scope;
+          }}
+          isReadOnly={false}
+          enableSelection={true}
+          enableEditor={true}
+          enableEditorHistory={true}
+          enableContextMenu={true}
+        />
+      </div> */}
+
+      {/* <div>
+        <ToolbarComponent id='toolbar' clicked={toolbarButtonClick}>
+          <ItemDirective id="AlignLeft" prefixIcon="e-de-ctnr-alignleft e-icons" tooltipText="Align Left" />
+          <ItemDirective id="AlignCenter" prefixIcon="e-de-ctnr-aligncenter e-icons" tooltipText="Align Center" />
+          <ItemDirective id="AlignRight" prefixIcon="e-de-ctnr-alignright e-icons" tooltipText="Align Right" />
+          <ItemDirective id="Justify" prefixIcon="e-de-ctnr-justify e-icons" tooltipText="Justify" />
+          <ItemDirective type="Separator" />
+          <ItemDirective id="IncreaseIndent" prefixIcon="e-de-ctnr-increaseindent e-icons" tooltipText="Increase Indent" />
+          <ItemDirective id="DecreaseIndent" prefixIcon="e-de-ctnr-decreaseindent e-icons" tooltipText="Decrease Indent" />
+          <ItemDirective type="Separator" />
+          <ItemDirective template={contentTemplate1} />
+          <ItemDirective id="ClearFormat" prefixIcon="e-de-ctnr-clearall e-icons" tooltipText="Clear Formatting" />
+          <ItemDirective type="Separator" />
+          <ItemDirective id="ShowParagraphMark" prefixIcon="e-de-e-paragraph-mark e-icons" tooltipText="Show the hidden characters like spaces, tab, paragraph marks, and breaks.(Ctrl + *)" />
+        </ToolbarComponent>
+
+        <DocumentEditorComponent
+          id="container"
+          ref={scope => {
+            documenteditor = scope;
+          }}
+          isReadOnly={false}
+          enableSelection={true}
+          enableEditor={true}
+          enableEditorHistory={true}
+          enableContextMenu={true}
+          enableTableDialog={true}
+          height={'330px'}
+        />
+      </div> */}
+
+      <div>
+        <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
+          <ItemsDirective>
+            <ItemDirective
+              id="bold"
+              prefixIcon="e-de-icon-Bold"
+              text="Bold"
+              tooltipText="Bold"
+            />
+            <ItemDirective
+              id="italic"
+              prefixIcon="e-de-icon-Italic"
+              text="Italic"
+              tooltipText="Italic"
+            />
+            <ItemDirective
+              id="underline"
+              prefixIcon="e-de-icon-Underline"
+              text="Underline"
+              tooltipText="Underline"
+            />
+            <ItemDirective
+              id="strikethrough"
+              prefixIcon="e-de-icon-Strikethrough"
+              text="Strikethrough"
+              tooltipText="Strikethrough"
+            />
+            <ItemDirective
+              id="subscript"
+              prefixIcon="e-de-icon-Subscript"
+              text="Subscript"
+              tooltipText="Subscript"
+            />
+            <ItemDirective
+              id="superscript"
+              prefixIcon="e-de-icon-Superscript"
+              text="Superscript"
+              tooltipText="Superscript"
+            />
+            <ItemDirective type="Separator" />
+
+            <ItemDirective template={contentTemplate1} />
+            <ItemDirective type="Separator" />
+            <ItemDirective template={contentTemplate2} />
+            <ItemDirective template={contentTemplate3} />
+
+            <ItemDirective
+              id="AlignLeft"
+              prefixIcon="e-de-ctnr-alignleft e-icons"
+              tooltipText="Align Left"
+            />
+            <ItemDirective
+              id="AlignCenter"
+              prefixIcon="e-de-ctnr-aligncenter e-icons"
+              tooltipText="Align Center"
+            />
+            <ItemDirective
+              id="AlignRight"
+              prefixIcon="e-de-ctnr-alignright e-icons"
+              tooltipText="Align Right"
+            />
+            <ItemDirective
+              id="Justify"
+              prefixIcon="e-de-ctnr-justify e-icons"
+              tooltipText="Justify"
+            />
+          </ItemsDirective>
+        </ToolbarComponent>
+
+        <DocumentEditorComponent
+          id="container"
+          height={"100px"}
+          ref={(scope) => {
+            documenteditor = scope;
+          }}
+          isReadOnly={false}
+          enableSelection={true}
+          enableEditor={true}
+          enableEditorHistory={true}
+          enableContextMenu={true}
+        />
+      </div>
+
       <div className="flex border p-4 gap-4">
         {/* File Button and Dropdown */}
 
@@ -314,7 +921,7 @@ function SyncFusionEditor() {
             </ul>
           )}
         </div>
-        <div className="relative">
+        {/* <div className="relative">
           <button
             className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
             onClick={() => toggleDropdown("attach")}
@@ -334,7 +941,7 @@ function SyncFusionEditor() {
               </li>
             </ul>
           )}
-        </div>
+        </div> */}
         <Box sx={{ width: "100%", px: 2.6, py: 0.5 }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button variant="outlined" sx={{ textTransform: "none" }}>

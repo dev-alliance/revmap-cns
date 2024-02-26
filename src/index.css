@@ -83,7 +83,16 @@
   left: -56% !important;
   top: -115px !important;
 }
-
+.e-de-ctnr-prop-label {
+  color: rgba(0, 0, 0, 0.54);
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05px;
+  margin-bottom: 12px;
+  opacity: 0.87;
+  display: none;
+}
 /************** paragraph end   ********************** */
 
 /******************** table start ******************************** */
