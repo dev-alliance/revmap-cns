@@ -86,13 +86,41 @@ function SyncFusionEditor() {
     }));
   };
 
+
+  // To change the font style of selected content
+  function changeFontFamily(args) {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      documentEditor.selection.characterFormat.fontFamily = args.value;
+      documentEditor.focusIn();
+    }
+  }
+
+  // To change the font size of selected content
+  function changeFontSize(args) {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      documentEditor.selection.characterFormat.fontSize = args.value;
+      documentEditor.focusIn();
+    }
+  }
+
+  // To change the font color of selected content
+  function changeFontColor(args) {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      documentEditor.selection.characterFormat.fontColor = args.currentValue.hex;
+      documentEditor.focusIn();
+    }
+  }
+
   const onToolbarClick = (args: any) => {
     const documentEditor = editorContainerRef.current.documentEditor;
-
-    if (!documentEditor) {
-      console.error("Document Editor is not initialized yet.");
-      return;
-    }
+    console.log('args :', args.item.id)
+    // if (!documentEditor) {
+    //   console.error("Document Editor is not initialized yet.");
+    //   return;
+    // }
 
     switch (args.item.id) {
       case "bold":
@@ -121,41 +149,41 @@ function SyncFusionEditor() {
         break;
       case "AlignLeft":
         //Toggle the Left alignment for selected or current paragraph
-        documenteditor.editor.toggleTextAlignment("Left");
+        documentEditor.editor.toggleTextAlignment("Left");
         break;
       case "AlignRight":
         //Toggle the Right alignment for selected or current paragraph
-        documenteditor.editor.toggleTextAlignment("Right");
+        documentEditor.editor.toggleTextAlignment("Right");
         break;
       case "AlignCenter":
         //Toggle the Center alignment for selected or current paragraph
-        documenteditor.editor.toggleTextAlignment("Center");
+        documentEditor.editor.toggleTextAlignment("Center");
         break;
       case "Justify":
         //Toggle the Justify alignment for selected or current paragraph
-        documenteditor.editor.toggleTextAlignment("Justify");
+        documentEditor.editor.toggleTextAlignment("Justify");
         break;
       case "IncreaseIndent":
         //Increase the left indent of selected or current paragraph
-        documenteditor.editor.increaseIndent();
+        documentEditor.editor.increaseIndent();
         break;
       case "DecreaseIndent":
         //Decrease the left indent of selected or current paragraph
-        documenteditor.editor.decreaseIndent();
+        documentEditor.editor.decreaseIndent();
         break;
       case "ClearFormat":
-        documenteditor.editor.clearFormatting();
+        documentEditor.editor.clearFormatting();
         break;
       case "ShowParagraphMark":
         //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
-        documenteditor.documentEditorSettings.showHiddenMarks =
-          !documenteditor.documentEditorSettings.showHiddenMarks;
+        documentEditor.documentEditorSettings.showHiddenMarks =
+          !documentEditor.documentEditorSettings.showHiddenMarks;
         break;
       case "fontFamily":
         changeFontFamily({ value: args.value });
         break;
       case "fontSize":
-        changeFontSize({ value: args.value });
+        changeFontSize({ value: parseFloat(args.value) }); // Assuming args.value is a string that needs conversion to number
         break;
       case "fontColor":
         changeFontColor({ currentValue: { hex: args.value } });
@@ -498,21 +526,21 @@ function SyncFusionEditor() {
     };
   }
 
-  //To change the font Style of selected content
-  function changeFontFamily(args: any): void {
-    documenteditor.selection.characterFormat.fontFamily = args.value;
-    documenteditor.focusIn();
-  }
-  //To Change the font Size of selected content
-  function changeFontSize(args: any): void {
-    documenteditor.selection.characterFormat.fontSize = args.value;
-    documenteditor.focusIn();
-  }
-  //To Change the font Color of selected content
-  function changeFontColor(args: any) {
-    documenteditor.selection.characterFormat.fontColor = args.currentValue.hex;
-    documenteditor.focusIn();
-  }
+  // //To change the font Style of selected content
+  // function changeFontFamily(args: any): void {
+  //   documenteditor.selection.characterFormat.fontFamily = args.value;
+  //   documenteditor.focusIn();
+  // }
+  // //To Change the font Size of selected content
+  // function changeFontSize(args: any): void {
+  //   documenteditor.selection.characterFormat.fontSize = args.value;
+  //   documenteditor.focusIn();
+  // }
+  // //To Change the font Color of selected content
+  // function changeFontColor(args: any) {
+  //   documenteditor.selection.characterFormat.fontColor = args.currentValue.hex;
+  //   documenteditor.focusIn();
+  // }
 
   //Selection change to retrieve formatting
   function onSelectionChange() {
@@ -974,7 +1002,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-        // showPropertiesPane={false}
+      // showPropertiesPane={false}
       />
     </div>
   );
