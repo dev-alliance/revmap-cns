@@ -208,6 +208,22 @@ function SyncFusionEditor() {
       // Implement any default action or log an unhandled case
     }
   };
+  // text color highlight
+  const [highlightColor, setHighlightColor] = useState("#FF5733");
+  const applyHighlightColor = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      // Apply the selected highlight color
+      documentEditor.selection.characterFormat.highlightColor = highlightColor;
+    }
+  };
+
+  const handleColorChange = (args) => {
+    setHighlightColor(args.currentValue.hex);
+    applyHighlightColor();
+  };
+
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   // tables formatting
 
@@ -220,6 +236,7 @@ function SyncFusionEditor() {
   // }
 
   function toolbarButtonClick(arg) {
+    console.log("arg", arg);
     const documentEditor = editorContainerRef.current.documentEditor;
     switch (arg.item.id) {
       case "table":
@@ -262,6 +279,8 @@ function SyncFusionEditor() {
         //Opens insert table dialog
         documentEditor.showDialog("Table");
         break;
+      default:
+        console.warn("Unhandled toolbar item:", arg.item.id);
     }
   }
 
@@ -909,6 +928,13 @@ function SyncFusionEditor() {
             <ItemDirective text="Dialog" />
           </ItemsDirective>
         </ToolbarComponent>
+
+        <ColorPickerComponent
+          id="cellFillColorPicker"
+          mode="Palette"
+          showButtons={false}
+          change={handleFillColorChange}
+        />
 
         {/* <DocumentEditorComponent
           id="container"
