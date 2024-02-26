@@ -88,7 +88,7 @@ function SyncFusionEditor() {
 
 
   // To change the font style of selected content
-  function changeFontFamily(args) {
+  function changeFontFamily(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
       documentEditor.selection.characterFormat.fontFamily = args.value;
@@ -97,7 +97,7 @@ function SyncFusionEditor() {
   }
 
   // To change the font size of selected content
-  function changeFontSize(args) {
+  function changeFontSize(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
       documentEditor.selection.characterFormat.fontSize = args.value;
@@ -106,7 +106,7 @@ function SyncFusionEditor() {
   }
 
   // To change the font color of selected content
-  function changeFontColor(args) {
+  function changeFontColor(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
       documentEditor.selection.characterFormat.fontColor = args.currentValue.hex;
@@ -514,17 +514,17 @@ function SyncFusionEditor() {
   //   }
   // }
 
-  let documenteditor: DocumentEditorComponent;
-  React.useEffect(() => {
-    componentDidMount();
-  }, []);
-  function componentDidMount() {
-    documenteditor.selectionChange = () => {
-      setTimeout(() => {
-        onSelectionChange();
-      }, 20);
-    };
-  }
+  // let documenteditor: DocumentEditorComponent;
+  // React.useEffect(() => {
+  //   componentDidMount();
+  // }, []);
+  // function componentDidMount() {
+  //   documenteditor.selectionChange = () => {
+  //     setTimeout(() => {
+  //       onSelectionChange();
+  //     }, 20);
+  //   };
+  // }
 
   // //To change the font Style of selected content
   // function changeFontFamily(args: any): void {
@@ -543,37 +543,40 @@ function SyncFusionEditor() {
   // }
 
   //Selection change to retrieve formatting
-  function onSelectionChange() {
-    if (documenteditor.selection) {
-      enableDisableFontOptions();
-      // #endregion
-    }
-  }
-  function enableDisableFontOptions() {
-    const characterformat = documenteditor.selection.characterFormat;
-    const properties = [
-      characterformat.bold,
-      characterformat.italic,
-      characterformat.underline,
-      characterformat.strikethrough,
-    ];
-    const toggleBtnId = ["bold", "italic", "underline", "strikethrough"];
-    for (let i = 0; i < properties.length; i++) {
-      changeActiveState(properties[i], toggleBtnId[i]);
-    }
-  }
-  function changeActiveState(property: any, btnId: any) {
-    const toggleBtn: any | null = document.getElementById(btnId);
-    if (
-      (typeof property == "boolean" && property == true) ||
-      (typeof property == "string" && property !== "None")
-    )
-      toggleBtn.classList.add("e-btn-toggle");
-    else {
-      if (toggleBtn.classList.contains("e-btn-toggle"))
-        toggleBtn.classList.remove("e-btn-toggle");
-    }
-  }
+  // function onSelectionChange() {
+  //   if (documenteditor.selection) {
+  //     enableDisableFontOptions();
+  //     // #endregion
+  //   }
+  // }
+  // function enableDisableFontOptions() {
+  //   const characterformat = documenteditor.selection.characterFormat;
+  //   const properties = [
+  //     characterformat.bold,
+  //     characterformat.italic,
+  //     characterformat.underline,
+  //     characterformat.strikethrough,
+  //   ];
+  //   const toggleBtnId = ["bold", "italic", "underline", "strikethrough"];
+  //   for (let i = 0; i < properties.length; i++) {
+  //     changeActiveState(properties[i], toggleBtnId[i]);
+  //   }
+  // }
+  // function changeActiveState(property: any, btnId: any) {
+  //   const toggleBtn: any | null = document.getElementById(btnId);
+  //   if (
+  //     (typeof property == "boolean" && property == true) ||
+  //     (typeof property == "string" && property !== "None")
+  //   )
+  //     toggleBtn.classList.add("e-btn-toggle");
+  //   else {
+  //     if (toggleBtn.classList.contains("e-btn-toggle"))
+  //       toggleBtn.classList.remove("e-btn-toggle");
+  //   }
+  // }
+
+
+
   const fontStyle: string[] = [
     "Algerian",
     "Arial",
@@ -711,24 +714,9 @@ function SyncFusionEditor() {
       <div>
         <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
           <ItemsDirective>
-            <ItemDirective
-              id="bold"
-              prefixIcon="e-de-icon-Bold"
-              text="Bold"
-              tooltipText="Bold"
-            />
-            <ItemDirective
-              id="italic"
-              prefixIcon="e-de-icon-Italic"
-              text="Italic"
-              tooltipText="Italic"
-            />
-            <ItemDirective
-              id="underline"
-              prefixIcon="e-de-icon-Underline"
-              text="Underline"
-              tooltipText="Underline"
-            />
+            <ItemDirective id="bold" prefixIcon="e-icons e-bold" tooltipText="Bold" />
+            <ItemDirective id="italic" prefixIcon="e-icons e-italic" tooltipText="Italic" />
+            <ItemDirective id="underline" prefixIcon="e-icons e-underline" tooltipText="Underline" />
             <ItemDirective
               id="strikethrough"
               prefixIcon="e-de-icon-Strikethrough"
@@ -777,7 +765,7 @@ function SyncFusionEditor() {
           </ItemsDirective>
         </ToolbarComponent>
 
-        <DocumentEditorComponent
+        {/* <DocumentEditorComponent
           id="container"
           height={"100px"}
           ref={(scope) => {
@@ -788,7 +776,7 @@ function SyncFusionEditor() {
           enableEditor={true}
           enableEditorHistory={true}
           enableContextMenu={true}
-        />
+        /> */}
       </div>
 
       <div className="flex border p-4 gap-4">
