@@ -50,7 +50,6 @@ import {
 } from "@syncfusion/ej2-react-navigations";
 import { ComboBoxComponent } from "@syncfusion/ej2-react-dropdowns";
 import { ColorPickerComponent } from "@syncfusion/ej2-react-inputs";
-
 import {
   DropDownButtonComponent,
   ItemModel,
@@ -792,9 +791,8 @@ function SyncFusionEditor() {
             />
           </ItemsDirective>
         </ToolbarComponent>
-        <Tooltip content="Select highlight color" position="BottomCenter">
-          <ColorPickerComponent value={highlightColor} change={handleColorChange} />
-        </Tooltip>
+
+        <ColorPickerComponent value={highlightColor} change={handleColorChange} />
         {/* <DocumentEditorComponent
           id="container"
           height={"100px"}
