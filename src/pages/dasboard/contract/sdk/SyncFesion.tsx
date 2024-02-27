@@ -202,6 +202,19 @@ function SyncFusionEditor() {
           !documentEditor.documentEditorSettings.showHiddenMarks;
         break;
 
+      case 'Bullets':
+        //To create bullet list
+        documentEditor.editor.applyBullet('\uf0b7', 'Symbol');
+        break;
+      case 'Numbering':
+        //To create numbering list
+        documentEditor.editor.applyNumbering('%1)', 'UpRoman');
+        break;
+      case 'clearlist':
+        //To clear list
+        documentEditor.editor.clearList();
+        break;
+
       // Removed the duplicated 'Custom' case as it seems unnecessary
       default:
         console.warn("Unhandled toolbar item:", args.item.id);
@@ -889,6 +902,12 @@ function SyncFusionEditor() {
               prefixIcon="e-de-ctnr-justify e-icons"
               tooltipText="Justify"
             />
+
+            <ItemDirective id="Bullets" prefixIcon="e-de-ctnr-bullets e-icons" tooltipText="Bullets" />
+            <ItemDirective id="Numbering" prefixIcon="e-de-ctnr-numbering e-icons" tooltipText="Numbering" />
+            <ItemDirective id="clearlist" text="Clear" tooltipText="Clear List" />
+
+
           </ItemsDirective>
         </ToolbarComponent>
 
