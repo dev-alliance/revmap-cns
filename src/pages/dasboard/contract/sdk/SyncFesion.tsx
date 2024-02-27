@@ -284,6 +284,28 @@ function SyncFusionEditor() {
     }
   }
 
+
+
+  // State for the cell fill color
+  const [cellFillColor, setCellFillColor] = useState(''); // Default color
+
+  const applyCellFillColor = () => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+
+    documentEditor.selection.cellFormat.background = cellFillColor;
+
+  };
+
+  const handleFillColorChange = (args) => {
+    console.log(args)
+    setCellFillColor(args.currentValue.hex);
+    applyCellFillColor();
+  };
+
+
+
+
+
   // const onToolbarClick = (args: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
 
@@ -732,19 +754,7 @@ function SyncFusionEditor() {
       ></ComboBoxComponent>
     );
   }
-  const [highlightColor, setHighlightColor] = useState("#FF5733"); // Default color
-  const applyHighlightColor = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      // Apply the selected highlight color
-      documentEditor.selection.characterFormat.highlightColor = highlightColor;
-    }
-  };
 
-  const handleColorChange = (args) => {
-    setHighlightColor(args.currentValue.hex);
-    applyHighlightColor();
-  };
   return (
     <div>
       {/* 
@@ -1161,7 +1171,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-        // showPropertiesPane={false}
+      // showPropertiesPane={false}
       />
     </div>
   );
