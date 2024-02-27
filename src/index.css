@@ -17,7 +17,15 @@
 
 /* topbar height  */
 .e-de-ctnr-toolbar {
-  height: 150px !important;
+  /* height: 150px !important; */
+}
+
+.e-de-ctnr-properties-pane-btn {
+  display: none;
+}
+
+.e-de-pane {
+  display: none !important;
 }
 
 /* #container_editor_font_properties_leftDiv {
@@ -29,61 +37,62 @@
 /* paragraph  */
 
 /* style */
-#container_editor_font_properties_leftDiv {
+/* #container_editor_font_properties_leftDiv {
   position: absolute !important;
   left: -81% !important;
   top: -115px !important;
-}
+} */
 
 /* align */
-#container_editor_font_properties_indentWholeDiv {
+/* #container_editor_font_properties_indentWholeDiv {
   position: absolute !important;
   left: -81% !important;
   top: -80px !important;
-}
+} */
 
 /* font FAMILY AND SIZE*/
-#container_editor_font_properties_sizeStyle {
+/* #container_editor_font_properties_sizeStyle {
   position: absolute !important;
   left: -62% !important;
   top: -80px !important;
-}
+} */
 
 /* font color */
-#container_editor_font_properties_colorDiv {
+/* #container_editor_font_properties_colorDiv {
   position: absolute !important;
   left: -68% !important;
   top: -115px !important;
-}
+} */
 
 /* bulits  */
-#container_editor_font_properties_listDiv {
+/* #container_editor_font_properties_listDiv {
   position: absolute !important;
   left: -46% !important;
   top: -115px !important;
-}
+} */
 
 /* paragraph heading etc  */
-#container_editor_font_properties_styleDiv {
+/* #container_editor_font_properties_styleDiv {
   position: absolute !important;
   left: -43% !important;
   top: -115px !important;
-}
+} */
 
 /* X power  */
-#container_editor_font_properties_rightDiv {
+/* #container_editor_font_properties_rightDiv {
   position: absolute !important;
   left: -52% !important;
   top: -115px !important;
-}
+} */
 
 /* uppercase  */
-#container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+/* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
   position: absolute !important;
   left: -56% !important;
   top: -115px !important;
-}
-.e-de-ctnr-prop-label {
+} */
+
+/* .e-de-ctnr-prop-label {
   color: rgba(0, 0, 0, 0.54);
   display: inline-block;
   font-size: 12px;
@@ -92,128 +101,130 @@
   margin-bottom: 12px;
   opacity: 0.87;
   display: none;
-}
+} */
+
 /************** paragraph end   ********************** */
 
 /******************** table start ******************************** */
 
 /* dell and insert cell  */
-.e-de-insert-del-cell {
+/* .e-de-insert-del-cell {
   position: absolute !important;
   left: -81% !important;
   top: -115px !important;
-}
+} */
 
-.e-de-ctnr-group-btn-top {
+/* .e-de-ctnr-group-btn-top {
   position: absolute !important;
   left: -81% !important;
   top: -80px !important;
-}
+} */
 
-.e-de-ctnr-group-btn-middle {
+/* .e-de-ctnr-group-btn-middle {
   position: absolute !important;
   left: -75% !important;
   top: -80px !important;
-}
+} */
 
-.e-de-ctnr-group-btn-bottom {
+/* .e-de-ctnr-group-btn-bottom {
   position: absolute !important;
   left: -69% !important;
   top: -80px !important;
-}
+} */
 
 /* fill color  */
-.e-de-prop-font-colorpicker {
+/* .e-de-prop-font-colorpicker {
   position: absolute !important;
   left: -63% !important;
   top: -80px !important;
-}
+} */
 
 /* font color  */
-.e-de-border-clr-picker {
+/* .e-de-border-clr-picker {
   position: absolute !important;
   left: -69% !important;
   top: -115px !important;
-}
+} */
 
 /* border width  */
-#container_editor_tableBorderSize {
+/* #container_editor_tableBorderSize {
   position: absolute !important;
   left: -64% !important;
   top: -128px !important;
-}
+} */
 
 /* cell margin  */
-.e-de-cellmargin-text {
+/* .e-de-cellmargin-text {
   position: absolute !important;
   left: -57% !important;
   top: -170px !important;
-}
+} */
 
 /* =========================================================================== */
 /* *****MEDIA QUESRRY ************** */
 @media screen and (max-width: 1450px) {
+
   /* style */
-  #container_editor_font_properties_leftDiv {
+  /* #container_editor_font_properties_leftDiv {
     left: -68% !important;
     top: -115px !important;
-  }
+  } */
 
   /* align */
-  #container_editor_font_properties_indentWholeDiv {
+  /* #container_editor_font_properties_indentWholeDiv {
     left: -68% !important;
     top: -80px !important;
-  }
+  } */
 
   /* font color */
-  #container_editor_font_properties_colorDiv {
+  /* #container_editor_font_properties_colorDiv {
     position: absolute !important;
     left: -48.5% !important;
     top: -115px !important;
-  }
+  } */
 
   /* font FAMILY AND SIZE*/
-  #container_editor_font_properties_sizeStyle {
+  /* #container_editor_font_properties_sizeStyle {
     left: -38% !important;
     top: -80px !important;
-  }
+  } */
 
   /* uppercase  */
-  #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+  /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
     position: absolute !important;
     left: -30% !important;
     top: -115px !important;
-  }
+  } */
 
   /* X power  */
-  #container_editor_font_properties_rightDiv {
+  /* #container_editor_font_properties_rightDiv {
     position: absolute !important;
     left: -24% !important;
     top: -115px !important;
-  }
+  } */
 
   /* bulits  */
-  #container_editor_font_properties_listDiv {
+  /* #container_editor_font_properties_listDiv {
     position: absolute !important;
     left: -15% !important;
     top: -115px !important;
-  }
+  } */
 
   /* paragraph heading etc  */
-  #container_editor_font_properties_styleDiv {
+  /* #container_editor_font_properties_styleDiv {
     left: -9% !important;
     top: -115px !important;
-  }
+  } */
 
   /******************** table start ******************************** */
   /* dell and insert cell  */
-  .e-de-insert-del-cell {
+  /* .e-de-insert-del-cell {
     position: absolute !important;
     left: -65% !important;
     top: -115px !important;
-  }
+  } */
 
-  .e-de-ctnr-group-btn-top {
+  /* .e-de-ctnr-group-btn-top {
     position: absolute !important;
     left: -65% !important;
     top: -80px !important;
@@ -229,95 +240,95 @@
     position: absolute !important;
     left: -35% !important;
     top: -80px !important;
-  }
+  } */
 
   /* fill color  */
-  .e-de-prop-font-colorpicker {
+  /* .e-de-prop-font-colorpicker {
     position: absolute !important;
     left: -20% !important;
     top: -80px !important;
-  }
+  } */
 
   /* font color  */
-  .e-de-border-clr-picker {
+  /* .e-de-border-clr-picker {
     position: absolute !important;
     left: -35% !important;
     top: -115px !important;
-  }
+  } */
 
   /* border width  */
-  #container_editor_tableBorderSize {
+  /* #container_editor_tableBorderSize {
     position: absolute !important;
     left: -22% !important;
     top: -128px !important;
-  }
+  } */
 
   /* cell margin  */
-  .e-de-cellmargin-text {
+  /* .e-de-cellmargin-text {
     position: absolute !important;
     left: -12% !important;
     top: -170px !important;
-  }
+  } */
 }
 
 @media screen and (min-width: 1450px) and (max-width: 1700px) {
   /* paragraph  */
 
   /* style */
-  #container_editor_font_properties_leftDiv {
+  /* #container_editor_font_properties_leftDiv {
     left: -75% !important;
     top: -115px !important;
-  }
+  } */
 
   /* align */
-  #container_editor_font_properties_indentWholeDiv {
+  /* #container_editor_font_properties_indentWholeDiv {
     left: -75% !important;
     top: -80px !important;
-  }
+  } */
 
   /* font color */
-  #container_editor_font_properties_colorDiv {
+  /* #container_editor_font_properties_colorDiv {
     position: absolute !important;
     left: -60% !important;
     top: -115px !important;
-  }
+  } */
 
   /* font FAMILY AND SIZE*/
-  #container_editor_font_properties_sizeStyle {
+  /* #container_editor_font_properties_sizeStyle {
     left: -51% !important;
     top: -80px !important;
-  }
+  } */
 
   /* uppercase  */
-  #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+  /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
     position: absolute !important;
     left: -45% !important;
     top: -115px !important;
-  }
+  } */
 
   /* X power  */
-  #container_editor_font_properties_rightDiv {
+  /* #container_editor_font_properties_rightDiv {
     position: absolute !important;
     left: -40% !important;
     top: -115px !important;
-  }
+  } */
 
   /* bulits  */
-  #container_editor_font_properties_listDiv {
+  /* #container_editor_font_properties_listDiv {
     position: absolute !important;
     left: -33% !important;
     top: -115px !important;
-  }
+  } */
 
   /* paragraph heading etc  */
-  #container_editor_font_properties_styleDiv {
+  /* #container_editor_font_properties_styleDiv {
     left: -28% !important;
     top: -115px !important;
-  }
+  } */
 
   /******************** table start ******************************** */
   /* dell and insert cell  */
-  .e-de-insert-del-cell {
+  /* .e-de-insert-del-cell {
     position: absolute !important;
     left: -75% !important;
     top: -115px !important;
@@ -339,35 +350,35 @@
     position: absolute !important;
     left: -51% !important;
     top: -80px !important;
-  }
+  } */
 
   /* fill color  */
-  .e-de-prop-font-colorpicker {
+  /* .e-de-prop-font-colorpicker {
     position: absolute !important;
     left: -39% !important;
     top: -80px !important;
-  }
+  } */
 
   /* font color  */
-  .e-de-border-clr-picker {
+  /* .e-de-border-clr-picker {
     position: absolute !important;
     left: -51% !important;
     top: -115px !important;
-  }
+  } */
 
   /* border width  */
-  #container_editor_tableBorderSize {
+  /* #container_editor_tableBorderSize {
     position: absolute !important;
     left: -40% !important;
     top: -128px !important;
-  }
+  } */
 
   /* cell margin  */
-  .e-de-cellmargin-text {
+  /* .e-de-cellmargin-text {
     position: absolute !important;
     left: -20% !important;
     top: -190px !important;
-  }
+  } */
 }
 
 /* @media screen and (max-width: 1600px) {
@@ -419,8 +430,7 @@
 /* end */
 
 /* sidebar hidden  */
-.e-de-pane {
-}
+.e-de-pane {}
 
 /* .e-de-ctnr-segment { 
   position: absolute !important;

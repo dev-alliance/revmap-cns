@@ -202,17 +202,49 @@ function SyncFusionEditor() {
           !documentEditor.documentEditorSettings.showHiddenMarks;
         break;
 
-      case 'Bullets':
-        //To create bullet list
-        documentEditor.editor.applyBullet('\uf0b7', 'Symbol');
+      case 'Bullets-Dot':
+        documentEditor.editor.applyBullet('\uf0b7', 'Symbol'); // Standard dot bullet
         break;
-      case 'Numbering':
-        //To create numbering list
-        documentEditor.editor.applyNumbering('%1)', 'UpRoman');
+      case 'Bullets-Circle':
+        documentEditor.editor.applyBullet('\uf06f', 'Symbol'); // Open circle bullet
         break;
-      case 'clearlist':
-        //To clear list
-        documentEditor.editor.clearList();
+      case 'Bullets-Square':
+        documentEditor.editor.applyBullet('\uf0a7', 'Wingdings'); // Square bullet
+        break;
+      case 'Numbering-Arabic':
+        documentEditor.editor.applyNumbering('%1.', 'Arabic'); // Arabic numbering
+        break;
+      case 'Numbering-Roman':
+        documentEditor.editor.applyNumbering('%1.', 'UpperRoman'); // Uppercase Roman numbering
+        break;
+      case 'Numbering-Alpha':
+        documentEditor.editor.applyNumbering('%1.', 'UpperLetter'); // Uppercase Alphabet numbering
+        break;
+      // upper lower case 
+      case "uppercase":
+        // Changes the selected text to uppercase
+        if (documentEditor.selection && documentEditor.selection.text) {
+          const uppercaseText = documentEditor.selection.text.toUpperCase();
+          documentEditor.editor.insertText(uppercaseText);
+        }
+        break;
+
+      case "lowercase":
+        // Changes the selected text to lowercase
+        if (documentEditor.selection && documentEditor.selection.text) {
+          const lowercaseText = documentEditor.selection.text.toLowerCase();
+          documentEditor.editor.insertText(lowercaseText);
+        }
+        break;
+
+      case 'lineHeight1':
+        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
+        break;
+      case 'lineHeight1_5':
+        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
+        break;
+      case 'lineHeight2':
+        documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
         break;
 
       // Removed the duplicated 'Custom' case as it seems unnecessary
@@ -235,6 +267,67 @@ function SyncFusionEditor() {
     setHighlightColor(args.currentValue.hex);
     applyHighlightColor();
   };
+
+
+
+
+
+
+  let itemsss: ItemModel[] = [
+    {
+      text: 'Single',
+    },
+    {
+      text: '1.15',
+    },
+    {
+      text: '1.5',
+    },
+    {
+      text: 'Double',
+    },
+  ];
+
+  function lineHeight1() {
+    return (<DropDownButtonComponent items={itemsss} iconCss="e-de-icon-LineSpacing" select={lineSpacingAction} ></DropDownButtonComponent>);
+  }
+
+  //Change the line spacing of selected or current paragraph
+  function lineSpacingAction(args: any) {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    let text: string = args.item.text;
+    switch (text) {
+      case 'Single':
+        documentEditor.selection.paragraphFormat.lineSpacing = 1;
+        break;
+      case '1.15':
+        documentEditor.selection.paragraphFormat.lineSpacing = 1.15;
+        break;
+      case '1.5':
+        documentEditor.selection.paragraphFormat.lineSpacing = 1.5;
+        break;
+      case 'Double':
+        documentEditor.selection.paragraphFormat.lineSpacing = 2;
+        break;
+    }
+    setTimeout((): void => {
+      documentEditor.focusIn();
+    }, 30);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -768,6 +861,9 @@ function SyncFusionEditor() {
     );
   }
 
+
+
+
   return (
     <div>
       {/* 
@@ -834,136 +930,6 @@ function SyncFusionEditor() {
       </div> */}
 
       <div>
-        <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
-          <ItemsDirective>
-            <ItemDirective
-              id="bold"
-              prefixIcon="e-icons e-bold"
-              tooltipText="Bold"
-            />
-            <ItemDirective
-              id="italic"
-              prefixIcon="e-icons e-italic"
-              tooltipText="Italic"
-            />
-            <ItemDirective
-              id="underline"
-              prefixIcon="e-icons e-underline"
-              tooltipText="Underline"
-            />
-            <ItemDirective
-              id="highlight"
-              prefixIcon="e-icons e-highlight"
-              tooltipText="Highlight"
-            />
-            <ItemDirective
-              id="strikethrough"
-              prefixIcon="e-de-icon-Strikethrough"
-              text="Strikethrough"
-              tooltipText="Strikethrough"
-            />
-            <ItemDirective
-              id="subscript"
-              prefixIcon="e-de-icon-Subscript"
-              text="Subscript"
-              tooltipText="Subscript"
-            />
-            <ItemDirective
-              id="superscript"
-              prefixIcon="e-de-icon-Superscript"
-              text="Superscript"
-              tooltipText="Superscript"
-            />
-            <ItemDirective type="Separator" />
-
-            <ItemDirective template={contentTemplate1} />
-            <ItemDirective type="Separator" />
-            <ItemDirective template={contentTemplate2} />
-            <ItemDirective template={contentTemplate3} />
-
-            <ItemDirective
-              id="AlignLeft"
-              prefixIcon="e-de-ctnr-alignleft e-icons"
-              tooltipText="Align Left"
-            />
-
-            <ItemDirective
-              id="AlignCenter"
-              prefixIcon="e-de-ctnr-aligncenter e-icons"
-              tooltipText="Align Center"
-            />
-            <ItemDirective
-              id="AlignRight"
-              prefixIcon="e-de-ctnr-alignright e-icons"
-              tooltipText="Align Right"
-            />
-            <ItemDirective
-              id="Justify"
-              prefixIcon="e-de-ctnr-justify e-icons"
-              tooltipText="Justify"
-            />
-
-            <ItemDirective id="Bullets" prefixIcon="e-de-ctnr-bullets e-icons" tooltipText="Bullets" />
-            <ItemDirective id="Numbering" prefixIcon="e-de-ctnr-numbering e-icons" tooltipText="Numbering" />
-            <ItemDirective id="clearlist" text="Clear" tooltipText="Clear List" />
-
-
-          </ItemsDirective>
-        </ToolbarComponent>
-
-        <ColorPickerComponent
-          value={highlightColor}
-          change={handleColorChange}
-        />
-
-        <ToolbarComponent clicked={toolbarButtonClick}>
-          <ItemsDirective>
-            <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
-            <ItemDirective type="Separator" />
-            <ItemDirective
-              id="insert_above"
-              prefixIcon="e-de-ctnr-insertabove e-icons"
-            />
-            <ItemDirective
-              id="insert_below"
-              prefixIcon="e-de-ctnr-insertbelow e-icons"
-            />
-            <ItemDirective type="Separator" />
-            <ItemDirective
-              id="insert_left"
-              prefixIcon="e-de-ctnr-insertleft e-icons"
-            />
-            <ItemDirective
-              id="insert_right"
-              prefixIcon="e-de-ctnr-insertright e-icons"
-            />
-            <ItemDirective type="Separator" />
-            <ItemDirective
-              id="delete_table"
-              tooltipText="Delete"
-              text="Delete"
-              prefixIcon="custom-delete-icon"
-            />
-
-            <ItemDirective
-              id="delete_rows"
-              prefixIcon="e-de-ctnr-deleterows e-icons"
-            />
-            <ItemDirective
-              id="delete_columns"
-              prefixIcon="e-de-ctnr-deletecolumns e-icons"
-            />
-            <ItemDirective type="Separator" />
-            <ItemDirective text="Dialog" />
-          </ItemsDirective>
-        </ToolbarComponent>
-
-        <ColorPickerComponent
-          id="cellFillColorPicker"
-          mode="Palette"
-          showButtons={false}
-          change={handleFillColorChange}
-        />
 
         {/* <DocumentEditorComponent
           id="container"
@@ -1137,6 +1103,10 @@ function SyncFusionEditor() {
             </ul>
           )}
         </div>
+
+
+
+
         {/* <div className="relative">
           <button
             className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
@@ -1183,6 +1153,138 @@ function SyncFusionEditor() {
         </Box>
       </div>
       {/* <div id="xyz">show </div> */}
+
+
+      <div className="text styling flex items-center">
+        <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
+          <ItemsDirective>
+            <ItemDirective
+              id="bold"
+              prefixIcon="e-icons e-bold"
+              tooltipText="Bold"
+            />
+            <ItemDirective
+              id="italic"
+              prefixIcon="e-icons e-italic"
+              tooltipText="Italic"
+            />
+            <ItemDirective
+              id="underline"
+              prefixIcon="e-icons e-underline"
+              tooltipText="Underline"
+            />
+            <ItemDirective
+              id="highlight"
+              prefixIcon="e-icons e-highlight"
+              tooltipText="Highlight"
+            />
+            <ItemDirective id="strikethrough" prefixIcon="e-icons e-strikethrough" tooltipText="Strikethrough" />
+            <ItemDirective id="subscript" prefixIcon="e-icons e-subscript" tooltipText="Subscript" />
+            <ItemDirective id="superscript" prefixIcon="e-icons e-superscript" tooltipText="Superscript" />
+
+            <ItemDirective type="Separator" />
+
+            <ItemDirective template={contentTemplate1} />
+            <ItemDirective type="Separator" />
+            <ItemDirective template={contentTemplate2} />
+            <ItemDirective template={contentTemplate3} />
+
+            {/* <ItemDirective template={lineHeight1} /> */}
+
+            <ItemDirective
+              id="AlignLeft"
+              prefixIcon="e-de-ctnr-alignleft e-icons"
+              tooltipText="Align Left"
+            />
+
+            <ItemDirective
+              id="AlignCenter"
+              prefixIcon="e-de-ctnr-aligncenter e-icons"
+              tooltipText="Align Center"
+            />
+            <ItemDirective
+              id="AlignRight"
+              prefixIcon="e-de-ctnr-alignright e-icons"
+              tooltipText="Align Right"
+            />
+            <ItemDirective
+              id="Justify"
+              prefixIcon="e-de-ctnr-justify e-icons"
+              tooltipText="Justify"
+            />
+
+
+            <ItemDirective template={lineHeight1} prefixIcon="e-de-ctnr-aligncenter e-icons" tooltipText="Line Height 1" />
+
+            <ItemDirective id="Numbering-Arabic" prefixIcon="e-icons e-de-ctnr-numbering" tooltipText="Arabic Numbering" />
+            <ItemDirective id="Numbering-Roman" prefixIcon="e-de-ctnr-bullets e-icons" tooltipText="Roman Numbering" />
+            <ItemDirective id="clearlist" text="Clear" tooltipText="Clear List" />
+
+
+            <ItemDirective id="uppercase" text='A' prefixIcon="e-icons e-de-ctnr-uppercase " tooltipText="Uppercase" />
+            <ItemDirective id="lowercase" text='a' prefixIcon="e-de-ctnr-lower-case e-icons" tooltipText="Lowercase" />
+
+
+          </ItemsDirective>
+        </ToolbarComponent>
+        <ColorPickerComponent
+          value={highlightColor}
+          change={handleColorChange}
+        />
+
+      </div>
+      <div className="text styling flex items-center">
+        <ToolbarComponent clicked={toolbarButtonClick}>
+          <ItemsDirective>
+            <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
+            <ItemDirective type="Separator" />
+            <ItemDirective
+              id="insert_above"
+              prefixIcon="e-de-ctnr-insertabove e-icons"
+            />
+            <ItemDirective
+              id="insert_below"
+              prefixIcon="e-de-ctnr-insertbelow e-icons"
+            />
+            <ItemDirective type="Separator" />
+            <ItemDirective
+              id="insert_left"
+              prefixIcon="e-de-ctnr-insertleft e-icons"
+            />
+            <ItemDirective
+              id="insert_right"
+              prefixIcon="e-de-ctnr-insertright e-icons"
+            />
+            <ItemDirective type="Separator" />
+            <ItemDirective
+              id="delete_table"
+              tooltipText="Delete"
+              text="Delete"
+              prefixIcon="custom-delete-icon"
+            />
+
+            <ItemDirective
+              id="delete_rows"
+              prefixIcon="e-de-ctnr-deleterows e-icons"
+            />
+            <ItemDirective
+              id="delete_columns"
+              prefixIcon="e-de-ctnr-deletecolumns e-icons"
+            />
+            <ItemDirective type="Separator" />
+            <ItemDirective text="Dialog" />
+          </ItemsDirective>
+        </ToolbarComponent>
+
+        <ColorPickerComponent
+          id="cellFillColorPicker"
+          mode="Palette"
+          showButtons={false}
+          change={handleFillColorChange}
+        />
+      </div>
+
+
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
