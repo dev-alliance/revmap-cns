@@ -14,6 +14,7 @@ import {
   Select,
   MenuItem,
   IconButton,
+  Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -50,11 +51,12 @@ const OverView = () => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
     getValues,
   } = useForm<FormValues>();
   const navigate = useNavigate();
-  const { updateContractOverview } = useContext(ContractContext);
+  const { updateContractOverview, contract } = useContext(ContractContext);
   const { user } = useAuth();
   const [teamData, setTeamData] = useState<Array<any>>([]);
   const [branchData, setBranchData] = useState<Array<any>>([]);
@@ -102,29 +104,43 @@ const OverView = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       // Assuming data contains the updated overview fields
+
       const updatedOverview: any = {
-        name: data.name,
+        name: data?.name,
         vendor: "Vendor Name", // Modify as needed
-        currency: data.currency,
-        value: data.value,
-        category: data.category,
-        tags: data.tags,
-        branch: data.branch,
-        team: data.team,
+        currency: data?.currency,
+        value: data?.value,
+        category: data?.category,
+        subcategory: data?.subcategory,
+        tags: data?.tags,
+        branch: data?.branch,
+        team: data?.team,
         contractType: "Type1", // Modify as needed
         status: "Active", // Modify as needed
         // Add other fields as necessary
       };
-
+      console.log(updatedOverview, "dataupdat");
       updateContractOverview(updatedOverview);
 
-      // Success toast and navigation as before
       toast.success("Contract overview updated successfully");
     } catch (error) {
-      // Error handling as before
       toast.error("Failed to update contract overview");
     }
   };
+  useEffect(() => {
+    if (contract) {
+      setValue("name", contract?.name);
+      setValue("currency", contract?.currency);
+      setValue("value", contract?.value);
+      setValue("category", contract?.category);
+      setValue("subcategory", contract?.subcategory);
+      setValue("tags", contract?.tags);
+      setValue("branch", contract?.branch);
+      setValue("team", contract?.team);
+      setValue("contractType", contract?.contractType);
+    }
+  }, [contract, setValue]);
+
   useEffect(() => {
     // Define a function to handle the logic you want to run on unmount
     const handleUnload = async () => {
@@ -140,12 +156,11 @@ const OverView = () => {
           // Ensure toast is available in this scope or imported if necessary
           toast.error("Failed to save changes.");
         });
+        return () => clearTimeout(timeoutId);
       }, 3000); // Delay by 3000 milliseconds (3 seconds)
-
-      return () => clearTimeout(timeoutId);
     };
     // Assuming you want this to run only once, on mount and unmount
-  }, [getValues, onSubmit]);
+  }, []);
 
   useEffect(() => {
     const category = catategorylist.find((c) => c._id === selectedCategory);
@@ -208,6 +223,10 @@ const OverView = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <Typography variant="body1" color="primary">
+        Overview
+      </Typography>
+      <Divider style={{ margin: "10px 0" }} />
       <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
         <Typography
           variant="body2"
@@ -216,7 +235,7 @@ const OverView = () => {
           Contract Name*
         </Typography>
         <Controller
-          name="name" // Make sure to use unique names for each field
+          name="name"
           control={control}
           rules={{ required: "This field is required" }}
           render={({ field }) => (
@@ -227,7 +246,19 @@ const OverView = () => {
               error={!!errors.name}
               helperText={errors.name?.message}
               size="small"
-              variant="outlined"
+              variant="standard"
+              InputProps={{
+                sx: {
+                  "::placeholder": {
+                    fontSize: "0.55rem", // Adjusted font size for placeholder
+                    textAlign: "center", // Center placeholder text horizontally
+                  },
+                  input: {
+                    fontSize: "0.875rem", // Adjusted font size for input text
+                    textAlign: "center", // Center input text horizontally
+                  },
+                },
+              }}
             />
           )}
         />
@@ -250,49 +281,20 @@ const OverView = () => {
               placeholder="Add name"
               fullWidth
               size="small"
-              variant="outlined"
+              variant="standard"
+              InputProps={{
+                sx: {
+                  "::placeholder": {
+                    fontSize: "0.55rem", // Adjusted font size for placeholder
+                    textAlign: "center", // Center placeholder text horizontally
+                  },
+                  input: {
+                    fontSize: "0.875rem", // Adjusted font size for input text
+                    textAlign: "center", // Center input text horizontally
+                  },
+                },
+              }}
             />
-          )}
-        />
-      </Box>
-
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
-        <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
-          Currency
-        </Typography>
-        <Controller
-          name="currency"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <FormControl fullWidth size="small">
-              {/* Optional: add this line if you want a label */}
-              <Select
-                {...field}
-                labelId="status-label"
-                displayEmpty
-                renderValue={(value) => {
-                  if (value === "") {
-                    return (
-                      <em
-                        style={{
-                          color: "#C2C2C2",
-                          fontStyle: "normal",
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        {" "}
-                        Choose currency
-                      </em> // Placeholder text with custom color
-                    );
-                  }
-                  return field.value;
-                }}
-              >
-                {/* Placeholder */}
-                <MenuItem value="$">$</MenuItem>
-              </Select>
-            </FormControl>
           )}
         />
       </Box>
@@ -315,8 +317,69 @@ const OverView = () => {
               //   error={!!errors.value}
               //   helperText={errors.contractWith?.value}
               size="small"
-              variant="outlined"
+              variant="standard"
+              InputProps={{
+                sx: {
+                  "::placeholder": {
+                    fontSize: "0.55rem", // Adjusted font size for placeholder
+                    textAlign: "center", // Center placeholder text horizontally
+                  },
+                  input: {
+                    fontSize: "0.875rem", // Adjusted font size for input text
+                    textAlign: "center", // Center input text horizontally
+                  },
+                },
+              }}
             />
+          )}
+        />
+      </Box>
+      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+        <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
+          Currency
+        </Typography>
+        <Controller
+          name="currency"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <FormControl fullWidth size="small" variant="outlined">
+              <Select
+                {...field}
+                labelId="status-label"
+                displayEmpty
+                renderValue={(value) => {
+                  if (value === "") {
+                    return (
+                      <em
+                        style={{
+                          color: "#C2C2C2",
+                          fontStyle: "normal",
+                          fontSize: "0.70rem", // Reduced font size for placeholder
+                        }}
+                      >
+                        Choose currency
+                      </em> // Placeholder text with custom color and font size
+                    );
+                  }
+                  return field.value;
+                }}
+                sx={{
+                  ".MuiSelect-select": {
+                    border: "none", // Remove border
+                    fontSize: "0.70rem", // Ensure consistent font size
+                    "&:focus": {
+                      backgroundColor: "transparent", // Remove the background color on focus
+                    },
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none", // Ensure no border
+                  },
+                }}
+              >
+                <MenuItem value="$">$</MenuItem>
+              </Select>
+            </FormControl>
           )}
         />
       </Box>
@@ -347,7 +410,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "15.5px",
+                          fontSize: "0.70rem", // Reduced font size for placeholder
                         }}
                       >
                         Select branch
@@ -358,6 +421,18 @@ const OverView = () => {
                     (branch) => branch._id === value
                   );
                   return selectedBranch ? selectedBranch.branchName : "";
+                }}
+                sx={{
+                  ".MuiSelect-select": {
+                    border: "none", // Remove border
+                    fontSize: "0.70rem", // Ensure consistent font size
+                    "&:focus": {
+                      backgroundColor: "transparent", // Remove the background color on focus
+                    },
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none", // Ensure no border
+                  },
                 }}
               >
                 {branchData?.map((branch: any) => (
@@ -396,7 +471,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "15.5px",
+                          fontSize: "0.70rem", // Reduced font size for placeholder
                         }}
                       >
                         Select team
@@ -409,6 +484,18 @@ const OverView = () => {
                     (team) => team._id === value
                   );
                   return selectedTeam ? selectedTeam.name : "";
+                }}
+                sx={{
+                  ".MuiSelect-select": {
+                    border: "none", // Remove border
+                    fontSize: "0.70rem", // Ensure consistent font size
+                    "&:focus": {
+                      backgroundColor: "transparent", // Remove the background color on focus
+                    },
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none", // Ensure no border
+                  },
                 }}
               >
                 {teamData?.map((team: any) => (
@@ -447,7 +534,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "15.5px",
+                          fontSize: "0.70rem", // Reduced font size for placeholder
                         }}
                       >
                         Select category
@@ -459,6 +546,18 @@ const OverView = () => {
                     (category) => category._id === value
                   );
                   return selectedCategory ? `${selectedCategory.name}` : "";
+                }}
+                sx={{
+                  ".MuiSelect-select": {
+                    border: "none", // Remove border
+                    fontSize: "0.70rem", // Ensure consistent font size
+                    "&:focus": {
+                      backgroundColor: "transparent", // Remove the background color on focus
+                    },
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none", // Ensure no border
+                  },
                 }}
               >
                 {catategorylist?.map((category: any) => (
@@ -491,7 +590,7 @@ const OverView = () => {
                       style={{
                         color: "#C2C2C2",
                         fontStyle: "normal",
-                        fontSize: "15.5px",
+                        fontSize: "0.70rem", // Reduced font size for placeholder
                       }}
                     >
                       Select subcategory
@@ -500,6 +599,18 @@ const OverView = () => {
                     value
                   )
                 }
+                sx={{
+                  ".MuiSelect-select": {
+                    border: "none", // Remove border
+                    fontSize: "0.70rem", // Ensure consistent font size
+                    "&:focus": {
+                      backgroundColor: "transparent", // Remove the background color on focus
+                    },
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none", // Ensure no border
+                  },
+                }}
               >
                 {subCategories.map((subCategory: any) => (
                   <MenuItem key={subCategory._id} value={subCategory.name}>
@@ -511,7 +622,64 @@ const OverView = () => {
           )}
         />
       </Box>
-
+      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+        <Typography
+          variant="body2"
+          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
+        >
+          Tag*
+        </Typography>
+        <Controller
+          name="tags"
+          control={control}
+          // defaultValue=""
+          render={({ field }) => (
+            <FormControl fullWidth size="small">
+              {/* Optional: add this line if you want a label */}
+              <Select
+                {...field}
+                displayEmpty
+                renderValue={(value: any) => {
+                  if (value === "") {
+                    return (
+                      <em
+                        style={{
+                          color: "#C2C2C2",
+                          fontStyle: "normal",
+                          fontSize: "15.5px",
+                        }}
+                      >
+                        Select tag
+                      </em> // Placeholder text with custom color
+                    );
+                  }
+                  // Find the selected manager by ID
+                  const selectedTag = taglist.find((tag) => tag._id === value);
+                  return selectedTag ? `${selectedTag.name} ` : "";
+                }}
+                sx={{
+                  ".MuiSelect-select": {
+                    border: "none", // Remove border
+                    fontSize: "0.70rem", // Ensure consistent font size
+                    "&:focus": {
+                      backgroundColor: "transparent", // Remove the background color on focus
+                    },
+                  },
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none", // Ensure no border
+                  },
+                }}
+              >
+                {taglist?.map((tag: any) => (
+                  <MenuItem key={tag?._id} value={tag?._id}>
+                    {tag?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        />
+      </Box>
       {/* <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
         <Typography
           variant="body2"
@@ -559,59 +727,12 @@ const OverView = () => {
         />
       </Box> */}
 
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
-        <Typography
-          variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
-        >
-          Tag*
-        </Typography>
-        <Controller
-          name="tags"
-          control={control}
-          // defaultValue=""
-          render={({ field }) => (
-            <FormControl fullWidth size="small">
-              {/* Optional: add this line if you want a label */}
-              <Select
-                {...field}
-                labelId="manager-label"
-                displayEmpty
-                renderValue={(value) => {
-                  // if (value === "") {
-                  //   return (
-                  //     <em
-                  //       style={{
-                  //         color: "#C2C2C2",
-                  //         fontStyle: "normal",
-                  //         fontSize: "15.5px",
-                  //       }}
-                  //     >
-                  //       Select tag
-                  //     </em> // Placeholder text with custom color
-                  //   );
-                  // }
-                  // Find the selected manager by ID
-                  const selectedTag = taglist.find((tag) => tag._id === value);
-                  return selectedTag ? `${selectedTag.name} ` : "";
-                }}
-              >
-                {taglist?.map((tag: any) => (
-                  <MenuItem key={tag?._id} value={tag?._id}>
-                    {tag?.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        />
-      </Box>
       <Box>
         <Button
           onClick={handleAddField}
           variant="text"
           sx={{
-            mt: 2,
+            mt: 1,
             color: "inherit",
             backgroundColor: "transparent",
             boxShadow: "none",
@@ -642,6 +763,19 @@ const OverView = () => {
                   placeholder="Enter name"
                   size="small"
                   sx={{ mr: 2 }}
+                  variant="standard"
+                  InputProps={{
+                    sx: {
+                      "::placeholder": {
+                        fontSize: "0.55rem", // Adjusted font size for placeholder
+                        textAlign: "center", // Center placeholder text horizontally
+                      },
+                      input: {
+                        fontSize: "0.875rem", // Adjusted font size for input text
+                        textAlign: "center", // Center input text horizontally
+                      },
+                    },
+                  }}
                 />
                 <TextField
                   value={field.value}
@@ -650,6 +784,19 @@ const OverView = () => {
                   }
                   placeholder="Enter value"
                   size="small"
+                  variant="standard"
+                  InputProps={{
+                    sx: {
+                      "::placeholder": {
+                        fontSize: "0.55rem", // Adjusted font size for placeholder
+                        textAlign: "center", // Center placeholder text horizontally
+                      },
+                      input: {
+                        fontSize: "0.875rem", // Adjusted font size for input text
+                        textAlign: "center", // Center input text horizontally
+                      },
+                    },
+                  }}
                 />
               </>
             ) : (

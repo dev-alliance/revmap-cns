@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {
   createContext,
   useState,
@@ -38,7 +39,7 @@ interface Contract {
 }
 
 interface ContractContextProps {
-  contract: Contract | null;
+  contract: any | null;
   setContract: Dispatch<SetStateAction<Contract | null>>;
   contractStatus: ContractStatus;
   setContractStatus: Dispatch<SetStateAction<ContractStatus>>;
@@ -62,13 +63,18 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     expire: "",
   });
 
-  const updateContractOverview = (overview: Overview) => {
-    if (contract) {
+  const updateContractOverview = (overview: any) => {
+    if (contract !== null) {
+      // Check if 'contract' is not null
       setContract({
         ...contract,
         overview,
       });
-      // Optionally update to local storage or backend
+    } else {
+      setContract(
+        // Initialize with default or empty values for other properties
+        overview
+      );
     }
   };
 
@@ -83,6 +89,12 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
       setContractStatus(JSON.parse(storedContractStatus));
     }
   }, []);
+  useEffect(() => {
+    // Check if 'contract' is not null before storing
+    if (contract) {
+      localStorage.setItem("contract", JSON.stringify(contract));
+    }
+  }, [contract]);
 
   return (
     <ContractContext.Provider

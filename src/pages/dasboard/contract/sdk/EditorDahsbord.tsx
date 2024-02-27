@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import AdjustIcon from "@mui/icons-material/Adjust";
 import ApprovalIcon from "@mui/icons-material/CheckCircle";
 import { useForm, Controller } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
@@ -59,6 +60,7 @@ import "@syncfusion/ej2-react-documenteditor/styles/material.css";
 import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
 import { Link } from "react-router-dom";
 import SignatureDialog from "@/pages/dasboard/contract/sdk/SignatureDialog";
+import QuickSign from "@/pages/dasboard/contract/sdk/QuickSign";
 
 interface Module {
   icon: ReactNode;
@@ -92,11 +94,27 @@ const MyComponent: React.FC = () => {
       icon: <MenuIcon />,
     },
     overview: {
-      icon: <AssessmentIcon />,
+      icon: (
+        <Tooltip title="Overview">
+          <AdjustIcon />
+        </Tooltip>
+      ),
       content: <OverView />,
     },
+    quickSign: {
+      icon: (
+        <Tooltip title="quickSign">
+          <DrawIcon />
+        </Tooltip>
+      ),
+      content: <QuickSign />,
+    },
     approval: {
-      icon: <HowToRegIcon />,
+      icon: (
+        <Tooltip title="approvals">
+          <HowToRegIcon />
+        </Tooltip>
+      ),
       content: <ApprovalsComp />,
     },
     clause: {
@@ -111,10 +129,10 @@ const MyComponent: React.FC = () => {
       icon: <TimelineIcon />,
       content: <TimelineComp />,
     },
-    // lifeSycle: {
-    //   icon: <HistoryIcon />,
-    //   content: <LifeSycle />,
-    // },
+    lifeSycle: {
+      icon: <HistoryIcon />,
+      content: <LifeSycle />,
+    },
     shere: {
       icon: <ShareIcon />,
       content: <ShareComp />,
@@ -168,6 +186,19 @@ const MyComponent: React.FC = () => {
                   size="small"
                   // value={search}
                   placeholder="Add contract name"
+                  variant="standard"
+                  InputProps={{
+                    sx: {
+                      "::placeholder": {
+                        fontSize: "0.55rem", // Adjusted font size for placeholder
+                        textAlign: "center", // Center placeholder text horizontally
+                      },
+                      input: {
+                        fontSize: "0.875rem", // Adjusted font size for input text
+                        textAlign: "center", // Center input text horizontally
+                      },
+                    },
+                  }}
                   // onChange={(e: any) => setSearch(e.target.value)}
                 />
                 <Button
