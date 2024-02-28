@@ -239,7 +239,6 @@ const ContractList = () => {
 
   const listData = async () => {
     try {
-      setContractStatus("okkkkkk");
       setIsLoading(true);
       const { data } = await getBranchList(user?._id);
       setCategorylist(data);

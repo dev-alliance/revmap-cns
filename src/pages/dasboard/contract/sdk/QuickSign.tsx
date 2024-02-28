@@ -25,6 +25,7 @@ const QuickSign = () => {
     control,
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     mode: "onBlur",
@@ -33,6 +34,38 @@ const QuickSign = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
+
+  const [signatories, setSignatories] = useState([]);
+  const [inputValue, setInputValue] = useState(""); // Track the input value
+
+  // Function to handle adding new signatory
+  const handleAddSignatory = (newSignatory: any) => {
+    if (newSignatory && !signatories.includes(newSignatory.trim())) {
+      setSignatories((prev: any) => [...prev, newSignatory.trim()]);
+      reset(); // Reset the form field after adding
+      setInputValue(""); // Clear the controlled input value
+    }
+  };
+
+  // Function to remove a signatory from the list
+  const handleRemoveSignatory = (signatoryToRemove: any) => {
+    setSignatories(
+      signatories.filter((signatory) => signatory !== signatoryToRemove)
+    );
+  };
+
+  // Handle input change to track current value
+  const handleInputChange = (event, newInputValue) => {
+    setInputValue(newInputValue);
+  };
+
+  // Handle "Enter" key press in the input
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent form submission
+      handleAddSignatory(inputValue);
+    }
+  };
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -61,55 +94,74 @@ const QuickSign = () => {
       </Typography>
       <Divider style={{ margin: "10px 0" }} />
 
-      <div style={{ flex: 1, textAlign: "right" }}>
-        <Button variant="text" color="primary" sx={{ textTransform: "none" }}>
-          + Add Signatory
-        </Button>
-      </div>
-      <Controller
-        name="name"
-        control={control}
-        rules={{ required: "Mandatory field is required" }}
-        render={({ field, fieldState: { error } }) => (
-          <FormControl fullWidth size="small" error={!!error}>
+      {/* <div style={{ flex: 1, textAlign: "right" }}> */}
+      {/* <Button variant="text" color="primary" sx={{ textTransform: "none" }}>
+          + Add Signatory */}
+      {/* </Button> */}
+      <form onSubmit={(e) => e.preventDefault()}>
+        <Controller
+          name="name"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
             <Autocomplete
               {...field}
               freeSolo
               options={userList.map(
                 (user) => `${user.firstName} ${user.lastName}`
               )}
+              onInputChange={handleInputChange}
+              inputValue={inputValue}
+              onChange={(_, value) => handleAddSignatory(value ?? inputValue)}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label="Add signatory"
-                  error={!!error}
-                  helperText={error ? error.message : ""}
+                  margin="normal"
+                  variant="outlined"
+                  onKeyPress={handleKeyPress}
                 />
               )}
-              onInputChange={(event, value) => {
-                // Update the form state
-                field.onChange(value);
-              }}
-              onChange={(event, value) => {
-                // Handle selection from the dropdown
-                if (typeof value === "string") {
-                  field.onChange(value);
-                } else {
-                  const selectedUser = userList.find(
-                    (user) => `${user.firstName} ${user.lastName}` === value
-                  );
-                  if (selectedUser) {
-                    field.onChange(
-                      `${selectedUser.firstName} ${selectedUser.lastName}`
-                    );
-                  }
-                }
-              }}
             />
-          </FormControl>
-        )}
-      />
-      {userList?.map((approval) => (
+          )}
+        />
+        <div style={{ flex: 1, textAlign: "right" }}>
+          <Button
+            variant="text"
+            color="primary"
+            sx={{ textTransform: "none" }}
+            onClick={() => handleAddSignatory(inputValue)}
+          >
+            + Add Signatory
+          </Button>
+        </div>
+        {signatories.map((signatory, index) => (
+          <Box
+            key={index}
+            sx={{ display: "flex", alignItems: "center", mt: 1 }}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: "bold",
+                width: "120px",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {signatory}
+            </Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => handleRemoveSignatory(signatory)}
+            >
+              Remove
+            </Button>
+          </Box>
+        ))}
+      </form>
+
+      {/* {userList?.map((approval) => (
         <Grid
           container
           key={approval.id}
@@ -179,17 +231,9 @@ const QuickSign = () => {
             </Box>
           </Grid>
 
-          <Grid item>
-            <Button
-              variant="text"
-              color="primary"
-              sx={{ textTransform: "none", fontSize: "0.75rem" }}
-            >
-              Remove
-            </Button>
-          </Grid>
+          <Grid item></Grid>
         </Grid>
-      ))}
+      ))} */}
     </div>
   );
 };
