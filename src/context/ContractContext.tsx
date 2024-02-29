@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { AnyAaaaRecord } from "dns";
 import React, {
   createContext,
   useState,
@@ -42,8 +43,12 @@ interface ContractContextProps {
   contract: any | null;
   setContract: Dispatch<SetStateAction<Contract | null>>;
   contractStatus: ContractStatus;
-  setContractStatus: Dispatch<SetStateAction<ContractStatus>>;
+  setContractStatus: Dispatch<SetStateAction<any>>;
   updateContractOverview: (overview: Overview) => void;
+  signatories: any | null;
+  setSignatories: Dispatch<SetStateAction<any>>;
+  openDocoment: any | null;
+  setOpenDocoment: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -52,12 +57,18 @@ export const ContractContext = createContext<ContractContextProps>({
   contractStatus: { status: "", expire: "" },
   setContractStatus: () => {},
   updateContractOverview: () => {},
+  signatories: [],
+  setSignatories: () => {},
+  openDocoment: [],
+  setOpenDocoment: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
+  const [signatories, setSignatories] = useState<string[]>([]);
+  const [openDocoment, setOpenDocoment] = useState(false);
   const [contractStatus, setContractStatus] = useState<ContractStatus>({
     status: "",
     expire: "",
@@ -88,6 +99,14 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedContractStatus) {
       setContractStatus(JSON.parse(storedContractStatus));
     }
+    const storedContractSignature = localStorage.getItem("contractSignature");
+    if (storedContractSignature) {
+      setSignatories(JSON.parse(storedContractSignature));
+    }
+    const storedContractSignatureOpen = localStorage.getItem("openDocoment");
+    if (storedContractSignatureOpen) {
+      setOpenDocoment(JSON.parse(storedContractSignatureOpen));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -104,6 +123,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         contractStatus,
         setContractStatus,
         updateContractOverview,
+        signatories,
+        setSignatories,
+        openDocoment,
+        setOpenDocoment,
       }}
     >
       {children}

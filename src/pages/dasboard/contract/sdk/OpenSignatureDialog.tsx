@@ -16,18 +16,18 @@ import SignatureAddSignatory from "@/pages/dasboard/contract/sdk/SignatureAddSig
 import SignatureSendDoc from "@/pages/dasboard/contract/sdk/SignatureSendDoc";
 import SignatureSaveTempDoc from "@/pages/dasboard/contract/sdk/SignatureSaveTempDoc";
 import SignatureSentToSign from "@/pages/dasboard/contract/sdk/SignatureSentToSign";
+import { useLocation } from "react-router-dom";
+import { ContractContext } from "@/context/ContractContext";
+import OpenSignatureDoc from "@/pages/dasboard/contract/sdk/OpenSignatureDoc";
 
 // Assuming your form values type is correct
 type FormValues = {
   name: string;
 };
 
-interface DetailDialogProps {
-  open: boolean;
-  onClosePre: () => void;
-}
+interface DetailDialogProps {}
 
-const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
+const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
   const {
     control,
     handleSubmit,
@@ -35,14 +35,19 @@ const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
     formState: { errors },
   } = useForm<FormValues>({ mode: "onBlur" });
   const { user } = useAuth();
+  const { setOpenDocoment, openDocoment } = useContext(ContractContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [currentStep, setCurrentStep] = useState(1);
 
-  useEffect(() => {
-    // Assuming you might want to perform some actions when the component mounts
-  }, []);
+  const handleOpenDialog = () => {
+    setOpenDocoment(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDocoment(false);
+  };
 
   const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
 
@@ -50,7 +55,7 @@ const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
   switch (currentStep) {
     case 1:
       componentToRender = (
-        <SignatureAddSignatory onButtonClick={handleNextStep} />
+        <OpenSignatureDoc email={"abc"} onButtonClick={handleNextStep} />
       );
       break;
     case 2:
@@ -62,7 +67,7 @@ const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
       componentToRender = (
         <SignatureSaveTempDoc
           onButtonClick={handleNextStep}
-          onClose={onClosePre}
+          onClose={handleCloseDialog}
         />
       );
       break;
@@ -70,7 +75,7 @@ const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
       componentToRender = (
         <SignatureSentToSign
           onButtonClick={handleNextStep}
-          onClose={onClosePre}
+          onClose={handleCloseDialog}
         />
       );
       break;
@@ -84,8 +89,8 @@ const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
   return (
     <>
       <Dialog
-        open={open}
-        onClose={onClosePre}
+        open={openDocoment}
+        onClose={handleCloseDialog}
         maxWidth="sm"
         fullWidth
         sx={{ alignItems: "center" }}
@@ -98,7 +103,7 @@ const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
           }}
         >
           <IconButton
-            onClick={onClosePre}
+            onClick={handleCloseDialog}
             aria-label="close"
             sx={{ position: "absolute", top: 8, right: 8 }}
           >
@@ -109,11 +114,11 @@ const SignatureDialog: React.FC<DetailDialogProps> = ({ open, onClosePre }) => {
         {componentToRender}
 
         {/* <DialogActions>
-          <Button onClick={onClosePre}>Close</Button>
+          <Button onClick={handleCloseDialog}>Close</Button>
         </DialogActions> */}
       </Dialog>
     </>
   );
 };
 
-export default SignatureDialog;
+export default OpenSignatureDialog;

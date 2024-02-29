@@ -189,7 +189,7 @@ export default function Dashboard() {
     setLeftSideBar(!leftSideBar);
   };
 
-  const handleStatusClick = (newStatus: string) => {
+  const handleStatusClick = (newStatus: any) => {
     setContractStatus({ status: newStatus });
   };
   const handleExpireClick = (expire: string) => {
@@ -1028,6 +1028,7 @@ export default function Dashboard() {
           <Route path="/contract-list" element={<ContractList />} />
           <Route path="/create-contract" element={<CreateContract />} />
           <Route path="/editor-dahsbord" element={<TinyDahsbord />} />
+          <Route path="/editor-dahsbord/open" element={<TinyDahsbord />} />
           <Route path="/sub-page-1" element={<SubPage1 />} />
           <Route path="/billing" element={<CardsSubscription />} />
 

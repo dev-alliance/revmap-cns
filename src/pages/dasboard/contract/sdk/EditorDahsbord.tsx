@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable */
-import React, { useState, ReactNode, useCallback } from "react";
+import React, {
+  useState,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
 import {
   Grid,
   List,
@@ -58,9 +64,11 @@ import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
 import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import SignatureDialog from "@/pages/dasboard/contract/sdk/SignatureDialog";
 import QuickSign from "@/pages/dasboard/contract/sdk/QuickSign";
+import { ContractContext } from "@/context/ContractContext";
+import OpenSignatureDialog from "@/pages/dasboard/contract/sdk/OpenSignatureDialog";
 
 interface Module {
   icon: ReactNode;
@@ -68,12 +76,21 @@ interface Module {
 }
 
 const MyComponent: React.FC = () => {
+  const location = useLocation();
+  const { setOpenDocoment } = useContext(ContractContext);
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname === "/dashboard/editor-dahsbord/open") {
+      setOpenDocoment(true);
+      console.log("ok");
+    }
+  }, []);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -358,7 +375,8 @@ const MyComponent: React.FC = () => {
           </Grid>
         </Box>
       </Box>
-      <SignatureDialog open={openDialog} onClose={handleCloseDialog} />
+      <SignatureDialog open={openDialog} onClosePre={handleCloseDialog} />
+      <OpenSignatureDialog />
     </>
   );
 };
