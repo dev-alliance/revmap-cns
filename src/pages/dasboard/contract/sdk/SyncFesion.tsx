@@ -106,14 +106,14 @@ function SyncFusionEditor() {
   }
 
   // To change the font color of selected content
-  function changeFontColor(args: any) {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontColor =
-        args.currentValue.hex;
-      documentEditor.focusIn();
-    }
-  }
+  // function changeFontColor(args: any) {
+  //   const documentEditor = editorContainerRef.current.documentEditor;
+  //   if (documentEditor && documentEditor.selection) {
+  //     documentEditor.selection.characterFormat.fontColor =
+  //       args.currentValue.hex;
+  //     documentEditor.focusIn();
+  //   }
+  // }
 
   // To change the highlight color of selected content
   function changeHighlightColor(color: string) {
@@ -269,7 +269,12 @@ function SyncFusionEditor() {
     applyHighlightColor();
   };
 
-
+  //To Change the font Color of selected content
+  function changeFontColor(args) {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    documentEditor.selection.characterFormat.fontColor = args.currentValue.hex;
+    documentEditor.focusIn();
+  }
 
 
 
@@ -315,13 +320,6 @@ function SyncFusionEditor() {
       documentEditor.focusIn();
     }, 30);
   }
-
-
-
-
-
-
-
 
 
 
@@ -396,21 +394,15 @@ function SyncFusionEditor() {
         //To change the bottom margin
         documentEditor.selection.cellFormat.bottomMargin = 5.4;
         break;
-      case "set_border_width":
-        let borderSettings: BorderSettings = {
-          type: 'AllBorders',
-          lineWidth: borderWidth,
-        };
-        //Apply border.
-        documentEditor.editor.applyBorders(borderSettings);
-
+      case 'set_border_width':
+        // Open a border width selection dropdown
+        documentEditor.showDialog('TableProperties');
         break;
       default:
         console.warn("Unhandled toolbar item:", arg.item.id);
     }
   }
 
-  const [borderWidth, setBorderWidth] = useState(1);
   // State for the cell fill color
   const [cellFillColor, setCellFillColor] = useState(''); // Default color
 
@@ -873,11 +865,26 @@ function SyncFusionEditor() {
   ];
   function contentTemplate1() {
     return (
-      <ColorPickerComponent
-        showButtons={true}
-        value="#000000"
-        change={changeFontColor}
-      ></ColorPickerComponent>
+      <>
+        <ColorPickerComponent
+          showButtons={true}
+          value="#000000"
+          change={changeFontColor}
+        ></ColorPickerComponent>
+        <button
+          onClick={() => console.log('Open color picker here')}
+          style={{
+            fontWeight: 'bold',
+            color: '#000000',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '16px' // Adjust as needed
+          }}
+        >
+          A
+        </button>
+      </>
     );
   }
   function contentTemplate2() {
@@ -903,6 +910,80 @@ function SyncFusionEditor() {
     );
   }
 
+  function onWrapTextChange(args) {
+    if (editorContainerRef.current) {
+      const documentEditor = editorContainerRef.current.documentEditor;
+      // Assuming we have the border width value in 'args.value'
+      const borderWidth = args.value;
+      if (borderWidth >= 1 && borderWidth <= 5) {
+        const table = documentEditor.selection.tableFormat;
+        if (table) {
+          table.borders.top.lineStyle = 'Single';
+          table.borders.top.lineWidth = borderWidth;
+          table.borders.bottom.lineStyle = 'Single';
+          table.borders.bottom.lineWidth = borderWidth;
+          table.borders.left.lineStyle = 'Single';
+          table.borders.left.lineWidth = borderWidth;
+          table.borders.right.lineStyle = 'Single';
+          table.borders.right.lineWidth = borderWidth;
+          documentEditor.selection.tableFormat = table;
+        }
+      }
+    }
+  }
+
+
+
+  // const [isTableSelected, setIsTableSelected] = useState(false);
+
+  // useEffect(() => {
+  //   const documentEditor = editorContainerRef.current.documentEditor;
+
+  //   // Function to check if the selection includes a table
+  //   const checkForTableSelection = () => {
+  //     // Check if the current selection is a table
+  //     const selection = documentEditor.selection;
+  //     console.log('asdf', selection)
+  //     const isTable = selection && selection.isInTable;
+  //     setIsTableSelected(!!isTable);
+  //   };
+
+  //   if (documentEditor) {
+  //     // Attach the selection change event listener
+  //     documentEditor.selectionChange = checkForTableSelection;
+  //   }
+
+  //   // Cleanup the event listener on component unmount
+  //   return () => {
+  //     if (documentEditor) {
+  //       documentEditor.selectionChange = null;
+  //     }
+  //   };
+  // }, []);
+
+
+  const [isTableSelected, setIsTableSelected] = useState(false);
+
+  useEffect(() => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+
+    if (documentEditor) {
+      // Listen to selection changes
+      documentEditor.selectionChange = () => {
+        // Check if the current selection is within a table
+        const isInTable = documentEditor?.selection?.contextTypeInternal == 'TableText';
+        console.log('asfds', documentEditor?.selection?.contextTypeInternal)
+        setIsTableSelected(isInTable);
+      };
+    }
+
+    return () => {
+      if (documentEditor) {
+        // Cleanup the event listener when the component unmounts
+        documentEditor.selectionChange = undefined;
+      }
+    };
+  }, []);
 
 
 
@@ -1218,11 +1299,11 @@ function SyncFusionEditor() {
                 prefixIcon="e-icons e-underline"
                 tooltipText="Underline"
               />
-              <ItemDirective
+              {/* <ItemDirective
                 id="highlight"
                 prefixIcon="e-icons e-highlight"
                 tooltipText="Highlight"
-              />
+              /> */}
               <ItemDirective id="strikethrough" prefixIcon="e-icons e-strikethrough" tooltipText="Strikethrough" />
               <ItemDirective id="subscript" prefixIcon="e-icons e-subscript" tooltipText="Subscript" />
               <ItemDirective id="superscript" prefixIcon="e-icons e-superscript" tooltipText="Superscript" />
@@ -1266,8 +1347,11 @@ function SyncFusionEditor() {
               <ItemDirective id="clearlist" text="Clear" tooltipText="Clear List" />
 
 
-              <ItemDirective id="uppercase" text='A' prefixIcon="e-icons e-de-ctnr-uppercase " tooltipText="Uppercase" />
-              <ItemDirective id="lowercase" text='a' prefixIcon="e-de-ctnr-lower-case e-icons" tooltipText="Lowercase" />
+              <ItemDirective id="uppercase" prefixIcon=" e-upper-case e-icons" tooltipText="Uppercase" />
+              <ItemDirective id="lowercase" prefixIcon="e-icons e-lower-case " tooltipText="Lowercase" />
+
+
+
 
 
             </ItemsDirective>
@@ -1280,83 +1364,75 @@ function SyncFusionEditor() {
         </div>
 
         {/* ***************Table************************ */}
-
-        <div className="text styling flex items-center">
-          <ToolbarComponent clicked={toolbarButtonClick}>
-            <ItemsDirective>
-              <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
-              <ItemDirective type="Separator" />
-              <ItemDirective
-                id="insert_above"
-                prefixIcon="e-de-ctnr-insertabove e-icons"
-              />
-              <ItemDirective
-                id="insert_below"
-                prefixIcon="e-de-ctnr-insertbelow e-icons"
-              />
-              <ItemDirective type="Separator" />
-              <ItemDirective
-                id="insert_left"
-                prefixIcon="e-de-ctnr-insertleft e-icons"
-              />
-              <ItemDirective
-                id="insert_right"
-                prefixIcon="e-de-ctnr-insertright e-icons"
-              />
-              <ItemDirective type="Separator" />
-              {/* <ItemDirective
+        {isTableSelected &&
+          <div className="text styling flex items-center">
+            <ToolbarComponent clicked={toolbarButtonClick}>
+              <ItemsDirective>
+                <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
+                <ItemDirective type="Separator" />
+                <ItemDirective
+                  id="insert_above"
+                  prefixIcon="e-de-ctnr-insertabove e-icons"
+                />
+                <ItemDirective
+                  id="insert_below"
+                  prefixIcon="e-de-ctnr-insertbelow e-icons"
+                />
+                <ItemDirective type="Separator" />
+                <ItemDirective
+                  id="insert_left"
+                  prefixIcon="e-de-ctnr-insertleft e-icons"
+                />
+                <ItemDirective
+                  id="insert_right"
+                  prefixIcon="e-de-ctnr-insertright e-icons"
+                />
+                <ItemDirective type="Separator" />
+                {/* <ItemDirective
               id="delete_table"
               tooltipText="Delete"
               text="Delete"
               prefixIcon="custom-delete-icon"
             /> */}
 
-              <ItemDirective
-                id="delete_rows"
-                prefixIcon="e-de-ctnr-deleterows e-icons"
-              />
-              <ItemDirective
-                id="delete_columns"
-                prefixIcon="e-de-ctnr-deletecolumns e-icons"
-              />
-              <ItemDirective type="Separator" />
-              <ItemDirective id="merge_cell" text="Merge Cells" prefixIcon="e-de-ctnr-mergecells e-icons" />
-              <ItemDirective type="Separator" />
+                <ItemDirective
+                  id="delete_rows"
+                  prefixIcon="e-de-ctnr-deleterows e-icons"
+                />
+                <ItemDirective
+                  id="delete_columns"
+                  prefixIcon="e-de-ctnr-deletecolumns e-icons"
+                />
+                <ItemDirective type="Separator" />
+                <ItemDirective id="merge_cell" text="Merge Cells" prefixIcon="e-de-ctnr-mergecells e-icons" />
+                <ItemDirective type="Separator" />
 
-              <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" />
+                {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
 
 
-              <ItemDirective text="Dialog" />
-              <ItemDirective type="Separator" />
+                <DropDownListComponent
+                  id="borderWidthDropdown"
+                  dataSource={[1, 2, 3, 4, 5]}
+                  placeholder="Select border width"
+                  floatLabelType="Auto"
+                  change={onWrapTextChange}
+                />
+                {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
+                <ItemDirective type="Separator" />
 
-              <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" />
-              <ItemDirective type="Separator" />
+                <ItemDirective id="set_border_width" text="Apply Border" prefixIcon="your-icon-class-for-border-width" />
 
-              <ItemDirective id="set_border_width" text="Apply Border" prefixIcon="your-icon-class-for-border-width" />
+              </ItemsDirective>
+            </ToolbarComponent>
 
-            </ItemsDirective>
-          </ToolbarComponent>
-          <div className="w-[3%] mx-2 ">
-            <NumericTextBoxComponent
-              id="borderWidthNumeric"
-              format='##.##'
-              value={borderWidth}
-              min={0}
-              max={10}
-              step={0.5}
-              change={(e) => setBorderWidth(e.value)}
-              placeholder="Border width"
+            <ColorPickerComponent
+              id="cellFillColorPicker"
+              mode="Palette"
+              showButtons={false}
+              change={handleFillColorChange}
             />
-          </div>
 
-          <ColorPickerComponent
-            id="cellFillColorPicker"
-            mode="Palette"
-            showButtons={false}
-            change={handleFillColorChange}
-          />
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
+            {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
             <NumericTextBoxComponent
               value={topMargin}
               placeholder="Top Margin"
@@ -1385,11 +1461,12 @@ function SyncFusionEditor() {
               change={(e) => setRightMargin(e.value)}
               blur={applyMargins}
             />
+          </div> */}
+
+
+
           </div>
-
-
-
-        </div>
+        }
       </div>
 
       <DocumentEditorContainerComponent
