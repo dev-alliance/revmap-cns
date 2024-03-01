@@ -49,8 +49,14 @@ import {
   ItemDirective,
   ItemsDirective,
 } from "@syncfusion/ej2-react-navigations";
-import { ComboBoxComponent, DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
-import { ColorPickerComponent, NumericTextBoxComponent } from "@syncfusion/ej2-react-inputs";
+import {
+  ComboBoxComponent,
+  DropDownListComponent,
+} from "@syncfusion/ej2-react-dropdowns";
+import {
+  ColorPickerComponent,
+  NumericTextBoxComponent,
+} from "@syncfusion/ej2-react-inputs";
 import {
   DropDownButtonComponent,
   ItemModel,
@@ -150,7 +156,7 @@ function SyncFusionEditor() {
       case "highlight":
         if (documentEditor && documentEditor.selection) {
           // Check if the selected text is already highlighted
-          let highlightColor: HighlightColor =
+          const highlightColor: any =
             documentEditor.selection.characterFormat.highlightColor;
           //Sets highlightColor formatting for selected text.
           documentEditor.selection.characterFormat.highlightColor = "Pink";
@@ -203,25 +209,25 @@ function SyncFusionEditor() {
           !documentEditor.documentEditorSettings.showHiddenMarks;
         break;
 
-      case 'Bullets-Dot':
-        documentEditor.editor.applyBullet('\uf0b7', 'Symbol'); // Standard dot bullet
+      case "Bullets-Dot":
+        documentEditor.editor.applyBullet("\uf0b7", "Symbol"); // Standard dot bullet
         break;
-      case 'Bullets-Circle':
-        documentEditor.editor.applyBullet('\uf06f', 'Symbol'); // Open circle bullet
+      case "Bullets-Circle":
+        documentEditor.editor.applyBullet("\uf06f", "Symbol"); // Open circle bullet
         break;
-      case 'Bullets-Square':
-        documentEditor.editor.applyBullet('\uf0a7', 'Wingdings'); // Square bullet
+      case "Bullets-Square":
+        documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
         break;
-      case 'Numbering-Arabic':
-        documentEditor.editor.applyNumbering('%1.', 'Arabic'); // Arabic numbering
+      case "Numbering-Arabic":
+        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
         break;
-      case 'Numbering-Roman':
-        documentEditor.editor.applyNumbering('%1.', 'UpperRoman'); // Uppercase Roman numbering
+      case "Numbering-Roman":
+        documentEditor.editor.applyNumbering("%1.", "UpperRoman"); // Uppercase Roman numbering
         break;
-      case 'Numbering-Alpha':
-        documentEditor.editor.applyNumbering('%1.', 'UpperLetter'); // Uppercase Alphabet numbering
+      case "Numbering-Alpha":
+        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
         break;
-      // upper lower case 
+      // upper lower case
       case "uppercase":
         // Changes the selected text to uppercase
         if (documentEditor.selection && documentEditor.selection.text) {
@@ -238,13 +244,13 @@ function SyncFusionEditor() {
         }
         break;
 
-      case 'lineHeight1':
+      case "lineHeight1":
         documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
         break;
-      case 'lineHeight1_5':
+      case "lineHeight1_5":
         documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
         break;
-      case 'lineHeight2':
+      case "lineHeight2":
         documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
         break;
 
@@ -264,55 +270,58 @@ function SyncFusionEditor() {
     }
   };
 
-  const handleColorChange = (args) => {
+  const handleColorChange = (args: any) => {
     setHighlightColor(args.currentValue.hex);
     applyHighlightColor();
   };
 
   //To Change the font Color of selected content
-  function changeFontColor(args) {
+  function changeFontColor(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.selection.characterFormat.fontColor = args.currentValue.hex;
     documentEditor.focusIn();
   }
 
-
-
-
-  let itemsss: ItemModel[] = [
+  const itemsss: ItemModel[] = [
     {
-      text: 'Single',
+      text: "Single",
     },
     {
-      text: '1.15',
+      text: "1.15",
     },
     {
-      text: '1.5',
+      text: "1.5",
     },
     {
-      text: 'Double',
+      text: "Double",
     },
   ];
 
   function lineHeight1() {
-    return (<DropDownButtonComponent items={itemsss} iconCss="e-de-icon-LineSpacing" select={lineSpacingAction} ></DropDownButtonComponent>);
+    return (
+      <DropDownButtonComponent
+        items={itemsss}
+        iconCss="e-de-icon-LineSpacing"
+        select={lineSpacingAction}
+      ></DropDownButtonComponent>
+    );
   }
 
   //Change the line spacing of selected or current paragraph
   function lineSpacingAction(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
-    let text: string = args.item.text;
+    const text: string = args.item.text;
     switch (text) {
-      case 'Single':
+      case "Single":
         documentEditor.selection.paragraphFormat.lineSpacing = 1;
         break;
-      case '1.15':
+      case "1.15":
         documentEditor.selection.paragraphFormat.lineSpacing = 1.15;
         break;
-      case '1.5':
+      case "1.5":
         documentEditor.selection.paragraphFormat.lineSpacing = 1.5;
         break;
-      case 'Double':
+      case "Double":
         documentEditor.selection.paragraphFormat.lineSpacing = 2;
         break;
     }
@@ -320,13 +329,6 @@ function SyncFusionEditor() {
       documentEditor.focusIn();
     }, 30);
   }
-
-
-
-
-
-
-
 
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -340,7 +342,7 @@ function SyncFusionEditor() {
   //   documenteditor.editor.insertTable(2, 2);
   // }
 
-  function toolbarButtonClick(arg) {
+  function toolbarButtonClick(arg: any) {
     console.log("arg", arg);
     const documentEditor = editorContainerRef.current.documentEditor;
     switch (arg.item.id) {
@@ -385,7 +387,6 @@ function SyncFusionEditor() {
         documentEditor.showDialog("Table");
         break;
       case "adjust_margins":
-
         documentEditor.selection.cellFormat.leftMargin = 5.4;
         //To change the right margin
         documentEditor.selection.cellFormat.rightMargin = 5.4;
@@ -394,9 +395,9 @@ function SyncFusionEditor() {
         //To change the bottom margin
         documentEditor.selection.cellFormat.bottomMargin = 5.4;
         break;
-      case 'set_border_width':
+      case "set_border_width":
         // Open a border width selection dropdown
-        documentEditor.showDialog('TableProperties');
+        documentEditor.showDialog("TableProperties");
         break;
       default:
         console.warn("Unhandled toolbar item:", arg.item.id);
@@ -404,17 +405,16 @@ function SyncFusionEditor() {
   }
 
   // State for the cell fill color
-  const [cellFillColor, setCellFillColor] = useState(''); // Default color
+  const [cellFillColor, setCellFillColor] = useState(""); // Default color
 
   const applyCellFillColor = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
 
     documentEditor.selection.cellFormat.background = cellFillColor;
-
   };
 
-  const handleFillColorChange = (args) => {
-    console.log(args)
+  const handleFillColorChange = (args: any) => {
+    console.log(args);
     setCellFillColor(args.currentValue.hex);
     applyCellFillColor();
   };
@@ -439,12 +439,6 @@ function SyncFusionEditor() {
   };
 
   // border width
-
-
-
-
-
-
 
   // const onToolbarClick = (args: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
@@ -872,14 +866,14 @@ function SyncFusionEditor() {
           change={changeFontColor}
         ></ColorPickerComponent>
         <button
-          onClick={() => console.log('Open color picker here')}
+          onClick={() => console.log("Open color picker here")}
           style={{
-            fontWeight: 'bold',
-            color: '#000000',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '16px' // Adjust as needed
+            fontWeight: "bold",
+            color: "#000000",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "16px", // Adjust as needed
           }}
         >
           A
@@ -910,7 +904,7 @@ function SyncFusionEditor() {
     );
   }
 
-  function onWrapTextChange(args) {
+  function onWrapTextChange(args: any) {
     if (editorContainerRef.current) {
       const documentEditor = editorContainerRef.current.documentEditor;
       // Assuming we have the border width value in 'args.value'
@@ -918,21 +912,19 @@ function SyncFusionEditor() {
       if (borderWidth >= 1 && borderWidth <= 5) {
         const table = documentEditor.selection.tableFormat;
         if (table) {
-          table.borders.top.lineStyle = 'Single';
+          table.borders.top.lineStyle = "Single";
           table.borders.top.lineWidth = borderWidth;
-          table.borders.bottom.lineStyle = 'Single';
+          table.borders.bottom.lineStyle = "Single";
           table.borders.bottom.lineWidth = borderWidth;
-          table.borders.left.lineStyle = 'Single';
+          table.borders.left.lineStyle = "Single";
           table.borders.left.lineWidth = borderWidth;
-          table.borders.right.lineStyle = 'Single';
+          table.borders.right.lineStyle = "Single";
           table.borders.right.lineWidth = borderWidth;
           documentEditor.selection.tableFormat = table;
         }
       }
     }
   }
-
-
 
   // const [isTableSelected, setIsTableSelected] = useState(false);
 
@@ -961,7 +953,6 @@ function SyncFusionEditor() {
   //   };
   // }, []);
 
-
   const [isTableSelected, setIsTableSelected] = useState(false);
 
   useEffect(() => {
@@ -971,8 +962,9 @@ function SyncFusionEditor() {
       // Listen to selection changes
       documentEditor.selectionChange = () => {
         // Check if the current selection is within a table
-        const isInTable = documentEditor?.selection?.contextTypeInternal == 'TableText';
-        console.log('asfds', documentEditor?.selection?.contextTypeInternal)
+        const isInTable =
+          documentEditor?.selection?.contextTypeInternal == "TableText";
+        console.log("asfds", documentEditor?.selection?.contextTypeInternal);
         setIsTableSelected(isInTable);
       };
     }
@@ -984,8 +976,6 @@ function SyncFusionEditor() {
       }
     };
   }, []);
-
-
 
   return (
     <div>
@@ -1053,7 +1043,6 @@ function SyncFusionEditor() {
       </div> */}
 
       <div>
-
         {/* <DocumentEditorComponent
           id="container"
           height={"100px"}
@@ -1227,9 +1216,6 @@ function SyncFusionEditor() {
           )}
         </div>
 
-
-
-
         {/* <div className="relative">
           <button
             className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
@@ -1278,9 +1264,6 @@ function SyncFusionEditor() {
       {/* <div id="xyz">show </div> */}
 
       <div className="  ">
-
-
-
         <div className="text styling flex items-center">
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
@@ -1304,9 +1287,21 @@ function SyncFusionEditor() {
                 prefixIcon="e-icons e-highlight"
                 tooltipText="Highlight"
               /> */}
-              <ItemDirective id="strikethrough" prefixIcon="e-icons e-strikethrough" tooltipText="Strikethrough" />
-              <ItemDirective id="subscript" prefixIcon="e-icons e-subscript" tooltipText="Subscript" />
-              <ItemDirective id="superscript" prefixIcon="e-icons e-superscript" tooltipText="Superscript" />
+              <ItemDirective
+                id="strikethrough"
+                prefixIcon="e-icons e-strikethrough"
+                tooltipText="Strikethrough"
+              />
+              <ItemDirective
+                id="subscript"
+                prefixIcon="e-icons e-subscript"
+                tooltipText="Subscript"
+              />
+              <ItemDirective
+                id="superscript"
+                prefixIcon="e-icons e-superscript"
+                tooltipText="Superscript"
+              />
 
               <ItemDirective type="Separator" />
 
@@ -1339,36 +1334,55 @@ function SyncFusionEditor() {
                 tooltipText="Justify"
               />
 
+              <ItemDirective
+                template={lineHeight1}
+                prefixIcon="e-de-ctnr-aligncenter e-icons"
+                tooltipText="Line Height 1"
+              />
 
-              <ItemDirective template={lineHeight1} prefixIcon="e-de-ctnr-aligncenter e-icons" tooltipText="Line Height 1" />
+              <ItemDirective
+                id="Numbering-Arabic"
+                prefixIcon="e-icons e-de-ctnr-numbering"
+                tooltipText="Arabic Numbering"
+              />
+              <ItemDirective
+                id="Numbering-Roman"
+                prefixIcon="e-de-ctnr-bullets e-icons"
+                tooltipText="Roman Numbering"
+              />
+              <ItemDirective
+                id="clearlist"
+                text="Clear"
+                tooltipText="Clear List"
+              />
 
-              <ItemDirective id="Numbering-Arabic" prefixIcon="e-icons e-de-ctnr-numbering" tooltipText="Arabic Numbering" />
-              <ItemDirective id="Numbering-Roman" prefixIcon="e-de-ctnr-bullets e-icons" tooltipText="Roman Numbering" />
-              <ItemDirective id="clearlist" text="Clear" tooltipText="Clear List" />
-
-
-              <ItemDirective id="uppercase" prefixIcon=" e-upper-case e-icons" tooltipText="Uppercase" />
-              <ItemDirective id="lowercase" prefixIcon="e-icons e-lower-case " tooltipText="Lowercase" />
-
-
-
-
-
+              <ItemDirective
+                id="uppercase"
+                prefixIcon=" e-upper-case e-icons"
+                tooltipText="Uppercase"
+              />
+              <ItemDirective
+                id="lowercase"
+                prefixIcon="e-icons e-lower-case "
+                tooltipText="Lowercase"
+              />
             </ItemsDirective>
           </ToolbarComponent>
           <ColorPickerComponent
             value={highlightColor}
             change={handleColorChange}
           />
-
         </div>
 
         {/* ***************Table************************ */}
-        {isTableSelected &&
+        {isTableSelected && (
           <div className="text styling flex items-center">
             <ToolbarComponent clicked={toolbarButtonClick}>
               <ItemsDirective>
-                <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
+                <ItemDirective
+                  id="table"
+                  prefixIcon="e-de-ctnr-table e-icons"
+                />
                 <ItemDirective type="Separator" />
                 <ItemDirective
                   id="insert_above"
@@ -1404,11 +1418,14 @@ function SyncFusionEditor() {
                   prefixIcon="e-de-ctnr-deletecolumns e-icons"
                 />
                 <ItemDirective type="Separator" />
-                <ItemDirective id="merge_cell" text="Merge Cells" prefixIcon="e-de-ctnr-mergecells e-icons" />
+                <ItemDirective
+                  id="merge_cell"
+                  text="Merge Cells"
+                  prefixIcon="e-de-ctnr-mergecells e-icons"
+                />
                 <ItemDirective type="Separator" />
 
                 {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
-
 
                 <DropDownListComponent
                   id="borderWidthDropdown"
@@ -1420,8 +1437,11 @@ function SyncFusionEditor() {
                 {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
                 <ItemDirective type="Separator" />
 
-                <ItemDirective id="set_border_width" text="Apply Border" prefixIcon="your-icon-class-for-border-width" />
-
+                <ItemDirective
+                  id="set_border_width"
+                  text="Apply Border"
+                  prefixIcon="your-icon-class-for-border-width"
+                />
               </ItemsDirective>
             </ToolbarComponent>
 
@@ -1462,11 +1482,8 @@ function SyncFusionEditor() {
               blur={applyMargins}
             />
           </div> */}
-
-
-
           </div>
-        }
+        )}
       </div>
 
       <DocumentEditorContainerComponent
@@ -1476,7 +1493,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-      // showPropertiesPane={false}
+        // showPropertiesPane={false}
       />
     </div>
   );
