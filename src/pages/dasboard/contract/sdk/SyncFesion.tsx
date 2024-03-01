@@ -35,6 +35,7 @@ import {
   Divider,
 } from "@mui/material";
 import linepng from '../../../../assets/line.png'
+import bucket from '../../../../assets/bucket.png'
 import {
   DocumentEditorComponent,
   Selection,
@@ -290,7 +291,7 @@ function SyncFusionEditor() {
       <div className="w-[60px]">
         <ColorPickerComponent showButtons={true} value={highlightColor} change={changeHighlightColor} />
         <button className="  ">
-          <img src={linepng} className="h-4 w-3 -mt-3 absolute" />
+          <img src={bucket} className="h-5 w-5 -mt-3 absolute" />
 
         </button>
       </div>
