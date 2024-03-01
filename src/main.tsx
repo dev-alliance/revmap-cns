@@ -10,7 +10,7 @@ import { Components } from "@mui/material/styles/components";
 import { DataGrid } from "@mui/x-data-grid";
 import { registerLicense } from "@syncfusion/ej2-base";
 registerLicense(
-  "ORg4AjUWIQA/Gnt2UVhhQlVFfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTX5SdENjWHpZdXNXRmJa"
+  "Ngo9BigBOggjHTQxAR8/V1NAaF1cVWhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdEFjWn9fcHBRRmBZV0B1Vg=="
 );
 const theme = createTheme({
   typography: {

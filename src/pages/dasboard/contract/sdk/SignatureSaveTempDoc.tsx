@@ -98,7 +98,7 @@ const SignatureSaveTempDoc: React.FC<DetailDialogProps> = ({
           alignItems: "center",
         }}
       >
-        <strong style={{ display: "flex" }}>
+        <strong style={{ display: "flex", textAlign: "center" }}>
           {" "}
           Do you want to save as template before sending the document for
           signature?
@@ -113,15 +113,16 @@ const SignatureSaveTempDoc: React.FC<DetailDialogProps> = ({
           textAlign: "center",
         }}
       >
+        {/* <Card> */}
         <img
           src={logo}
           alt="Logo"
           style={{
             // maxWidth: isMobile ? "20px" : "50px",
-            width: "18%",
+            width: "14%",
             // height: "auto",
-            marginTop: "1rem", // Adjust as needed
-            marginBottom: "1rem", // Adjust as needed
+            marginTop: "0rem", // Adjust as needed
+            marginBottom: "0.5rem", // Adjust as needed
           }}
         />
         <Button
@@ -136,7 +137,7 @@ const SignatureSaveTempDoc: React.FC<DetailDialogProps> = ({
         <Button
           variant="contained"
           color="primary"
-          sx={{ textTransform: "none", mt: 2, mb: 3, width: "fit-content" }}
+          sx={{ textTransform: "none", mt: 2, width: "fit-content" }}
           onClick={() => onButtonClick()}
         >
           Send document

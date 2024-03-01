@@ -49,8 +49,14 @@ import {
   ItemDirective,
   ItemsDirective,
 } from "@syncfusion/ej2-react-navigations";
-import { ComboBoxComponent, DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
-import { ColorPickerComponent, NumericTextBoxComponent } from "@syncfusion/ej2-react-inputs";
+import {
+  ComboBoxComponent,
+  DropDownListComponent,
+} from "@syncfusion/ej2-react-dropdowns";
+import {
+  ColorPickerComponent,
+  NumericTextBoxComponent,
+} from "@syncfusion/ej2-react-inputs";
 import {
   DropDownButtonComponent,
   ItemModel,
@@ -105,26 +111,6 @@ function SyncFusionEditor() {
     }
   }
 
-  // To change the font color of selected content
-  // function changeFontColor(args: any) {
-  //   const documentEditor = editorContainerRef.current.documentEditor;
-  //   if (documentEditor && documentEditor.selection) {
-  //     documentEditor.selection.characterFormat.fontColor =
-  //       args.currentValue.hex;
-  //     documentEditor.focusIn();
-  //   }
-  // }
-
-  // To change the highlight color of selected content
-  function changeHighlightColor(color: string) {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      // Sets the highlight color of the selection
-      // Possible color values: 'Yellow', 'Green', 'Blue', 'Red', etc., or HEX color codes
-      documentEditor.selection.characterFormat.highlightColor = color;
-      documentEditor.focusIn();
-    }
-  }
   const onToolbarClick = (args: any) => {
     const documentEditor = editorContainerRef.current.documentEditor;
     console.log("args :", args.item.id);
@@ -150,7 +136,7 @@ function SyncFusionEditor() {
       case "highlight":
         if (documentEditor && documentEditor.selection) {
           // Check if the selected text is already highlighted
-          let highlightColor: HighlightColor =
+          const highlightColor: any =
             documentEditor.selection.characterFormat.highlightColor;
           //Sets highlightColor formatting for selected text.
           documentEditor.selection.characterFormat.highlightColor = "Pink";
@@ -203,25 +189,25 @@ function SyncFusionEditor() {
           !documentEditor.documentEditorSettings.showHiddenMarks;
         break;
 
-      case 'Bullets-Dot':
-        documentEditor.editor.applyBullet('\uf0b7', 'Symbol'); // Standard dot bullet
+      case "Bullets-Dot":
+        documentEditor.editor.applyBullet("\uf0b7", "Symbol"); // Standard dot bullet
         break;
-      case 'Bullets-Circle':
-        documentEditor.editor.applyBullet('\uf06f', 'Symbol'); // Open circle bullet
+      case "Bullets-Circle":
+        documentEditor.editor.applyBullet("\uf06f", "Symbol"); // Open circle bullet
         break;
-      case 'Bullets-Square':
-        documentEditor.editor.applyBullet('\uf0a7', 'Wingdings'); // Square bullet
+      case "Bullets-Square":
+        documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
         break;
-      case 'Numbering-Arabic':
-        documentEditor.editor.applyNumbering('%1.', 'Arabic'); // Arabic numbering
+      case "Numbering-Arabic":
+        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
         break;
-      case 'Numbering-Roman':
-        documentEditor.editor.applyNumbering('%1.', 'UpperRoman'); // Uppercase Roman numbering
+      case "Numbering-Roman":
+        documentEditor.editor.applyNumbering("%1.", "UpperRoman"); // Uppercase Roman numbering
         break;
-      case 'Numbering-Alpha':
-        documentEditor.editor.applyNumbering('%1.', 'UpperLetter'); // Uppercase Alphabet numbering
+      case "Numbering-Alpha":
+        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
         break;
-      // upper lower case 
+      // upper lower case
       case "uppercase":
         // Changes the selected text to uppercase
         if (documentEditor.selection && documentEditor.selection.text) {
@@ -238,13 +224,13 @@ function SyncFusionEditor() {
         }
         break;
 
-      case 'lineHeight1':
+      case "lineHeight1":
         documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
         break;
-      case 'lineHeight1_5':
+      case "lineHeight1_5":
         documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
         break;
-      case 'lineHeight2':
+      case "lineHeight2":
         documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
         break;
 
@@ -276,43 +262,46 @@ function SyncFusionEditor() {
     documentEditor.focusIn();
   }
 
-
-
-
-  let itemsss: ItemModel[] = [
+  const itemsss: ItemModel[] = [
     {
-      text: 'Single',
+      text: "Single",
     },
     {
-      text: '1.15',
+      text: "1.15",
     },
     {
-      text: '1.5',
+      text: "1.5",
     },
     {
-      text: 'Double',
+      text: "Double",
     },
   ];
 
   function lineHeight1() {
-    return (<DropDownButtonComponent items={itemsss} iconCss="e-de-icon-LineSpacing" select={lineSpacingAction} ></DropDownButtonComponent>);
+    return (
+      <DropDownButtonComponent
+        items={itemsss}
+        iconCss="e-de-icon-LineSpacing"
+        select={lineSpacingAction}
+      ></DropDownButtonComponent>
+    );
   }
 
   //Change the line spacing of selected or current paragraph
   function lineSpacingAction(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
-    let text: string = args.item.text;
+    const text: string = args.item.text;
     switch (text) {
-      case 'Single':
+      case "Single":
         documentEditor.selection.paragraphFormat.lineSpacing = 1;
         break;
-      case '1.15':
+      case "1.15":
         documentEditor.selection.paragraphFormat.lineSpacing = 1.15;
         break;
-      case '1.5':
+      case "1.5":
         documentEditor.selection.paragraphFormat.lineSpacing = 1.5;
         break;
-      case 'Double':
+      case "Double":
         documentEditor.selection.paragraphFormat.lineSpacing = 2;
         break;
     }
@@ -385,7 +374,6 @@ function SyncFusionEditor() {
         documentEditor.showDialog("Table");
         break;
       case "adjust_margins":
-
         documentEditor.selection.cellFormat.leftMargin = 5.4;
         //To change the right margin
         documentEditor.selection.cellFormat.rightMargin = 5.4;
@@ -394,9 +382,9 @@ function SyncFusionEditor() {
         //To change the bottom margin
         documentEditor.selection.cellFormat.bottomMargin = 5.4;
         break;
-      case 'set_border_width':
+      case "set_border_width":
         // Open a border width selection dropdown
-        documentEditor.showDialog('TableProperties');
+        documentEditor.showDialog("TableProperties");
         break;
       default:
         console.warn("Unhandled toolbar item:", arg.item.id);
@@ -404,13 +392,12 @@ function SyncFusionEditor() {
   }
 
   // State for the cell fill color
-  const [cellFillColor, setCellFillColor] = useState(''); // Default color
+  const [cellFillColor, setCellFillColor] = useState(""); // Default color
 
   const applyCellFillColor = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
 
     documentEditor.selection.cellFormat.background = cellFillColor;
-
   };
 
   const handleFillColorChange = (args: any) => {
@@ -438,39 +425,6 @@ function SyncFusionEditor() {
     }
   };
 
-  // border width
-
-
-
-
-
-
-
-  // const onToolbarClick = (args: any) => {
-  //   const documentEditor = editorContainerRef.current.documentEditor;
-
-  //   if (!documentEditor) {
-  //     console.error('Document Editor is not initialized yet.');
-  //     return;
-  //   }
-
-  //   switch (args.item.id) {
-  //     case 'bold':
-  //       documentEditor.editor.toggleBold();
-  //       break;
-  //     case 'italic':
-  //       documentEditor.editor.toggleItalic();
-  //       break;
-  //     case 'underline':
-  //       documentEditor.editor.toggleUnderline();
-  //       break;
-  //     // add other cases
-  //     default:
-  //       console.warn('Unhandled toolbar item:', args.item.id);
-  //   }
-  // };
-
-  // Define custom toolbar item
   const customItem = {
     prefixIcon: "e-de-ctnr-lock",
     tooltipText: "Disable Image",
@@ -496,25 +450,15 @@ function SyncFusionEditor() {
     "Footer",
     "PageSetup",
     "PageNumber",
+    "Find",
     // "Break",
+
     // "Separator",
     // "Find",
     // "Separator",
     // "LocalClipboard",
     // "RestrictEditing",
   ];
-
-  // const toolbarItems =
-  //   document.querySelectorAll<HTMLElement>(".e-toolbar-item");
-  // toolbarItems.forEach((item) => {
-  //   item.style.display = "none";
-  // });
-
-  // // Select elements with class "e-btn-icon" and hide them
-  // const btnIcons = document.querySelectorAll<HTMLElement>(".e-btn-icon");
-  // btnIcons.forEach((icon) => {
-  //   icon.style.display = "none";
-  // });
 
   // const triggerClick = (id: any) => {
   //   const element = document.getElementById(id);
@@ -530,302 +474,6 @@ function SyncFusionEditor() {
     $(`#${id}`).trigger("click");
     // $("#container_toolbar_open").parent().css("display", "block");
   };
-
-  // useEffect(() => {
-  //   cloneElement();
-  // }, []);
-
-  // function cloneElement() {
-  //   // Check if the original element exists before cloning it
-  //   const original = document.getElementById(
-  //     "container_editor_font_properties_properties"
-  //   );
-  //   if (original) {
-  //     // Clone the original element
-  //     const clone = original.cloneNode(true); // Cloning with all descendants
-
-  //     // Check if the element with id "xyz" exists before appending the cloned element to it
-  //     const xyzElement = document.getElementById("xyz");
-  //     if (xyzElement) {
-  //       xyzElement.appendChild(clone); // Appending the cloned element to the div with id 'xyz'
-  //     } else {
-  //       console.error("Element with id 'xyz' not found");
-  //     }
-  //   } else {
-  //     console.error(
-  //       "Element with id 'container_editor_font_properties_properties' not found"
-  //     );
-  //   }
-  // }
-
-  // paragraph
-
-  // let documenteditor: DocumentEditorComponent;
-  // React.useEffect(() => {
-  //   componentDidMount()
-  // }, []);
-  // function componentDidMount() {
-  //   documenteditor.selectionChange = () => {
-  //     setTimeout(() => { onSelectionChange(); }, 20);
-  //   };
-  // }
-
-  // function toolbarButtonClick(arg) {
-  //   switch (arg.item.id) {
-  //     case 'bold':
-  //       //Toggles the bold of selected content
-  //       documenteditor.editor.toggleBold();
-  //       break;
-  //     case 'italic':
-  //       //Toggles the Italic of selected content
-  //       documenteditor.editor.toggleItalic();
-  //       break;
-  //     case 'underline':
-  //       //Toggles the underline of selected content
-  //       documenteditor.editor.toggleUnderline('Single');
-  //       break;
-  //     case 'strikethrough':
-  //       //Toggles the strikethrough of selected content
-  //       documenteditor.editor.toggleStrikethrough();
-  //       break;
-  //     case 'subscript':
-  //       //Toggles the subscript of selected content
-  //       documenteditor.editor.toggleSubscript();
-  //       break;
-  //     case 'superscript':
-  //       //Toggles the superscript of selected content
-  //       documenteditor.editor.toggleSuperscript();
-  //       break;
-  //   }
-  // }
-  // //To change the font Style of selected content
-  // function changeFontFamily(args): void {
-  //   documenteditor.selection.characterFormat.fontFamily = args.value;
-  //   documenteditor.focusIn();
-  // }
-  // //To Change the font Size of selected content
-  // function changeFontSize(args): void {
-  //   documenteditor.selection.characterFormat.fontSize = args.value;
-  //   documenteditor.focusIn();
-  // }
-  // //To Change the font Color of selected content
-  // function changeFontColor(args) {
-  //   documenteditor.selection.characterFormat.fontColor = args.currentValue.hex;
-  //   documenteditor.focusIn();
-  // }
-
-  // //Selection change to retrieve formatting
-  // function onSelectionChange() {
-  //   if (documenteditor.selection) {
-  //     enableDisableFontOptions();
-  //     // #endregion
-  //   }
-  // }
-  // function enableDisableFontOptions() {
-  //   var characterformat = documenteditor.selection.characterFormat;
-  //   var properties = [characterformat.bold, characterformat.italic, characterformat.underline, characterformat.strikethrough];
-  //   var toggleBtnId = ["bold", "italic", "underline", "strikethrough"];
-  //   for (let i = 0; i < properties.length; i++) {
-  //     changeActiveState(properties[i], toggleBtnId[i]);
-  //   }
-  // }
-  // function changeActiveState(property, btnId) {
-  //   let toggleBtn: HTMLElement = document.getElementById(btnId);
-  //   if ((typeof (property) == 'boolean' && property == true) || (typeof (property) == 'string' && property !== 'None'))
-  //     toggleBtn.classList.add("e-btn-toggle");
-  //   else {
-  //     if (toggleBtn.classList.contains("e-btn-toggle"))
-  //       toggleBtn.classList.remove("e-btn-toggle");
-  //   }
-  // }
-  // let fontStyle: string[] = ['Algerian', 'Arial', 'Calibri', 'Cambria', 'Cambria Math', 'Candara', 'Courier New', 'Georgia', 'Impact', 'Segoe Print', 'Segoe Script', 'Segoe UI', 'Symbol', 'Times New Roman', 'Verdana', 'Windings'
-  // ];
-  // let fontSize: string[] = ['8', '9', '10', '11', '12', '14', '16', '18',
-  //   '20', '22', '24', '26', '28', '36', '48', '72', '96'];
-  // function contentTemplate1() {
-  //   return (<ColorPickerComponent showButtons={true} value='#000000' change={changeFontColor}></ColorPickerComponent>);
-  // }
-  // function contentTemplate2() {
-  //   return (<ComboBoxComponent dataSource={fontStyle} change={changeFontFamily} index={2} allowCustom={true} showClearButton={false} ></ComboBoxComponent>);
-  // }
-  // function contentTemplate3() {
-  //   return (<ComboBoxComponent dataSource={fontSize} change={changeFontSize} index={2} allowCustom={true} showClearButton={false} ></ComboBoxComponent>);
-  // }
-
-  // paragraph alignment
-
-  // let documenteditor: DocumentEditorComponent;
-  // React.useEffect(() => {
-  //   componentDidMount()
-  // }, []);
-  // let items3: ItemModel[] = [
-  //   {
-  //     text: 'Single',
-  //   },
-  //   {
-  //     text: '1.15',
-  //   },
-  //   {
-  //     text: '1.5',
-  //   },
-  //   {
-  //     text: 'Double',
-  //   },
-  // ];
-
-  // function contentTemplate1() {
-  //   return (<DropDownButtonComponent items={items3} iconCss="e-de-icon-LineSpacing" select={lineSpacingAction} ></DropDownButtonComponent>);
-  // }
-  // function componentDidMount(): void {
-  //   documenteditor.selectionChange = () => {
-  //     setTimeout(() => { onSelectionChange(); }, 20);
-  //   };
-  // }
-
-  // function toolbarButtonClick(arg): void {
-  //   switch (arg.item.id) {
-  //     case 'AlignLeft':
-  //       //Toggle the Left alignment for selected or current paragraph
-  //       documenteditor.editor.toggleTextAlignment('Left');
-  //       break;
-  //     case 'AlignRight':
-  //       //Toggle the Right alignment for selected or current paragraph
-  //       documenteditor.editor.toggleTextAlignment('Right');
-  //       break;
-  //     case 'AlignCenter':
-  //       //Toggle the Center alignment for selected or current paragraph
-  //       documenteditor.editor.toggleTextAlignment('Center');
-  //       break;
-  //     case 'Justify':
-  //       //Toggle the Justify alignment for selected or current paragraph
-  //       documenteditor.editor.toggleTextAlignment('Justify');
-  //       break;
-  //     case 'IncreaseIndent':
-  //       //Increase the left indent of selected or current paragraph
-  //       documenteditor.editor.increaseIndent();
-  //       break;
-  //     case 'DecreaseIndent':
-  //       //Decrease the left indent of selected or current paragraph
-  //       documenteditor.editor.decreaseIndent();
-  //       break;
-  //     case 'ClearFormat':
-  //       documenteditor.editor.clearFormatting();
-  //       break;
-  //     case 'ShowParagraphMark':
-  //       //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
-  //       documenteditor.documentEditorSettings.showHiddenMarks = !documenteditor.documentEditorSettings.showHiddenMarks;
-  //       break;
-  //   }
-  // }
-  // //Change the line spacing of selected or current paragraph
-  // function lineSpacingAction(args: any) {
-  //   let text: string = args.item.text;
-  //   switch (text) {
-  //     case 'Single':
-  //       documenteditor.selection.paragraphFormat.lineSpacing = 1;
-  //       break;
-  //     case '1.15':
-  //       documenteditor.selection.paragraphFormat.lineSpacing = 1.15;
-  //       break;
-  //     case '1.5':
-  //       documenteditor.selection.paragraphFormat.lineSpacing = 1.5;
-  //       break;
-  //     case 'Double':
-  //       documenteditor.selection.paragraphFormat.lineSpacing = 2;
-  //       break;
-  //   }
-  //   setTimeout((): void => {
-  //     documenteditor.focusIn();
-  //   }, 30);
-  // }
-  // // Selection change to retrieve formatting
-  // function onSelectionChange() {
-  //   if (documenteditor.selection) {
-  //     var paragraphFormat = documenteditor.selection.paragraphFormat;
-  //     var toggleBtnId = ['AlignLeft', 'AlignCenter', 'AlignRight', 'Justify', 'ShowParagraphMark'];
-  //     //Remove toggle state.
-  //     for (var i = 0; i < toggleBtnId.length; i++) {
-  //       let toggleBtn: HTMLElement = document.getElementById(toggleBtnId[i]);
-  //       toggleBtn.classList.remove('e-btn-toggle');
-  //     }
-  //     //Add toggle state based on selection paragraph format.
-  //     if (paragraphFormat.textAlignment === 'Left') {
-  //       document.getElementById('AlignLeft').classList.add('e-btn-toggle');
-  //     } else if (paragraphFormat.textAlignment === 'Right') {
-  //       document.getElementById('AlignRight').classList.add('e-btn-toggle');
-  //     } else if (paragraphFormat.textAlignment === 'Center') {
-  //       document.getElementById('AlignCenter').classList.add('e-btn-toggle');
-  //     } else {
-  //       document.getElementById('Justify').classList.add('e-btn-toggle');
-  //     }
-  //     if (documenteditor.documentEditorSettings.showHiddenMarks) {
-  //       document.getElementById('ShowParagraphMark').classList.add('e-btn-toggle');
-  //     }
-  //     // #endregion
-  //   }
-  // }
-
-  // let documenteditor: DocumentEditorComponent;
-  // React.useEffect(() => {
-  //   componentDidMount();
-  // }, []);
-  // function componentDidMount() {
-  //   documenteditor.selectionChange = () => {
-  //     setTimeout(() => {
-  //       onSelectionChange();
-  //     }, 20);
-  //   };
-  // }
-
-  // //To change the font Style of selected content
-  // function changeFontFamily(args: any): void {
-  //   documenteditor.selection.characterFormat.fontFamily = args.value;
-  //   documenteditor.focusIn();
-  // }
-  // //To Change the font Size of selected content
-  // function changeFontSize(args: any): void {
-  //   documenteditor.selection.characterFormat.fontSize = args.value;
-  //   documenteditor.focusIn();
-  // }
-  // //To Change the font Color of selected content
-  // function changeFontColor(args: any) {
-  //   documenteditor.selection.characterFormat.fontColor = args.currentValue.hex;
-  //   documenteditor.focusIn();
-  // }
-
-  //Selection change to retrieve formatting
-  // function onSelectionChange() {
-  //   if (documenteditor.selection) {
-  //     enableDisableFontOptions();
-  //     // #endregion
-  //   }
-  // }
-  // function enableDisableFontOptions() {
-  //   const characterformat = documenteditor.selection.characterFormat;
-  //   const properties = [
-  //     characterformat.bold,
-  //     characterformat.italic,
-  //     characterformat.underline,
-  //     characterformat.strikethrough,
-  //   ];
-  //   const toggleBtnId = ["bold", "italic", "underline", "strikethrough"];
-  //   for (let i = 0; i < properties.length; i++) {
-  //     changeActiveState(properties[i], toggleBtnId[i]);
-  //   }
-  // }
-  // function changeActiveState(property: any, btnId: any) {
-  //   const toggleBtn: any | null = document.getElementById(btnId);
-  //   if (
-  //     (typeof property == "boolean" && property == true) ||
-  //     (typeof property == "string" && property !== "None")
-  //   )
-  //     toggleBtn.classList.add("e-btn-toggle");
-  //   else {
-  //     if (toggleBtn.classList.contains("e-btn-toggle"))
-  //       toggleBtn.classList.remove("e-btn-toggle");
-  //   }
-  // }
-
   const fontStyle: string[] = [
     "Algerian",
     "Arial",
@@ -872,14 +520,14 @@ function SyncFusionEditor() {
           change={changeFontColor}
         ></ColorPickerComponent>
         <button
-          onClick={() => console.log('Open color picker here')}
+          onClick={() => console.log("Open color picker here")}
           style={{
-            fontWeight: 'bold',
-            color: '#000000',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '16px' // Adjust as needed
+            fontWeight: "bold",
+            color: "#000000",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "16px", // Adjust as needed
           }}
         >
           A
@@ -918,49 +566,19 @@ function SyncFusionEditor() {
       if (borderWidth >= 1 && borderWidth <= 5) {
         const table = documentEditor.selection.tableFormat;
         if (table) {
-          table.borders.top.lineStyle = 'Single';
+          table.borders.top.lineStyle = "Single";
           table.borders.top.lineWidth = borderWidth;
-          table.borders.bottom.lineStyle = 'Single';
+          table.borders.bottom.lineStyle = "Single";
           table.borders.bottom.lineWidth = borderWidth;
-          table.borders.left.lineStyle = 'Single';
+          table.borders.left.lineStyle = "Single";
           table.borders.left.lineWidth = borderWidth;
-          table.borders.right.lineStyle = 'Single';
+          table.borders.right.lineStyle = "Single";
           table.borders.right.lineWidth = borderWidth;
           documentEditor.selection.tableFormat = table;
         }
       }
     }
   }
-
-
-
-  // const [isTableSelected, setIsTableSelected] = useState(false);
-
-  // useEffect(() => {
-  //   const documentEditor = editorContainerRef.current.documentEditor;
-
-  //   // Function to check if the selection includes a table
-  //   const checkForTableSelection = () => {
-  //     // Check if the current selection is a table
-  //     const selection = documentEditor.selection;
-  //     console.log('asdf', selection)
-  //     const isTable = selection && selection.isInTable;
-  //     setIsTableSelected(!!isTable);
-  //   };
-
-  //   if (documentEditor) {
-  //     // Attach the selection change event listener
-  //     documentEditor.selectionChange = checkForTableSelection;
-  //   }
-
-  //   // Cleanup the event listener on component unmount
-  //   return () => {
-  //     if (documentEditor) {
-  //       documentEditor.selectionChange = null;
-  //     }
-  //   };
-  // }, []);
-
 
   const [isTableSelected, setIsTableSelected] = useState(false);
 
@@ -971,8 +589,9 @@ function SyncFusionEditor() {
       // Listen to selection changes
       documentEditor.selectionChange = () => {
         // Check if the current selection is within a table
-        const isInTable = documentEditor?.selection?.contextTypeInternal == 'TableText';
-        console.log('asfds', documentEditor?.selection?.contextTypeInternal)
+        const isInTable =
+          documentEditor?.selection?.contextTypeInternal == "TableText";
+        console.log("asfds", documentEditor?.selection?.contextTypeInternal);
         setIsTableSelected(isInTable);
       };
     }
@@ -985,88 +604,9 @@ function SyncFusionEditor() {
     };
   }, []);
 
-
-
   return (
     <div>
-      {/* 
-      <div>
-        <ToolbarComponent id='toolbar' clicked={toolbarButtonClick}>
-          <ItemsDirective>
-            <ItemDirective id="bold" prefixIcon="e-de-icon-Bold" text="Bold" tooltipText="Bold" />
-            <ItemDirective id="italic" prefixIcon="e-de-icon-Italic" text="Italic" tooltipText="Italic" />
-            <ItemDirective id="underline" prefixIcon="e-de-icon-Underline" text="Underline" tooltipText="Underline" />
-            <ItemDirective id="strikethrough" prefixIcon="e-de-icon-Strikethrough" text="Strikethrough" tooltipText="Strikethrough" />
-            <ItemDirective id="subscript" prefixIcon="e-de-icon-Subscript" text="Subscript" tooltipText="Subscript" />
-            <ItemDirective id="superscript" prefixIcon="e-de-icon-Superscript" text="Superscript" tooltipText="Superscript" />
-            <ItemDirective type="Separator" />
-
-            <ItemDirective template={contentTemplate1} />
-            <ItemDirective type="Separator" />
-             
-          </ItemsDirective>
-        </ToolbarComponent>
-
-        <DocumentEditorComponent
-          id="container"
-          height={'330px'}
-          ref={scope => {
-            documenteditor = scope;
-          }}
-          isReadOnly={false}
-          enableSelection={true}
-          enableEditor={true}
-          enableEditorHistory={true}
-          enableContextMenu={true}
-        />
-      </div> */}
-
-      {/* <div>
-        <ToolbarComponent id='toolbar' clicked={toolbarButtonClick}>
-          <ItemDirective id="AlignLeft" prefixIcon="e-de-ctnr-alignleft e-icons" tooltipText="Align Left" />
-          <ItemDirective id="AlignCenter" prefixIcon="e-de-ctnr-aligncenter e-icons" tooltipText="Align Center" />
-          <ItemDirective id="AlignRight" prefixIcon="e-de-ctnr-alignright e-icons" tooltipText="Align Right" />
-          <ItemDirective id="Justify" prefixIcon="e-de-ctnr-justify e-icons" tooltipText="Justify" />
-          <ItemDirective type="Separator" />
-          <ItemDirective id="IncreaseIndent" prefixIcon="e-de-ctnr-increaseindent e-icons" tooltipText="Increase Indent" />
-          <ItemDirective id="DecreaseIndent" prefixIcon="e-de-ctnr-decreaseindent e-icons" tooltipText="Decrease Indent" />
-          <ItemDirective type="Separator" />
-          <ItemDirective template={contentTemplate1} />
-          <ItemDirective id="ClearFormat" prefixIcon="e-de-ctnr-clearall e-icons" tooltipText="Clear Formatting" />
-          <ItemDirective type="Separator" />
-          <ItemDirective id="ShowParagraphMark" prefixIcon="e-de-e-paragraph-mark e-icons" tooltipText="Show the hidden characters like spaces, tab, paragraph marks, and breaks.(Ctrl + *)" />
-        </ToolbarComponent>
-
-        <DocumentEditorComponent
-          id="container"
-          ref={scope => {
-            documenteditor = scope;
-          }}
-          isReadOnly={false}
-          enableSelection={true}
-          enableEditor={true}
-          enableEditorHistory={true}
-          enableContextMenu={true}
-          enableTableDialog={true}
-          height={'330px'}
-        />
-      </div> */}
-
-      <div>
-
-        {/* <DocumentEditorComponent
-          id="container"
-          height={"100px"}
-          ref={(scope) => {
-            documenteditor = scope;
-          }}
-          isReadOnly={false}
-          enableSelection={true}
-          enableEditor={true}
-          enableEditorHistory={true}
-          enableContextMenu={true}
-        /> */}
-      </div>
+      <div></div>
 
       <div className="flex border p-4 gap-4">
         {/* File Button and Dropdown */}
@@ -1227,10 +767,7 @@ function SyncFusionEditor() {
           )}
         </div>
 
-
-
-
-        {/* <div className="relative">
+        <div className="relative">
           <button
             className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
             onClick={() => toggleDropdown("attach")}
@@ -1250,7 +787,7 @@ function SyncFusionEditor() {
               </li>
             </ul>
           )}
-        </div> */}
+        </div>
         <Box sx={{ width: "100%", px: 2.6, py: 0.5 }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button variant="outlined" sx={{ textTransform: "none" }}>
@@ -1278,9 +815,6 @@ function SyncFusionEditor() {
       {/* <div id="xyz">show </div> */}
 
       <div className="  ">
-
-
-
         <div className="text styling flex items-center">
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
@@ -1304,9 +838,21 @@ function SyncFusionEditor() {
                 prefixIcon="e-icons e-highlight"
                 tooltipText="Highlight"
               /> */}
-              <ItemDirective id="strikethrough" prefixIcon="e-icons e-strikethrough" tooltipText="Strikethrough" />
-              <ItemDirective id="subscript" prefixIcon="e-icons e-subscript" tooltipText="Subscript" />
-              <ItemDirective id="superscript" prefixIcon="e-icons e-superscript" tooltipText="Superscript" />
+              <ItemDirective
+                id="strikethrough"
+                prefixIcon="e-icons e-strikethrough"
+                tooltipText="Strikethrough"
+              />
+              <ItemDirective
+                id="subscript"
+                prefixIcon="e-icons e-subscript"
+                tooltipText="Subscript"
+              />
+              <ItemDirective
+                id="superscript"
+                prefixIcon="e-icons e-superscript"
+                tooltipText="Superscript"
+              />
 
               <ItemDirective type="Separator" />
 
@@ -1339,36 +885,55 @@ function SyncFusionEditor() {
                 tooltipText="Justify"
               />
 
+              <ItemDirective
+                template={lineHeight1}
+                prefixIcon="e-de-ctnr-aligncenter e-icons"
+                tooltipText="Line Height 1"
+              />
 
-              <ItemDirective template={lineHeight1} prefixIcon="e-de-ctnr-aligncenter e-icons" tooltipText="Line Height 1" />
+              <ItemDirective
+                id="Numbering-Arabic"
+                prefixIcon="e-icons e-de-ctnr-numbering"
+                tooltipText="Arabic Numbering"
+              />
+              <ItemDirective
+                id="Numbering-Roman"
+                prefixIcon="e-de-ctnr-bullets e-icons"
+                tooltipText="Roman Numbering"
+              />
+              <ItemDirective
+                id="clearlist"
+                text="Clear"
+                tooltipText="Clear List"
+              />
 
-              <ItemDirective id="Numbering-Arabic" prefixIcon="e-icons e-de-ctnr-numbering" tooltipText="Arabic Numbering" />
-              <ItemDirective id="Numbering-Roman" prefixIcon="e-de-ctnr-bullets e-icons" tooltipText="Roman Numbering" />
-              <ItemDirective id="clearlist" text="Clear" tooltipText="Clear List" />
-
-
-              <ItemDirective id="uppercase" prefixIcon=" e-upper-case e-icons" tooltipText="Uppercase" />
-              <ItemDirective id="lowercase" prefixIcon="e-icons e-lower-case " tooltipText="Lowercase" />
-
-
-
-
-
+              <ItemDirective
+                id="uppercase"
+                prefixIcon=" e-upper-case e-icons"
+                tooltipText="Uppercase"
+              />
+              <ItemDirective
+                id="lowercase"
+                prefixIcon="e-icons e-lower-case "
+                tooltipText="Lowercase"
+              />
             </ItemsDirective>
           </ToolbarComponent>
           <ColorPickerComponent
             value={highlightColor}
             change={handleColorChange}
           />
-
         </div>
 
         {/* ***************Table************************ */}
-        {isTableSelected &&
+        {isTableSelected && (
           <div className="text styling flex items-center">
             <ToolbarComponent clicked={toolbarButtonClick}>
               <ItemsDirective>
-                <ItemDirective id="table" prefixIcon="e-de-ctnr-table e-icons" />
+                <ItemDirective
+                  id="table"
+                  prefixIcon="e-de-ctnr-table e-icons"
+                />
                 <ItemDirective type="Separator" />
                 <ItemDirective
                   id="insert_above"
@@ -1404,11 +969,14 @@ function SyncFusionEditor() {
                   prefixIcon="e-de-ctnr-deletecolumns e-icons"
                 />
                 <ItemDirective type="Separator" />
-                <ItemDirective id="merge_cell" text="Merge Cells" prefixIcon="e-de-ctnr-mergecells e-icons" />
+                <ItemDirective
+                  id="merge_cell"
+                  text="Merge Cells"
+                  prefixIcon="e-de-ctnr-mergecells e-icons"
+                />
                 <ItemDirective type="Separator" />
 
                 {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
-
 
                 <DropDownListComponent
                   id="borderWidthDropdown"
@@ -1420,8 +988,11 @@ function SyncFusionEditor() {
                 {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
                 <ItemDirective type="Separator" />
 
-                <ItemDirective id="set_border_width" text="Apply Border" prefixIcon="your-icon-class-for-border-width" />
-
+                <ItemDirective
+                  id="set_border_width"
+                  text="Apply Border"
+                  prefixIcon="your-icon-class-for-border-width"
+                />
               </ItemsDirective>
             </ToolbarComponent>
 
@@ -1462,11 +1033,8 @@ function SyncFusionEditor() {
               blur={applyMargins}
             />
           </div> */}
-
-
-
           </div>
-        }
+        )}
       </div>
 
       <DocumentEditorContainerComponent
@@ -1483,242 +1051,3 @@ function SyncFusionEditor() {
 }
 
 export default SyncFusionEditor;
-
-// import * as React from "react";
-// import {
-//   DocumentEditorComponent,
-//   Selection,
-//   Editor,
-//   EditorHistory,
-//   ContextMenu,
-// } from "@syncfusion/ej2-react-documenteditor";
-// import {
-//   ToolbarComponent,
-//   ItemDirective,
-// } from "@syncfusion/ej2-react-navigations";
-// import {
-//   DropDownButtonComponent,
-//   ItemModel,
-// } from "@syncfusion/ej2-react-splitbuttons";
-
-// //Inject required modules.
-// DocumentEditorComponent.Inject(Selection, Editor, EditorHistory, ContextMenu);
-
-// function SyncFeson() {
-//   const documenteditor = React.useRef<DocumentEditorComponent | null>(null);
-
-//   React.useEffect(() => {
-//     componentDidMount();
-//   }, []);
-
-//   const items: ItemModel[] = [
-//     {
-//       text: "Single",
-//     },
-//     {
-//       text: "1.15",
-//     },
-//     {
-//       text: "1.5",
-//     },
-//     {
-//       text: "Double",
-//     },
-//   ];
-
-//   function contentTemplate1() {
-//     return (
-//       <DropDownButtonComponent
-//         items={items}
-//         iconCss="e-de-icon-LineSpacing"
-//         select={lineSpacingAction}
-//       ></DropDownButtonComponent>
-//     );
-//   }
-
-//   function componentDidMount(): void {
-//     if (documenteditor.current) {
-//       documenteditor.current.selectionChange = () => {
-//         setTimeout(() => {
-//           onSelectionChange();
-//         }, 20);
-//       };
-//     }
-//   }
-
-//   function toolbarButtonClick(arg: { item: { id: string } }): void {
-//     if (documenteditor.current) {
-//       switch (arg.item.id) {
-//         case "AlignLeft":
-//           documenteditor.current.editor.toggleTextAlignment("Left");
-//           break;
-//         case "AlignRight":
-//           documenteditor.current.editor.toggleTextAlignment("Right");
-//           break;
-//         case "AlignCenter":
-//           documenteditor.current.editor.toggleTextAlignment("Center");
-//           break;
-//         case "Justify":
-//           documenteditor.current.editor.toggleTextAlignment("Justify");
-//           break;
-//         case "IncreaseIndent":
-//           documenteditor.current.editor.increaseIndent();
-//           break;
-//         case "DecreaseIndent":
-//           documenteditor.current.editor.decreaseIndent();
-//           break;
-//         case "ClearFormat":
-//           if (documenteditor.current) {
-//             documenteditor.current.editor.clearFormatting();
-//           }
-//           break;
-//         case "ShowParagraphMark":
-//           if (documenteditor.current) {
-//             documenteditor.current.documentEditorSettings.showHiddenMarks =
-//               !documenteditor.current.documentEditorSettings.showHiddenMarks;
-//           }
-//           break;
-//       }
-//     }
-//   }
-
-//   function lineSpacingAction(args: any) {
-//     const text: string = args.item.text;
-//     if (documenteditor.current) {
-//       switch (text) {
-//         case "Single":
-//           documenteditor.current.selection.paragraphFormat.lineSpacing = 1;
-//           break;
-//         case "1.15":
-//           documenteditor.current.selection.paragraphFormat.lineSpacing = 1.15;
-//           break;
-//         case "1.5":
-//           documenteditor.current.selection.paragraphFormat.lineSpacing = 1.5;
-//           break;
-//         case "Double":
-//           documenteditor.current.selection.paragraphFormat.lineSpacing = 2;
-//           break;
-//       }
-//       setTimeout((): void => {
-//         if (documenteditor.current) {
-//           documenteditor.current.focusIn();
-//         }
-//       }, 30);
-//     }
-//   }
-
-//   function onSelectionChange() {
-//     if (documenteditor.current && documenteditor.current.selection) {
-//       const paragraphFormat = documenteditor.current.selection.paragraphFormat;
-//       const toggleBtnId = [
-//         "AlignLeft",
-//         "AlignCenter",
-//         "AlignRight",
-//         "Justify",
-//         "ShowParagraphMark",
-//       ];
-
-//       toggleBtnId.forEach((id) => {
-//         const toggleBtn = document.getElementById(id);
-//         if (toggleBtn) {
-//           toggleBtn.classList.remove("e-btn-toggle");
-//         }
-//       });
-
-//       if (paragraphFormat.textAlignment === "Left") {
-//         const alignLeftBtn = document.getElementById("AlignLeft");
-//         if (alignLeftBtn) {
-//           alignLeftBtn.classList.add("e-btn-toggle");
-//         }
-//       } else if (paragraphFormat.textAlignment === "Right") {
-//         const alignRightBtn = document.getElementById("AlignRight");
-//         if (alignRightBtn) {
-//           alignRightBtn.classList.add("e-btn-toggle");
-//         }
-//       } else if (paragraphFormat.textAlignment === "Center") {
-//         const alignCenterBtn = document.getElementById("AlignCenter");
-//         if (alignCenterBtn) {
-//           alignCenterBtn.classList.add("e-btn-toggle");
-//         }
-//       } else {
-//         const justifyBtn = document.getElementById("Justify");
-//         if (justifyBtn) {
-//           justifyBtn.classList.add("e-btn-toggle");
-//         }
-//       }
-
-//       if (documenteditor.current.documentEditorSettings.showHiddenMarks) {
-//         const showParagraphMarkBtn =
-//           document.getElementById("ShowParagraphMark");
-//         if (showParagraphMarkBtn) {
-//           showParagraphMarkBtn.classList.add("e-btn-toggle");
-//         }
-//       }
-//     }
-//   }
-
-//   return (
-//     <div>
-//       <ToolbarComponent id="toolbar" clicked={toolbarButtonClick}>
-//         <ItemDirective
-//           id="AlignLeft"
-//           prefixIcon="e-de-ctnr-alignleft e-icons"
-//           tooltipText="Align Left"
-//         />
-//         <ItemDirective
-//           id="AlignCenter"
-//           prefixIcon="e-de-ctnr-aligncenter e-icons"
-//           tooltipText="Align Center"
-//         />
-//         <ItemDirective
-//           id="AlignRight"
-//           prefixIcon="e-de-ctnr-alignright e-icons"
-//           tooltipText="Align Right"
-//         />
-//         <ItemDirective
-//           id="Justify"
-//           prefixIcon="e-de-ctnr-justify e-icons"
-//           tooltipText="Justify"
-//         />
-//         <ItemDirective type="Separator" />
-//         <ItemDirective
-//           id="IncreaseIndent"
-//           prefixIcon="e-de-ctnr-increaseindent e-icons"
-//           tooltipText="Increase Indent"
-//         />
-//         <ItemDirective
-//           id="DecreaseIndent"
-//           prefixIcon="e-de-ctnr-decreaseindent e-icons"
-//           tooltipText="Decrease Indent"
-//         />
-//         <ItemDirective type="Separator" />
-//         <ItemDirective template={contentTemplate1} />
-//         <ItemDirective
-//           id="ClearFormat"
-//           prefixIcon="e-de-ctnr-clearall e-icons"
-//           tooltipText="Clear Formatting"
-//         />
-//         <ItemDirective type="Separator" />
-//         <ItemDirective
-//           id="ShowParagraphMark"
-//           prefixIcon="e-de-e-paragraph-mark e-icons"
-//           tooltipText="Show the hidden characters like spaces, tab, paragraph marks, and breaks.(Ctrl + *)"
-//         />
-//       </ToolbarComponent>
-
-//       <DocumentEditorComponent
-//         id="container"
-//         ref={documenteditor}
-//         isReadOnly={false}
-//         enableSelection={true}
-//         enableEditor={true}
-//         enableEditorHistory={true}
-//         enableContextMenu={true}
-//         enableTableDialog={true}
-//         height={"330px"}
-//       />
-//     </div>
-//   );
-// }
-
-// export default SyncFeson;
