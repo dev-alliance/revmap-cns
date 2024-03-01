@@ -99,9 +99,12 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
           mt: -5,
         }}
       >
-        <Typography variant="body1" sx={{ mt: 1, mb: 2 }}>
-          PK (<span style={{ color: "primary" }}>{email}</span>) has shared
-          Residential Rental Agreement to sign.
+        <Typography variant="body1" sx={{ mt: 1 }}>
+          PK ({" "}
+          <Box component="span" sx={{ color: "primary.main" }}>
+            {email}
+          </Box>
+          ) has shared Residential Rental Agreement to sign.
         </Typography>
       </DialogTitle>
 
@@ -123,10 +126,16 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
               // maxWidth: isMobile ? "20px" : "50px",
               width: "30%",
               // height: "auto",
-              marginTop: "1rem", // Adjust as needed
-              marginBottom: "1rem", // Adjust as needed
+              // Adjust as needed
             }}
           />
+          <Typography variant="body1" sx={{ mt: 1, mb: 2, ml: -14 }}>
+            PK (
+            <Box component="span" sx={{ color: "primary.main" }}>
+              {email}
+            </Box>
+            ) has shared Residential Rental Agreement to sign.
+          </Typography>
           <Controller
             name="name"
             control={control}

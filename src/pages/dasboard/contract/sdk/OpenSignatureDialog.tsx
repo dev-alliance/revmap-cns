@@ -19,6 +19,7 @@ import SignatureSentToSign from "@/pages/dasboard/contract/sdk/SignatureSentToSi
 import { useLocation } from "react-router-dom";
 import { ContractContext } from "@/context/ContractContext";
 import OpenSignatureDoc from "@/pages/dasboard/contract/sdk/OpenSignatureDoc";
+import OpenDrawSignature from "@/pages/dasboard/contract/sdk/OpenDrawSignature";
 
 // Assuming your form values type is correct
 type FormValues = {
@@ -59,9 +60,7 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
       );
       break;
     case 2:
-      componentToRender = (
-        <SignatureSendDoc email={"abc"} onButtonClick={handleNextStep} />
-      );
+      componentToRender = <OpenDrawSignature />;
       break;
     case 3:
       componentToRender = (
