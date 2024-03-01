@@ -34,7 +34,8 @@ import {
   IconButton,
   Divider,
 } from "@mui/material";
-
+import linepng from '../../../../assets/line.png'
+import bucket from '../../../../assets/bucket.png'
 import {
   DocumentEditorComponent,
   Selection,
@@ -241,26 +242,64 @@ function SyncFusionEditor() {
     }
   };
   // text color highlight
-  const [highlightColor, setHighlightColor] = useState("#FF5733");
-  const applyHighlightColor = () => {
+  const [fontColor, setFontColor] = useState('#000000'); // Default font color
+  const [highlightColor, setHighlightColor] = useState('#FF5733'); // Default highlight color
+
+  // Function to change the font color
+  const changeFontColor = (args: any) => {
+    const color = args.currentValue.hex;
+    setFontColor(color);
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
-      // Apply the selected highlight color
-      documentEditor.selection.characterFormat.highlightColor = highlightColor;
+      documentEditor.selection.characterFormat.fontColor = color;
     }
   };
 
-  const handleColorChange = (args: any) => {
-    setHighlightColor(args.currentValue.hex);
-    applyHighlightColor();
+  // Function to change the highlight color
+  const changeHighlightColor = (args: any) => {
+    const color = args.currentValue.hex;
+    setHighlightColor(color);
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (documentEditor && documentEditor.selection) {
+      documentEditor.selection.characterFormat.highlightColor = color;
+    }
   };
 
-  //To Change the font Color of selected content
-  function changeFontColor(args: any) {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    documentEditor.selection.characterFormat.fontColor = args.currentValue.hex;
-    documentEditor.focusIn();
-  }
+  // Templates for ColorPicker within ItemDirective
+  const fontColorPickerTemplate = () => (
+    <>
+      <ColorPickerComponent showButtons={true} value={fontColor} change={changeFontColor} />
+      <button
+        onClick={() => console.log("Open color picker here")}
+        style={{
+          fontWeight: "bold",
+          color: "#000000",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          fontSize: "16px",
+          paddingTop: '3px'
+        }}
+      >
+        A
+      </button>
+    </>
+  );
+
+  const highlightColorPickerTemplate = () => (
+    <>
+      <div className="w-[60px]">
+        <ColorPickerComponent showButtons={true} value={highlightColor} change={changeHighlightColor} />
+        <button className="  ">
+          <img src={bucket} className="h-5 w-5 -mt-3 absolute" />
+
+        </button>
+      </div>
+    </>
+  );
+
+
+
 
   const itemsss: ItemModel[] = [
     {
@@ -279,11 +318,19 @@ function SyncFusionEditor() {
 
   function lineHeight1() {
     return (
-      <DropDownButtonComponent
-        items={itemsss}
-        iconCss="e-de-icon-LineSpacing"
-        select={lineSpacingAction}
-      ></DropDownButtonComponent>
+      <div className="w-[50px]">
+        <DropDownButtonComponent
+          items={itemsss}
+          iconCss="e-de-icon-LineSpacing"
+          select={lineSpacingAction}
+        ></DropDownButtonComponent>
+
+        <button className="-ml-10 mt-2 ">
+          <img src={linepng} className="h-3 w-3" />
+
+        </button>
+
+      </div>
     );
   }
 
@@ -309,6 +356,25 @@ function SyncFusionEditor() {
       documentEditor.focusIn();
     }, 30);
   }
+
+
+
+
+
+
+
+
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+  // tables formatting
+
+  // let documenteditor: DocumentEditorComponent;
+  // React.useEffect(() => {
+  //   ComponentDidMount();
+  // }, []);
+  // function ComponentDidMount() {
+  //   documenteditor.editor.insertTable(2, 2);
+  // }
 
   function toolbarButtonClick(arg: any) {
     console.log("arg", arg);
@@ -382,7 +448,7 @@ function SyncFusionEditor() {
   };
 
   const handleFillColorChange = (args: any) => {
-    console.log(args);
+    console.log(args)
     setCellFillColor(args.currentValue.hex);
     applyCellFillColor();
   };
@@ -492,30 +558,7 @@ function SyncFusionEditor() {
     "72",
     "96",
   ];
-  function contentTemplate1() {
-    return (
-      <>
-        <ColorPickerComponent
-          showButtons={true}
-          value="#000000"
-          change={changeFontColor}
-        ></ColorPickerComponent>
-        <button
-          onClick={() => console.log("Open color picker here")}
-          style={{
-            fontWeight: "bold",
-            color: "#000000",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "16px", // Adjust as needed
-          }}
-        >
-          A
-        </button>
-      </>
-    );
-  }
+
   function contentTemplate2() {
     return (
       <ComboBoxComponent
@@ -799,6 +842,8 @@ function SyncFusionEditor() {
         <div className="text styling flex items-center">
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
+              <ItemDirective template={contentTemplate2} />
+              <ItemDirective template={contentTemplate3} />
               <ItemDirective
                 id="bold"
                 prefixIcon="e-icons e-bold"
@@ -837,13 +882,28 @@ function SyncFusionEditor() {
 
               <ItemDirective type="Separator" />
 
-              <ItemDirective template={contentTemplate1} />
+              {/* Font Color Picker */}
+              <ItemDirective tooltipText="Font Color" template={fontColorPickerTemplate} />
+              {/* Highlight Color Picker */}
+              <ItemDirective tooltipText="Highlight Color" template={highlightColorPickerTemplate} />
+
               <ItemDirective type="Separator" />
-              <ItemDirective template={contentTemplate2} />
-              <ItemDirective template={contentTemplate3} />
+              {/* uppercase lowercase */}
+              <ItemDirective
+                id="uppercase"
+                prefixIcon=" e-upper-case e-icons"
+                tooltipText="Uppercase"
+              />
+              <ItemDirective
+                id="lowercase"
+                prefixIcon="e-icons e-lower-case "
+                tooltipText="Lowercase"
+              />
+              <ItemDirective type="Separator" />
 
               {/* <ItemDirective template={lineHeight1} /> */}
 
+              {/* align text  */}
               <ItemDirective
                 id="AlignLeft"
                 prefixIcon="e-de-ctnr-alignleft e-icons"
@@ -865,7 +925,7 @@ function SyncFusionEditor() {
                 prefixIcon="e-de-ctnr-justify e-icons"
                 tooltipText="Justify"
               />
-
+              {/* lineheight  */}
               <ItemDirective
                 template={lineHeight1}
                 prefixIcon="e-de-ctnr-aligncenter e-icons"
@@ -888,22 +948,12 @@ function SyncFusionEditor() {
                 tooltipText="Clear List"
               />
 
-              <ItemDirective
-                id="uppercase"
-                prefixIcon=" e-upper-case e-icons"
-                tooltipText="Uppercase"
-              />
-              <ItemDirective
-                id="lowercase"
-                prefixIcon="e-icons e-lower-case "
-                tooltipText="Lowercase"
-              />
             </ItemsDirective>
           </ToolbarComponent>
-          <ColorPickerComponent
+          {/* <ColorPickerComponent
             value={highlightColor}
             change={handleColorChange}
-          />
+          /> */}
         </div>
 
         {/* ***************Table************************ */}
@@ -1025,7 +1075,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-        // showPropertiesPane={false}
+      // showPropertiesPane={false}
       />
     </div>
   );
