@@ -264,13 +264,13 @@ function SyncFusionEditor() {
     }
   };
 
-  const handleColorChange = (args) => {
+  const handleColorChange = (args: any) => {
     setHighlightColor(args.currentValue.hex);
     applyHighlightColor();
   };
 
   //To Change the font Color of selected content
-  function changeFontColor(args) {
+  function changeFontColor(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.selection.characterFormat.fontColor = args.currentValue.hex;
     documentEditor.focusIn();
@@ -340,7 +340,7 @@ function SyncFusionEditor() {
   //   documenteditor.editor.insertTable(2, 2);
   // }
 
-  function toolbarButtonClick(arg) {
+  function toolbarButtonClick(arg: any) {
     console.log("arg", arg);
     const documentEditor = editorContainerRef.current.documentEditor;
     switch (arg.item.id) {
@@ -413,7 +413,7 @@ function SyncFusionEditor() {
 
   };
 
-  const handleFillColorChange = (args) => {
+  const handleFillColorChange = (args: any) => {
     console.log(args)
     setCellFillColor(args.currentValue.hex);
     applyCellFillColor();
@@ -910,7 +910,7 @@ function SyncFusionEditor() {
     );
   }
 
-  function onWrapTextChange(args) {
+  function onWrapTextChange(args: any) {
     if (editorContainerRef.current) {
       const documentEditor = editorContainerRef.current.documentEditor;
       // Assuming we have the border width value in 'args.value'
