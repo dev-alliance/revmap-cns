@@ -96,7 +96,7 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mt: -5,
+          mt: -10,
         }}
       >
         <Typography variant="body1" sx={{ mt: 1 }}>

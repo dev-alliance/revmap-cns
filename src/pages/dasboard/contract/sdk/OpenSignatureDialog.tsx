@@ -90,7 +90,7 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
       <Dialog
         open={openDocoment}
         onClose={handleCloseDialog}
-        maxWidth="sm"
+        // maxWidth="sm"
         fullWidth
         sx={{ alignItems: "center" }}
       >
