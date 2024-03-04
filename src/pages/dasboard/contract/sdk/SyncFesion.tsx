@@ -293,7 +293,10 @@ function SyncFusionEditor() {
       <div className="w-[60px]">
         <ColorPickerComponent showButtons={true} value={highlightColor} change={changeHighlightColor} />
         <button className="  ">
-          <img src={colorPencil} className="h-5 w-5 -mt-3 absolute" />
+          {/* <img src={colorPencil} className="h-5 w-5 -mt-3 absolute" /> */}
+          <svg className="absolute -mt-3" width="24" height="24" focusable="false"><g fill-rule="nonzero"><path id="tox-icon-highlight-bg-color__color" d="M3 18h18v3H3z"></path><path d="M4,17l2.4-2.4C6.1,14.3,6,14,6,13.6c0-0.4,0.2-0.8,0.5-1l9.1-9.1C15.9,3.1,16.2,3,16.6,3s0.8,0.1,1.1,0.4l1.9,1.9C19.8,5.6,20,6,20,6.4s-0.1,0.8-0.4,1.1l-9.1,9.1c-0.3,0.3-0.7,0.4-1.1,0.4s-0.7-0.1-1-0.4L8,17H4z M13.4,11.5l-1.9-1.9l-4,4l1.9,1.9L13.4,11.5z">
+          </path>
+          </g></svg>
         </button>
       </div>
     </>
