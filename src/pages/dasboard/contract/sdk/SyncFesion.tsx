@@ -36,6 +36,7 @@ import {
 } from "@mui/material";
 import linepng from '../../../../assets/line.png'
 import bucket from '../../../../assets/bucket.png'
+import colorPencil from '../../../../assets/colorPencil.png'
 import {
   DocumentEditorComponent,
   Selection,
@@ -114,7 +115,7 @@ function SyncFusionEditor() {
 
   const onToolbarClick = (args: any) => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    console.log("args :", args.item.id);
+    console.log("args text:", args.item.id);
     // if (!documentEditor) {
     //   console.error("Document Editor is not initialized yet.");
     //   return;
@@ -243,7 +244,6 @@ function SyncFusionEditor() {
   };
   // text color highlight
   const [fontColor, setFontColor] = useState('#000000'); // Default font color
-  const [highlightColor, setHighlightColor] = useState('#FF5733'); // Default highlight color
 
   // Function to change the font color
   const changeFontColor = (args: any) => {
@@ -255,8 +255,10 @@ function SyncFusionEditor() {
     }
   };
 
+  const [highlightColor, setHighlightColor] = useState('#FFFF00'); // Default highlight color
   // Function to change the highlight color
   const changeHighlightColor = (args: any) => {
+    console.log('args color hightlight: ', args)
     const color = args.currentValue.hex;
     setHighlightColor(color);
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -291,8 +293,7 @@ function SyncFusionEditor() {
       <div className="w-[60px]">
         <ColorPickerComponent showButtons={true} value={highlightColor} change={changeHighlightColor} />
         <button className="  ">
-          <img src={bucket} className="h-5 w-5 -mt-3 absolute" />
-
+          <img src={colorPencil} className="h-5 w-5 -mt-3 absolute" />
         </button>
       </div>
     </>
@@ -377,7 +378,7 @@ function SyncFusionEditor() {
   // }
 
   function toolbarButtonClick(arg: any) {
-    console.log("arg", arg);
+    console.log("arg table", arg);
     const documentEditor = editorContainerRef.current.documentEditor;
     switch (arg.item.id) {
       case "table":
@@ -443,7 +444,6 @@ function SyncFusionEditor() {
 
   const applyCellFillColor = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
-
     documentEditor.selection.cellFormat.background = cellFillColor;
   };
 
@@ -452,6 +452,24 @@ function SyncFusionEditor() {
     setCellFillColor(args.currentValue.hex);
     applyCellFillColor();
   };
+
+
+  const cellFillColorPickerTemplate = () => (
+    <>
+      <div className="relative w-[60px]">
+        <ColorPickerComponent
+          id="cellFillColorPicker"
+          showButtons={true}
+          value={cellFillColor}
+          change={handleFillColorChange}
+        />
+        <button className="absolute top-0 -right-1 mt-1.5" onClick={() => {/* logic to open color picker if needed */ }}>
+          <img src={bucket} className="h-5 w-5" alt="Fill Cell" />
+        </button>
+      </div>
+    </>
+  );
+
 
   const [topMargin, setTopMargin] = useState(0);
   const [bottomMargin, setBottomMargin] = useState(0);
@@ -1024,15 +1042,20 @@ function SyncFusionEditor() {
                   text="Apply Border"
                   prefixIcon="your-icon-class-for-border-width"
                 />
+
+                <ItemDirective type="Separator" />
+
+
+                <ItemDirective tooltipText="Cell Fill Color" template={cellFillColorPickerTemplate} />
               </ItemsDirective>
             </ToolbarComponent>
 
-            <ColorPickerComponent
+            {/* <ColorPickerComponent
               id="cellFillColorPicker"
               mode="Palette"
               showButtons={false}
               change={handleFillColorChange}
-            />
+            /> */}
 
             {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
             <NumericTextBoxComponent
