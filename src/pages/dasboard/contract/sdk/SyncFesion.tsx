@@ -36,7 +36,8 @@ import {
 } from "@mui/material";
 import linepng from '../../../../assets/line.png'
 import bucket from '../../../../assets/bucket.png'
-import colorPencil from '../../../../assets/colorPencil.png'
+import undo from '../../../../assets/undo.png'
+import redo from '../../../../assets/redo.png'
 import {
   DocumentEditorComponent,
   Selection,
@@ -82,6 +83,7 @@ function SyncFusionEditor() {
     signature: false,
     export: false,
     attach: false,
+    insert: false,
   });
 
   const toggleDropdown = (dropdown: any) => {
@@ -91,6 +93,7 @@ function SyncFusionEditor() {
       signature: false,
       export: false,
       attach: false,
+      insert: false,
       [dropdown]: !prevState[dropdown],
     }));
   };
@@ -653,41 +656,43 @@ function SyncFusionEditor() {
     <div>
       <div></div>
 
-      <div className="flex border p-4 gap-4">
+      <div className="flex border py-1 px-4 gap-4">
         {/* File Button and Dropdown */}
 
-        <div className="relative">
+        <div className="relative ">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
+            className="text-black text-[14px] font-semibold p-2 rounded focus:outline-none mr-6 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("file")}
           >
             File
           </button>
           {openDropdowns.file && (
             <ul
-              className="absolute left-0 mt-2 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-24 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
               <li
-                className="p-2 hover:bg-gray-200 cursor-pointer"
+                className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
                   triggerClick("container_toolbar_open");
                 }}
               >
                 Open
               </li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">Save</li>
+              <li className="px-2 py-2 hover:bg-gray-200 cursor-pointer">Save</li>
               <li
-                className="p-2 hover:bg-gray-200 cursor-pointer"
+                className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_properties");
                 }}
               >
                 Edit
               </li>
+              <div onClick={() => toggleDropdown("file")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
+
             </ul>
           )}
         </div>
@@ -695,21 +700,29 @@ function SyncFusionEditor() {
         {/* View Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
+            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("view")}
           >
             View
           </button>
           {openDropdowns.view && (
             <ul
-              className="absolute left-0 mt-2 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
               <li
-                className="p-2 hover:bg-gray-200 cursor-pointer"
+                className="px-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  triggerClick("container_toolbar_find");
+                }}
+              >
+                Find
+              </li>
+              <li
+                className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
                   triggerClick("container_toolbar_comment");
                 }}
@@ -717,7 +730,7 @@ function SyncFusionEditor() {
                 Add comment
               </li>
               <li
-                className="p-2 hover:bg-gray-200 cursor-pointer"
+                className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
                   triggerClick("container_toolbar_track");
                 }}
@@ -726,7 +739,7 @@ function SyncFusionEditor() {
               </li>
 
               <li
-                className="p-2 hover:bg-gray-200 cursor-pointer"
+                className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_bold");
                 }}
@@ -734,7 +747,7 @@ function SyncFusionEditor() {
                 Reject all changes
               </li>
               <li
-                className="p-2 hover:bg-gray-200 cursor-pointer"
+                className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_bold");
                 }}
@@ -742,13 +755,85 @@ function SyncFusionEditor() {
                 Accept all changes
               </li>
               <li
-                className="p-2 hover:bg-gray-200 cursor-pointer"
+                className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_bold");
                 }}
               >
                 View Audit trail
               </li>
+              <div onClick={() => toggleDropdown("view")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
+
+            </ul>
+          )}
+        </div>
+
+        {/* insert and Dropdown */}
+        <div className="relative">
+          <button
+            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            onClick={() => toggleDropdown("insert")}
+          >
+            Insert
+          </button>
+          {openDropdowns.insert && (
+            <ul
+              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
+              style={{
+                backgroundColor: "#F0F2F5",
+                border: "1px solid #C1C1C1",
+              }}
+            >
+              <li
+                className="px-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  triggerClick("container_toolbar_table");
+                }}
+              >
+                Table
+              </li>
+              <li
+                className="px-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  triggerClick("container_toolbar_link");
+                }}
+              >
+                Link
+              </li>
+              <li
+                className="px-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  triggerClick("container_toolbar_header");
+                }}
+              >
+                Header
+              </li>
+
+              <li
+                className="px-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  triggerClick("container_toolbar_footer");
+                }}
+              >
+                Footer
+              </li>
+              <li
+                className="px-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  triggerClick("container_toolbar_page_setup");
+                }}
+              >
+                Page Setup
+              </li>
+              <li
+                className="px-2 hover:bg-gray-200 cursor-pointer"
+                onClick={() => {
+                  triggerClick("container_toolbar_page_number");
+                }}
+              >
+                Page Number
+              </li>
+              <div onClick={() => toggleDropdown("insert")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
             </ul>
           )}
         </div>
@@ -756,29 +841,30 @@ function SyncFusionEditor() {
         {/* Signature Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
+            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("signature")}
           >
             Signature
           </button>
           {openDropdowns.signature && (
             <ul
-              className="absolute left-0 mt-2 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Request signature
               </li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Cancel all signature
               </li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Revert to review
               </li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">Sign</li>
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">Sign</li>
+              <div onClick={() => toggleDropdown("signature")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
             </ul>
           )}
         </div>
@@ -786,54 +872,58 @@ function SyncFusionEditor() {
         {/* Export Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
+            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("export")}
           >
             Export
           </button>
           {openDropdowns.export && (
             <ul
-              className="absolute left-0 mt-2 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Download PDF
               </li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Download Word
               </li>
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Download signature certificate
               </li>
+              <div onClick={() => toggleDropdown("export")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
+
             </ul>
           )}
         </div>
 
         <div className="relative">
           <button
-            className="text-black p-2 rounded focus:outline-none focus:ring focus:ring-blue-500 mx-10 hover:bg-blue-700 hover:text-white"
+            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("attach")}
           >
             Attach
           </button>
           {openDropdowns.attach && (
             <ul
-              className="absolute left-0 mt-2 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li className="p-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Add attachment
               </li>
+              <div onClick={() => toggleDropdown("attach")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
+
             </ul>
           )}
         </div>
-        <Box sx={{ width: "100%", px: 2.6, py: 0.5 }}>
+        <Box sx={{ width: "100%", px: 2.6 }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button variant="outlined" sx={{ textTransform: "none" }}>
               Cancel
@@ -861,6 +951,15 @@ function SyncFusionEditor() {
 
       <div className="  ">
         <div className="text styling flex items-center">
+          <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
+
+            <p onClick={() => {
+              triggerClick("container_toolbar_undo ");
+            }}><img src={undo} className="h-6 w-5 cursor-pointer" /> </p>
+            <p onClick={() => {
+              triggerClick("container_toolbar_redo ");
+            }}><img src={redo} className="h-6 w-5 cursor-pointer" /> </p>
+          </div>
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
               <ItemDirective template={contentTemplate2} />

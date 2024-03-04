@@ -7,53 +7,59 @@
 /* for now end  */
 
 .link-no-underline {
-    text-decoration: none;
-    color: inherit;
+  text-decoration: none;
+  color: inherit;
 }
 
 .link-no-underline:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* topbar height  */
 .e-de-ctnr-toolbar {
-    /* height: 180px !important; */
+  /* height: 180px !important; */
 }
 
 .e-de-ctnr-properties-pane-btn {
-    display: none;
+  display: none;
 }
 
 .e-de-pane {
-    display: none !important;
+  display: none !important;
 }
 
 .e-popup {
-    height: 600px !important;
+  height: 600px !important;
 }
 
 .e-content {
-    width: 90%;
+  width: 90%;
 }
 
 #dialog_538769107_0_dialog-content {
-    height: 300px !important;
+  height: 300px !important;
 }
 
 
 .e-icons.e-font-color {
-    background-image: url('./assets/fontcolor.png');
-    width: 100px;
-    height: 100px;
+  background-image: url('./assets/fontcolor.png');
+  width: 100px;
+  height: 100px;
 }
 
 .e-icons.e-text-highlight {
-    background-image: url('./assets/fontcolor.png');
-    width: 100px;
-    height: 100px;
+  background-image: url('./assets/fontcolor.png');
+  width: 100px;
+  height: 100px;
 }
 
+#container_editorReview_Tab {
+  width: 300px !important;
+}
 
+.e-de-ctnr-toolbar {
+  display: none !important;
+}
 
 /* #container_editor_font_properties_leftDiv {
   position: absolute !important;
@@ -191,67 +197,67 @@
 /* *****MEDIA QUESRRY ************** */
 @media screen and (max-width: 1450px) {
 
-    /* style */
-    /* #container_editor_font_properties_leftDiv {
+  /* style */
+  /* #container_editor_font_properties_leftDiv {
     left: -68% !important;
     top: -115px !important;
   } */
 
-    /* align */
-    /* #container_editor_font_properties_indentWholeDiv {
+  /* align */
+  /* #container_editor_font_properties_indentWholeDiv {
     left: -68% !important;
     top: -80px !important;
   } */
 
-    /* font color */
-    /* #container_editor_font_properties_colorDiv {
+  /* font color */
+  /* #container_editor_font_properties_colorDiv {
     position: absolute !important;
     left: -48.5% !important;
     top: -115px !important;
   } */
 
-    /* font FAMILY AND SIZE*/
-    /* #container_editor_font_properties_sizeStyle {
+  /* font FAMILY AND SIZE*/
+  /* #container_editor_font_properties_sizeStyle {
     left: -38% !important;
     top: -80px !important;
   } */
 
-    /* uppercase  */
-    /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+  /* uppercase  */
+  /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
     position: absolute !important;
     left: -30% !important;
     top: -115px !important;
   } */
 
-    /* X power  */
-    /* #container_editor_font_properties_rightDiv {
+  /* X power  */
+  /* #container_editor_font_properties_rightDiv {
     position: absolute !important;
     left: -24% !important;
     top: -115px !important;
   } */
 
-    /* bulits  */
-    /* #container_editor_font_properties_listDiv {
+  /* bulits  */
+  /* #container_editor_font_properties_listDiv {
     position: absolute !important;
     left: -15% !important;
     top: -115px !important;
   } */
 
-    /* paragraph heading etc  */
-    /* #container_editor_font_properties_styleDiv {
+  /* paragraph heading etc  */
+  /* #container_editor_font_properties_styleDiv {
     left: -9% !important;
     top: -115px !important;
   } */
 
-    /******************** table start ******************************** */
-    /* dell and insert cell  */
-    /* .e-de-insert-del-cell {
+  /******************** table start ******************************** */
+  /* dell and insert cell  */
+  /* .e-de-insert-del-cell {
     position: absolute !important;
     left: -65% !important;
     top: -115px !important;
   } */
 
-    /* .e-de-ctnr-group-btn-top {
+  /* .e-de-ctnr-group-btn-top {
     position: absolute !important;
     left: -65% !important;
     top: -80px !important;
@@ -269,29 +275,29 @@
     top: -80px !important;
   } */
 
-    /* fill color  */
-    /* .e-de-prop-font-colorpicker {
+  /* fill color  */
+  /* .e-de-prop-font-colorpicker {
     position: absolute !important;
     left: -20% !important;
     top: -80px !important;
   } */
 
-    /* font color  */
-    /* .e-de-border-clr-picker {
+  /* font color  */
+  /* .e-de-border-clr-picker {
     position: absolute !important;
     left: -35% !important;
     top: -115px !important;
   } */
 
-    /* border width  */
-    /* #container_editor_tableBorderSize {
+  /* border width  */
+  /* #container_editor_tableBorderSize {
     position: absolute !important;
     left: -22% !important;
     top: -128px !important;
   } */
 
-    /* cell margin  */
-    /* .e-de-cellmargin-text {
+  /* cell margin  */
+  /* .e-de-cellmargin-text {
     position: absolute !important;
     left: -12% !important;
     top: -170px !important;
@@ -299,63 +305,63 @@
 }
 
 @media screen and (min-width: 1450px) and (max-width: 1700px) {
-    /* paragraph  */
+  /* paragraph  */
 
-    /* style */
-    /* #container_editor_font_properties_leftDiv {
+  /* style */
+  /* #container_editor_font_properties_leftDiv {
     left: -75% !important;
     top: -115px !important;
   } */
 
-    /* align */
-    /* #container_editor_font_properties_indentWholeDiv {
+  /* align */
+  /* #container_editor_font_properties_indentWholeDiv {
     left: -75% !important;
     top: -80px !important;
   } */
 
-    /* font color */
-    /* #container_editor_font_properties_colorDiv {
+  /* font color */
+  /* #container_editor_font_properties_colorDiv {
     position: absolute !important;
     left: -60% !important;
     top: -115px !important;
   } */
 
-    /* font FAMILY AND SIZE*/
-    /* #container_editor_font_properties_sizeStyle {
+  /* font FAMILY AND SIZE*/
+  /* #container_editor_font_properties_sizeStyle {
     left: -51% !important;
     top: -80px !important;
   } */
 
-    /* uppercase  */
-    /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
+  /* uppercase  */
+  /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
     position: absolute !important;
     left: -45% !important;
     top: -115px !important;
   } */
 
-    /* X power  */
-    /* #container_editor_font_properties_rightDiv {
+  /* X power  */
+  /* #container_editor_font_properties_rightDiv {
     position: absolute !important;
     left: -40% !important;
     top: -115px !important;
   } */
 
-    /* bulits  */
-    /* #container_editor_font_properties_listDiv {
+  /* bulits  */
+  /* #container_editor_font_properties_listDiv {
     position: absolute !important;
     left: -33% !important;
     top: -115px !important;
   } */
 
-    /* paragraph heading etc  */
-    /* #container_editor_font_properties_styleDiv {
+  /* paragraph heading etc  */
+  /* #container_editor_font_properties_styleDiv {
     left: -28% !important;
     top: -115px !important;
   } */
 
-    /******************** table start ******************************** */
-    /* dell and insert cell  */
-    /* .e-de-insert-del-cell {
+  /******************** table start ******************************** */
+  /* dell and insert cell  */
+  /* .e-de-insert-del-cell {
     position: absolute !important;
     left: -75% !important;
     top: -115px !important;
@@ -379,29 +385,29 @@
     top: -80px !important;
   } */
 
-    /* fill color  */
-    /* .e-de-prop-font-colorpicker {
+  /* fill color  */
+  /* .e-de-prop-font-colorpicker {
     position: absolute !important;
     left: -39% !important;
     top: -80px !important;
   } */
 
-    /* font color  */
-    /* .e-de-border-clr-picker {
+  /* font color  */
+  /* .e-de-border-clr-picker {
     position: absolute !important;
     left: -51% !important;
     top: -115px !important;
   } */
 
-    /* border width  */
-    /* #container_editor_tableBorderSize {
+  /* border width  */
+  /* #container_editor_tableBorderSize {
     position: absolute !important;
     left: -40% !important;
     top: -128px !important;
   } */
 
-    /* cell margin  */
-    /* .e-de-cellmargin-text {
+  /* cell margin  */
+  /* .e-de-cellmargin-text {
     position: absolute !important;
     left: -20% !important;
     top: -190px !important;
@@ -466,8 +472,8 @@
   height: 100px; 
 } */
 .e-tab {
-    display: block;
-    position: absolute !important;
+  display: block;
+  position: absolute !important;
 }
 
 /* 
@@ -479,13 +485,13 @@
 } */
 
 .e-tab .e-content .e-item {
-    background: inherit;
-    color: #000;
-    font-size: 56px;
+  background: inherit;
+  color: #000;
+  font-size: 56px;
 }
 
 .e-input-group,
 .e-input-group.e-control-wrapper {
-    display: flex;
-    vertical-align: middle;
+  display: flex;
+  vertical-align: middle;
 }

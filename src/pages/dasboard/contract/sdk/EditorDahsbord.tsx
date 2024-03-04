@@ -216,15 +216,15 @@ const MyComponent: React.FC = () => {
                       },
                     },
                   }}
-                  // onChange={(e: any) => setSearch(e.target.value)}
+                // onChange={(e: any) => setSearch(e.target.value)}
                 />
                 <Button
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="contained"
-                  // component={Link}
-                  // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-                  // disabled={!user?.role?.permissions?.create_clauses}
-                  // to="/dashboard/create-clauses"
+                // component={Link}
+                // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                // disabled={!user?.role?.permissions?.create_clauses}
+                // to="/dashboard/create-clauses"
                 >
                   Draft
                 </Button>
