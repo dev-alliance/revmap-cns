@@ -664,6 +664,33 @@ export default function Dashboard() {
                 pl: 7,
                 fontSize: "12px",
                 backgroundColor:
+                  selectedModule === "roles" ? "lightblue" : "transparent",
+              }}
+              component={Link}
+              to="/dashboard/role-list"
+              onClick={() => handleModuleClick("roles")}
+            >
+              <img
+                src={roles}
+                alt="customfeild"
+                style={{ width: "20px", height: "20px", marginRight: "10px" }}
+              />
+              <ListItemText
+                primary={"Roles"}
+                sx={{
+                  fontSize: "12px",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "15px",
+                }}
+              />
+            </ListItemButton>
+            <ListItemButton
+              sx={{
+                pl: 7,
+                fontSize: "12px",
+                backgroundColor:
                   selectedModule === "teams" ? "lightblue" : "transparent",
               }}
               onClick={() => handleModuleClick("teams")}
