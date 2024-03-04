@@ -61,6 +61,10 @@
   display: none !important;
 }
 
+#e-split-btn_43_dropdownbtn {
+  margin-right: -2px;
+}
+
 /* #container_editor_font_properties_leftDiv {
   position: absolute !important;
   left: -25% !important;
