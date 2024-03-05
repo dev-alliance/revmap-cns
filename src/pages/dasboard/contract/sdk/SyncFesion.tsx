@@ -18,6 +18,10 @@ import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
+import { registerLicense } from "@syncfusion/ej2-base";
+registerLicense(
+  "ORg4AjUWIQA/Gnt2UVhiQlJPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSX1Tc0ViWHZcd3dVRWQ="
+);
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
 // other imports...
@@ -278,7 +282,7 @@ function SyncFusionEditor() {
     }
   };
   // text color highlight
-  const [fontColor, setFontColor] = useState('#000000'); // Default font color
+  const [fontColor, setFontColor] = useState("#000000"); // Default font color
 
   // Function to change the font color
   const changeFontColor = (args: any) => {
@@ -290,10 +294,10 @@ function SyncFusionEditor() {
     }
   };
 
-  const [highlightColor, setHighlightColor] = useState('#FFFF00'); // Default highlight color
+  const [highlightColor, setHighlightColor] = useState("#FFFF00"); // Default highlight color
   // Function to change the highlight color
   const changeHighlightColor = (args: any) => {
-    console.log('args color hightlight: ', args)
+    console.log("args color hightlight: ", args);
     const color = args.currentValue.hex;
     setHighlightColor(color);
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -305,7 +309,11 @@ function SyncFusionEditor() {
   // Templates for ColorPicker within ItemDirective
   const fontColorPickerTemplate = () => (
     <div className="flex">
-      <ColorPickerComponent showButtons={true} value={fontColor} change={changeFontColor} />
+      <ColorPickerComponent
+        showButtons={true}
+        value={fontColor}
+        change={changeFontColor}
+      />
       <p
         onClick={() => console.log("Open color picker here")}
         style={{
@@ -315,31 +323,42 @@ function SyncFusionEditor() {
           border: "none",
           cursor: "pointer",
           fontSize: "18px",
-          paddingTop: '1px'
+          paddingTop: "1px",
         }}
       >
         A
       </p>
-
     </div>
   );
 
   const highlightColorPickerTemplate = () => (
     <>
       <div className="w-[60px]">
-        <ColorPickerComponent showButtons={true} value={highlightColor} change={changeHighlightColor} />
+        <ColorPickerComponent
+          showButtons={true}
+          value={highlightColor}
+          change={changeHighlightColor}
+        />
         <button className=" mr-2">
           {/* <img src={colorPencil} className="h-5 w-5 -mt-3 absolute" /> */}
-          <svg className="absolute -ml-1.5 -mt-[15px]" width="24" height="24" focusable="false"><g fill-rule="nonzero"><path id="tox-icon-highlight-bg-color__color" d="M3 18h18v3H3z"></path><path d="M4,17l2.4-2.4C6.1,14.3,6,14,6,13.6c0-0.4,0.2-0.8,0.5-1l9.1-9.1C15.9,3.1,16.2,3,16.6,3s0.8,0.1,1.1,0.4l1.9,1.9C19.8,5.6,20,6,20,6.4s-0.1,0.8-0.4,1.1l-9.1,9.1c-0.3,0.3-0.7,0.4-1.1,0.4s-0.7-0.1-1-0.4L8,17H4z M13.4,11.5l-1.9-1.9l-4,4l1.9,1.9L13.4,11.5z">
-          </path>
-          </g></svg>
+          <svg
+            className="absolute -ml-1.5 -mt-[15px]"
+            width="24"
+            height="24"
+            focusable="false"
+          >
+            <g fill-rule="nonzero">
+              <path
+                id="tox-icon-highlight-bg-color__color"
+                d="M3 18h18v3H3z"
+              ></path>
+              <path d="M4,17l2.4-2.4C6.1,14.3,6,14,6,13.6c0-0.4,0.2-0.8,0.5-1l9.1-9.1C15.9,3.1,16.2,3,16.6,3s0.8,0.1,1.1,0.4l1.9,1.9C19.8,5.6,20,6,20,6.4s-0.1,0.8-0.4,1.1l-9.1,9.1c-0.3,0.3-0.7,0.4-1.1,0.4s-0.7-0.1-1-0.4L8,17H4z M13.4,11.5l-1.9-1.9l-4,4l1.9,1.9L13.4,11.5z"></path>
+            </g>
+          </svg>
         </button>
       </div>
     </>
   );
-
-
-
 
   const itemsss: ItemModel[] = [
     {
@@ -367,9 +386,7 @@ function SyncFusionEditor() {
 
         <button className="-ml-10 mt-2 ">
           <img src={linepng} className="h-3 w-3" />
-
         </button>
-
       </div>
     );
   }
@@ -396,13 +413,6 @@ function SyncFusionEditor() {
       documentEditor.focusIn();
     }, 30);
   }
-
-
-
-
-
-
-
 
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -487,11 +497,10 @@ function SyncFusionEditor() {
   };
 
   const handleFillColorChange = (args: any) => {
-    console.log(args)
+    console.log(args);
     setCellFillColor(args.currentValue.hex);
     applyCellFillColor();
   };
-
 
   const cellFillColorPickerTemplate = () => (
     <>
@@ -502,13 +511,17 @@ function SyncFusionEditor() {
           value={cellFillColor}
           change={handleFillColorChange}
         />
-        <button className="absolute top-0 -right-1 mt-1.5" onClick={() => {/* logic to open color picker if needed */ }}>
+        <button
+          className="absolute top-0 -right-1 mt-1.5"
+          onClick={() => {
+            /* logic to open color picker if needed */
+          }}
+        >
           <img src={bucket} className="h-5 w-5" alt="Fill Cell" />
         </button>
       </div>
     </>
   );
-
 
   const [topMargin, setTopMargin] = useState(0);
   const [bottomMargin, setBottomMargin] = useState(0);
@@ -728,228 +741,246 @@ function SyncFusionEditor() {
                 <img src={editIcon} className="h-4 w-4" alt="" />
                 Edit
               </li>
-              <div onClick={() => toggleDropdown("file")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
-            </ul>
-          )}
-        </div>
+              <div
+                onClick={() => toggleDropdown("file")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
+            </ul >
+          )
+          }
+        </div >
 
         {/* View Button and Dropdown */}
-        <div className="relative">
+        < div className="relative" >
           <button
             className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("view")}
           >
             View
           </button>
-          {openDropdowns.view && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2 "
-                onClick={() => {
-                  triggerClick("container_toolbar_find");
+          {
+            openDropdowns.view && (
+              <ul
+                className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
+                style={{
+                  backgroundColor: "#F0F2F5",
+                  border: "1px solid #C1C1C1",
                 }}
               >
-                <img src={searchIcon} className="h-4 w-4" alt="" />
-                Find
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_comment");
-                }}
-              >
-                <img src={commentIcon} className="h-4 w-4" alt="" />
-                Add comment
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_track");
-                }}
-              >
-                <img src={trackChangesIcon} className="h-4 w-4" alt="" />
-                Track changes
-              </li>
+                <li
+                  className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2 "
+                  onClick={() => {
+                    triggerClick("container_toolbar_find");
+                  }}
+                >
+                  <img src={searchIcon} className="h-4 w-4" alt="" />
+                  Find
+                </li>
+                <li
+                  className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_comment");
+                  }}
+                >
+                  <img src={commentIcon} className="h-4 w-4" alt="" />
+                  Add comment
+                </li>
+                <li
+                  className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_track");
+                  }}
+                >
+                  <img src={trackChangesIcon} className="h-4 w-4" alt="" />
+                  Track changes
+                </li>
 
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
-                }}
-              >
-                <img src={crossIcon} className="h-3 w-3" alt="" />
-                Reject all changes
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
-                }}
-              >
-                <img src={tickIcon} className="h-4 w-4" alt="" />
-                Accept all changes
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
-                }}
-              >
-                <img src={viewIcon} className="h-4 w-4" alt="" />
-                View Audit trail
-              </li>
-              <div onClick={() => toggleDropdown("view")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
-            </ul>
-          )}
-        </div>
+                <li
+                  className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_editor_font_properties_bold");
+                  }}
+                >
+                  <img src={crossIcon} className="h-3 w-3" alt="" />
+                  Reject all changes
+                </li>
+                <li
+                  className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_editor_font_properties_bold");
+                  }}
+                >
+                  <img src={tickIcon} className="h-4 w-4" alt="" />
+                  Accept all changes
+                </li>
+                <li
+                  className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_editor_font_properties_bold");
+                  }}
+                >
+                  <img src={viewIcon} className="h-4 w-4" alt="" />
+                  View Audit trail
+                </li>
+                <div
+                  onClick={() => toggleDropdown("view")}
+                  className="w-full h-full  fixed inset-0 z-[-9]"
+                ></div>
+              </ul>
+            )
+          }
+        </div >
 
         {/* insert and Dropdown */}
-        <div className="relative">
+        < div className="relative" >
           <button
             className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("insert")}
           >
             Insert
           </button>
-          {openDropdowns.insert && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_table");
+          {
+            openDropdowns.insert && (
+              <ul
+                className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
+                style={{
+                  backgroundColor: "#F0F2F5",
+                  border: "1px solid #C1C1C1",
                 }}
               >
-                <img src={tableIcon} className="h-4 w-4" alt="" />
-                Table
-              </li>
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_link");
-                }}
-              >
-                <img src={linkIcon} className="h-4 w-4" alt="" />
-                Link
-              </li>
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_header");
-                }}
-              >
-                <img src={headerIcon} className="h-4 w-4" alt="" />
-                Header
-              </li>
+                <li
+                  className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_table");
+                  }}
+                >
+                  <img src={tableIcon} className="h-4 w-4" alt="" />
+                  Table
+                </li>
+                <li
+                  className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_link");
+                  }}
+                >
+                  <img src={linkIcon} className="h-4 w-4" alt="" />
+                  Link
+                </li>
+                <li
+                  className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_header");
+                  }}
+                >
+                  <img src={headerIcon} className="h-4 w-4" alt="" />
+                  Header
+                </li>
 
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_footer");
-                }}
-              >
-                <img src={footerIcon} className="h-4 w-4" alt="" />
-                Footer
-              </li>
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_page_setup");
-                }}
-              >
-                <img src={pageSetupIcon} className="h-5 w-5" alt="" />
-                Page Setup
-              </li>
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_page_number");
-                }}
-              >
-                <img src={pageNoIcon} className="h-5 w-5" alt="" />
-                Page Number
-              </li>
-              <div onClick={() => toggleDropdown("insert")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-            </ul>
-          )}
-        </div>
+                <li
+                  className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_footer");
+                  }}
+                >
+                  <img src={footerIcon} className="h-4 w-4" alt="" />
+                  Footer
+                </li>
+                <li
+                  className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_page_setup");
+                  }}
+                >
+                  <img src={pageSetupIcon} className="h-5 w-5" alt="" />
+                  Page Setup
+                </li>
+                <li
+                  className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
+                  onClick={() => {
+                    triggerClick("container_toolbar_page_number");
+                  }}
+                >
+                  <img src={pageNoIcon} className="h-5 w-5" alt="" />
+                  Page Number
+                </li>
+                <div
+                  onClick={() => toggleDropdown("insert")}
+                  className="w-full h-full  fixed inset-0 z-[-9]"
+                ></div>
+              </ul>
+            )
+          }
+        </div >
 
         {/* Signature Button and Dropdown */}
-        <div className="relative">
+        < div className="relative" >
           <button
             className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("signature")}
           >
             Signature
           </button>
-          {openDropdowns.signature && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
-                <img src={requestIcon} className="h-4 w-4" alt="" />  Request signature
-              </li>
-              <li className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
-                <img src={crossIcon} className="h-4 w-4" alt="" />  Cancel all signature
-              </li>
-              <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
-                <img src={websiteIcon} className="h-4 w-4" alt="" />  Revert to review
-              </li>
-              <li className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2">
-                <img src={signatureIcon} className="h-4 w-4" alt="" />  Sign
-              </li>
-              <div onClick={() => toggleDropdown("signature")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-            </ul>
-          )}
-        </div>
+          {
+            openDropdowns.signature && (
+              <ul
+                className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
+                style={{
+                  backgroundColor: "#F0F2F5",
+                  border: "1px solid #C1C1C1",
+                }}
+              >
+                <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                  <img src={requestIcon} className="h-4 w-4" alt="" />  Request signature
+                </li>
+                <li className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
+                  <img src={crossIcon} className="h-4 w-4" alt="" />  Cancel all signature
+                </li>
+                <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                  <img src={websiteIcon} className="h-4 w-4" alt="" />  Revert to review
+                </li>
+                <li className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2">
+                  <img src={signatureIcon} className="h-4 w-4" alt="" />  Sign
+                </li>
+                <div onClick={() => toggleDropdown("signature")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
+              </ul>
+            )
+          }
+        </div >
 
         {/* Export Button and Dropdown */}
-        <div className="relative">
+        < div className="relative" >
           <button
             className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("export")}
           >
             Export
           </button>
-          {openDropdowns.export && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
-                <img src={pdfIcon} className="h-5 w-5" alt="" />  Download PDF
-              </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
-                <img src={wordIcon} className="h-5 w-5" alt="" /> Download Word
-              </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
-                <img src={downloadIcon} className="h-6 w-5" alt="" />  Download signature certificate
-              </li>
-              <div onClick={() => toggleDropdown("export")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
-            </ul>
-          )}
-        </div>
+          {
+            openDropdowns.export && (
+              <ul
+                className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
+                style={{
+                  backgroundColor: "#F0F2F5",
+                  border: "1px solid #C1C1C1",
+                }}
+              >
+                <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                  <img src={pdfIcon} className="h-5 w-5" alt="" />  Download PDF
+                </li>
+                <li className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
+                  <img src={wordIcon} className="h-5 w-5" alt="" /> Download Word
+                </li>
+                <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                  <img src={downloadIcon} className="h-6 w-5" alt="" />  Download signature certificate
+                </li>
+                <div
+                  onClick={() => toggleDropdown("export")}
+                  className="w-full h-full  fixed inset-0 z-[-9]"
+                ></div>
+              </ul>
+            )
+          }
+        </div >
 
         <div className="relative">
           <button
@@ -970,8 +1001,10 @@ function SyncFusionEditor() {
                 <img src={attachIcon} className="h-4 w-4" alt="" />
                 Add attachment
               </li>
-              <div onClick={() => toggleDropdown("attach")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
+              <div
+                onClick={() => toggleDropdown("attach")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
             </ul>
           )}
         </div>
@@ -998,19 +1031,26 @@ function SyncFusionEditor() {
             </Button>
           </div>
         </Box>
-      </div>
+      </div >
       {/* <div id="xyz">show </div> */}
 
-      <div className="  ">
+      < div className="  " >
         <div className="text styling flex items-center">
           <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
-
-            <p onClick={() => {
-              triggerClick("container_toolbar_undo ");
-            }}><img src={undo} className="h-6 w-5 cursor-pointer" /> </p>
-            <p onClick={() => {
-              triggerClick("container_toolbar_redo ");
-            }}><img src={redo} className="h-6 w-5 cursor-pointer" /> </p>
+            <p
+              onClick={() => {
+                triggerClick("container_toolbar_undo ");
+              }}
+            >
+              <img src={undo} className="h-6 w-5 cursor-pointer" />{" "}
+            </p>
+            <p
+              onClick={() => {
+                triggerClick("container_toolbar_redo ");
+              }}
+            >
+              <img src={redo} className="h-6 w-5 cursor-pointer" />{" "}
+            </p>
           </div>
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
@@ -1055,11 +1095,17 @@ function SyncFusionEditor() {
               <ItemDirective type="Separator" />
 
               {/* Font Color Picker */}
-              <ItemDirective tooltipText="Font Color" template={fontColorPickerTemplate} />
+              <ItemDirective
+                tooltipText="Font Color"
+                template={fontColorPickerTemplate}
+              />
               {/* Highlight Color Picker */}
               <ItemDirective type="Separator" />
 
-              <ItemDirective tooltipText="Highlight Color" template={highlightColorPickerTemplate} />
+              <ItemDirective
+                tooltipText="Highlight Color"
+                template={highlightColorPickerTemplate}
+              />
 
               <ItemDirective type="Separator" />
               {/* uppercase lowercase */}
@@ -1121,7 +1167,6 @@ function SyncFusionEditor() {
                 text="Clear"
                 tooltipText="Clear List"
               />
-
             </ItemsDirective>
           </ToolbarComponent>
           {/* <ColorPickerComponent
@@ -1131,89 +1176,92 @@ function SyncFusionEditor() {
         </div>
 
         {/* ***************Table************************ */}
-        {isTableSelected && (
-          <div className="text styling flex items-center">
-            <ToolbarComponent clicked={toolbarButtonClick}>
-              <ItemsDirective>
-                <ItemDirective
-                  id="table"
-                  prefixIcon="e-de-ctnr-table e-icons"
-                />
-                <ItemDirective type="Separator" />
-                <ItemDirective
-                  id="insert_above"
-                  prefixIcon="e-de-ctnr-insertabove e-icons"
-                />
-                <ItemDirective
-                  id="insert_below"
-                  prefixIcon="e-de-ctnr-insertbelow e-icons"
-                />
-                <ItemDirective type="Separator" />
-                <ItemDirective
-                  id="insert_left"
-                  prefixIcon="e-de-ctnr-insertleft e-icons"
-                />
-                <ItemDirective
-                  id="insert_right"
-                  prefixIcon="e-de-ctnr-insertright e-icons"
-                />
-                <ItemDirective type="Separator" />
-                {/* <ItemDirective
+        {
+          isTableSelected && (
+            <div className="text styling flex items-center">
+              <ToolbarComponent clicked={toolbarButtonClick}>
+                <ItemsDirective>
+                  <ItemDirective
+                    id="table"
+                    prefixIcon="e-de-ctnr-table e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="insert_above"
+                    prefixIcon="e-de-ctnr-insertabove e-icons"
+                  />
+                  <ItemDirective
+                    id="insert_below"
+                    prefixIcon="e-de-ctnr-insertbelow e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="insert_left"
+                    prefixIcon="e-de-ctnr-insertleft e-icons"
+                  />
+                  <ItemDirective
+                    id="insert_right"
+                    prefixIcon="e-de-ctnr-insertright e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  {/* <ItemDirective
               id="delete_table"
               tooltipText="Delete"
               text="Delete"
               prefixIcon="custom-delete-icon"
             /> */}
 
-                <ItemDirective
-                  id="delete_rows"
-                  prefixIcon="e-de-ctnr-deleterows e-icons"
-                />
-                <ItemDirective
-                  id="delete_columns"
-                  prefixIcon="e-de-ctnr-deletecolumns e-icons"
-                />
-                <ItemDirective type="Separator" />
-                <ItemDirective
-                  id="merge_cell"
-                  text="Merge Cells"
-                  prefixIcon="e-de-ctnr-mergecells e-icons"
-                />
-                <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="delete_rows"
+                    prefixIcon="e-de-ctnr-deleterows e-icons"
+                  />
+                  <ItemDirective
+                    id="delete_columns"
+                    prefixIcon="e-de-ctnr-deletecolumns e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="merge_cell"
+                    text="Merge Cells"
+                    prefixIcon="e-de-ctnr-mergecells e-icons"
+                  />
+                  <ItemDirective type="Separator" />
 
-                {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
+                  {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
 
-                <DropDownListComponent
-                  id="borderWidthDropdown"
-                  dataSource={[1, 2, 3, 4, 5]}
-                  placeholder="Select border width"
-                  floatLabelType="Auto"
-                  change={onWrapTextChange}
-                />
-                {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
-                <ItemDirective type="Separator" />
+                  <DropDownListComponent
+                    id="borderWidthDropdown"
+                    dataSource={[1, 2, 3, 4, 5]}
+                    placeholder="Select border width"
+                    floatLabelType="Auto"
+                    change={onWrapTextChange}
+                  />
+                  {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
+                  <ItemDirective type="Separator" />
 
-                <ItemDirective
-                  id="set_border_width"
-                  text="Apply Border"
-                  prefixIcon="your-icon-class-for-border-width"
-                />
+                  <ItemDirective
+                    id="set_border_width"
+                    text="Apply Border"
+                    prefixIcon="your-icon-class-for-border-width"
+                  />
 
-                <ItemDirective type="Separator" />
+                  <ItemDirective type="Separator" />
 
+                  <ItemDirective
+                    tooltipText="Cell Fill Color"
+                    template={cellFillColorPickerTemplate}
+                  />
+                </ItemsDirective>
+              </ToolbarComponent>
 
-                <ItemDirective tooltipText="Cell Fill Color" template={cellFillColorPickerTemplate} />
-              </ItemsDirective>
-            </ToolbarComponent>
-
-            {/* <ColorPickerComponent
+              {/* <ColorPickerComponent
               id="cellFillColorPicker"
               mode="Palette"
               showButtons={false}
               change={handleFillColorChange}
             /> */}
 
-            {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
+              {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
             <NumericTextBoxComponent
               value={topMargin}
               placeholder="Top Margin"
@@ -1243,20 +1291,21 @@ function SyncFusionEditor() {
               blur={applyMargins}
             />
           </div> */}
-          </div>
-        )}
-      </div>
+            </div>
+          )
+        }
+      </div >
 
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
-        height="620px"
+        height="600px"
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
       // showPropertiesPane={false}
       />
-    </div>
+    </div >
   );
 }
 

@@ -63,8 +63,15 @@ const fonts = [
   { label: "Georgia", value: "Georgia, serif" },
   // Add more fonts as needed
 ];
+interface DetailDialogProps {
+  onClose: any;
+  onButtonClick: () => void;
+}
+const OpenDrawSignature: React.FC<DetailDialogProps> = ({
+  onButtonClick,
 
-const OpenDrawSignature = () => {
+  onClose,
+}) => {
   const [disable, setDisable] = useState(true);
   const signatureObj = useRef<any>(null);
   const [tabValue, setTabValue] = useState(0);
@@ -418,7 +425,7 @@ const OpenDrawSignature = () => {
           <Button
             variant="outlined"
             sx={{ textTransform: "none", float: "left", mt: 2 }}
-            // onClick={() => onButtonClick()}
+            onClick={() => onClose()}
           >
             Cancel
           </Button>
@@ -426,7 +433,7 @@ const OpenDrawSignature = () => {
             variant="contained"
             color="success"
             sx={{ textTransform: "none", float: "right", mt: 2 }}
-            // onClick={() => onButtonClick()}
+            onClick={() => onButtonClick()}
           >
             Accept and sign
           </Button>

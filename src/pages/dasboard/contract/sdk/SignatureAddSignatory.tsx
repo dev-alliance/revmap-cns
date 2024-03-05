@@ -36,6 +36,7 @@ import { useForm, Controller } from "react-hook-form";
 import logo from "@/assets/sign.png";
 import SignatureSendDoc from "@/pages/dasboard/contract/sdk/SignatureSendDoc";
 import { ContractContext } from "@/context/ContractContext";
+import InputAdornment from "@mui/material/InputAdornment";
 type FormValues = {
   name: string;
   checkboxName: any;
@@ -57,7 +58,8 @@ const SignatureAddSignatory: React.FC<SignatureAddSignatoryProps> = ({
     mode: "onBlur",
   });
   const { user } = useAuth();
-  const { signatories, setSignatories } = useContext(ContractContext);
+  const { signatories, setSignatories, selectedModule, setSelectedModule } =
+    useContext(ContractContext);
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
@@ -65,6 +67,7 @@ const SignatureAddSignatory: React.FC<SignatureAddSignatoryProps> = ({
 
   const [inputValue, setInputValue] = useState(""); // Track the input value
   const [openDialog, setOpenDialog] = useState(false);
+  console.log(selectedModule, "selectedModule");
 
   // Function to handle adding new signatory
   const handleAddSignatory = (newSignatoryEmail: string) => {
@@ -75,7 +78,11 @@ const SignatureAddSignatory: React.FC<SignatureAddSignatoryProps> = ({
     }
   };
 
-  // Function to remove a signatory from the list
+  const handleAddSignatoryClick = () => {
+    alert("ok");
+    setSelectedModule("quickSign");
+  };
+
   const handleRemoveSignatory = (signatoryToRemove: any) => {
     setSignatories(
       signatories.filter((signatory: any) => signatory !== signatoryToRemove)
@@ -170,46 +177,27 @@ const SignatureAddSignatory: React.FC<SignatureAddSignatoryProps> = ({
       <DialogContent sx={{ maxHeight: "300px" }}>
         <Grid item xs={12} sm={7}>
           <form onSubmit={(e) => e.preventDefault()}>
-            <Controller
-              name="name"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <Autocomplete
-                  {...field}
-                  freeSolo
-                  options={userList.map((user) => ({
-                    label: `${user.firstName} ${user.lastName}`,
-                    email: user.email,
-                  }))}
-                  getOptionLabel={(option: any) => option.label || ""}
-                  onInputChange={handleInputChange}
-                  inputValue={inputValue}
-                  onChange={(_, value) =>
-                    handleAddSignatory(value ? value.email : "")
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Add signatory"
-                      margin="normal"
-                      variant="outlined"
-                      onKeyPress={handleKeyPress}
-                    />
-                  )}
-                />
-              )}
+            <TextField
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                readOnly: true,
+                // Changed from endAdornment to startAdornment
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Button
+                      variant="text"
+                      color="primary"
+                      sx={{ textTransform: "none" }}
+                      onClick={handleAddSignatoryClick}
+                    >
+                      Add Signatory
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
+              onClick={handleAddSignatoryClick}
             />
-            <div style={{ flex: 1, textAlign: "right" }}>
-              <Button
-                variant="text"
-                color="primary"
-                sx={{ textTransform: "none" }}
-                onClick={() => handleAddSignatory(inputValue)}
-              >
-                + Add Signatory
-              </Button>
-            </div>
 
             <Card
               sx={{

@@ -49,6 +49,8 @@ interface ContractContextProps {
   setSignatories: Dispatch<SetStateAction<any>>;
   openDocoment: any | null;
   setOpenDocoment: Dispatch<SetStateAction<any>>;
+  selectedModule: any | null;
+  setSelectedModule: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -61,6 +63,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setSignatories: () => {},
   openDocoment: [],
   setOpenDocoment: () => {},
+  selectedModule: {},
+  setSelectedModule: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -69,6 +73,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [contract, setContract] = useState<Contract | null>(null);
   const [signatories, setSignatories] = useState<string[]>([]);
   const [openDocoment, setOpenDocoment] = useState(false);
+  const [selectedModule, setSelectedModule] = useState<string>("overview");
   const [contractStatus, setContractStatus] = useState<ContractStatus>({
     status: "",
     expire: "",
@@ -107,6 +112,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedContractSignatureOpen) {
       setOpenDocoment(JSON.parse(storedContractSignatureOpen));
     }
+    const storedContractselectedModule = localStorage.getItem("selectedModule");
+    if (storedContractselectedModule) {
+      setSelectedModule(JSON.parse(storedContractselectedModule));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -127,6 +136,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setSignatories,
         openDocoment,
         setOpenDocoment,
+        selectedModule,
+        setSelectedModule,
       }}
     >
       {children}
