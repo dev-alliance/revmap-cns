@@ -18,6 +18,10 @@ import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
+import { registerLicense } from "@syncfusion/ej2-base";
+registerLicense(
+  "ORg4AjUWIQA/Gnt2UVhiQlJPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSX1Tc0ViWHZcd3dVRWQ="
+);
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
 // other imports...
@@ -34,11 +38,11 @@ import {
   IconButton,
   Divider,
 } from "@mui/material";
-import linepng from '../../../../assets/line.png'
-import bucket from '../../../../assets/bucket.png'
-import undo from '../../../../assets/undo.png'
-import redo from '../../../../assets/redo.png'
-import fontColor from '../../../../assets/fontColor.png'
+import linepng from "../../../../assets/line.png";
+import bucket from "../../../../assets/bucket.png";
+import undo from "../../../../assets/undo.png";
+import redo from "../../../../assets/redo.png";
+import fontColor from "../../../../assets/fontColor.png";
 
 import {
   DocumentEditorComponent,
@@ -248,7 +252,7 @@ function SyncFusionEditor() {
     }
   };
   // text color highlight
-  const [fontColor, setFontColor] = useState('#000000'); // Default font color
+  const [fontColor, setFontColor] = useState("#000000"); // Default font color
 
   // Function to change the font color
   const changeFontColor = (args: any) => {
@@ -260,10 +264,10 @@ function SyncFusionEditor() {
     }
   };
 
-  const [highlightColor, setHighlightColor] = useState('#FFFF00'); // Default highlight color
+  const [highlightColor, setHighlightColor] = useState("#FFFF00"); // Default highlight color
   // Function to change the highlight color
   const changeHighlightColor = (args: any) => {
-    console.log('args color hightlight: ', args)
+    console.log("args color hightlight: ", args);
     const color = args.currentValue.hex;
     setHighlightColor(color);
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -275,7 +279,11 @@ function SyncFusionEditor() {
   // Templates for ColorPicker within ItemDirective
   const fontColorPickerTemplate = () => (
     <div className="flex">
-      <ColorPickerComponent showButtons={true} value={fontColor} change={changeFontColor} />
+      <ColorPickerComponent
+        showButtons={true}
+        value={fontColor}
+        change={changeFontColor}
+      />
       <p
         onClick={() => console.log("Open color picker here")}
         style={{
@@ -285,31 +293,42 @@ function SyncFusionEditor() {
           border: "none",
           cursor: "pointer",
           fontSize: "18px",
-          paddingTop: '1px'
+          paddingTop: "1px",
         }}
       >
         A
       </p>
-
     </div>
   );
 
   const highlightColorPickerTemplate = () => (
     <>
       <div className="w-[60px]">
-        <ColorPickerComponent showButtons={true} value={highlightColor} change={changeHighlightColor} />
+        <ColorPickerComponent
+          showButtons={true}
+          value={highlightColor}
+          change={changeHighlightColor}
+        />
         <button className=" mr-2">
           {/* <img src={colorPencil} className="h-5 w-5 -mt-3 absolute" /> */}
-          <svg className="absolute -ml-1.5 -mt-[15px]" width="24" height="24" focusable="false"><g fill-rule="nonzero"><path id="tox-icon-highlight-bg-color__color" d="M3 18h18v3H3z"></path><path d="M4,17l2.4-2.4C6.1,14.3,6,14,6,13.6c0-0.4,0.2-0.8,0.5-1l9.1-9.1C15.9,3.1,16.2,3,16.6,3s0.8,0.1,1.1,0.4l1.9,1.9C19.8,5.6,20,6,20,6.4s-0.1,0.8-0.4,1.1l-9.1,9.1c-0.3,0.3-0.7,0.4-1.1,0.4s-0.7-0.1-1-0.4L8,17H4z M13.4,11.5l-1.9-1.9l-4,4l1.9,1.9L13.4,11.5z">
-          </path>
-          </g></svg>
+          <svg
+            className="absolute -ml-1.5 -mt-[15px]"
+            width="24"
+            height="24"
+            focusable="false"
+          >
+            <g fill-rule="nonzero">
+              <path
+                id="tox-icon-highlight-bg-color__color"
+                d="M3 18h18v3H3z"
+              ></path>
+              <path d="M4,17l2.4-2.4C6.1,14.3,6,14,6,13.6c0-0.4,0.2-0.8,0.5-1l9.1-9.1C15.9,3.1,16.2,3,16.6,3s0.8,0.1,1.1,0.4l1.9,1.9C19.8,5.6,20,6,20,6.4s-0.1,0.8-0.4,1.1l-9.1,9.1c-0.3,0.3-0.7,0.4-1.1,0.4s-0.7-0.1-1-0.4L8,17H4z M13.4,11.5l-1.9-1.9l-4,4l1.9,1.9L13.4,11.5z"></path>
+            </g>
+          </svg>
         </button>
       </div>
     </>
   );
-
-
-
 
   const itemsss: ItemModel[] = [
     {
@@ -337,9 +356,7 @@ function SyncFusionEditor() {
 
         <button className="-ml-10 mt-2 ">
           <img src={linepng} className="h-3 w-3" />
-
         </button>
-
       </div>
     );
   }
@@ -366,13 +383,6 @@ function SyncFusionEditor() {
       documentEditor.focusIn();
     }, 30);
   }
-
-
-
-
-
-
-
 
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -457,11 +467,10 @@ function SyncFusionEditor() {
   };
 
   const handleFillColorChange = (args: any) => {
-    console.log(args)
+    console.log(args);
     setCellFillColor(args.currentValue.hex);
     applyCellFillColor();
   };
-
 
   const cellFillColorPickerTemplate = () => (
     <>
@@ -472,13 +481,17 @@ function SyncFusionEditor() {
           value={cellFillColor}
           change={handleFillColorChange}
         />
-        <button className="absolute top-0 -right-1 mt-1.5" onClick={() => {/* logic to open color picker if needed */ }}>
+        <button
+          className="absolute top-0 -right-1 mt-1.5"
+          onClick={() => {
+            /* logic to open color picker if needed */
+          }}
+        >
           <img src={bucket} className="h-5 w-5" alt="Fill Cell" />
         </button>
       </div>
     </>
   );
-
 
   const [topMargin, setTopMargin] = useState(0);
   const [bottomMargin, setBottomMargin] = useState(0);
@@ -685,7 +698,9 @@ function SyncFusionEditor() {
               >
                 Open
               </li>
-              <li className="px-2 py-2 hover:bg-gray-200 cursor-pointer">Save</li>
+              <li className="px-2 py-2 hover:bg-gray-200 cursor-pointer">
+                Save
+              </li>
               <li
                 className="px-2 hover:bg-gray-200 cursor-pointer"
                 onClick={() => {
@@ -694,8 +709,10 @@ function SyncFusionEditor() {
               >
                 Edit
               </li>
-              <div onClick={() => toggleDropdown("file")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
+              <div
+                onClick={() => toggleDropdown("file")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
             </ul>
           )}
         </div>
@@ -765,8 +782,10 @@ function SyncFusionEditor() {
               >
                 View Audit trail
               </li>
-              <div onClick={() => toggleDropdown("view")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
+              <div
+                onClick={() => toggleDropdown("view")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
             </ul>
           )}
         </div>
@@ -836,7 +855,10 @@ function SyncFusionEditor() {
               >
                 Page Number
               </li>
-              <div onClick={() => toggleDropdown("insert")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
+              <div
+                onClick={() => toggleDropdown("insert")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
             </ul>
           )}
         </div>
@@ -867,7 +889,10 @@ function SyncFusionEditor() {
                 Revert to review
               </li>
               <li className="px-2 hover:bg-gray-200 cursor-pointer">Sign</li>
-              <div onClick={() => toggleDropdown("signature")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
+              <div
+                onClick={() => toggleDropdown("signature")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
             </ul>
           )}
         </div>
@@ -897,8 +922,10 @@ function SyncFusionEditor() {
               <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Download signature certificate
               </li>
-              <div onClick={() => toggleDropdown("export")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
+              <div
+                onClick={() => toggleDropdown("export")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
             </ul>
           )}
         </div>
@@ -921,8 +948,10 @@ function SyncFusionEditor() {
               <li className="px-2 hover:bg-gray-200 cursor-pointer">
                 Add attachment
               </li>
-              <div onClick={() => toggleDropdown("attach")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
-
+              <div
+                onClick={() => toggleDropdown("attach")}
+                className="w-full h-full  fixed inset-0 z-[-9]"
+              ></div>
             </ul>
           )}
         </div>
@@ -955,13 +984,20 @@ function SyncFusionEditor() {
       <div className="  ">
         <div className="text styling flex items-center">
           <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
-
-            <p onClick={() => {
-              triggerClick("container_toolbar_undo ");
-            }}><img src={undo} className="h-6 w-5 cursor-pointer" /> </p>
-            <p onClick={() => {
-              triggerClick("container_toolbar_redo ");
-            }}><img src={redo} className="h-6 w-5 cursor-pointer" /> </p>
+            <p
+              onClick={() => {
+                triggerClick("container_toolbar_undo ");
+              }}
+            >
+              <img src={undo} className="h-6 w-5 cursor-pointer" />{" "}
+            </p>
+            <p
+              onClick={() => {
+                triggerClick("container_toolbar_redo ");
+              }}
+            >
+              <img src={redo} className="h-6 w-5 cursor-pointer" />{" "}
+            </p>
           </div>
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
@@ -1006,11 +1042,17 @@ function SyncFusionEditor() {
               <ItemDirective type="Separator" />
 
               {/* Font Color Picker */}
-              <ItemDirective tooltipText="Font Color" template={fontColorPickerTemplate} />
+              <ItemDirective
+                tooltipText="Font Color"
+                template={fontColorPickerTemplate}
+              />
               {/* Highlight Color Picker */}
               <ItemDirective type="Separator" />
 
-              <ItemDirective tooltipText="Highlight Color" template={highlightColorPickerTemplate} />
+              <ItemDirective
+                tooltipText="Highlight Color"
+                template={highlightColorPickerTemplate}
+              />
 
               <ItemDirective type="Separator" />
               {/* uppercase lowercase */}
@@ -1072,7 +1114,6 @@ function SyncFusionEditor() {
                 text="Clear"
                 tooltipText="Clear List"
               />
-
             </ItemsDirective>
           </ToolbarComponent>
           {/* <ColorPickerComponent
@@ -1152,8 +1193,10 @@ function SyncFusionEditor() {
 
                 <ItemDirective type="Separator" />
 
-
-                <ItemDirective tooltipText="Cell Fill Color" template={cellFillColorPickerTemplate} />
+                <ItemDirective
+                  tooltipText="Cell Fill Color"
+                  template={cellFillColorPickerTemplate}
+                />
               </ItemsDirective>
             </ToolbarComponent>
 
@@ -1201,11 +1244,11 @@ function SyncFusionEditor() {
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
-        height="620px"
+        height="600px"
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-      // showPropertiesPane={false}
+        // showPropertiesPane={false}
       />
     </div>
   );

@@ -20,6 +20,9 @@ import { useLocation } from "react-router-dom";
 import { ContractContext } from "@/context/ContractContext";
 import OpenSignatureDoc from "@/pages/dasboard/contract/sdk/OpenSignatureDoc";
 import OpenDrawSignature from "@/pages/dasboard/contract/sdk/OpenDrawSignature";
+import OpenSignatureSignAll from "@/pages/dasboard/contract/sdk/OpenSignatureSignAll";
+import OpenSignaturFinish from "@/pages/dasboard/contract/sdk/OpenSignaturFinish";
+import OpenSignaturDownload from "@/pages/dasboard/contract/sdk/OpenSignaturDownload";
 
 // Assuming your form values type is correct
 type FormValues = {
@@ -60,11 +63,16 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
       );
       break;
     case 2:
-      componentToRender = <OpenDrawSignature />;
+      componentToRender = (
+        <OpenDrawSignature
+          onButtonClick={handleNextStep}
+          onClose={handleCloseDialog}
+        />
+      );
       break;
     case 3:
       componentToRender = (
-        <SignatureSaveTempDoc
+        <OpenSignatureSignAll
           onButtonClick={handleNextStep}
           onClose={handleCloseDialog}
         />
@@ -72,7 +80,7 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
       break;
     case 4:
       componentToRender = (
-        <SignatureSentToSign
+        <OpenSignaturFinish
           onButtonClick={handleNextStep}
           onClose={handleCloseDialog}
         />
@@ -80,7 +88,10 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
       break;
     default:
       componentToRender = (
-        <SignatureAddSignatory onButtonClick={handleNextStep} />
+        <OpenSignaturDownload
+          onButtonClick={handleNextStep}
+          onClose={handleCloseDialog}
+        />
       );
       break;
   }

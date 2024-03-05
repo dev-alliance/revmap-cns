@@ -39,12 +39,13 @@ type FormValues = {
   checkboxName: any;
 };
 interface DetailDialogProps {
-  email: any;
+  onClose: any;
   onButtonClick: () => void;
 }
-const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
+const OpenSignatureSignAll: React.FC<DetailDialogProps> = ({
   onButtonClick,
-  email,
+
+  onClose,
 }) => {
   const {
     control,
@@ -96,20 +97,24 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mt: -2,
+          mt: -5,
         }}
       >
-        <Typography variant="body1" sx={{ mt: 1 }}>
-          PK ({" "}
-          <Box component="span" sx={{ color: "primary.main" }}>
-            {email}
-          </Box>
-          ) has shared Residential Rental Agreement to sign.
+        <Typography
+          variant="body1"
+          sx={{
+            mt: 1,
+            fontWeight: "bold",
+            fontSize: "15px",
+            whiteSpace: "nowrap",
+          }}
+        >
+          “Residential Rental Agreement” document has been signed by all parties
         </Typography>
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="body2">To: {email}</Typography>
+        <Typography variant="body2">To: {onClose}</Typography>
         <Card
           sx={{
             display: "flex",
@@ -129,38 +134,10 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
               // Adjust as needed
             }}
           />
-          <Typography variant="body1" sx={{ mt: 1, mb: 2, ml: -14 }}>
-            PK (
-            <Box component="span" sx={{ color: "primary.main" }}>
-              {email}
-            </Box>
-            ) has shared Residential Rental Agreement to sign.
+          <Typography variant="body1" sx={{ mt: 3, mb: 3 }}>
+            “Residential Rental Agreement” document has been signed by all
+            parties.
           </Typography>
-          <Controller
-            name="name"
-            control={control}
-            // rules={{ required: "Tag Name is required", maxLength: 50 }}
-            render={({ field }) => (
-              <>
-                <TextareaAutosize
-                  {...field}
-                  placeholder="text"
-                  minRows={4}
-                  maxLength={50}
-                  onChange={(event) => {
-                    field.onChange(event); // react-hook-form Controller handle onChange
-                  }}
-                  style={{
-                    width: "100%",
-                    fontSize: "16px",
-                    border: "1px solid #ced4da",
-                    borderRadius: "4px",
-                    padding: "10px",
-                  }}
-                />
-              </>
-            )}
-          />
         </Card>
 
         <div
@@ -185,4 +162,4 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
   );
 };
 
-export default OpenSignatureDoc;
+export default OpenSignatureSignAll;

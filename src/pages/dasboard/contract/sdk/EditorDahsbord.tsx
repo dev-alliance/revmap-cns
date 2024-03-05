@@ -79,7 +79,8 @@ const MyComponent: React.FC = () => {
   const location = useLocation();
   const { setOpenDocoment } = useContext(ContractContext);
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
-  const [selectedModule, setSelectedModule] = useState<string>("overview");
+  const { signatories, setSignatories, selectedModule, setSelectedModule } =
+    useContext(ContractContext);
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -177,7 +178,7 @@ const MyComponent: React.FC = () => {
             flexGrow: 1,
             pr: 1,
             height: "calc(100vh - 64px)",
-            overflow: "auto",
+            overflow: "hidden",
           }}
         >
           <Box
@@ -216,15 +217,15 @@ const MyComponent: React.FC = () => {
                       },
                     },
                   }}
-                // onChange={(e: any) => setSearch(e.target.value)}
+                  // onChange={(e: any) => setSearch(e.target.value)}
                 />
                 <Button
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="contained"
-                // component={Link}
-                // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-                // disabled={!user?.role?.permissions?.create_clauses}
-                // to="/dashboard/create-clauses"
+                  // component={Link}
+                  // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
+                  // disabled={!user?.role?.permissions?.create_clauses}
+                  // to="/dashboard/create-clauses"
                 >
                   Draft
                 </Button>
