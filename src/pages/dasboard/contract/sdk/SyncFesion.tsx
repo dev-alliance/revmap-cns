@@ -38,7 +38,37 @@ import linepng from '../../../../assets/line.png'
 import bucket from '../../../../assets/bucket.png'
 import undo from '../../../../assets/undo.png'
 import redo from '../../../../assets/redo.png'
-import fontColor from '../../../../assets/fontColor.png'
+// icons 
+import openFolder from '../../../../assets/icons/folder.png'
+import saveIcon from '../../../../assets/icons/save.png'
+import editIcon from '../../../../assets/icons/edit.png'
+// view 
+import searchIcon from '../../../../assets/icons/search.png'
+import commentIcon from '../../../../assets/icons/comment.png'
+import trackChangesIcon from '../../../../assets/icons/writing.png'
+import crossIcon from '../../../../assets/icons/close.png'
+import tickIcon from '../../../../assets/icons/check.png'
+import viewIcon from '../../../../assets/icons/website.png'
+// insert 
+import tableIcon from '../../../../assets/icons/table.png'
+import linkIcon from '../../../../assets/icons/link.png'
+import headerIcon from '../../../../assets/icons/header.png'
+import footerIcon from '../../../../assets/icons/footer.png'
+import pageNoIcon from '../../../../assets/icons/pageNumber.png'
+import pageSetupIcon from '../../../../assets/icons/cogwheels.png'
+// export 
+import pdfIcon from '../../../../assets/icons/pdf.png'
+import wordIcon from '../../../../assets/icons/word.png'
+import downloadIcon from '../../../../assets/icons/download.png'
+// signature 
+import requestIcon from '../../../../assets/icons/request.png'
+import websiteIcon from '../../../../assets/icons/website.png'
+import signatureIcon from '../../../../assets/icons/signature.png'
+// attach 
+import attachIcon from '../../../../assets/icons/attach.png'
+
+
+
 
 import {
   DocumentEditorComponent,
@@ -671,27 +701,31 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.file && (
             <ul
-              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-24 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_open");
                 }}
               >
+                <img src={openFolder} className="h-4 w-4" alt="" />
                 Open
               </li>
-              <li className="px-2 py-2 hover:bg-gray-200 cursor-pointer">Save</li>
+              <li className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2">
+                <img src={saveIcon} className="h-4 w-4" alt="" />
+                Save</li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_properties");
                 }}
               >
+                <img src={editIcon} className="h-4 w-4" alt="" />
                 Edit
               </li>
               <div onClick={() => toggleDropdown("file")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
@@ -710,59 +744,65 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.view && (
             <ul
-              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2 "
                 onClick={() => {
                   triggerClick("container_toolbar_find");
                 }}
               >
+                <img src={searchIcon} className="h-4 w-4" alt="" />
                 Find
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_comment");
                 }}
               >
+                <img src={commentIcon} className="h-4 w-4" alt="" />
                 Add comment
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_track");
                 }}
               >
+                <img src={trackChangesIcon} className="h-4 w-4" alt="" />
                 Track changes
               </li>
 
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_bold");
                 }}
               >
+                <img src={crossIcon} className="h-3 w-3" alt="" />
                 Reject all changes
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_bold");
                 }}
               >
+                <img src={tickIcon} className="h-4 w-4" alt="" />
                 Accept all changes
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_editor_font_properties_bold");
                 }}
               >
+                <img src={viewIcon} className="h-4 w-4" alt="" />
                 View Audit trail
               </li>
               <div onClick={() => toggleDropdown("view")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
@@ -781,59 +821,65 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.insert && (
             <ul
-              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_table");
                 }}
               >
+                <img src={tableIcon} className="h-4 w-4" alt="" />
                 Table
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_link");
                 }}
               >
+                <img src={linkIcon} className="h-4 w-4" alt="" />
                 Link
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_header");
                 }}
               >
+                <img src={headerIcon} className="h-4 w-4" alt="" />
                 Header
               </li>
 
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_footer");
                 }}
               >
+                <img src={footerIcon} className="h-4 w-4" alt="" />
                 Footer
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_page_setup");
                 }}
               >
+                <img src={pageSetupIcon} className="h-5 w-5" alt="" />
                 Page Setup
               </li>
               <li
-                className="px-2 hover:bg-gray-200 cursor-pointer"
+                className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
                   triggerClick("container_toolbar_page_number");
                 }}
               >
+                <img src={pageNoIcon} className="h-5 w-5" alt="" />
                 Page Number
               </li>
               <div onClick={() => toggleDropdown("insert")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
@@ -851,22 +897,24 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.signature && (
             <ul
-              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">
-                Request signature
+              <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                <img src={requestIcon} className="h-4 w-4" alt="" />  Request signature
               </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">
-                Cancel all signature
+              <li className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
+                <img src={crossIcon} className="h-4 w-4" alt="" />  Cancel all signature
               </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">
-                Revert to review
+              <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                <img src={websiteIcon} className="h-4 w-4" alt="" />  Revert to review
               </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">Sign</li>
+              <li className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2">
+                <img src={signatureIcon} className="h-4 w-4" alt="" />  Sign
+              </li>
               <div onClick={() => toggleDropdown("signature")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
             </ul>
           )}
@@ -882,20 +930,20 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.export && (
             <ul
-              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">
-                Download PDF
+              <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                <img src={pdfIcon} className="h-5 w-5" alt="" />  Download PDF
               </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">
-                Download Word
+              <li className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
+                <img src={wordIcon} className="h-5 w-5" alt="" /> Download Word
               </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">
-                Download signature certificate
+              <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                <img src={downloadIcon} className="h-6 w-5" alt="" />  Download signature certificate
               </li>
               <div onClick={() => toggleDropdown("export")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
 
@@ -912,13 +960,14 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.attach && (
             <ul
-              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li className="px-2 hover:bg-gray-200 cursor-pointer">
+              <li className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2">
+                <img src={attachIcon} className="h-4 w-4" alt="" />
                 Add attachment
               </li>
               <div onClick={() => toggleDropdown("attach")} className="w-full h-full  fixed inset-0 z-[-9]"></div>
