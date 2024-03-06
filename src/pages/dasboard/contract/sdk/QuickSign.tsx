@@ -96,7 +96,7 @@ const QuickSign = () => {
   return (
     <div style={{ textAlign: "left", position: "relative" }}>
       <Typography variant="body1" color="primary">
-        ESign
+        eSign
       </Typography>
       <Typography variant="body2" color="textSecondary">
         Add the signatory who will sign this document

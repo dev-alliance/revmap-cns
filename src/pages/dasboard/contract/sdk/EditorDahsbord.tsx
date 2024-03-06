@@ -130,7 +130,7 @@ const MyComponent: React.FC = () => {
     },
     quickSign: {
       icon: (
-        <Tooltip title="quickSign">
+        <Tooltip title="eSign">
           <img src={sign_smal} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
@@ -138,7 +138,7 @@ const MyComponent: React.FC = () => {
     },
     approval: {
       icon: (
-        <Tooltip title="approvals">
+        <Tooltip title="Approvals">
           <img src={approval} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
@@ -146,7 +146,7 @@ const MyComponent: React.FC = () => {
     },
     clause: {
       icon: (
-        <Tooltip title="clause">
+        <Tooltip title="Clause">
           <img src={clauses} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
@@ -154,7 +154,7 @@ const MyComponent: React.FC = () => {
     },
     attachement: {
       icon: (
-        <Tooltip title="attachement">
+        <Tooltip title="Attachement">
           <img src={attachments} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
@@ -162,7 +162,7 @@ const MyComponent: React.FC = () => {
     },
     timeLine: {
       icon: (
-        <Tooltip title="timeLine">
+        <Tooltip title="TimeLine">
           <img src={timeline} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
@@ -170,7 +170,7 @@ const MyComponent: React.FC = () => {
     },
     lifeSycle: {
       icon: (
-        <Tooltip title="lifeSycle">
+        <Tooltip title="Lifecycle">
           <img src={life_sycle} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
