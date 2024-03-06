@@ -59,7 +59,11 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
   switch (currentStep) {
     case 1:
       componentToRender = (
-        <OpenSignatureDoc email={"abc"} onButtonClick={handleNextStep} />
+        <OpenSignatureDoc
+          email={"abc"}
+          onButtonClick={handleNextStep}
+          handleCloseDialog={handleCloseDialog}
+        />
       );
       break;
     case 2:
@@ -67,6 +71,7 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
         <OpenDrawSignature
           onButtonClick={handleNextStep}
           onClose={handleCloseDialog}
+          handleCloseDialog={handleCloseDialog}
         />
       );
       break;
@@ -75,6 +80,7 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
         <OpenSignatureSignAll
           onButtonClick={handleNextStep}
           onClose={handleCloseDialog}
+          handleCloseDialog={handleCloseDialog}
         />
       );
       break;
@@ -105,7 +111,7 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
         fullWidth
         sx={{ alignItems: "center" }}
       >
-        <DialogTitle
+        {/* <DialogTitle
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -119,7 +125,7 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
           >
             <CloseIcon />
           </IconButton>
-        </DialogTitle>
+        </DialogTitle> */}
 
         {componentToRender}
 

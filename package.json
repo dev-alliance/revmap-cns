@@ -28,6 +28,7 @@
     "@syncfusion/ej2-react-navigations": "^24.2.3",
     "@syncfusion/ej2-react-splitbuttons": "^24.2.5",
     "@tinymce/tinymce-react": "^4.3.2",
+    "@types/lodash": "^4.14.202",
     "@types/react-dropzone": "^5.1.0",
     "axios": "^1.6.0",
     "country-state-city": "^3.2.1",

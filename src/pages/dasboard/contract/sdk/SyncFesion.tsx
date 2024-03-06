@@ -1015,7 +1015,7 @@ function SyncFusionEditor() {
         </div>
         <Box sx={{ width: "100%", px: 2.6 }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button variant="outlined" sx={{ textTransform: "none" }}>
+            {/* <Button variant="outlined" sx={{ textTransform: "none" }}>
               Cancel
             </Button>
             <Button
@@ -1025,11 +1025,11 @@ function SyncFusionEditor() {
               color="success"
             >
               Save
-            </Button>
+            </Button> */}
             <Button
               sx={{ ml: 2, textTransform: "none" }}
               type="submit"
-              variant="contained"
+              variant="outlined"
               color="success"
             >
               Edit

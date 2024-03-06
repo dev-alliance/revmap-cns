@@ -41,9 +41,11 @@ type FormValues = {
 interface DetailDialogProps {
   email: any;
   onButtonClick: () => void;
+  handleCloseDialog: () => void;
 }
 const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
   onButtonClick,
+  handleCloseDialog,
   email,
 }) => {
   const {
@@ -99,7 +101,14 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
           mt: -2,
         }}
       >
-        <Typography variant="body1" sx={{ mt: 1 }}>
+        <IconButton
+          onClick={handleCloseDialog}
+          aria-label="close"
+          sx={{ position: "absolute", top: 8, right: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Typography variant="body1" sx={{ mt: 2 }}>
           PK ({" "}
           <Box component="span" sx={{ color: "primary.main" }}>
             {email}

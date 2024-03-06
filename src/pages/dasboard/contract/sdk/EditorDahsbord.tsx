@@ -79,6 +79,7 @@ import life_sycle from "@/assets/life_sycle.png";
 import sign_smal from "@/assets/sign_smal.png";
 import timeline from "@/assets/timeline.png";
 import approval from "@/assets/approval_icon.png";
+import { debounce } from "lodash";
 interface Module {
   icon: ReactNode;
   content?: ReactNode;
@@ -86,14 +87,28 @@ interface Module {
 
 const MyComponent: React.FC = () => {
   const location = useLocation();
-  const { setOpenDocoment } = useContext(ContractContext);
-  const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
+  const { setOpenDocoment, sidebarExpanded, setSidebarExpanded } =
+    useContext(ContractContext);
+  // const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
   const { signatories, setSignatories, selectedModule, setSelectedModule } =
     useContext(ContractContext);
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  // Calculate width based on input length. Adjust the multiplier as needed for your specific font and design.
+  // You might also want to set a minimum and maximum width.
+  const inputWidth =
+    inputValue.length > 0 ? `${Math.max(100, inputValue.length * 6)}px` : "70%";
+
+  const handleInputChange = useCallback(
+    debounce((value: any) => {
+      setInputValue(value);
+    }, 100),
+    []
+  );
 
   useEffect(() => {
     if (location.pathname === "/dashboard/editor-dahsbord/open") {
@@ -230,38 +245,34 @@ const MyComponent: React.FC = () => {
                 }}
               >
                 <TextField
-                  size="small"
-                  // value={search}
                   placeholder="Add contract name"
                   variant="standard"
                   InputProps={{
                     sx: {
+                      width: inputWidth, // Apply dynamic width
                       "::placeholder": {
-                        fontSize: "0.55rem", // Adjusted font size for placeholder
-                        textAlign: "center", // Center placeholder text horizontally
+                        fontSize: "0.55rem",
+                        // textAlign: "center",
                       },
                       input: {
-                        fontSize: "0.875rem", // Adjusted font size for input text
-                        textAlign: "center", // Center input text horizontally
+                        fontSize: "0.875rem",
+                        // textAlign: "center",
                       },
                     },
                   }}
-                  // onChange={(e: any) => setSearch(e.target.value)}
+                  value={inputValue}
+                  onChange={(e) => handleInputChange(e.target.value)}
                 />
                 <Button
                   sx={{ ml: 2, textTransform: "none" }}
-                  variant="contained"
-                  // component={Link}
-                  // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-                  // disabled={!user?.role?.permissions?.create_clauses}
-                  // to="/dashboard/create-clauses"
+                  variant="outlined"
                 >
                   Draft
                 </Button>
               </Box>
             </div>
             <div>
-              <Box
+              {/* <Box
                 sx={{
                   width: 30,
                   height: 30,
@@ -296,10 +307,11 @@ const MyComponent: React.FC = () => {
                     Owner
                   </Button>
                 </span>
-              </Tooltip>
+              </Tooltip> */}
               <Button
                 sx={{ ml: 2, textTransform: "none" }}
-                variant="contained"
+                variant="outlined"
+                color="success"
                 onClick={handleClick}
               >
                 <AddIcon /> Share
@@ -364,7 +376,7 @@ const MyComponent: React.FC = () => {
 
         <Box
           sx={{
-            width: sidebarExpanded ? 320 : 50,
+            width: sidebarExpanded ? 320 : 55,
             flexShrink: 0,
             display: "flex",
             border: "1px solid #BEBEBE",

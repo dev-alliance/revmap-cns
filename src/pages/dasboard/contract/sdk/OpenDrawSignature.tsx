@@ -31,10 +31,12 @@ import {
   FormControlLabel,
   InputAdornment,
   Select,
+  IconButton,
 } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -66,10 +68,11 @@ const fonts = [
 interface DetailDialogProps {
   onClose: any;
   onButtonClick: () => void;
+  handleCloseDialog: () => void;
 }
 const OpenDrawSignature: React.FC<DetailDialogProps> = ({
   onButtonClick,
-
+  handleCloseDialog,
   onClose,
 }) => {
   const [disable, setDisable] = useState(true);
@@ -142,39 +145,99 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
 
   return (
     <>
-      <DialogTitle
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          mb: -2,
-          mt: -5,
-        }}
-      >
-        <strong style={{ display: "flex" }}>Signature</strong>
-      </DialogTitle>
-
-      <Box
-        sx={{
-          borderBottom: 1,
-          borderColor: "divider",
-          color: "gray",
-          ml: 2,
-          mr: 2,
-        }}
-      >
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          aria-label="basic tabs example"
+      <Card>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          <Tab label="Draw" sx={{ fontWeight: "bold" }} />
-          <Tab label="Type" sx={{ fontWeight: "bold" }} />
-          <Tab label="Upload" sx={{ fontWeight: "bold" }} />
-        </Tabs>
-      </Box>
+          <IconButton
+            onClick={handleCloseDialog}
+            aria-label="close"
+            sx={{ position: "absolute", top: 8, right: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            mb: -2,
+            mt: -5,
+          }}
+        >
+          <strong style={{ display: "flex", textDecoration: "underline" }}>
+            Signature
+          </strong>
+        </DialogTitle>
 
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            color: "gray",
+            ml: 0.5,
+            mr: 2,
+          }}
+        >
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="basic tabs example"
+          >
+            <Tab label="Draw" sx={{ fontWeight: "bold" }} />
+            <Tab label="Type" sx={{ fontWeight: "bold" }} />
+            <Tab label="Upload" sx={{ fontWeight: "bold" }} />
+          </Tabs>
+        </Box>
+      </Card>
       <TabPanel value={tabValue} index={0}>
         <div
+          className="signature-container"
+          style={{
+            position: "relative",
+            height: "25vh",
+            width: "100%",
+            backgroundColor: "#fff", // Card background color
+            boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)", // Shadow effect
+            transition: "0.3s",
+            borderRadius: "5px", // Rounded corners
+            padding: "0px", // Padding inside the card
+          }}
+        >
+          {/* Other content */}
+          <div id="signature-control" style={{ height: "100%" }}>
+            <SignatureComponent
+              id="signature"
+              ref={signatureObj}
+              change={change}
+              style={{ width: "100%", height: "100%" }}
+            ></SignatureComponent>
+            <ButtonComponent
+              id="signclear"
+              cssClass="e-primary e-sign-clear"
+              onClick={clrBtnClick}
+              disabled={disable}
+              style={{
+                margin: "auto",
+                background: "white",
+                color: "gray",
+                textTransform: "none",
+                position: "absolute",
+                left: "6px",
+                top: "10px", // Adjust as needed
+                // Add left or right property if you want to align it differently
+              }}
+            >
+              Clear
+            </ButtonComponent>
+          </div>
+        </div>
+
+        {/* <div
           className="control-pane"
           style={{
             display: "flex",
@@ -186,7 +249,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
         >
           <div
             className="col-lg-12 control-section"
-            style={{ maxWidth: "600px", margin: "auto" }} // Adjust maxWidth as needed for your design
+            style={{ maxWidth: "800px", margin: "auto" }} // Adjust maxWidth as needed for your design
           >
             <div
               id="signature-control"
@@ -194,8 +257,8 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                 textAlign: "center",
               }}
             >
-              <div className="e-sign-heading">
-                {/* <span
+              {/* <div className="e-sign-heading"> */}
+        {/* <span
                   className="e-btn-options"
                   style={{
                     display: "flex",
@@ -203,7 +266,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                     gap: "10px",
                   }}
                 > */}
-                {/* <ButtonComponent
+        {/* <ButtonComponent
                     id="signclear"
                     cssClass="e-primary e-sign-clear"
                     onClick={clrBtnClick}
@@ -219,7 +282,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                   >
                     Clear
                   </ButtonComponent> */}
-                {/* <ButtonComponent
+        {/* <ButtonComponent
                     id="signsave"
                     cssClass="e-primary e-sign-save"
                     onClick={saveBtnClick}
@@ -235,55 +298,33 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                   >
                     Download
                   </ButtonComponent> */}
-                {/* </span> */}
-              </div>
-              <div
-                className="signature-container"
-                style={{ position: "relative", height: "250px", width: "100%" }}
-              >
-                {/* Other content */}
-                <div id="signature-control" style={{ height: "100%" }}>
-                  <SignatureComponent
-                    id="signature"
-                    ref={signatureObj}
-                    change={change}
-                    style={{ width: "100%", height: "100%" }}
-                  ></SignatureComponent>
-                  <ButtonComponent
-                    id="signclear"
-                    cssClass="e-primary e-sign-clear"
-                    onClick={clrBtnClick}
-                    disabled={disable}
-                    style={{
-                      margin: "auto",
-                      background: "white",
-                      color: "gray",
-                      textTransform: "none",
-                      position: "absolute",
-                      left: "6px",
-                      top: "10px", // Adjust as needed
-                      // Add left or right property if you want to align it differently
-                    }}
-                  >
-                    Clear
-                  </ButtonComponent>
-                </div>
-                {/* Other content */}
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* </span> */}
+        {/* </div> */}
+        {/* </div> */}
+        {/* </div> */}
+        {/* </div>  */}
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        <Card variant="outlined" sx={{ mt: 2 }}>
+        <Card
+          variant="outlined"
+          sx={{
+            backgroundColor: "#fff", // Card background color
+            boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)", // Shadow effect
+            transition: "0.3s",
+            borderRadius: "5px", // Rounded corners
+            padding: "0px",
+            height: "25vh",
+            width: "100%",
+          }}
+        >
           <CardContent>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column", // Changed from "inline" to "flex"
                 // Aligns children horizontally
-                alignItems: "center", // Vertically centers the items in the container
-                justifyContent: "center", // Horizontally centers the items
+                // alignItems: "center", // Vertically centers the items in the container
+                // justifyContent: "center", // Horizontally centers the items
               }}
             >
               <Button
@@ -345,12 +386,13 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                 variant="h5"
                 sx={{
                   mt: -7.5, // Adjust this value to align the Typography text with the TextField
-                  mb: 2, // Margin bottom for spacing
+                  mb: 2,
+                  ml: 1, // Margin bottom for spacing
                   fontFamily: selectedFont,
                   userSelect: "none",
-                  position: "relative", // Ensure Typography is positioned correctly
+                  // position: "relative", // Ensure Typography is positioned correctly
                   zIndex: 1,
-                  alignItems: "center", // Bring the Typography in front of the TextField
+                  // alignItems: "center", // Bring the Typography in front of the TextField
                 }}
               >
                 {typedSignature || "Type your signature here"}{" "}
@@ -365,14 +407,20 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
           {...getRootProps()}
           style={{
             border: "2px dashed #eeeeee",
-            padding: "20px",
+            // padding: "35px",
+            height: "25vh",
+            width: "100%",
             textAlign: "center",
             cursor: "pointer",
+            backgroundColor: "#fff", // Card background color
+            boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)", // Shadow effect
+            transition: "0.3s",
+            borderRadius: "5px", // Rounded corners
           }}
         >
           <input {...getInputProps()} />
           {selectedFile ? (
-            <div>
+            <div style={{ marginTop: "6rem" }}>
               <p>{selectedFile.name}</p>
             </div>
           ) : (
@@ -382,7 +430,8 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                 flexDirection: "row", // Aligns children horizontally
                 alignItems: "center", // Vertically centers the items in the container
                 justifyContent: "center", // Horizontally centers the items
-                height: "110px", // Adjust the height as needed
+                height: "110px",
+                marginTop: "2.8rem", // Adjust the height as needed
               }}
             >
               <img
@@ -394,9 +443,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                   marginRight: "10px", // Adds some space between the image and the text
                 }}
               />
-              <h1 style={{ margin: 0, fontWeight: "bold" }}>
-                Upload signature
-              </h1>{" "}
+              <h1 style={{ fontWeight: "bold" }}>Upload signature</h1>{" "}
               {/* Removed bottom margin to align with the image */}
             </div>
           )}
@@ -411,7 +458,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
           // textAlign: "center",
         }}
       >
-        <Typography variant="body1" sx={{ mt: 1, mb: 2, textAlign: "justify" }}>
+        <Typography variant="body2" sx={{ mt: 1, mb: 2, textAlign: "justify" }}>
           I acknowledge that ContractnSign will utilize my name and email
           address, along with limited information necessary to complete the
           signature process and enhance user experience. To understand more
@@ -424,7 +471,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
         <Box>
           <Button
             variant="outlined"
-            sx={{ textTransform: "none", float: "left", mt: 2 }}
+            sx={{ textTransform: "none", float: "left" }}
             onClick={() => onClose()}
           >
             Cancel
@@ -432,7 +479,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
           <Button
             variant="contained"
             color="success"
-            sx={{ textTransform: "none", float: "right", mt: 2 }}
+            sx={{ textTransform: "none", float: "right" }}
             onClick={() => onButtonClick()}
           >
             Accept and sign

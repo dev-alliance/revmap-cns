@@ -51,6 +51,8 @@ interface ContractContextProps {
   setOpenDocoment: Dispatch<SetStateAction<any>>;
   selectedModule: any | null;
   setSelectedModule: Dispatch<SetStateAction<any>>;
+  sidebarExpanded: any | null;
+  setSidebarExpanded: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -65,6 +67,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setOpenDocoment: () => {},
   selectedModule: {},
   setSelectedModule: () => {},
+  sidebarExpanded: {},
+  setSidebarExpanded: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -74,6 +78,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [signatories, setSignatories] = useState<string[]>([]);
   const [openDocoment, setOpenDocoment] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
+  const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
   const [contractStatus, setContractStatus] = useState<ContractStatus>({
     status: "",
     expire: "",
@@ -112,9 +117,14 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedContractSignatureOpen) {
       setOpenDocoment(JSON.parse(storedContractSignatureOpen));
     }
-    const storedContractselectedModule = localStorage.getItem("selectedModule");
+    const storedContractselectedModule =
+      localStorage.getItem("sidebarExpanded");
     if (storedContractselectedModule) {
-      setSelectedModule(JSON.parse(storedContractselectedModule));
+      setSidebarExpanded(JSON.parse(storedContractselectedModule));
+    }
+    const storedContractsidebarExand = localStorage.getItem("sid");
+    if (storedContractsidebarExand) {
+      setSelectedModule(JSON.parse(storedContractsidebarExand));
     }
   }, []);
   useEffect(() => {
@@ -138,6 +148,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setOpenDocoment,
         selectedModule,
         setSelectedModule,
+        sidebarExpanded,
+        setSidebarExpanded,
       }}
     >
       {children}

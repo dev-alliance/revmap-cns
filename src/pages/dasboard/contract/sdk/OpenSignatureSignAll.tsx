@@ -41,10 +41,11 @@ type FormValues = {
 interface DetailDialogProps {
   onClose: any;
   onButtonClick: () => void;
+  handleCloseDialog: () => void;
 }
 const OpenSignatureSignAll: React.FC<DetailDialogProps> = ({
   onButtonClick,
-
+  handleCloseDialog,
   onClose,
 }) => {
   const {
@@ -97,13 +98,18 @@ const OpenSignatureSignAll: React.FC<DetailDialogProps> = ({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mt: -5,
         }}
       >
+        <IconButton
+          onClick={handleCloseDialog}
+          aria-label="close"
+          sx={{ position: "absolute", top: 8, right: 8 }}
+        >
+          <CloseIcon />
+        </IconButton>
         <Typography
           variant="body1"
           sx={{
-            mt: 1,
             fontWeight: "bold",
             fontSize: "15px",
             whiteSpace: "nowrap",
@@ -114,13 +120,14 @@ const OpenSignatureSignAll: React.FC<DetailDialogProps> = ({
       </DialogTitle>
 
       <DialogContent>
-        <Typography variant="body2">To: {onClose}</Typography>
+        <Typography variant="body2">To: {"abc@gmail.com"}</Typography>
         <Card
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             textAlign: "center",
+            mt: 3,
             p: 1,
           }}
         >
@@ -151,7 +158,7 @@ const OpenSignatureSignAll: React.FC<DetailDialogProps> = ({
           <Button
             variant="contained"
             color="success"
-            sx={{ textTransform: "none" }}
+            sx={{ textTransform: "none", mt: "4" }}
             onClick={() => onButtonClick()}
           >
             Open the document

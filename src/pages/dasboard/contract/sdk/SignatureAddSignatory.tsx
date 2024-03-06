@@ -58,8 +58,13 @@ const SignatureAddSignatory: React.FC<SignatureAddSignatoryProps> = ({
     mode: "onBlur",
   });
   const { user } = useAuth();
-  const { signatories, setSignatories, selectedModule, setSelectedModule } =
-    useContext(ContractContext);
+  const {
+    signatories,
+    setSignatories,
+    selectedModule,
+    setSidebarExpanded,
+    setSelectedModule,
+  } = useContext(ContractContext);
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
@@ -79,8 +84,8 @@ const SignatureAddSignatory: React.FC<SignatureAddSignatoryProps> = ({
   };
 
   const handleAddSignatoryClick = () => {
-    alert("ok");
     setSelectedModule("quickSign");
+    setSidebarExpanded(true);
   };
 
   const handleRemoveSignatory = (signatoryToRemove: any) => {
@@ -198,78 +203,79 @@ const SignatureAddSignatory: React.FC<SignatureAddSignatoryProps> = ({
               }}
               onClick={handleAddSignatoryClick}
             />
-
-            <Card
-              sx={{
-                alignItems: "center",
-                justifyContent: "space-between", // This spreads out the children
-                mt: 1,
-                p: 1,
-              }}
-            >
-              {signatories.map((signatory: any, index: any) => (
-                <>
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Box
-                      sx={{
+            {signatories.length !== 0 && (
+              <Card
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "space-between", // This spreads out the children
+                  mt: 1,
+                  p: 1,
+                }}
+              >
+                {signatories.map((signatory: any, index: any) => (
+                  <>
+                    <div
+                      key={index}
+                      style={{
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "space-between",
                       }}
                     >
                       <Box
-                        key={signatory._id}
                         sx={{
-                          width: 24,
-                          height: 24,
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            bubbleColors[index % bubbleColors.length],
-                          color: "#FFFFFF",
-                          marginRight: -1,
-                          fontSize: "8px",
-                          mr: 1,
                         }}
                       >
-                        <Typography>
-                          {signatory?.charAt(0).toUpperCase()}
+                        <Box
+                          key={signatory._id}
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "50%",
+                            backgroundColor:
+                              bubbleColors[index % bubbleColors.length],
+                            color: "#FFFFFF",
+                            marginRight: -1,
+                            fontSize: "8px",
+                            mr: 1,
+                          }}
+                        >
+                          <Typography>
+                            {signatory?.charAt(0).toUpperCase()}
+                          </Typography>
+                        </Box>
+                        <Typography
+                          onClick={() => onButtonClick()}
+                          variant="body2"
+                          sx={{
+                            fontWeight: "bold",
+                            width: "120px",
+                            textOverflow: "ellipsis",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {signatory}
                         </Typography>
                       </Box>
-                      <Typography
-                        onClick={() => onButtonClick()}
-                        variant="body2"
-                        sx={{
-                          fontWeight: "bold",
-                          width: "120px",
-                          textOverflow: "ellipsis",
-                          cursor: "pointer",
-                        }}
-                      >
-                        {signatory}
-                      </Typography>
-                    </Box>
 
-                    <Button
-                      variant="text"
-                      color="primary"
-                      sx={{ textTransform: "none" }}
-                      onClick={() => handleRemoveSignatory(signatory)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                </>
-              ))}
-            </Card>
+                      <Button
+                        variant="text"
+                        color="primary"
+                        sx={{ textTransform: "none" }}
+                        onClick={() => handleRemoveSignatory(signatory)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </>
+                ))}
+              </Card>
+            )}
           </form>
           <Button
             variant="contained"
