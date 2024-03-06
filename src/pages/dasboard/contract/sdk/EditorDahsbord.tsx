@@ -69,7 +69,16 @@ import SignatureDialog from "@/pages/dasboard/contract/sdk/SignatureDialog";
 import QuickSign from "@/pages/dasboard/contract/sdk/QuickSign";
 import { ContractContext } from "@/context/ContractContext";
 import OpenSignatureDialog from "@/pages/dasboard/contract/sdk/OpenSignatureDialog";
-
+import logo from "@/assets/logo.jpg";
+import about_icon from "@/assets/about_icon.png";
+import attachments from "@/assets/attachments.png";
+import clauses from "@/assets/clauses.png";
+import { CloudDownload as DownloadIcon } from "@mui/icons-material";
+import comments from "@/assets/comments.png";
+import life_sycle from "@/assets/life_sycle.png";
+import sign_smal from "@/assets/sign_smal.png";
+import timeline from "@/assets/timeline.png";
+import approval from "@/assets/approval_icon.png";
 interface Module {
   icon: ReactNode;
   content?: ReactNode;
@@ -114,7 +123,7 @@ const MyComponent: React.FC = () => {
     overview: {
       icon: (
         <Tooltip title="Overview">
-          <AdjustIcon />
+          <img src={about_icon} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
       content: <OverView />,
@@ -122,7 +131,7 @@ const MyComponent: React.FC = () => {
     quickSign: {
       icon: (
         <Tooltip title="quickSign">
-          <DrawIcon />
+          <img src={sign_smal} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
       content: <QuickSign />,
@@ -130,33 +139,53 @@ const MyComponent: React.FC = () => {
     approval: {
       icon: (
         <Tooltip title="approvals">
-          <HowToRegIcon />
+          <img src={approval} alt="Logo" style={{ width: "30%" }} />
         </Tooltip>
       ),
       content: <ApprovalsComp />,
     },
     clause: {
-      icon: <TaskIcon />,
+      icon: (
+        <Tooltip title="clause">
+          <img src={clauses} alt="Logo" style={{ width: "30%" }} />
+        </Tooltip>
+      ),
       content: <ClauseComp />,
     },
     attachement: {
-      icon: <AttachFileIcon />,
+      icon: (
+        <Tooltip title="attachement">
+          <img src={attachments} alt="Logo" style={{ width: "30%" }} />
+        </Tooltip>
+      ),
       content: <Attachement />,
     },
     timeLine: {
-      icon: <TimelineIcon />,
+      icon: (
+        <Tooltip title="timeLine">
+          <img src={timeline} alt="Logo" style={{ width: "30%" }} />
+        </Tooltip>
+      ),
       content: <TimelineComp />,
     },
     lifeSycle: {
-      icon: <HistoryIcon />,
+      icon: (
+        <Tooltip title="lifeSycle">
+          <img src={life_sycle} alt="Logo" style={{ width: "30%" }} />
+        </Tooltip>
+      ),
       content: <LifeSycle />,
     },
-    shere: {
-      icon: <ShareIcon />,
-      content: <ShareComp />,
-    },
+    // shere: {
+    //   icon: <ShareIcon />,
+    //   content: <ShareComp />,
+    // },
     discussion: {
-      icon: <ChatIcon />,
+      icon: (
+        <Tooltip title="discussion">
+          <img src={comments} alt="Logo" style={{ width: "30%" }} />
+        </Tooltip>
+      ),
       content: <Discussion />,
     },
     // Add more modules as needed
@@ -335,7 +364,7 @@ const MyComponent: React.FC = () => {
 
         <Box
           sx={{
-            width: sidebarExpanded ? 320 : 60,
+            width: sidebarExpanded ? 320 : 50,
             flexShrink: 0,
             display: "flex",
             border: "1px solid #BEBEBE",
@@ -354,7 +383,7 @@ const MyComponent: React.FC = () => {
               <List>
                 {Object.keys(modules).map((key) => (
                   <ListItemButton
-                    sx={{ mb: 2.5 }}
+                    sx={{ mb: 2.5, width: "100%" }}
                     key={key}
                     selected={selectedModule === key}
                     onClick={() =>
