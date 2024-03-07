@@ -55,6 +55,7 @@ import tickIcon from "../../../../assets/icons/check.png";
 import viewIcon from "../../../../assets/icons/website.png";
 // insert
 import tableIcon from "../../../../assets/icons/table.png";
+import imageIcon from "../../../../assets/icons/picture.png";
 import linkIcon from "../../../../assets/icons/link.png";
 import headerIcon from "../../../../assets/icons/header.png";
 import footerIcon from "../../../../assets/icons/footer.png";
@@ -852,12 +853,12 @@ function SyncFusionEditor() {
                 Table
               </li>
               <li
-                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                className="px-3 hover:bg-gray-200 cursor-pointer  pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_toolbar_table");
+                  triggerClick("container_toolbar_image_local");
                 }}
               >
-                <img src={tableIcon} className="h-4 w-4" alt="" />
+                <img src={imageIcon} className="h-4 w-4" alt="" />
                 Image
               </li>
               <li
@@ -1306,7 +1307,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-        // showPropertiesPane={false}
+      // showPropertiesPane={false}
       />
     </div>
   );
