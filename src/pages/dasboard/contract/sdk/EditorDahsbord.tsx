@@ -267,7 +267,7 @@ const MyComponent: React.FC = () => {
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="outlined"
                 >
-                  Draft
+                  Drafttttttttttttt
                 </Button>
               </Box>
             </div>
