@@ -122,9 +122,9 @@ const OverView = () => {
       console.log(updatedOverview, "dataupdat");
       updateContractOverview(updatedOverview);
 
-      toast.success("Contract overview updated successfully");
+      // toast.success("Contract overview updated successfully");
     } catch (error) {
-      toast.error("Failed to update contract overview");
+      // toast.error("Failed to update contract overview");
     }
   };
   useEffect(() => {

@@ -113,7 +113,7 @@ const OwnerDialog: React.FC<{
             name="name"
             control={control}
             rules={{ required: "Mandatory field is required" }}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field, fieldState: { error } }: any) => (
               <FormControl fullWidth size="small" error={!!error}>
                 <Autocomplete
                   {...field}

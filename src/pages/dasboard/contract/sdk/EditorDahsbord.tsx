@@ -45,7 +45,6 @@ import ShareIcon from "@mui/icons-material/Share";
 import ShareComp from "@/pages/dasboard/contract/sdk/ShareComp";
 import ChatIcon from "@mui/icons-material/Chat";
 import Discussion from "@/pages/dasboard/contract/sdk/Discussion";
-import { AnyAction } from "@reduxjs/toolkit";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import DrawIcon from "@mui/icons-material/Draw";
 import {
@@ -101,7 +100,7 @@ const MyComponent: React.FC = () => {
   // Calculate width based on input length. Adjust the multiplier as needed for your specific font and design.
   // You might also want to set a minimum and maximum width.
   const inputWidth =
-    inputValue.length > 0 ? `${Math.max(100, inputValue.length * 6)}px` : "70%";
+    inputValue.length > 0 ? `${Math.max(100, inputValue.length * 8)}px` : "70%";
 
   const handleInputChange = useCallback(
     debounce((value: any) => {
@@ -245,29 +244,40 @@ const MyComponent: React.FC = () => {
                 }}
               >
                 <TextField
-                  placeholder="Add contract name"
+                  placeholder="Untitled document"
                   variant="standard"
                   InputProps={{
                     sx: {
                       width: inputWidth, // Apply dynamic width
                       "::placeholder": {
-                        fontSize: "0.55rem",
+                        fontSize: "1rem",
                         // textAlign: "center",
                       },
                       input: {
-                        fontSize: "0.875rem",
+                        fontSize: "1rem",
                         // textAlign: "center",
+                      },
+                      // Targeting the underline to remove it or make it invisible
+                      "&:before": {
+                        borderBottom: "none", // Removes the underline in default state
+                      },
+                      "&:hover:not(.Mui-disabled):before": {
+                        borderBottom: "none", // Removes the underline on hover (if not disabled)
+                      },
+                      "&:after": {
+                        borderBottom: "none", // Removes the underline in focused/active state
                       },
                     },
                   }}
                   value={inputValue}
                   onChange={(e) => handleInputChange(e.target.value)}
                 />
+
                 <Button
                   sx={{ ml: 2, textTransform: "none" }}
                   variant="outlined"
                 >
-                  Drafttttttttttttt
+                  Draft
                 </Button>
               </Box>
             </div>
