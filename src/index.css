@@ -40,15 +40,14 @@
   height: 300px !important;
 }
 
-
 .e-icons.e-font-color {
-  background-image: url('./assets/fontcolor.png');
+  background-image: url("./assets/fontcolor.png");
   width: 100px;
   height: 100px;
 }
 
 .e-icons.e-text-highlight {
-  background-image: url('./assets/fontcolor.png');
+  background-image: url("./assets/fontcolor.png");
   width: 100px;
   height: 100px;
 }
@@ -200,7 +199,6 @@
 /* =========================================================================== */
 /* *****MEDIA QUESRRY ************** */
 @media screen and (max-width: 1450px) {
-
   /* style */
   /* #container_editor_font_properties_leftDiv {
     left: -68% !important;
@@ -467,7 +465,8 @@
 /* end */
 
 /* sidebar hidden  */
-.e-de-pane {}
+.e-de-pane {
+}
 
 /* .e-de-ctnr-segment { 
   position: absolute !important;

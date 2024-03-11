@@ -112,7 +112,7 @@ const QuickSign = () => {
           name="name"
           control={control}
           defaultValue=""
-          render={({ field }) => (
+          render={({ field }: any) => (
             <Autocomplete
               {...field}
               freeSolo
@@ -123,7 +123,7 @@ const QuickSign = () => {
               getOptionLabel={(option: any) => option.label || ""}
               onInputChange={handleInputChange}
               inputValue={inputValue}
-              onChange={(_, value) =>
+              onChange={(_, value: any) =>
                 handleAddSignatory(value ? value.email : "")
               }
               renderInput={(params) => (

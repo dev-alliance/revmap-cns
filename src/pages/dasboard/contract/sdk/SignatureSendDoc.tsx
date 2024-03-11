@@ -113,7 +113,7 @@ const SignatureSendDoc: React.FC<DetailDialogProps> = ({
           name="name"
           control={control}
           // rules={{ required: "Tag Name is required", maxLength: 50 }}
-          render={({ field }) => (
+          render={({ field }: any) => (
             <>
               <TextareaAutosize
                 {...field}

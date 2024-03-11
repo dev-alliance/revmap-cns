@@ -333,6 +333,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                   mb: 1,
                   display: "flex",
                   alignItems: "center",
+                  textTransform: "none",
                 }}
                 onClick={handleClick}
                 endIcon={<ArrowDropDownIcon />}
@@ -392,10 +393,11 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
                   userSelect: "none",
                   // position: "relative", // Ensure Typography is positioned correctly
                   zIndex: 1,
+
                   // alignItems: "center", // Bring the Typography in front of the TextField
                 }}
               >
-                {typedSignature || "Type your signature here"}{" "}
+                {typedSignature || "Start typing here"}
                 {/* Display placeholder text when there's no signature */}
               </Typography>
             </Box>
