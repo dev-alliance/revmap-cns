@@ -4,6 +4,9 @@ import baseURL from "./axiosInstance";
 export const getList = async () => {
   return await baseURL.get(`/api/v1/customFields/list`);
 };
+export const getfeildList = async () => {
+  return await baseURL.get(`/api/v1/customFields/list`);
+};
 
 export const create = async (data: any) => {
   const response = await baseURL.post("/api/v1/customFields/create", data);
