@@ -79,6 +79,19 @@ import sign_smal from "@/assets/sign_smal.png";
 import timeline from "@/assets/timeline.png";
 import approval from "@/assets/approval_icon.png";
 import { debounce } from "lodash";
+
+
+// icon for sidebar 
+
+import dangerIcon from "../../../../assets/leftsideicon/danger.png";
+import writingIcon from "../../../../assets/leftsideicon/writing.png";
+import userIcon from "../../../../assets/leftsideicon/user.png";
+import clipboardIcon from "../../../../assets/leftsideicon/clipboard3.png";
+import attachIcon from "../../../../assets/leftsideicon/attached.png";
+import timelineIcon from "../../../../assets/leftsideicon/timing.png";
+import lifecycleIcon from "../../../../assets/leftsideicon/lifecyle2.png";
+import commentIcon from "../../../../assets/leftsideicon/comment.png";
+
 interface Module {
   icon: ReactNode;
   content?: ReactNode;
@@ -137,7 +150,7 @@ const MyComponent: React.FC = () => {
     overview: {
       icon: (
         <Tooltip title="Overview">
-          <img src={about_icon} alt="Logo" style={{ width: "30%" }} />
+          <img src={dangerIcon} alt="Logo" style={{ width: "4%" }} />
         </Tooltip>
       ),
       content: <OverView />,
@@ -145,7 +158,7 @@ const MyComponent: React.FC = () => {
     quickSign: {
       icon: (
         <Tooltip title="eSign">
-          <img src={sign_smal} alt="Logo" style={{ width: "30%" }} />
+          <img src={writingIcon} alt="Logo" style={{ width: '5%' }} />
         </Tooltip>
       ),
       content: <QuickSign />,
@@ -153,7 +166,7 @@ const MyComponent: React.FC = () => {
     approval: {
       icon: (
         <Tooltip title="Approvals">
-          <img src={approval} alt="Logo" style={{ width: "30%" }} />
+          <img src={userIcon} alt="Logo" style={{ width: "4%" }} />
         </Tooltip>
       ),
       content: <ApprovalsComp />,
@@ -161,7 +174,7 @@ const MyComponent: React.FC = () => {
     clause: {
       icon: (
         <Tooltip title="Clause">
-          <img src={clauses} alt="Logo" style={{ width: "30%" }} />
+          <img src={clipboardIcon} alt="Logo" style={{ width: "4%" }} />
         </Tooltip>
       ),
       content: <ClauseComp />,
@@ -169,7 +182,7 @@ const MyComponent: React.FC = () => {
     attachement: {
       icon: (
         <Tooltip title="Attachement">
-          <img src={attachments} alt="Logo" style={{ width: "30%" }} />
+          <img src={attachIcon} alt="Logo" style={{ width: "4%" }} />
         </Tooltip>
       ),
       content: <Attachement />,
@@ -177,7 +190,7 @@ const MyComponent: React.FC = () => {
     timeLine: {
       icon: (
         <Tooltip title="TimeLine">
-          <img src={timeline} alt="Logo" style={{ width: "30%" }} />
+          <img src={timelineIcon} alt="Logo" style={{ width: "5%" }} />
         </Tooltip>
       ),
       content: <TimelineComp />,
@@ -185,7 +198,7 @@ const MyComponent: React.FC = () => {
     lifeSycle: {
       icon: (
         <Tooltip title="Lifecycle">
-          <img src={life_sycle} alt="Logo" style={{ width: "30%" }} />
+          <img src={lifecycleIcon} alt="Logo" style={{ width: "4%" }} />
         </Tooltip>
       ),
       content: <LifeSycle />,
@@ -197,7 +210,7 @@ const MyComponent: React.FC = () => {
     discussion: {
       icon: (
         <Tooltip title="discussion">
-          <img src={comments} alt="Logo" style={{ width: "30%" }} />
+          <img src={commentIcon} alt="Logo" style={{ width: "4%" }} />
         </Tooltip>
       ),
       content: <Discussion />,

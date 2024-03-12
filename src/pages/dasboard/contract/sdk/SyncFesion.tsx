@@ -741,7 +741,9 @@ function SyncFusionEditor() {
   const save = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     const userFileName = prompt("Enter a file name for your docs", "My File");
-    documentEditor.save(userFileName, 'Docx');
+    if (userFileName) {
+      documentEditor.save(userFileName, 'Docx');
+    }
   }
 
   // const onImportClick = () => {
@@ -799,9 +801,11 @@ function SyncFusionEditor() {
             graphics.drawImage(pdfImage, 0, 0, imageWidth, imageHeight);
             loadedPage++;
             if (loadedPage === count) {
-              const userFileName = prompt("Enter a file name for your PDF", "sample");
-              pdfdocument.save((container.documentEditor.documentName === '' ? userFileName : container.documentEditor.documentName) + '.pdf');
-              pdfdocument.destroy();
+              const userFileName = prompt("Enter a file name for your PDF", "My pdf");
+              if (userFileName) {
+                pdfdocument.save((container.documentEditor.documentName === '' ? userFileName : container.documentEditor.documentName) + '.pdf');
+                pdfdocument.destroy();
+              }
             }
           };
           if (image.complete) {
@@ -811,6 +815,48 @@ function SyncFusionEditor() {
       }
     }
   };
+  const [documentData, setDocumentData] = useState<string | null>(null);
+
+  const saveDocumentToState = () => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    if (documentEditor) {
+      // Export the document as SFDT (Syncfusion Document Text) format
+      const sfdtData = documentEditor.saveAsBlob('Sfdt');
+      sfdtData.then((blob: any) => {
+        // Convert blob to text and save in state
+        const reader = new FileReader();
+        reader.onload = () => {
+          setDocumentData(reader.result as string);
+        };
+        reader.readAsText(blob);
+      });
+    }
+  };
+
+
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files ? event.target.files[0] : null;
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       const result = reader.result;
+  //       if (result) {
+  //         const documentEditor = editorContainerRef.current?.documentEditor;
+  //         if (documentEditor) {
+  //           const base64String = result.split(',')[1]; // Ensure this split operation is safe
+  //           documentEditor.open(base64String, 'Base64');
+  //         }
+  //       } else {
+  //         console.error('Failed to read the file.');
+  //       }
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+
+
+
   return (
     <div>
 
@@ -840,9 +886,10 @@ function SyncFusionEditor() {
                 }}
               >
                 <img src={openFolder} className="h-4 w-4" alt="" />
-                Open
+                Import Document
+                {/* <input type="file" accept=".docx" onChange={handleFileChange} /> */}
               </li>
-              <li onClick={save} className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2">
+              <li onClick={saveDocumentToState} className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2">
                 <img src={saveIcon} className="h-4 w-4" alt="" />
                 Save
               </li>
