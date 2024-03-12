@@ -104,7 +104,7 @@ DocumentEditorComponent.Inject(
   Editor,
   EditorHistory,
   ContextMenu,
-  TableDialog
+  TableDialog,
 );
 
 DocumentEditorContainerComponent.Inject(Toolbar);
@@ -181,6 +181,41 @@ function SyncFusionEditor() {
           documentEditor.selection.characterFormat.highlightColor = "Pink";
           documentEditor.focusIn();
         }
+        break;
+
+      case 'findText':
+        const searchText = 'example'; // Example text to search for
+        if (documentEditor) {
+          documentEditor.search.findAll(searchText, 'None');
+        }
+        break;
+
+      case "container_toolbar_open":
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.docx,.pdf';
+        fileInput.onchange = (e: any) => {
+          const file = e.target.files[0];
+          if (file) {
+            if (file.name.endsWith('.docx')) {
+              const reader = new FileReader();
+              reader.onload = () => {
+
+                documentEditor?.open(reader.result as string, 'Docx');
+              };
+              reader.readAsDataURL(file);
+            } else if (file.name.endsWith('.pdf')) {
+              // PDF opening not supported in DocumentEditor; use PDF Viewer or convert to DOCX
+              alert('Please convert PDF to DOCX format to open');
+            }
+          }
+        };
+        fileInput.click();
+        break;
+
+      case "container_toolbar_save":
+        documentEditor?.save('Document.docx', 'Docx');
+
         break;
 
       case "strikethrough":
@@ -550,7 +585,7 @@ function SyncFusionEditor() {
   // Full list of toolbar items
   const items: any = [
     // customItem,
-    // "Open",
+    "Open",
     "Undo",
     "Redo",
     // "Separator",
@@ -695,10 +730,13 @@ function SyncFusionEditor() {
       }
     };
   }, []);
-
+  const exportPdf = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    documentEditor.save('sample', 'Docx');
+  }
   return (
     <div>
-      <div></div>
+
 
       <div className="flex border py-1 px-4 gap-4">
         {/* File Button and Dropdown */}
@@ -970,7 +1008,7 @@ function SyncFusionEditor() {
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+              <li onClick={() => exportPdf()} className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
                 <img src={pdfIcon} className="h-5 w-5" alt="" /> Download PDF
               </li>
               <li className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
@@ -1039,6 +1077,13 @@ function SyncFusionEditor() {
         </Box>
       </div>
       {/* <div id="xyz">show </div> */}
+
+
+
+
+
+
+
 
       <div className="  ">
         <div className="text styling flex items-center">
