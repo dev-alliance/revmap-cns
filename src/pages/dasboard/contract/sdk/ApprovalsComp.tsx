@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import {
   Divider,
   Button,
-  Grid,
+  Tooltip,
   Typography,
   Card,
   CardContent,
@@ -26,6 +26,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { getfeildList } from "@/service/api/customFeild";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import ApprovalReasionDialog from "@/pages/dasboard/contract/sdk/ApprovalReasionDialog";
+import { json } from "stream/consumers";
+import warnig from "@/assets/Messages_Bubble_Warning.png";
 type FormValues = {
   name: string;
 };
@@ -42,43 +45,63 @@ const ApprovalsComp = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [approvalList, setApprovallist] = useState<any[]>([]);
+  const [signatories, setSignatories] = useState<any[]>([]);
   const [showCompanySelect, setShowCompanySelect] = useState(false);
   const [showConditionalSelect, setShowConditionalSelect] = useState(false);
   const [showSignatories, setShowSignatories] = useState(false);
-
+  const [reason, setReason] = useState("");
   const [buttonState, setButtonState] = useState("none"); // 'company', 'conditional', or 'none'
   const [switchState, setSwitchState] = useState({
     switch1: false,
     switch2: false,
   });
   const [selectedApproval, setSelectedApproval] = useState("mandatory");
-  const [signatories, setSignatories] = useState<any[]>([]);
+  const [approvers, setApprovers] = useState<any[]>([]);
   const [userApproval, setUserApproval] = useState<any[]>([]);
   const [selectedApprovalId, setSelectedApprovalId] = useState("");
   const [userList, setUserList] = useState<Array<any>>([]);
   const [feildList, setFeildList] = useState<Array<any>>([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogData, setDialogData] = useState<any>(null);
+
+  const handleOpenDialog = (approver: any) => {
+    console.log(approver, "datadata");
+    setDialogData(approver);
+    setOpenDialog(true);
+  };
+
+  const handleDialogSubmit = (reason: any) => {
+    setApprovers((prevApprovers) =>
+      prevApprovers.map((approver) =>
+        approver._id === dialogData._id ? { ...approver, reason } : approver
+      )
+    );
+    handleCloseDialog();
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
   const handleChange = (event: any) => {
     const newValue = event.target.value;
     setSelectedApproval(newValue); // Update the selected approval state
     // Call the custom function with the new value
   };
-  const handleAddSignatory = (names: string[]) => {
-    setSignatories((prev: any) => {
-      // Create a new set to avoid duplicates
-      const newSignatories = new Set(prev);
-      names.forEach((name) => {
-        if (name && !newSignatories.has(name)) {
-          newSignatories.add(name);
-        }
-      });
-      return Array.from(newSignatories);
-    });
-  };
 
+  const handleAddSignatory = (data: string[]) => {
+    console.log(data, "names");
+    setApprovers(data);
+    // setApprovers(() => {
+    //   // Instead of creating a set from prev, create an empty set for a fresh list
+    //   const newSignatories = new Set(names); // Directly add new names, ensuring they're unique within this selection
+    //   return Array.from(newSignatories);
+    // });
+  };
+  console.log(approvers, "approvers");
   // Function to remove a signatory from the list
   const handleRemoveSignatory = (signatoryToRemove: any) => {
-    setSignatories(
-      signatories.filter((signatory: any) => signatory !== signatoryToRemove)
+    setApprovers(
+      approvers.filter((signatory: any) => signatory !== signatoryToRemove)
     );
   };
 
@@ -155,7 +178,24 @@ const ApprovalsComp = () => {
     }
   }, [user?._id]);
 
-  const bubbleColors = ["#FEC85E", "#BC3D89", "#725FE7,#00A7B1"]; // Yellow, Green, Blue
+  const handleRejectApproverByEmail = (app: any) => {
+    const reason = prompt("Please enter the reason for rejection:");
+    // This confirms the passed email argument is as expected.
+
+    if (reason) {
+      setApprovers((prevApprovers) =>
+        prevApprovers.map((approver) => {
+          console.log(approver, "shah");
+          return approver._id === app._id
+            ? { ...approver, reason: reason }
+            : approver;
+        })
+      );
+    }
+  };
+  console.log(approvers, "ok");
+
+  const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"]; // Yellow, Green, Blue
   return (
     <div style={{ textAlign: "left", position: "relative" }}>
       <Typography variant="body1" color="primary">
@@ -230,19 +270,14 @@ const ApprovalsComp = () => {
                   setSelectedApprovalId(value); // Update the local state with the new value
 
                   // Find the team by the selected value (ID)
-                  const selectedApproval = approvalList.find(
-                    (team) => team._id === value
-                  );
 
                   // Transform the approver list into a suitable format for display
-                  const approverNames = selectedApproval
-                    ? selectedApproval.approver.map(
-                        (approver: any) => `${approver.firstName} `
-                      )
-                    : [];
+                  const selectedApproval = approvalList.find(
+                    (approval) => approval._id === value
+                  );
 
                   // Invoke the custom function with the approver names list
-                  handleAddSignatory(approverNames);
+                  handleAddSignatory(selectedApproval.approver);
                 }}
                 displayEmpty
                 renderValue={(selectedValue) =>
@@ -275,6 +310,7 @@ const ApprovalsComp = () => {
                 display: "flex",
                 justifyContent: "flex-end",
                 width: "100%",
+                marginBottom: "0.5rem",
               }}
             >
               <Button
@@ -318,70 +354,90 @@ const ApprovalsComp = () => {
             </div>
 
             {showSignatories &&
-              signatories.map((signatory, index) => (
-                <Box
-                  key={index}
-                  sx={{ display: "flex", alignItems: "center", mb: 1 }}
-                >
+              approvers.map((companyApproval, index) => (
+                <>
                   <Box
-                    sx={{
-                      width: 25,
-                      height: 25,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "50%",
-                      backgroundColor:
-                        bubbleColors[index % bubbleColors.length],
-                      color: "#FFFFFF",
-                      marginRight: -1,
-                      fontSize: "8px",
-                      mr: 1,
-                    }}
+                    key={index}
+                    sx={{ display: "flex", alignItems: "center", mb: 1, mt: 2 }}
                   >
-                    <Typography>
-                      {signatory?.charAt(0).toUpperCase()}
+                    <Box
+                      sx={{
+                        width: "25px !important",
+                        height: "25px !important",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        backgroundColor:
+                          bubbleColors[index % bubbleColors.length],
+                        color: "#FFFFFF",
+                        marginRight: -1,
+
+                        mr: 1,
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "12px" }}>
+                        {companyApproval?.email?.charAt(0).toUpperCase()}
+                      </Typography>
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: "bold",
+                        width: "120px",
+                        textOverflow: "ellipsis",
+                        fontSize: "10px",
+                      }}
+                    >
+                      {companyApproval?.email}
                     </Typography>
+                    <div style={{ display: "flex" }}>
+                      {" "}
+                      <Button
+                        variant="text"
+                        sx={{
+                          textTransform: "none",
+                          fontSize: "16px",
+                          color: "#31C65B",
+                          fontWeight: "bold",
+                          padding: "0 8px", // Reduce padding here
+                          minWidth: "auto", // Ensures the button width is only as wide as its content
+                        }}
+                        onClick={() => handleOpenDialog(companyApproval)}
+                      >
+                        <CheckCircleOutlineIcon fontSize="small" />
+                      </Button>
+                      <Button
+                        variant="text"
+                        sx={{
+                          textTransform: "none",
+                          fontSize: "16px",
+                          color: "#BEBEBE",
+                          fontWeight: "bold",
+                          padding: "0 8px", // Style adjustments as needed
+                          minWidth: "auto", // Ensures button width is only as wide as its content
+                        }}
+                        onClick={() => handleOpenDialog(companyApproval)}
+                      >
+                        <HighlightOffIcon fontSize="small" />{" "}
+                        {companyApproval?.reason && (
+                          <Tooltip title={companyApproval?.reason}>
+                            <img
+                              src={warnig}
+                              alt="Logo"
+                              style={{ width: "70%", marginTop: "-1rem" }}
+                            />
+                          </Tooltip>
+                        )}
+                      </Button>
+                    </div>
                   </Box>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: "bold",
-                      width: "130px",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {signatory}
-                  </Typography>
-                  <Button
-                    variant="text"
-                    sx={{
-                      textTransform: "none",
-                      fontSize: "16px",
-                      color: "#31C65B",
-                      fontWeight: "bold",
-                      padding: "0 8px", // Reduce padding here
-                      minWidth: "auto", // Ensures the button width is only as wide as its content
-                    }}
-                    onClick={() => handleRemoveSignatory(signatory)}
-                  >
-                    <CheckCircleOutlineIcon fontSize="small" />
-                  </Button>
-                  <Button
-                    variant="text"
-                    sx={{
-                      textTransform: "none",
-                      fontSize: "16px",
-                      color: "#BEBEBE",
-                      fontWeight: "bold",
-                      padding: "0 8px", // Reduce padding here
-                      minWidth: "auto", // Ensures the button width is only as wide as its content
-                    }}
-                    onClick={() => handleRemoveSignatory(signatory)}
-                  >
-                    <HighlightOffIcon fontSize="small" />
-                  </Button>
-                </Box>
+                  {/* <ApprovalReasionDialog
+                    open={openDialog}
+                    onClose={handleCloseDialog}
+
+                  /> */}
+                </>
               ))}
           </>
         )}
@@ -422,39 +478,7 @@ const ApprovalsComp = () => {
             </FormControl>
 
             {selectedApproval === "mandatory" && (
-              // Render the user selection Autocomplete component when 'mandatory' is selected
-
               <>
-                {/* <Controller
-          name="name"
-          control={control}
-          defaultValue=""
-          render={({ field }: any) => (
-            <Autocomplete
-              {...field}
-              freeSolo
-              options={userList.map((user) => ({
-                label: `${user.firstName} ${user.lastName}`,
-                email: user.email,
-              }))}
-              getOptionLabel={(option: any) => option.label || ""}
-              onInputChange={handleInputChange}
-              inputValue={inputValue}
-              onChange={(_, value: any) =>
-                handleAddSignatory(value ? value.email : "")
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Add signatory"
-                  margin="normal"
-                  variant="outlined"
-                  onKeyPress={handleKeyPress}
-                />
-              )}
-            />
-          )}
-        /> */}
                 {userApproval.length > 0 && (
                   <div
                     style={{
@@ -711,6 +735,12 @@ const ApprovalsComp = () => {
           </React.Fragment>
         )}
       </div>
+      <ApprovalReasionDialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        onSubmit={handleDialogSubmit}
+        dialogData={dialogData}
+      />
     </div>
   );
 };
