@@ -18,7 +18,14 @@ import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
-import { PdfDocument, PdfPageSettings, PdfPageOrientation, PdfSection, PdfBitmap, SizeF } from '@syncfusion/ej2-pdf-export';
+import {
+  PdfDocument,
+  PdfPageSettings,
+  PdfPageOrientation,
+  PdfSection,
+  PdfBitmap,
+  SizeF,
+} from "@syncfusion/ej2-pdf-export";
 import { registerLicense } from "@syncfusion/ej2-base";
 registerLicense(
   "ORg4AjUWIQA/Gnt2UVhiQlJPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSX1Tc0ViWHZcd3dVRWQ="
@@ -105,7 +112,7 @@ DocumentEditorComponent.Inject(
   Editor,
   EditorHistory,
   ContextMenu,
-  TableDialog,
+  TableDialog
 );
 
 DocumentEditorContainerComponent.Inject(Toolbar);
@@ -173,8 +180,6 @@ function SyncFusionEditor() {
         documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
         break;
 
-
-
       case "highlight":
         if (documentEditor && documentEditor.selection) {
           // Check if the selected text is already highlighted
@@ -186,30 +191,29 @@ function SyncFusionEditor() {
         }
         break;
 
-      case 'findText':
-        const searchText = 'example'; // Example text to search for
+      case "findText":
+        const searchText = "example"; // Example text to search for
         if (documentEditor) {
-          documentEditor.search.findAll(searchText, 'None');
+          documentEditor.search.findAll(searchText, "None");
         }
         break;
 
       case "container_toolbar_open":
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.docx,.pdf';
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".docx,.pdf";
         fileInput.onchange = (e: any) => {
           const file = e.target.files[0];
           if (file) {
-            if (file.name.endsWith('.docx')) {
+            if (file.name.endsWith(".docx")) {
               const reader = new FileReader();
               reader.onload = () => {
-
-                documentEditor?.open(reader.result as string, 'Docx');
+                documentEditor?.open(reader.result as string, "Docx");
               };
               reader.readAsDataURL(file);
-            } else if (file.name.endsWith('.pdf')) {
+            } else if (file.name.endsWith(".pdf")) {
               // PDF opening not supported in DocumentEditor; use PDF Viewer or convert to DOCX
-              alert('Please convert PDF to DOCX format to open');
+              alert("Please convert PDF to DOCX format to open");
             }
           }
         };
@@ -217,7 +221,7 @@ function SyncFusionEditor() {
         break;
 
       case "container_toolbar_save":
-        documentEditor?.save('Document.docx', 'Docx');
+        documentEditor?.save("Document.docx", "Docx");
 
         break;
 
@@ -736,15 +740,15 @@ function SyncFusionEditor() {
   const exportPdf = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     const userFileName = prompt("Enter a file name for your PDF", "My PDF");
-    documentEditor.save(userFileName, 'Pdf');
-  }
+    documentEditor.save(userFileName, "Pdf");
+  };
   const save = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     const userFileName = prompt("Enter a file name for your docs", "My File");
     if (userFileName) {
-      documentEditor.save(userFileName, 'Docx');
+      documentEditor.save(userFileName, "Docx");
     }
-  }
+  };
 
   // const onImportClick = () => {
   //   const fileInput = document.createElement('input');
@@ -781,12 +785,12 @@ function SyncFusionEditor() {
 
       for (let i = 1; i <= count; i++) {
         setTimeout(() => {
-          let format: ImageFormat = 'image/jpeg';
+          let format: ImageFormat = "image/jpeg";
           // Getting pages as image
           let image = container.documentEditor.exportAsImage(i, format);
           image.onload = function () {
-            let imageHeight = parseInt(image.style.height.replace('px', ''));
-            let imageWidth = parseInt(image.style.width.replace('px', ''));
+            let imageHeight = parseInt(image.style.height.replace("px", ""));
+            let imageWidth = parseInt(image.style.width.replace("px", ""));
             let section: PdfSection = pdfdocument.sections.add();
             let settings: PdfPageSettings = new PdfPageSettings(0);
             if (imageWidth > imageHeight) {
@@ -796,14 +800,21 @@ function SyncFusionEditor() {
             section.setPageSettings(settings);
             let page = section.pages.add();
             let graphics = page.graphics;
-            let imageStr = image.src.replace('data:image/jpeg;base64,', '');
+            let imageStr = image.src.replace("data:image/jpeg;base64,", "");
             let pdfImage = new PdfBitmap(imageStr);
             graphics.drawImage(pdfImage, 0, 0, imageWidth, imageHeight);
             loadedPage++;
             if (loadedPage === count) {
-              const userFileName = prompt("Enter a file name for your PDF", "My pdf");
+              const userFileName = prompt(
+                "Enter a file name for your PDF",
+                "My pdf"
+              );
               if (userFileName) {
-                pdfdocument.save((container.documentEditor.documentName === '' ? userFileName : container.documentEditor.documentName) + '.pdf');
+                pdfdocument.save(
+                  (container.documentEditor.documentName === ""
+                    ? userFileName
+                    : container.documentEditor.documentName) + ".pdf"
+                );
                 pdfdocument.destroy();
               }
             }
@@ -821,7 +832,7 @@ function SyncFusionEditor() {
     const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor) {
       // Export the document as SFDT (Syncfusion Document Text) format
-      const sfdtData = documentEditor.saveAsBlob('Sfdt');
+      const sfdtData = documentEditor.saveAsBlob("Sfdt");
       sfdtData.then((blob: any) => {
         // Convert blob to text and save in state
         const reader = new FileReader();
@@ -832,7 +843,6 @@ function SyncFusionEditor() {
       });
     }
   };
-
 
   // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const file = event.target.files ? event.target.files[0] : null;
@@ -854,13 +864,8 @@ function SyncFusionEditor() {
   //   }
   // };
 
-
-
-
   return (
     <div>
-
-
       <div className="flex border py-1 px-4 gap-4">
         {/* File Button and Dropdown */}
 
@@ -889,7 +894,10 @@ function SyncFusionEditor() {
                 Import Document
                 {/* <input type="file" accept=".docx" onChange={handleFileChange} /> */}
               </li>
-              <li onClick={saveDocumentToState} className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2">
+              <li
+                onClick={saveDocumentToState}
+                className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
+              >
                 <img src={saveIcon} className="h-4 w-4" alt="" />
                 Save
               </li>
@@ -1135,10 +1143,14 @@ function SyncFusionEditor() {
               <li
                 onClick={onClick}
                 // onClick={() => exportPdf()}
-                className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+                className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+              >
                 <img src={pdfIcon} className="h-5 w-5" alt="" /> Download PDF
               </li>
-              <li onClick={save} className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
+              <li
+                onClick={save}
+                className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
+              >
                 <img src={wordIcon} className="h-5 w-5" alt="" /> Download Word
               </li>
               <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
@@ -1204,9 +1216,6 @@ function SyncFusionEditor() {
         </Box>
       </div>
       {/* <div id="xyz">show </div> */}
-
-
-
 
       <div className="  ">
         <div className="text styling flex items-center">
@@ -1475,7 +1484,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-      // showPropertiesPane={false}
+        // showPropertiesPane={false}
       />
     </div>
   );

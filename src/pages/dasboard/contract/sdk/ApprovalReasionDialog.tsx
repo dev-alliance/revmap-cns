@@ -42,7 +42,12 @@ type FormValues = {
 interface ApprovalReasionDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (reason: string) => void;
+  onSubmit: (
+    status: string,
+    reason: string,
+    approver: any,
+    Resolved: string
+  ) => void;
   dialogData: any;
 }
 
@@ -53,11 +58,22 @@ const ApprovalReasionDialog: React.FC<ApprovalReasionDialogProps> = ({
   dialogData,
 }) => {
   const [reason, setReason] = useState("");
+  console.log(dialogData, "dialogData");
+
+  useEffect(() => {
+    if (dialogData?.reason) {
+      setReason(dialogData.reason);
+    }
+  }, [dialogData]);
 
   const handleSave = () => {
-    onSubmit(reason);
+    onSubmit("Rejected", reason, "", "Resolved");
     onClose(); // Optionally reset reason and close the dialog
     setReason(""); // Reset reason for next use
+  };
+  const handleResolve = () => {
+    onSubmit("Rejected", reason, "", "resolved");
+    onClose();
   };
   return (
     <>
@@ -103,6 +119,7 @@ const ApprovalReasionDialog: React.FC<ApprovalReasionDialogProps> = ({
           >
             <TextareaAutosize
               placeholder="Leave a message (optional)"
+              value={reason}
               minRows={6}
               maxLength={50}
               onChange={(event) => setReason(event.target.value)}
@@ -147,32 +164,54 @@ const ApprovalReasionDialog: React.FC<ApprovalReasionDialogProps> = ({
                   color: "white",
                   padding: "2px 5px !important", // Force padding
                   height: "25px !important", // Reduce minimum height
-                  fontSize: "0.675rem", // Adjust font size if necessary
+                  fontSize: "0.775rem", // Adjust font size if necessary
                 }}
-                onClick={onClose}
+                onClick={handleSave}
               >
                 Cancel
               </Button>
 
-              <Button
-                variant="contained"
-                color="inherit"
-                sx={{
-                  textTransform: "none",
-                  backgroundColor: "#62BD6B",
-                  "&:hover": {
-                    backgroundColor: "#62BD6d",
-                  },
-                  color: "white",
-                  padding: "2px 5px !important",
-                  height: "25px !important",
-                  fontSize: "0.675rem",
-                }}
-                // onClick={() => setShowSignatories(!showSignatories)} // Toggle visibility
-                onClick={handleSave}
-              >
-                Save
-              </Button>
+              {!dialogData?.reason ? (
+                <Button
+                  variant="contained"
+                  color="inherit"
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#62BD6B",
+                    "&:hover": {
+                      backgroundColor: "#62BD6d",
+                    },
+                    color: "white",
+                    padding: "2px 5px !important",
+                    height: "25px !important",
+                    fontSize: "0.775rem",
+                  }}
+                  // onClick={() => setShowSignatories(!showSignatories)} // Toggle visibility
+                  onClick={handleSave}
+                >
+                  Save
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="inherit"
+                  sx={{
+                    textTransform: "none",
+                    backgroundColor: "#62BD6B",
+                    "&:hover": {
+                      backgroundColor: "#62BD6d",
+                    },
+                    color: "white",
+                    padding: "2px 5px !important",
+                    height: "25px !important",
+                    fontSize: "0.775rem",
+                  }}
+                  // onClick={() => setShowSignatories(!showSignatories)} // Toggle visibility
+                  onClick={handleResolve}
+                >
+                  Resolve
+                </Button>
+              )}
             </div>
           </div>
         </DialogContent>

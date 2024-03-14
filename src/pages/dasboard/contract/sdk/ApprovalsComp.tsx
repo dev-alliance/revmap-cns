@@ -16,6 +16,7 @@ import {
   RadioGroup,
   Autocomplete,
   TextField,
+  Input,
 } from "@mui/material";
 import { getList as getApprovalList } from "@/service/api/approval";
 import { FormControl } from "@mui/material";
@@ -29,6 +30,8 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ApprovalReasionDialog from "@/pages/dasboard/contract/sdk/ApprovalReasionDialog";
 import { json } from "stream/consumers";
 import warnig from "@/assets/Messages_Bubble_Warning.png";
+import send from "@/assets/Email_Sending.png";
+
 type FormValues = {
   name: string;
 };
@@ -37,7 +40,7 @@ const ApprovalsComp = () => {
     control,
     handleSubmit,
     watch,
-    setValue,
+
     formState: { errors },
   } = useForm<FormValues>({
     mode: "onBlur",
@@ -48,14 +51,14 @@ const ApprovalsComp = () => {
   const [signatories, setSignatories] = useState<any[]>([]);
   const [showCompanySelect, setShowCompanySelect] = useState(false);
   const [showConditionalSelect, setShowConditionalSelect] = useState(false);
-  const [showSignatories, setShowSignatories] = useState(false);
+  const [showSignatories, setShowSignatories] = useState("");
   const [reason, setReason] = useState("");
   const [buttonState, setButtonState] = useState("none"); // 'company', 'conditional', or 'none'
   const [switchState, setSwitchState] = useState({
     switch1: false,
     switch2: false,
   });
-  const [selectedApproval, setSelectedApproval] = useState("mandatory");
+  const [selectedApproval, setSelectedApproval] = useState("");
   const [approvers, setApprovers] = useState<any[]>([]);
   const [userApproval, setUserApproval] = useState<any[]>([]);
   const [selectedApprovalId, setSelectedApprovalId] = useState("");
@@ -63,6 +66,8 @@ const ApprovalsComp = () => {
   const [feildList, setFeildList] = useState<Array<any>>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogData, setDialogData] = useState<any>(null);
+  const [comparisonOperator, setComparisonOperator] = useState("");
+  const [value, setValue] = useState<any>("");
 
   const handleOpenDialog = (approver: any) => {
     console.log(approver, "datadata");
@@ -70,10 +75,24 @@ const ApprovalsComp = () => {
     setOpenDialog(true);
   };
 
-  const handleDialogSubmit = (reason: any) => {
+  const handleDialogSubmit = (
+    status: string,
+    reason: string,
+    approver: any,
+    Resolved: string
+  ) => {
+    if (approver) {
+      setDialogData(approver);
+    }
     setApprovers((prevApprovers) =>
-      prevApprovers.map((approver) =>
-        approver._id === dialogData._id ? { ...approver, reason } : approver
+      prevApprovers.map((currentApprover) =>
+        currentApprover._id === dialogData._id
+          ? {
+              ...currentApprover,
+              status: status === "" ? "" : status,
+              reason: Resolved === "resolved" ? "" : reason.trim(), // Set reason to empty if resolved, otherwise use the trimmed reason
+            }
+          : currentApprover
       )
     );
     handleCloseDialog();
@@ -223,7 +242,9 @@ const ApprovalsComp = () => {
 
         {showCompanySelect && (
           <>
-            {signatories.length > 0 && (
+            {(showSignatories === "topbar" ||
+              showSignatories === "view" ||
+              showSignatories === "edit") && (
               <div
                 style={{
                   display: "flex",
@@ -234,7 +255,7 @@ const ApprovalsComp = () => {
                 <Button
                   variant="text"
                   sx={{ textTransform: "none" }}
-                  onClick={() => setShowSignatories(true)}
+                  onClick={() => setShowSignatories("view")}
                 >
                   View
                 </Button>
@@ -243,7 +264,9 @@ const ApprovalsComp = () => {
                     variant="text"
                     sx={{ textTransform: "none" }}
                     onClick={() => {
-                      setSignatories([]);
+                      // setSignatories([]),
+                      // setSelectedApprovalId(""),
+                      setShowSignatories("edit");
                     }}
                   >
                     Edit
@@ -254,7 +277,10 @@ const ApprovalsComp = () => {
                     variant="text"
                     sx={{ textTransform: "none" }}
                     onClick={() => {
-                      setSignatories([]), setSelectedApprovalId("");
+                      setSignatories([]),
+                        setSelectedApprovalId(""),
+                        setShowSignatories(""),
+                        setApprovers([]);
                     }}
                   >
                     Delete
@@ -266,20 +292,20 @@ const ApprovalsComp = () => {
               <Select
                 value={selectedApprovalId}
                 onChange={(event) => {
-                  const { value } = event.target; // Directly access the selected value
-                  setSelectedApprovalId(value); // Update the local state with the new value
+                  const { value } = event.target;
+                  setSelectedApprovalId(value);
 
-                  // Find the team by the selected value (ID)
-
-                  // Transform the approver list into a suitable format for display
+                  // Your existing logic to find and transform the selected approval
                   const selectedApproval = approvalList.find(
                     (approval) => approval._id === value
                   );
-
-                  // Invoke the custom function with the approver names list
                   handleAddSignatory(selectedApproval.approver);
                 }}
                 displayEmpty
+                disabled={
+                  selectedApprovalId !== "" && showSignatories !== "edit"
+                }
+                // Disable the Select if an item is selected
                 renderValue={(selectedValue) =>
                   selectedValue === "" ? (
                     <em
@@ -299,66 +325,92 @@ const ApprovalsComp = () => {
                 }
               >
                 {approvalList.map((approval) => (
-                  <MenuItem key={approval._id} value={approval._id}>
+                  <MenuItem
+                    key={approval._id}
+                    value={approval._id}
+                    style={{
+                      // Conditionally style the MenuItem to appear disabled if it's the selected item
+                      color:
+                        selectedApprovalId === approval._id
+                          ? "#C2C2C2"
+                          : undefined,
+                    }}
+                  >
                     {approval.name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                width: "100%",
-                marginBottom: "0.5rem",
-              }}
-            >
-              <Button
-                variant="contained"
-                color="inherit"
-                sx={{
-                  mr: "20px",
-                  textTransform: "none",
-                  backgroundColor: "#DCDCDC",
-                  "&:hover": {
-                    backgroundColor: "#757575",
-                  },
-                  color: "white",
-                  padding: "2px 5px !important", // Force padding
-                  height: "25px !important", // Reduce minimum height
-                  fontSize: "0.675rem", // Adjust font size if necessary
-                }}
-                onClick={() => setShowSignatories(false)}
-              >
-                Cancel
-              </Button>
 
-              <Button
-                variant="contained"
-                color="inherit"
-                sx={{
-                  textTransform: "none",
-                  backgroundColor: "#62BD6B",
-                  "&:hover": {
-                    backgroundColor: "#62BD6d",
-                  },
-                  color: "white",
-                  padding: "2px 5px !important",
-                  height: "25px !important",
-                  fontSize: "0.675rem",
-                }}
-                onClick={() => setShowSignatories(!showSignatories)} // Toggle visibility
-              >
-                Save
-              </Button>
-            </div>
+            {approvers.length > 0 &&
+              (showSignatories === "" || showSignatories === "edit") && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    sx={{
+                      mr: "20px",
+                      textTransform: "none",
+                      backgroundColor: "#DCDCDC",
+                      "&:hover": {
+                        backgroundColor: "#757575",
+                      },
+                      color: "white",
+                      padding: "2px 5px !important", // Force padding
+                      height: "25px !important", // Reduce minimum height
+                      fontSize: "0.675rem", // Adjust font size if necessary
+                    }}
+                    onClick={() => {
+                      setSignatories([]),
+                        setSelectedApprovalId(""),
+                        setShowSignatories(""),
+                        setApprovers([]);
+                      setShowCompanySelect(false);
+                      setShowConditionalSelect(false);
+                      setButtonState("");
+                    }}
+                  >
+                    Cancel
+                  </Button>
 
-            {showSignatories &&
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#62BD6B",
+                      "&:hover": {
+                        backgroundColor: "#62BD6d",
+                      },
+                      color: "white",
+                      padding: "2px 5px !important",
+                      height: "25px !important",
+                      fontSize: "0.675rem",
+                    }}
+                    onClick={() => setShowSignatories("topbar")} // Toggle visibility
+                  >
+                    Save
+                  </Button>
+                </div>
+              )}
+            {showSignatories === "view" &&
               approvers.map((companyApproval, index) => (
                 <>
                   <Box
                     key={index}
-                    sx={{ display: "flex", alignItems: "center", mb: 1, mt: 2 }}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 1,
+                      mt: 2,
+                    }}
                   >
                     <Box
                       sx={{
@@ -376,62 +428,112 @@ const ApprovalsComp = () => {
                         mr: 1,
                       }}
                     >
-                      <Typography sx={{ fontSize: "12px" }}>
+                      <Typography sx={{ fontSize: "14px" }}>
                         {companyApproval?.email?.charAt(0).toUpperCase()}
                       </Typography>
                     </Box>
                     <Typography
                       variant="body2"
                       sx={{
-                        fontWeight: "bold",
+                        // fontWeight: "bold",
                         width: "120px",
                         textOverflow: "ellipsis",
-                        fontSize: "10px",
+                        fontSize: "16px",
                       }}
                     >
                       {companyApproval?.email}
                     </Typography>
-                    <div style={{ display: "flex" }}>
-                      {" "}
-                      <Button
-                        variant="text"
+                  </Box>
+                  <div style={{ display: "flex" }}>
+                    {companyApproval?.status ? (
+                      <Typography
+                        variant="body1"
                         sx={{
-                          textTransform: "none",
-                          fontSize: "16px",
-                          color: "#31C65B",
-                          fontWeight: "bold",
-                          padding: "0 8px", // Reduce padding here
-                          minWidth: "auto", // Ensures the button width is only as wide as its content
+                          ml: 1,
+                          display: "flex",
+                          // fontWeight: "bold",
+                          color:
+                            companyApproval?.status === "Rejected"
+                              ? "red"
+                              : companyApproval?.status === "Approved"
+                              ? "green"
+                              : "inherit", // Default text color
                         }}
-                        onClick={() => handleOpenDialog(companyApproval)}
                       >
-                        <CheckCircleOutlineIcon fontSize="small" />
-                      </Button>
-                      <Button
-                        variant="text"
-                        sx={{
-                          textTransform: "none",
-                          fontSize: "16px",
-                          color: "#BEBEBE",
-                          fontWeight: "bold",
-                          padding: "0 8px", // Style adjustments as needed
-                          minWidth: "auto", // Ensures button width is only as wide as its content
-                        }}
-                        onClick={() => handleOpenDialog(companyApproval)}
-                      >
-                        <HighlightOffIcon fontSize="small" />{" "}
-                        {companyApproval?.reason && (
+                        {companyApproval?.status === "Rejected" && (
                           <Tooltip title={companyApproval?.reason}>
                             <img
-                              src={warnig}
+                              onClick={() =>
+                                handleDialogSubmit("", "", companyApproval, "")
+                              }
+                              src={send}
                               alt="Logo"
-                              style={{ width: "70%", marginTop: "-1rem" }}
+                              style={{
+                                width: "20px",
+                                height: "20px",
+                                marginRight: "1rem",
+                              }}
                             />
                           </Tooltip>
-                        )}
-                      </Button>
-                    </div>
-                  </Box>
+                        )}{" "}
+                        {companyApproval?.status}
+                      </Typography>
+                    ) : (
+                      <>
+                        <Button
+                          variant="text"
+                          sx={{
+                            textTransform: "none",
+                            fontSize: "16px",
+                            color: "#31C65B",
+                            fontWeight: "bold",
+                            padding: "0 8px", // Reduce padding here
+                            minWidth: "auto",
+                            ml: -1, // Ensures the button width is only as wide as its content
+                          }}
+                          onClick={() =>
+                            handleDialogSubmit(
+                              "Approved",
+                              "",
+                              companyApproval,
+                              ""
+                            )
+                          }
+                        >
+                          <CheckCircleOutlineIcon />
+                        </Button>
+                        <Button
+                          variant="text"
+                          sx={{
+                            textTransform: "none",
+                            fontSize: "16px",
+                            color: "#BEBEBE",
+                            fontWeight: "bold",
+                            padding: "0 8px", // Style adjustments as needed
+                            minWidth: "auto", // Ensures button width is only as wide as its content
+                          }}
+                          onClick={() => handleOpenDialog(companyApproval)}
+                        >
+                          <HighlightOffIcon />{" "}
+                        </Button>
+                      </>
+                    )}
+                    {companyApproval?.reason && (
+                      <Tooltip title={companyApproval?.reason}>
+                        <img
+                          onClick={() => handleOpenDialog(companyApproval)}
+                          src={warnig}
+                          alt="Logo"
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            marginTop: "-0.4rem",
+                            marginLeft: "0.4rem",
+                          }}
+                        />
+                      </Tooltip>
+                    )}
+                  </div>
                   {/* <ApprovalReasionDialog
                     open={openDialog}
                     onClose={handleCloseDialog}
@@ -479,47 +581,66 @@ const ApprovalsComp = () => {
 
             {selectedApproval === "mandatory" && (
               <>
-                {userApproval.length > 0 && (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      width: "100%",
-                      marginTop: "5px",
-                      marginBottom: "-15px",
+                {userApproval.length === 0 && (
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: "bold",
+                      mt: 1,
                     }}
                   >
-                    <Button
-                      variant="text"
-                      sx={{ textTransform: "none" }}
-                      onClick={() => setShowSignatories(true)}
-                    >
-                      View
-                    </Button>
-                    <div style={{ textAlign: "right" }}>
-                      <Button
-                        variant="text"
-                        sx={{ textTransform: "none" }}
-                        onClick={() => {
-                          setSignatories([]);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <Button
-                        variant="text"
-                        sx={{ textTransform: "none" }}
-                        onClick={() => {
-                          setUserApproval([]), setSelectedApprovalId("");
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
+                    Get Approval from +
+                  </Typography>
                 )}
+                {userApproval.length > 0 &&
+                  (showSignatories === "topbar" ||
+                    showSignatories === "view" ||
+                    showSignatories === "edit") && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                        marginTop: "1rem",
+                        marginBottom: "-1rem",
+                      }}
+                    >
+                      <Button
+                        variant="text"
+                        sx={{ textTransform: "none" }}
+                        onClick={() => setShowSignatories("view")}
+                      >
+                        View
+                      </Button>
+                      <div style={{ textAlign: "right" }}>
+                        <Button
+                          variant="text"
+                          sx={{ textTransform: "none" }}
+                          onClick={() => {
+                            // setSignatories([]),
+                            // setSelectedApprovalId(""),
+                            setShowSignatories("edit");
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <Button
+                          variant="text"
+                          sx={{ textTransform: "none" }}
+                          onClick={() => {
+                            setSignatories([]),
+                              setSelectedApprovalId(""),
+                              setShowSignatories(""),
+                              setUserApproval([]);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 <Controller
                   name="name"
                   control={control}
@@ -565,60 +686,76 @@ const ApprovalsComp = () => {
                   )}
                 />
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    color="inherit"
-                    sx={{
-                      mr: "20px",
-                      textTransform: "none",
-                      backgroundColor: "#DCDCDC",
-                      "&:hover": {
-                        backgroundColor: "#757575",
-                      },
-                      color: "white",
-                      padding: "2px 5px !important", // Force padding
-                      height: "25px !important", // Reduce minimum height
-                      fontSize: "0.675rem", // Adjust font size if necessary
-                    }}
-                    onClick={() => setShowSignatories(false)}
-                  >
-                    Cancel
-                  </Button>
+                {userApproval.length > 0 &&
+                  (showSignatories === "" || showSignatories === "edit") && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                        marginBottom: "0.5rem",
+                        marginTop: "1rem",
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        color="inherit"
+                        sx={{
+                          mr: "20px",
+                          textTransform: "none",
+                          backgroundColor: "#DCDCDC",
+                          "&:hover": {
+                            backgroundColor: "#757575",
+                          },
+                          color: "white",
+                          padding: "2px 5px !important", // Force padding
+                          height: "25px !important", // Reduce minimum height
+                          fontSize: "0.675rem", // Adjust font size if necessary
+                        }}
+                        onClick={() => {
+                          setSignatories([]),
+                            setSelectedApprovalId(""),
+                            setShowSignatories(""),
+                            setApprovers([]);
+                          setShowCompanySelect(false);
+                          setShowConditionalSelect(false);
+                          setButtonState("");
+                        }}
+                      >
+                        Cancel
+                      </Button>
 
-                  <Button
-                    variant="contained"
-                    color="inherit"
-                    sx={{
-                      textTransform: "none",
-                      backgroundColor: "#62BD6B",
-                      "&:hover": {
-                        backgroundColor: "#62BD6d",
-                      },
-                      color: "white",
-                      padding: "2px 5px !important",
-                      height: "25px !important",
-                      fontSize: "0.675rem",
-                    }}
-                    onClick={() => setShowSignatories(!showSignatories)} // Toggle visibility
-                  >
-                    Save
-                  </Button>
-                </div>
+                      <Button
+                        variant="contained"
+                        color="inherit"
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: "#62BD6B",
+                          "&:hover": {
+                            backgroundColor: "#62BD6d",
+                          },
+                          color: "white",
+                          padding: "2px 5px !important",
+                          height: "25px !important",
+                          fontSize: "0.675rem",
+                        }}
+                        onClick={() => setShowSignatories("topbar")} // Toggle visibility
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  )}
 
-                {showSignatories &&
+                {showSignatories === "view" &&
                   userApproval.map((signatory, index) => (
                     <Box
                       key={index}
-                      sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mb: 1,
+                        mt: 1,
+                      }}
                     >
                       <Box
                         sx={{
@@ -688,49 +825,102 @@ const ApprovalsComp = () => {
             )}
 
             {selectedApproval === "conditional" && (
-              // Render other components when 'conditional' is selected
-              <div>
-                <FormControl fullWidth size="small" sx={{ mt: 2, mb: 2 }}>
-                  <Select
-                    value={selectedApprovalId}
-                    onChange={(event) => {
-                      const { value } = event.target; // Directly access the selected value
-                      setSelectedApprovalId(value); // Update the local state with the new value
-
-                      // Find the team by the selected value (ID)
-                      const selectedTeam = feildList.find(
-                        (team) => team._id === value
-                      );
-
-                      // Invoke the custom function with the selected team's name or an empty string
-                      handleAddSignatory(selectedTeam ? selectedTeam.name : "");
+              <>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  {" "}
+                  {/* Adjust alignment and spacing */}
+                  <Box
+                    sx={{
+                      border: "1px solid #C2C2C2", // Gray border
+                      padding: "8px", // Adjust padding as needed
+                      display: "flex", // Ensure Box content is flex-aligned
+                      alignItems: "center", // Vertically center the content in the Box
+                      marginRight: "8px", // Optional: add some spacing between the Box and the FormControl
                     }}
-                    displayEmpty
-                    renderValue={(selectedValue) =>
-                      selectedValue === "" ? (
-                        <em
-                          style={{
-                            color: "#C2C2C2",
-                            fontStyle: "normal",
-                            fontSize: "15.5px",
-                          }}
-                        >
-                          Select feild
-                        </em>
-                      ) : (
-                        feildList.find((team) => team._id === selectedValue)
-                          ?.name || ""
-                      )
-                    }
                   >
-                    {feildList.map((approval) => (
-                      <MenuItem key={approval._id} value={approval._id}>
-                        {approval.name}
+                    If
+                  </Box>
+                  <FormControl fullWidth size="small" sx={{ mt: 2, mb: 2 }}>
+                    <Select
+                      value={selectedApprovalId}
+                      onChange={(event) => {
+                        const { value } = event.target; // Directly access the selected value
+                        setSelectedApprovalId(value); // Update the local state with the new value
+
+                        // Find the team by the selected value (ID)
+                        const selectedTeam = feildList.find(
+                          (team) => team._id === value
+                        );
+
+                        // Invoke the custom function with the selected team's name or an empty string
+                        handleAddSignatory(
+                          selectedTeam ? selectedTeam.name : ""
+                        );
+                      }}
+                      displayEmpty
+                      renderValue={(selectedValue) =>
+                        selectedValue === "" ? (
+                          <em
+                            style={{
+                              color: "#C2C2C2",
+                              fontStyle: "normal",
+                              fontSize: "15.5px",
+                            }}
+                          >
+                            Select feild
+                          </em>
+                        ) : (
+                          feildList.find((team) => team._id === selectedValue)
+                            ?.name || ""
+                        )
+                      }
+                    >
+                      {feildList.map((approval) => (
+                        <MenuItem key={approval._id} value={approval._id}>
+                          {approval.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <FormControl size="small" sx={{ minWidth: 120 }}>
+                    <Select
+                      value={comparisonOperator}
+                      onChange={(e) => setComparisonOperator(e.target.value)}
+                      displayEmpty
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
+                      <MenuItem value="greater or equal to">
+                        {"greater or equal to"}
+                      </MenuItem>
+                      <MenuItem value="equals">{"equals"}</MenuItem>
+                      <MenuItem value="does not equal">
+                        {"does not equal"}
+                      </MenuItem>
+                      <MenuItem value="less than">{"less than"}</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <TextField // Changed from Input to TextField
+                    placeholder="Value"
+                    value={value}
+                    size="small" // Match the size with the Select component
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                </Box>
+                <Button
+                  variant="text"
+                  color="primary"
+                  sx={{ textTransform: "none", marginLeft: "-0.5rem" }}
+                  // onClick={() => handleAddSignatory(inputValue)}
+                >
+                  + Add Condition
+                </Button>
+              </>
             )}
           </React.Fragment>
         )}
