@@ -18,6 +18,7 @@ import "@syncfusion/ej2-navigations/styles/material.css";
 import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-splitbuttons/styles/material.css";
 import "@syncfusion/ej2-react-documenteditor/styles/material.css";
+import { PdfDocument, PdfPageSettings, PdfPageOrientation, PdfSection, PdfBitmap, SizeF } from '@syncfusion/ej2-pdf-export';
 import { registerLicense } from "@syncfusion/ej2-base";
 registerLicense(
   "ORg4AjUWIQA/Gnt2UVhiQlJPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSX1Tc0ViWHZcd3dVRWQ="
@@ -171,6 +172,8 @@ function SyncFusionEditor() {
         // Toggles the underline of selected content
         documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
         break;
+
+
 
       case "highlight":
         if (documentEditor && documentEditor.selection) {
@@ -732,8 +735,128 @@ function SyncFusionEditor() {
   }, []);
   const exportPdf = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    documentEditor.save('sample', 'Docx');
+    const userFileName = prompt("Enter a file name for your PDF", "My PDF");
+    documentEditor.save(userFileName, 'Pdf');
   }
+  const save = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    const userFileName = prompt("Enter a file name for your docs", "My File");
+    if (userFileName) {
+      documentEditor.save(userFileName, 'Docx');
+    }
+  }
+
+  // const onImportClick = () => {
+  //   const fileInput = document.createElement('input');
+  //   fileInput.type = 'file';
+  //   fileInput.accept = '.docx'; // Accept only DOCX files for direct opening
+  //   fileInput.onchange = async (e) => {
+  //     const file = e.target.files ? e.target.files[0] : null;
+  //     if (file && file.name && file.name.endsWith('.docx')) {
+  //       const reader = new FileReader();
+  //       reader.onload = async (e) => {
+  //         if (e.target.result) {
+  //           const arrayBuffer = e.target.result;
+  //           const documentEditor = editorContainerRef.current?.documentEditor;
+  //           if (documentEditor && arrayBuffer) {
+  //             documentEditor.open(arrayBuffer, 'Docx');
+  //           }
+  //         };
+  //       }
+  //       reader.readAsArrayBuffer(file); // Read the file as an array buffer for DOCX format
+  //     } else {
+  //       alert('Only DOCX files are supported.');
+  //     }
+  //   };
+  //   fileInput.click(); // Programmatically click the file input to open the file dialog
+  // };
+
+  const onClick = () => {
+    const container = editorContainerRef.current;
+    if (container) {
+      let pdfdocument: PdfDocument = new PdfDocument();
+      let count: number = container.documentEditor.pageCount;
+      container.documentEditor.documentEditorSettings.printDevicePixelRatio = 2;
+      let loadedPage = 0;
+
+      for (let i = 1; i <= count; i++) {
+        setTimeout(() => {
+          let format: ImageFormat = 'image/jpeg';
+          // Getting pages as image
+          let image = container.documentEditor.exportAsImage(i, format);
+          image.onload = function () {
+            let imageHeight = parseInt(image.style.height.replace('px', ''));
+            let imageWidth = parseInt(image.style.width.replace('px', ''));
+            let section: PdfSection = pdfdocument.sections.add();
+            let settings: PdfPageSettings = new PdfPageSettings(0);
+            if (imageWidth > imageHeight) {
+              settings.orientation = PdfPageOrientation.Landscape;
+            }
+            settings.size = new SizeF(imageWidth, imageHeight);
+            section.setPageSettings(settings);
+            let page = section.pages.add();
+            let graphics = page.graphics;
+            let imageStr = image.src.replace('data:image/jpeg;base64,', '');
+            let pdfImage = new PdfBitmap(imageStr);
+            graphics.drawImage(pdfImage, 0, 0, imageWidth, imageHeight);
+            loadedPage++;
+            if (loadedPage === count) {
+              const userFileName = prompt("Enter a file name for your PDF", "My pdf");
+              if (userFileName) {
+                pdfdocument.save((container.documentEditor.documentName === '' ? userFileName : container.documentEditor.documentName) + '.pdf');
+                pdfdocument.destroy();
+              }
+            }
+          };
+          if (image.complete) {
+            image.onload(null as any); // Trigger onload immediately if image is cached
+          }
+        }, 500 * i);
+      }
+    }
+  };
+  const [documentData, setDocumentData] = useState<string | null>(null);
+
+  const saveDocumentToState = () => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    if (documentEditor) {
+      // Export the document as SFDT (Syncfusion Document Text) format
+      const sfdtData = documentEditor.saveAsBlob('Sfdt');
+      sfdtData.then((blob: any) => {
+        // Convert blob to text and save in state
+        const reader = new FileReader();
+        reader.onload = () => {
+          setDocumentData(reader.result as string);
+        };
+        reader.readAsText(blob);
+      });
+    }
+  };
+
+
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files ? event.target.files[0] : null;
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       const result = reader.result;
+  //       if (result) {
+  //         const documentEditor = editorContainerRef.current?.documentEditor;
+  //         if (documentEditor) {
+  //           const base64String = result.split(',')[1]; // Ensure this split operation is safe
+  //           documentEditor.open(base64String, 'Base64');
+  //         }
+  //       } else {
+  //         console.error('Failed to read the file.');
+  //       }
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+
+
+
   return (
     <div>
 
@@ -763,9 +886,10 @@ function SyncFusionEditor() {
                 }}
               >
                 <img src={openFolder} className="h-4 w-4" alt="" />
-                Open
+                Import Document
+                {/* <input type="file" accept=".docx" onChange={handleFileChange} /> */}
               </li>
-              <li className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2">
+              <li onClick={saveDocumentToState} className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2">
                 <img src={saveIcon} className="h-4 w-4" alt="" />
                 Save
               </li>
@@ -1008,10 +1132,13 @@ function SyncFusionEditor() {
                 border: "1px solid #C1C1C1",
               }}
             >
-              <li onClick={() => exportPdf()} className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
+              <li
+                onClick={onClick}
+                // onClick={() => exportPdf()}
+                className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
                 <img src={pdfIcon} className="h-5 w-5" alt="" /> Download PDF
               </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
+              <li onClick={save} className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
                 <img src={wordIcon} className="h-5 w-5" alt="" /> Download Word
               </li>
               <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
@@ -1077,10 +1204,6 @@ function SyncFusionEditor() {
         </Box>
       </div>
       {/* <div id="xyz">show </div> */}
-
-
-
-
 
 
 
