@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable */
@@ -778,30 +779,30 @@ function SyncFusionEditor() {
   const onClick = () => {
     const container = editorContainerRef.current;
     if (container) {
-      let pdfdocument: PdfDocument = new PdfDocument();
-      let count: number = container.documentEditor.pageCount;
+      const pdfdocument: PdfDocument = new PdfDocument();
+      const count: number = container.documentEditor.pageCount;
       container.documentEditor.documentEditorSettings.printDevicePixelRatio = 2;
       let loadedPage = 0;
 
       for (let i = 1; i <= count; i++) {
         setTimeout(() => {
-          let format: ImageFormat = "image/jpeg";
+          const format: any = "image/jpeg";
           // Getting pages as image
-          let image = container.documentEditor.exportAsImage(i, format);
+          const image = container.documentEditor.exportAsImage(i, format);
           image.onload = function () {
-            let imageHeight = parseInt(image.style.height.replace("px", ""));
-            let imageWidth = parseInt(image.style.width.replace("px", ""));
-            let section: PdfSection = pdfdocument.sections.add();
-            let settings: PdfPageSettings = new PdfPageSettings(0);
+            const imageHeight = parseInt(image.style.height.replace("px", ""));
+            const imageWidth = parseInt(image.style.width.replace("px", ""));
+            const section: any = pdfdocument.sections.add();
+            const settings: PdfPageSettings = new PdfPageSettings(0);
             if (imageWidth > imageHeight) {
               settings.orientation = PdfPageOrientation.Landscape;
             }
             settings.size = new SizeF(imageWidth, imageHeight);
             section.setPageSettings(settings);
-            let page = section.pages.add();
-            let graphics = page.graphics;
-            let imageStr = image.src.replace("data:image/jpeg;base64,", "");
-            let pdfImage = new PdfBitmap(imageStr);
+            const page = section.pages.add();
+            const graphics = page.graphics;
+            const imageStr = image.src.replace("data:image/jpeg;base64,", "");
+            const pdfImage = new PdfBitmap(imageStr);
             graphics.drawImage(pdfImage, 0, 0, imageWidth, imageHeight);
             loadedPage++;
             if (loadedPage === count) {
