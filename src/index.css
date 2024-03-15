@@ -57,7 +57,7 @@
 }
 
 .e-de-ctnr-toolbar {
-  display: none !important;
+  /* display: none !important; */
 }
 
 #e-split-btn_43_dropdownbtn {
@@ -465,8 +465,7 @@
 /* end */
 
 /* sidebar hidden  */
-.e-de-pane {
-}
+.e-de-pane {}
 
 /* .e-de-ctnr-segment { 
   position: absolute !important;
