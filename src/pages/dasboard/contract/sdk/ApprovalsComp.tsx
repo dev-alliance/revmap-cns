@@ -336,12 +336,11 @@ const ApprovalsComp = () => {
                 </div>
               </div>
             )}
-            {/* {selectedApproval && (
-              <Typography sx={{ fontSize: "14px" }}>
-                {selectedApproval}....
+            {selectedApproval && (
+              <Typography sx={{ fontSize: "14px", marginTop: "1rem" }}>
+                Selected: {selectedApproval}
               </Typography>
             )}
-            {selectedApproval} */}
 
             <Autocomplete
               style={{ marginTop: "1rem" }}
@@ -354,10 +353,12 @@ const ApprovalsComp = () => {
                 const value = newValue ? newValue._id : "";
                 setSelectedApprovalId(value);
 
+                // Update the selectedApproval to display the name
                 if (newValue) {
+                  setSelectedApproval(newValue.name); // Assuming you have a function to set this state
                   handleAddSignatory(newValue.approver);
                 } else {
-                  // Handle the case where the selection is cleared if necessary
+                  setSelectedApproval(""); // Clear the selected approval name if no selection
                 }
               }}
               options={approvalList}
