@@ -335,6 +335,26 @@ function SyncFusionEditor() {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
   };
+
+
+  // const addComment = (commentText: any, author: any) => {
+  //   const documentEditor = editorContainerRef.current.documentEditor;
+  //   if (!documentEditor || !documentEditor.editor) {
+  //     console.error("Document Editor is not initialized yet.");
+  //     return;
+  //   }
+
+  //   // Check if any text is selected
+  //   if (documentEditor.selection && documentEditor.selection.text !== '') {
+  //     // Adds a comment to the selected text
+  //     documentEditor.editor.addComment(commentText, author);
+  //   } else {
+  //     alert('Please select text to comment on.');
+  //   }
+  // };
+
+
+
   // text color highlight
   const [fontColor, setFontColor] = useState("#000000"); // Default font color
 
@@ -967,6 +987,27 @@ function SyncFusionEditor() {
                 <img src={commentIcon} className="h-4 w-4" alt="" />
                 Add comment
               </li>
+
+              {/* <li
+                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
+
+              >
+                <button onClick={() => addComment('This is an internal comment', 'Internal Author')}>
+                  Add Internal Comment
+                </button>
+              </li>
+
+              <li
+                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
+
+              >
+                <button onClick={() => addComment('This is an external comment', 'External Author')}>
+                  Add External Comment
+                </button>
+              </li> */}
+
+
+
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
