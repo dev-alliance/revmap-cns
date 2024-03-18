@@ -89,6 +89,7 @@ import {
   ContextMenu,
   TableDialog,
   BorderSettings,
+  PageSetupDialog,
 } from "@syncfusion/ej2-react-documenteditor";
 import {
   ToolbarComponent,
@@ -158,8 +159,6 @@ function SyncFusionEditor() {
       documentEditor.focusIn();
     }
   }
-  const [showPageSetupDialog, setShowPageSetupDialog] = useState(false);
-  const [margins, setMargins] = useState({ top: '1', bottom: '1', left: '1', right: '1' });
 
   const onToolbarClick = (args: any) => {
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -183,9 +182,7 @@ function SyncFusionEditor() {
         documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
         break;
 
-      case "customPageSetup":
-        setShowPageSetupDialog(true);
-        break;
+
 
       case "highlight":
         if (documentEditor && documentEditor.selection) {
@@ -329,41 +326,14 @@ function SyncFusionEditor() {
     }
   };
 
-
-  const applyPageSetup = () => {
+  function ShowPageSetupDialog() {
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (documentEditor) {
-      // Assuming 'margins' are in inches, converting them to points for the Document Editor
-      const marginValues = {
-        top: parseFloat(margins.top) * 72, // 1 inch = 72 points
-        bottom: parseFloat(margins.bottom) * 72,
-        left: parseFloat(margins.left) * 72,
-        right: parseFloat(margins.right) * 72,
-      };
-      documentEditor.selection.sectionFormat.topMargin = marginValues.top;
-      documentEditor.selection.sectionFormat.bottomMargin = marginValues.bottom;
-      documentEditor.selection.sectionFormat.leftMargin = marginValues.left;
-      documentEditor.selection.sectionFormat.rightMargin = marginValues.right;
-      setShowPageSetupDialog(false); // Close dialog
-    }
-  };
+    documentEditor.showDialog('PageSetup');
+  }
 
-  const applyPageSetup1 = () => {
+  const toggleTrackChanges = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (documentEditor) {
-      // Assuming 'margins' are in inches, converting them to points for the Document Editor
-      const marginValues = {
-        top: parseFloat(margins.top) * 72, // 1 inch = 72 points
-        bottom: parseFloat(margins.bottom) * 72,
-        left: parseFloat(margins.left) * 72,
-        right: parseFloat(margins.right) * 72,
-      };
-      documentEditor.selection.sectionFormat.topMargin = marginValues.top;
-      documentEditor.selection.sectionFormat.bottomMargin = marginValues.bottom;
-      documentEditor.selection.sectionFormat.leftMargin = marginValues.left;
-      documentEditor.selection.sectionFormat.rightMargin = marginValues.right;
-      setShowPageSetupDialog(false); // Close dialog
-    }
+    documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
   };
   // text color highlight
   const [fontColor, setFontColor] = useState("#000000"); // Default font color
@@ -910,33 +880,6 @@ function SyncFusionEditor() {
 
   return (
     <div>
-      {showPageSetupDialog && (
-        <div style={{ position: 'absolute', top: '50%', zIndex: '999', left: '40%', backgroundColor: 'white', padding: '20px', border: '1px solid black' }}>
-          <h2>Page Setup</h2>
-          <label>
-            Top Margin (in):
-            <input type="number" value={margins.top} onChange={(e) => setMargins({ ...margins, top: e.target.value })} />
-          </label>
-          <br />
-          <label>
-            Bottom Margin (in):
-            <input type="number" value={margins.bottom} onChange={(e) => setMargins({ ...margins, bottom: e.target.value })} />
-          </label>
-          <br />
-          <label>
-            Left Margin (in):
-            <input type="number" value={margins.left} onChange={(e) => setMargins({ ...margins, left: e.target.value })} />
-          </label>
-          <br />
-          <label>
-            Right Margin (in):
-            <input type="number" value={margins.right} onChange={(e) => setMargins({ ...margins, right: e.target.value })} />
-          </label>
-          <br />
-          <button onClick={applyPageSetup}>Apply</button>
-          <button onClick={() => setShowPageSetupDialog(false)}>Cancel</button>
-        </div>
-      )}
 
       <div className="flex border py-1 px-4 gap-4">
         {/* File Button and Dropdown */}
@@ -1027,7 +970,8 @@ function SyncFusionEditor() {
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_toolbar_track");
+                  toggleTrackChanges()
+                  // triggerClick("container_toolbar_track");
                 }}
               >
                 <img src={trackChangesIcon} className="h-4 w-4" alt="" />
@@ -1133,9 +1077,7 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  setShowPageSetupDialog(true)
-                }}
+                onClick={ShowPageSetupDialog}
               >
                 <img src={pageSetupIcon} className="h-5 w-5" alt="" />
                 Page Setup
@@ -1554,7 +1496,7 @@ function SyncFusionEditor() {
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
-        height="600px"
+        height="70vh"
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}

@@ -29,7 +29,7 @@
 }
 
 .e-popup {
-  height: 600px !important;
+  height: auto !important;
 }
 
 .e-content {
@@ -37,7 +37,7 @@
 }
 
 #dialog_538769107_0_dialog-content {
-  height: 300px !important;
+  height: 400px !important;
 }
 
 .e-icons.e-font-color {
@@ -57,11 +57,30 @@
 }
 
 .e-de-ctnr-toolbar {
-  /* display: none !important; */
+  display: none !important;
 }
 
 #e-split-btn_43_dropdownbtn {
   margin-right: -2px;
+}
+
+#dialog_538769107_0 {
+  width: 400px !important;
+  height: 360px !important;
+  overflow-y: scroll;
+}
+
+.e-footer-content {
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+.e-de-search-tab-content {
+  margin-top: 44px !important;
+}
+
+#_tab_header_items {
+  margin-top: -10px !important;
 }
 
 /* #container_editor_font_properties_leftDiv {
