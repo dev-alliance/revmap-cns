@@ -29,7 +29,7 @@
 }
 
 .e-popup {
-  height: auto !important;
+  height: 360px !important;
 }
 
 .e-content {
@@ -78,6 +78,10 @@
 .e-de-search-tab-content {
   margin-top: 44px !important;
 }
+
+/* #dialog_968836386_0 {
+  width: 300px !important;
+} */
 
 #_tab_header_items {
   margin-top: -10px !important;
