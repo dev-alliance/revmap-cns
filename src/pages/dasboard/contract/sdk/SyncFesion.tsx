@@ -499,7 +499,38 @@ function SyncFusionEditor() {
   // function ComponentDidMount() {
   //   documenteditor.editor.insertTable(2, 2);
   // }
+  const [showTableTools, setShowTableTools] = useState(false);
 
+  // Function to update the table tool visibility based on the editor's selection
+  const updateTableToolsVisibility = () => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    setShowTableTools(isTableSelected);
+  };
+
+  // Set up an interval to periodically check for table selection
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      updateTableToolsVisibility();
+    }, 500); // Check every 500 milliseconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Functions to perform table operations
+  const deleteTable = () => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    if (isTableSelected) {
+      documentEditor.editor.deleteTable();
+    }
+  };
+
+  const insertRowAbove = () => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    if (isTableSelected) {
+      documentEditor.editor.insertRow(true);
+    }
+  };
   function toolbarButtonClick(arg: any) {
     console.log("arg table", arg);
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -507,6 +538,10 @@ function SyncFusionEditor() {
       case "table":
         //Insert table API to add table
         documentEditor.editor.insertTable(3, 2);
+        break;
+      case "delete_table":
+        // Delete the current table
+        documentEditor.editor.deleteTable();
         break;
       case "insert_above":
         //Insert the specified number of rows to the table above to the row at cursor position
@@ -898,9 +933,37 @@ function SyncFusionEditor() {
   //   }
   // };
 
+  const convertToBase64 = (file: any, callback: any) => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      callback(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const insertImage = (imageSrc: any) => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (!documentEditor || !documentEditor.editor) {
+      console.error("Document Editor is not initialized yet.");
+      return;
+    }
+
+    // Assuming you have the image dimensions or you can specify default values
+    const width = 100; // Example width
+    const height = 100; // Example height
+
+    documentEditor.editor.insertImage(imageSrc, width, height);
+  };
+
+
   return (
     <div>
-
+      {showTableTools && (
+        <div style={{ marginTop: '10px' }}>
+          <button onClick={deleteTable}>Delete Table</button>
+        </div>
+      )}
       <div className="flex border py-1 px-4 gap-4">
         {/* File Button and Dropdown */}
 
@@ -1085,8 +1148,22 @@ function SyncFusionEditor() {
                   triggerClick("container_toolbar_image_local");
                 }}
               >
-                <img src={imageIcon} className="h-4 w-4" alt="" />
-                Image
+                <label htmlFor="forimg" className="flex gap-2 cursor-pointer">
+                  <img src={imageIcon} className="h-4 w-4" alt="" />
+                  Image
+
+                  <input
+                    id="forimg"
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        convertToBase64(e.target.files[0], insertImage);
+                      }
+                    }}
+                  />
+                </label>
+
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
@@ -1444,12 +1521,11 @@ function SyncFusionEditor() {
                 />
                 <ItemDirective type="Separator" />
                 {/* <ItemDirective
-              id="delete_table"
-              tooltipText="Delete"
-              text="Delete"
-              prefixIcon="custom-delete-icon"
-            /> */}
-
+                  id="delete_table"
+                  tooltipText="Delete"
+                  text="Delete"
+                  prefixIcon="custom-delete-icon"
+                /> */}
                 <ItemDirective
                   id="delete_rows"
                   prefixIcon="e-de-ctnr-deleterows e-icons"
@@ -1462,10 +1538,11 @@ function SyncFusionEditor() {
                 <ItemDirective
                   id="merge_cell"
                   text="Merge Cells"
-                  prefixIcon="e-de-ctnr-mergecells e-icons"
+                  prefixIcon="e-merge-cells e-icons"
                 />
                 <ItemDirective type="Separator" />
 
+                <ItemDirective id="delete_table" prefixIcon="e-table-delete e-icons" text="Delete" tooltipText="Delete Table" />
                 {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
 
                 <DropDownListComponent
@@ -1481,7 +1558,7 @@ function SyncFusionEditor() {
                 <ItemDirective
                   id="set_border_width"
                   text="Apply Border"
-                  prefixIcon="your-icon-class-for-border-width"
+                  prefixIcon="e-border-all-2"
                 />
 
                 <ItemDirective type="Separator" />
