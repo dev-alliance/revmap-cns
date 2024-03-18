@@ -336,59 +336,57 @@ const ApprovalsComp = () => {
                 </div>
               </div>
             )}
-            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-              <Select
-                value={selectedApprovalId}
-                onChange={(event) => {
-                  const { value } = event.target;
-                  setSelectedApprovalId(value);
+            {/* {selectedApproval && (
+              <Typography sx={{ fontSize: "14px" }}>
+                {selectedApproval}....
+              </Typography>
+            )}
+            {selectedApproval} */}
 
-                  // Your existing logic to find and transform the selected approval
-                  const selectedApproval = approvalList.find(
-                    (approval) => approval._id === value
-                  );
-                  handleAddSignatory(selectedApproval.approver);
-                }}
-                displayEmpty
-                disabled={
-                  showSignatories == "topbar" && showSignatories !== "edit"
+            <Autocomplete
+              style={{ marginTop: "1rem" }}
+              value={
+                approvalList.find(
+                  (approval) => approval._id === selectedApprovalId
+                ) || null
+              }
+              onChange={(event, newValue) => {
+                const value = newValue ? newValue._id : "";
+                setSelectedApprovalId(value);
+
+                if (newValue) {
+                  handleAddSignatory(newValue.approver);
+                } else {
+                  // Handle the case where the selection is cleared if necessary
                 }
-                // Disable the Select if an item is selected
-                renderValue={(selectedValue) =>
-                  selectedValue === "" ? (
-                    <em
-                      style={{
-                        color: "#C2C2C2",
-                        fontStyle: "normal",
-                        fontSize: "15.5px",
-                      }}
-                    >
-                      Select Approval
-                    </em>
-                  ) : (
-                    approvalList.find(
-                      (approval) => approval._id === selectedValue
-                    )?.name || ""
-                  )
-                }
-              >
-                {approvalList.map((approval) => (
-                  <MenuItem
-                    key={approval._id}
-                    value={approval._id}
-                    style={{
-                      // Conditionally style the MenuItem to appear disabled if it's the selected item
-                      color:
-                        selectedApprovalId === approval._id
-                          ? "#C2C2C2"
-                          : undefined,
-                    }}
-                  >
-                    {approval.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+              }}
+              options={approvalList}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  InputProps={{
+                    ...params.InputProps,
+                    readOnly: true,
+                  }}
+                  variant="outlined"
+                  label="Select Approval"
+                />
+              )}
+              disabled={
+                showSignatories === "topbar" || showSignatories === "view"
+              }
+              clearOnEscape
+              renderOption={(props, option) => (
+                <li {...props}>{option.name}</li>
+              )}
+              fullWidth
+              size="small"
+              sx={{ mb: 2 }}
+              clearText="Remove"
+              noOptionsText="No Approvals"
+            />
 
             {approvers.length > 0 &&
               (showSignatories === "" || showSignatories === "edit") && (
@@ -712,17 +710,12 @@ const ApprovalsComp = () => {
                   name="name"
                   control={control}
                   render={({ field, fieldState: { error } }) => (
-                    <FormControl
-                      fullWidth
-                      size="small"
-                      error={!!error}
-                      sx={{ mt: 2 }}
-                    >
+                    <FormControl fullWidth size="small">
                       <Autocomplete
                         {...field}
                         disabled={
-                          showSignatories == "topbar" &&
-                          showSignatories !== "edit"
+                          showSignatories === "topbar" ||
+                          showSignatories === "view"
                         }
                         freeSolo
                         options={userList} // Use the userList directly

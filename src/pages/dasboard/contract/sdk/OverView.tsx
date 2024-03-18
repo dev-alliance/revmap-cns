@@ -31,6 +31,7 @@ import { ContractContext } from "@/context/ContractContext";
 
 type FormValues = {
   name: string;
+  with_name: string;
   currency: string;
   value: number;
   category: string;
@@ -107,6 +108,7 @@ const OverView = () => {
 
       const updatedOverview: any = {
         name: data?.name,
+        with_name: data?.with_name,
         vendor: "Vendor Name", // Modify as needed
         currency: data?.currency,
         value: data?.value,
@@ -130,6 +132,7 @@ const OverView = () => {
   useEffect(() => {
     if (contract) {
       setValue("name", contract?.name);
+      setValue("with_name", contract?.with_name || "");
       setValue("currency", contract?.currency);
       setValue("value", contract?.value);
       setValue("category", contract?.category);
@@ -227,12 +230,12 @@ const OverView = () => {
         Overview
       </Typography>
       <Divider style={{ margin: "10px 0" }} />
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
           sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
         >
-          Contract Name*
+          Contract Name
         </Typography>
         <Controller
           name="name"
@@ -241,21 +244,36 @@ const OverView = () => {
           render={({ field }) => (
             <TextField
               {...field}
-              placeholder="Add name"
+              placeholder="Add document name"
               fullWidth
               error={!!errors.name}
               helperText={errors.name?.message}
               size="small"
               variant="standard"
               InputProps={{
+                disableUnderline: true, // Disables the underline by default
                 sx: {
+                  "::after": {
+                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                  },
+                  "::before": {
+                    borderBottom: "none !important", // Hides the underline
+                  },
+                  ":hover:not(.Mui-disabled)::before": {
+                    borderBottom: "none !important", // Ensures underline stays hidden on hover
+                  },
+                  "input:focus + fieldset": {
+                    border: "none", // Optional: for outlined variant if ever used
+                  },
                   "::placeholder": {
-                    fontSize: "0.55rem", // Adjusted font size for placeholder
-                    textAlign: "center", // Center placeholder text horizontally
+                    fontSize: "0.55rem",
                   },
                   input: {
-                    fontSize: "0.875rem", // Adjusted font size for input text
-                    textAlign: "center", // Center input text horizontally
+                    fontSize: "0.875rem",
+                    "&:focus": {
+                      // Shows the underline when the input is focused
+                      borderBottom: "2px solid", // Adjust color as needed
+                    },
                   },
                 },
               }}
@@ -264,33 +282,48 @@ const OverView = () => {
         />
       </Box>
 
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
           sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
         >
-          Contract With*
+          Contract With
         </Typography>
         <Controller
-          name="name"
+          name="with_name"
           control={control}
           rules={{ required: "This field is required" }}
           render={({ field }) => (
             <TextField
               {...field}
-              placeholder="Add name"
+              placeholder="Add third party name"
               fullWidth
               size="small"
               variant="standard"
               InputProps={{
+                disableUnderline: true, // Disables the underline by default
                 sx: {
+                  "::after": {
+                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                  },
+                  "::before": {
+                    borderBottom: "none !important", // Hides the underline
+                  },
+                  ":hover:not(.Mui-disabled)::before": {
+                    borderBottom: "none !important", // Ensures underline stays hidden on hover
+                  },
+                  "input:focus + fieldset": {
+                    border: "none", // Optional: for outlined variant if ever used
+                  },
                   "::placeholder": {
-                    fontSize: "0.55rem", // Adjusted font size for placeholder
-                    textAlign: "center", // Center placeholder text horizontally
+                    fontSize: "0.55rem",
                   },
                   input: {
-                    fontSize: "0.875rem", // Adjusted font size for input text
-                    textAlign: "center", // Center input text horizontally
+                    fontSize: "0.875rem",
+                    "&:focus": {
+                      // Shows the underline when the input is focused
+                      borderBottom: "2px solid", // Adjust color as needed
+                    },
                   },
                 },
               }}
@@ -298,10 +331,10 @@ const OverView = () => {
           )}
         />
       </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
+          sx={{ minWidth: "75px", whiteSpace: "nowrap" }}
         >
           Annual Value
         </Typography>
@@ -319,14 +352,29 @@ const OverView = () => {
               size="small"
               variant="standard"
               InputProps={{
+                disableUnderline: true, // Disables the underline by default
                 sx: {
+                  "::after": {
+                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                  },
+                  "::before": {
+                    borderBottom: "none !important", // Hides the underline
+                  },
+                  ":hover:not(.Mui-disabled)::before": {
+                    borderBottom: "none !important", // Ensures underline stays hidden on hover
+                  },
+                  "input:focus + fieldset": {
+                    border: "none", // Optional: for outlined variant if ever used
+                  },
                   "::placeholder": {
-                    fontSize: "0.55rem", // Adjusted font size for placeholder
-                    textAlign: "center", // Center placeholder text horizontally
+                    fontSize: "0.55rem",
                   },
                   input: {
-                    fontSize: "0.875rem", // Adjusted font size for input text
-                    textAlign: "center", // Center input text horizontally
+                    fontSize: "0.875rem",
+                    "&:focus": {
+                      // Shows the underline when the input is focused
+                      borderBottom: "2px solid", // Adjust color as needed
+                    },
                   },
                 },
               }}
@@ -334,20 +382,19 @@ const OverView = () => {
           )}
         />
       </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
           Currency
         </Typography>
         <Controller
           name="currency"
           control={control}
-          defaultValue=""
+          defaultValue="" // Ensure this matches the initial state expected by your form
           render={({ field }) => (
             <FormControl fullWidth size="small" variant="outlined">
               <Select
                 {...field}
-                labelId="status-label"
-                displayEmpty
+                displayEmpty // This should ensure the placeholder is displayed when the value is ""
                 renderValue={(value) => {
                   if (value === "") {
                     return (
@@ -362,8 +409,9 @@ const OverView = () => {
                       </em> // Placeholder text with custom color and font size
                     );
                   }
-                  return field.value;
+                  return field.value; // Ensure this reflects the selected option text correctly
                 }}
+                labelId="currency-label"
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
@@ -378,13 +426,14 @@ const OverView = () => {
                 }}
               >
                 <MenuItem value="$">$</MenuItem>
+                <MenuItem value="NZ$">NZ$</MenuItem>
               </Select>
             </FormControl>
           )}
         />
       </Box>
 
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
           sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
@@ -445,12 +494,12 @@ const OverView = () => {
           />
         </FormControl>
       </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
           sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
         >
-          Team*
+          Team
         </Typography>
         <FormControl fullWidth size="small">
           <Controller
@@ -508,9 +557,9 @@ const OverView = () => {
           />
         </FormControl>
       </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
-          Category*
+          Category
         </Typography>
         <Controller
           name="category"
@@ -570,9 +619,9 @@ const OverView = () => {
           )}
         />
       </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
-          Subcategory*
+          Subcategory
         </Typography>
         <Controller
           name="subcategory"
@@ -622,40 +671,43 @@ const OverView = () => {
           )}
         />
       </Box>
-      <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
+      <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
           sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
         >
-          Tag*
+          Tag
         </Typography>
+
         <Controller
-          name="tags"
+          name="subcategory"
           control={control}
-          // defaultValue=""
+          defaultValue=""
           render={({ field }) => (
             <FormControl fullWidth size="small">
-              {/* Optional: add this line if you want a label */}
               <Select
                 {...field}
+                labelId="subcategory-label"
                 displayEmpty
-                renderValue={(value: any) => {
+                renderValue={(value) => {
                   if (value === "") {
                     return (
                       <em
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "15.5px",
+                          fontSize: "0.70rem", // Reduced font size for placeholder
                         }}
                       >
-                        Select tag
+                        Select category
                       </em> // Placeholder text with custom color
                     );
                   }
                   // Find the selected manager by ID
-                  const selectedTag = taglist.find((tag) => tag._id === value);
-                  return selectedTag ? `${selectedTag.name} ` : "";
+                  const selectedTags = taglist.find(
+                    (tags) => tags._id === value
+                  );
+                  return selectedTags ? `${selectedTags.name}` : "";
                 }}
                 sx={{
                   ".MuiSelect-select": {
@@ -680,59 +732,12 @@ const OverView = () => {
           )}
         />
       </Box>
-      {/* <Box sx={{ display: "flex", mb: 2, alignItems: "center" }}>
-        <Typography
-          variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
-        >
-          Status
-        </Typography>
-        <Controller
-          name="status"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-            <FormControl fullWidth size="small">
-              <Select
-                {...field}
-                labelId="status-label"
-                displayEmpty
-                renderValue={(value) => {
-                  if (value === "") {
-                    return (
-                      <em
-                        style={{
-                          color: "#C2C2C2",
-                          fontStyle: "normal",
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        {" "}
-                        Choose a status
-                      </em>
-                    );
-                  }
-                  return field.value;
-                }}
-              >
-                <MenuItem value="New">New</MenuItem>
-                <MenuItem value="Draft">Draft</MenuItem>
-                <MenuItem value="Negotiation">Negotiation</MenuItem>
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Notice period">Notice period</MenuItem>
-                <MenuItem value="Expired">Expired</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-        />
-      </Box> */}
 
       <Box>
         <Button
           onClick={handleAddField}
           variant="text"
           sx={{
-            mt: 1,
             color: "inherit",
             backgroundColor: "transparent",
             boxShadow: "none",
@@ -749,10 +754,7 @@ const OverView = () => {
           <AddIcon sx={{ color: "blue" }} /> Add Field
         </Button>
         {fields.map((field, index) => (
-          <Box
-            key={index}
-            sx={{ display: "flex", mb: 2, alignItems: "center" }}
-          >
+          <Box key={index} sx={{ mb: 0 }}>
             {field.isEditing ? (
               <>
                 <TextField
@@ -765,14 +767,29 @@ const OverView = () => {
                   sx={{ mr: 2 }}
                   variant="standard"
                   InputProps={{
+                    disableUnderline: true, // Disables the underline by default
                     sx: {
+                      "::after": {
+                        borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                      },
+                      "::before": {
+                        borderBottom: "none !important", // Hides the underline
+                      },
+                      ":hover:not(.Mui-disabled)::before": {
+                        borderBottom: "none !important", // Ensures underline stays hidden on hover
+                      },
+                      "input:focus + fieldset": {
+                        border: "none", // Optional: for outlined variant if ever used
+                      },
                       "::placeholder": {
-                        fontSize: "0.55rem", // Adjusted font size for placeholder
-                        textAlign: "center", // Center placeholder text horizontally
+                        fontSize: "0.55rem",
                       },
                       input: {
-                        fontSize: "0.875rem", // Adjusted font size for input text
-                        textAlign: "center", // Center input text horizontally
+                        fontSize: "0.875rem",
+                        "&:focus": {
+                          // Shows the underline when the input is focused
+                          borderBottom: "2px solid", // Adjust color as needed
+                        },
                       },
                     },
                   }}
@@ -786,21 +803,36 @@ const OverView = () => {
                   size="small"
                   variant="standard"
                   InputProps={{
+                    disableUnderline: true, // Disables the underline by default
                     sx: {
+                      "::after": {
+                        borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                      },
+                      "::before": {
+                        borderBottom: "none !important", // Hides the underline
+                      },
+                      ":hover:not(.Mui-disabled)::before": {
+                        borderBottom: "none !important", // Ensures underline stays hidden on hover
+                      },
+                      "input:focus + fieldset": {
+                        border: "none", // Optional: for outlined variant if ever used
+                      },
                       "::placeholder": {
-                        fontSize: "0.55rem", // Adjusted font size for placeholder
-                        textAlign: "center", // Center placeholder text horizontally
+                        fontSize: "0.55rem",
                       },
                       input: {
-                        fontSize: "0.875rem", // Adjusted font size for input text
-                        textAlign: "center", // Center input text horizontally
+                        fontSize: "0.875rem",
+                        "&:focus": {
+                          // Shows the underline when the input is focused
+                          borderBottom: "2px solid", // Adjust color as needed
+                        },
                       },
                     },
                   }}
                 />
               </>
             ) : (
-              <>
+              <div style={{ display: "flex" }}>
                 <Typography
                   sx={{ mr: 2, flexGrow: 1 }}
                   onClick={() => handleEditField(index)}
@@ -810,7 +842,7 @@ const OverView = () => {
                 <IconButton onClick={() => handleDeleteField(index)}>
                   <DeleteIcon fontSize="small" />
                 </IconButton>
-              </>
+              </div>
             )}
           </Box>
         ))}

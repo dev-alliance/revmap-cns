@@ -80,8 +80,7 @@ import timeline from "@/assets/timeline.png";
 import approval from "@/assets/approval_icon.png";
 import { debounce } from "lodash";
 
-
-// icon for sidebar 
+// icon for sidebar
 
 import dangerIcon from "../../../../assets/leftsideicon/danger.png";
 import writingIcon from "../../../../assets/leftsideicon/writing.png";
@@ -158,7 +157,7 @@ const MyComponent: React.FC = () => {
     quickSign: {
       icon: (
         <Tooltip title="eSign">
-          <img src={writingIcon} alt="Logo" style={{ width: '5%' }} />
+          <img src={writingIcon} alt="Logo" style={{ width: "5%" }} />
         </Tooltip>
       ),
       content: <QuickSign />,
@@ -260,25 +259,30 @@ const MyComponent: React.FC = () => {
                   placeholder="Untitled document"
                   variant="standard"
                   InputProps={{
+                    disableUnderline: true,
                     sx: {
                       width: inputWidth, // Apply dynamic width
+                      "::after": {
+                        borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                      },
+                      "::before": {
+                        borderBottom: "none !important", // Hides the underline
+                      },
+                      ":hover:not(.Mui-disabled)::before": {
+                        borderBottom: "none !important", // Ensures underline stays hidden on hover
+                      },
+                      "input:focus + fieldset": {
+                        border: "none", // Optional: for outlined variant if ever used
+                      },
                       "::placeholder": {
-                        fontSize: "1rem",
-                        // textAlign: "center",
+                        fontSize: "0.55rem",
                       },
                       input: {
-                        fontSize: "1rem",
-                        // textAlign: "center",
-                      },
-                      // Targeting the underline to remove it or make it invisible
-                      "&:before": {
-                        borderBottom: "none", // Removes the underline in default state
-                      },
-                      "&:hover:not(.Mui-disabled):before": {
-                        borderBottom: "none", // Removes the underline on hover (if not disabled)
-                      },
-                      "&:after": {
-                        borderBottom: "none", // Removes the underline in focused/active state
+                        fontSize: "0.875rem",
+                        "&:focus": {
+                          // Shows the underline when the input is focused
+                          borderBottom: "2px solid", // Adjust color as needed
+                        },
                       },
                     },
                   }}
@@ -399,12 +403,19 @@ const MyComponent: React.FC = () => {
 
         <Box
           sx={{
-            width: sidebarExpanded ? 320 : 55,
+            width: sidebarExpanded ? 320 : 55, // Adjust width based on sidebarExpanded state
             flexShrink: 0,
             display: "flex",
-            border: "1px solid #BEBEBE",
+            flexDirection: "column", // Typically, card content is laid out vertically
             height: "87vh",
-            overflowY: "scroll",
+            overflowY: "auto",
+            backgroundColor: "#fff", // Cards usually have a solid background color
+            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)", // Adds a subtle shadow similar to Material-UI cards
+            borderRadius: "4px", // Card-like elements often have rounded corners
+            transition: "box-shadow 0.3s", // Smooth transition for the shadow, makes interaction more lively
+            "&:hover": {
+              boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2)", // Enhanced shadow on hover for a touch of interactivity
+            },
           }}
         >
           <Grid container>
@@ -412,7 +423,8 @@ const MyComponent: React.FC = () => {
               item
               xs={2}
               sx={{
-                borderRight: sidebarExpanded ? "1px solid #BEBEBE" : "none",
+                height: "85vh",
+                borderRight: sidebarExpanded ? "1px solid #E0E0E0" : "none", // Adjusted border color for a more subtle look
               }}
             >
               <List>
@@ -421,11 +433,16 @@ const MyComponent: React.FC = () => {
                     sx={{ mb: 2.5, width: "100%" }}
                     key={key}
                     selected={selectedModule === key}
-                    onClick={() =>
-                      key === "toggle"
-                        ? toggleSidebar()
-                        : handleModuleClick(key)
-                    }
+                    onClick={() => {
+                      if (key === "toggle") {
+                        toggleSidebar();
+                      } else {
+                        handleModuleClick(key);
+                        if (!sidebarExpanded) {
+                          setSidebarExpanded(true);
+                        }
+                      }
+                    }}
                   >
                     <ListItemIcon>{modules[key].icon}</ListItemIcon>
                   </ListItemButton>

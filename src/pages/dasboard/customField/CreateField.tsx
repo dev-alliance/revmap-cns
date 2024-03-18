@@ -10,6 +10,8 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -30,6 +32,7 @@ interface CreateFieldProps {
 
 interface IFormInput {
   name: string;
+  type: string;
 }
 
 const CreateField: React.FC<CreateFieldProps> = ({
@@ -55,6 +58,7 @@ const CreateField: React.FC<CreateFieldProps> = ({
 
   useEffect(() => {
     setValue("name", itemName?.name);
+    setValue("type", itemName?.type);
   }, [itemName]);
 
   const onSubmit: any = async (data: any) => {
@@ -64,6 +68,7 @@ const CreateField: React.FC<CreateFieldProps> = ({
         id: user?._id,
         name: data.name,
         uploaded_by: user?.firstName,
+        type: data.type,
       };
       let response;
       if (itemName?.id) {
@@ -151,6 +156,40 @@ const CreateField: React.FC<CreateFieldProps> = ({
                   variant="outlined"
                   sx={{ fontSize: "16px", color: "#9A9A9A" }}
                 />
+              )}
+            />
+
+            <Controller
+              name="type"
+              control={control}
+              defaultValue=""
+              rules={{ required: " Type is required" }}
+              render={({ field }) => (
+                <Select
+                  size="small"
+                  {...field}
+                  placeholder="type"
+                  displayEmpty
+                  renderValue={(selectedValue: any) =>
+                    selectedValue === "" ? (
+                      <em
+                        style={{
+                          color: "#C2C2C2",
+                          fontStyle: "normal",
+                          fontSize: "15.5px",
+                        }}
+                      >
+                        Select condition
+                      </em>
+                    ) : (
+                      selectedValue
+                    )
+                  }
+                  sx={{ mt: 2 }}
+                >
+                  <MenuItem value="number">number</MenuItem>
+                  <MenuItem value="text">text</MenuItem>
+                </Select>
               )}
             />
 

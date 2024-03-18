@@ -30,10 +30,12 @@ import { format, utcToZonedTime } from "date-fns-tz";
 import { deletecustomFields, getList } from "@/service/api/customFeild";
 import AddIcon from "@mui/icons-material/Add";
 import CreateField from "@/pages/dasboard/customField/CreateField";
+import { type } from "os";
 interface CellType {
   row: any;
   _id: any;
   name: any;
+  type: any;
 }
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -65,7 +67,7 @@ const FieldList = () => {
   const [isOpenCreate, setIsOpenCreate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleCloseModalResetPass = () => setIsOpenCreate(false);
-  const [itemName, setItemName] = useState({ id: "", name: "" });
+  const [itemName, setItemName] = useState({ id: "", name: "", type: "" });
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
     row: CellType | null;
@@ -157,6 +159,25 @@ const FieldList = () => {
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      field: "type",
+      minWidth: 230,
+      headerName: "Type",
+      renderCell: ({ row }: any) => {
+        const { type } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {type || "-"}
+              </Typography>
             </Box>
           </Box>
         );
@@ -256,6 +277,7 @@ const FieldList = () => {
                     setItemName({
                       id: menuState.row?._id || "",
                       name: menuState.row?.name || "",
+                      type: menuState.row?.type || "",
                     });
                   }
                 }}
