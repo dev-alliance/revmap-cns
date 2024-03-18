@@ -73,7 +73,7 @@ const ApprovalsComp = () => {
   const [conditions, setConditions] = useState([
     { selectedApprovalId: "", comparisonOperator: "", value: "" },
   ]);
-
+  const [selectedUserApproval, setSelectedUserApproval] = useState("");
   const removeCondition = (indexToRemove: any) => {
     setConditions(conditions.filter((_, index) => index !== indexToRemove));
   };
@@ -707,50 +707,61 @@ const ApprovalsComp = () => {
                       </div>
                     </div>
                   )}
-                <Controller
-                  name="name"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <FormControl fullWidth size="small">
-                      <Autocomplete
-                        {...field}
-                        disabled={
-                          showSignatories === "topbar" ||
-                          showSignatories === "view"
-                        }
-                        freeSolo
-                        options={userList} // Use the userList directly
-                        getOptionLabel={(option) =>
-                          typeof option === "string"
-                            ? option
-                            : `${option.firstName} ${option.lastName}`
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="Search user"
-                            variant="outlined"
-                          />
-                        )}
-                        onInputChange={(event, value) => {
-                          // Handle free solo input change if necessary
-                        }}
-                        onChange={(event, value) => {
-                          if (typeof value === "string") {
-                            field.onChange(value);
-                            handleUserApproval(""); // Handle the case where a free solo value is inputted
-                          } else if (value && "email" in value) {
-                            handleUserApproval(value.email);
-                            field.onChange(
-                              `${value.firstName} ${value.lastName}`
-                            ); // Or however you wish to handle the field change
-                          }
-                        }}
-                      />
-                    </FormControl>
-                  )}
-                />
 
+                {selectedUserApproval !== "" &&
+                (showSignatories === "topbar" || showSignatories === "view") ? (
+                  <Typography variant="body1" sx={{ mt: 3 }}>
+                    {selectedUserApproval}
+                  </Typography>
+                ) : (
+                  <Controller
+                    name="name"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <FormControl fullWidth size="small">
+                        <Autocomplete
+                          sx={{ mt: 3 }}
+                          {...field}
+                          disabled={
+                            showSignatories === "topbar" ||
+                            showSignatories === "view"
+                          }
+                          freeSolo
+                          options={userList}
+                          getOptionLabel={(option) =>
+                            typeof option === "string"
+                              ? option
+                              : `${option.firstName} ${option.lastName}`
+                          }
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Search user"
+                              variant="outlined"
+                            />
+                          )}
+                          onInputChange={(event, value) => {
+                            // Handle free solo input change if necessary
+                          }}
+                          onChange={(event, value) => {
+                            if (typeof value === "string") {
+                              // For free solo input, update directly with the value
+                              setSelectedUserApproval(value);
+                              handleUserApproval(""); // Clear or handle as needed for free solo value
+                              field.onChange(value); // Ensure the field value is updated
+                            } else if (value && "email" in value) {
+                              // For selected object, update with formatted name and call handleUserApproval
+                              const formattedName = `${value.firstName} ${value.lastName}`;
+                              setSelectedUserApproval(formattedName);
+                              handleUserApproval(value.email);
+                              field.onChange(formattedName); // Update field value with formatted name
+                            }
+                          }}
+                        />
+                      </FormControl>
+                    )}
+                  />
+                )}
                 {userApproval.length > 0 &&
                   (showSignatories === "" || showSignatories === "edit") && (
                     <div
