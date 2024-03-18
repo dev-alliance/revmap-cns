@@ -337,8 +337,12 @@ const ApprovalsComp = () => {
               </div>
             )}
             {selectedApproval && (
-              <Typography sx={{ fontSize: "14px", marginTop: "1rem" }}>
-                Selected: {selectedApproval}
+              <Typography
+                variant="body1"
+                color="primary"
+                sx={{ marginTop: "1rem" }}
+              >
+                {selectedApproval}
               </Typography>
             )}
 
