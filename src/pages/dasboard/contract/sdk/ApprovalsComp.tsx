@@ -337,15 +337,8 @@ const ApprovalsComp = () => {
               </div>
             )}
             {selectedApproval !== "" &&
-            showSignatories === "topbar" &&
-            showSignatories === "view" ? (
-              <Typography
-                variant="body1"
-                color="primary"
-                sx={{ marginTop: "1rem" }}
-              >
-                {selectedApproval}
-              </Typography>
+            (showSignatories === "topbar" || showSignatories === "view") ? (
+              <Typography variant="body1">{selectedApproval}</Typography>
             ) : (
               <Autocomplete
                 style={{ marginTop: "1rem" }}

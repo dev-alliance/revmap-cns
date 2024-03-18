@@ -1,3 +1,4 @@
+/* eslint-disable no-duplicate-case */
 /* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -182,8 +183,6 @@ function SyncFusionEditor() {
         documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
         break;
 
-
-
       case "highlight":
         if (documentEditor && documentEditor.selection) {
           // Check if the selected text is already highlighted
@@ -328,14 +327,13 @@ function SyncFusionEditor() {
 
   function ShowPageSetupDialog() {
     const documentEditor = editorContainerRef.current.documentEditor;
-    documentEditor.showDialog('PageSetup');
+    documentEditor.showDialog("PageSetup");
   }
 
   const toggleTrackChanges = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
   };
-
 
   // const addComment = (commentText: any, author: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
@@ -352,8 +350,6 @@ function SyncFusionEditor() {
   //     alert('Please select text to comment on.');
   //   }
   // };
-
-
 
   // text color highlight
   const [fontColor, setFontColor] = useState("#000000"); // Default font color
@@ -956,11 +952,10 @@ function SyncFusionEditor() {
     documentEditor.editor.insertImage(imageSrc, width, height);
   };
 
-
   return (
     <div>
       {showTableTools && (
-        <div style={{ marginTop: '10px' }}>
+        <div style={{ marginTop: "10px" }}>
           <button onClick={deleteTable}>Delete Table</button>
         </div>
       )}
@@ -1069,12 +1064,10 @@ function SyncFusionEditor() {
                 </button>
               </li> */}
 
-
-
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
-                  toggleTrackChanges()
+                  toggleTrackChanges();
                   // triggerClick("container_toolbar_track");
                 }}
               >
@@ -1151,7 +1144,6 @@ function SyncFusionEditor() {
                 <label htmlFor="forimg" className="flex gap-2 cursor-pointer">
                   <img src={imageIcon} className="h-4 w-4" alt="" />
                   Image
-
                   <input
                     id="forimg"
                     type="file"
@@ -1163,7 +1155,6 @@ function SyncFusionEditor() {
                     }}
                   />
                 </label>
-
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
@@ -1542,7 +1533,12 @@ function SyncFusionEditor() {
                 />
                 <ItemDirective type="Separator" />
 
-                <ItemDirective id="delete_table" prefixIcon="e-table-delete e-icons" text="Delete" tooltipText="Delete Table" />
+                <ItemDirective
+                  id="delete_table"
+                  prefixIcon="e-table-delete e-icons"
+                  text="Delete"
+                  tooltipText="Delete Table"
+                />
                 {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
 
                 <DropDownListComponent
@@ -1618,7 +1614,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-      // showPropertiesPane={false}
+        // showPropertiesPane={false}
       />
     </div>
   );
