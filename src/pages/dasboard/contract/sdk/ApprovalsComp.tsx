@@ -336,7 +336,9 @@ const ApprovalsComp = () => {
                 </div>
               </div>
             )}
-            {selectedApproval && (
+            {selectedApproval !== "" &&
+            showSignatories === "topbar" &&
+            showSignatories === "view" ? (
               <Typography
                 variant="body1"
                 color="primary"
@@ -344,54 +346,55 @@ const ApprovalsComp = () => {
               >
                 {selectedApproval}
               </Typography>
-            )}
-
-            <Autocomplete
-              style={{ marginTop: "1rem" }}
-              value={
-                approvalList.find(
-                  (approval) => approval._id === selectedApprovalId
-                ) || null
-              }
-              onChange={(event, newValue) => {
-                const value = newValue ? newValue._id : "";
-                setSelectedApprovalId(value);
-
-                // Update the selectedApproval to display the name
-                if (newValue) {
-                  setSelectedApproval(newValue.name); // Assuming you have a function to set this state
-                  handleAddSignatory(newValue.approver);
-                } else {
-                  setSelectedApproval(""); // Clear the selected approval name if no selection
+            ) : (
+              <Autocomplete
+                style={{ marginTop: "1rem" }}
+                value={
+                  approvalList.find(
+                    (approval) => approval._id === selectedApprovalId
+                  ) || null
                 }
-              }}
-              options={approvalList}
-              getOptionLabel={(option) => option.name}
-              isOptionEqualToValue={(option, value) => option._id === value._id}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{
-                    ...params.InputProps,
-                    readOnly: true,
-                  }}
-                  variant="outlined"
-                  label="Select Approval"
-                />
-              )}
-              disabled={
-                showSignatories === "topbar" || showSignatories === "view"
-              }
-              clearOnEscape
-              renderOption={(props, option) => (
-                <li {...props}>{option.name}</li>
-              )}
-              fullWidth
-              size="small"
-              sx={{ mb: 2 }}
-              clearText="Remove"
-              noOptionsText="No Approvals"
-            />
+                onChange={(event, newValue) => {
+                  const value = newValue ? newValue._id : "";
+                  setSelectedApprovalId(value);
+
+                  if (newValue) {
+                    setSelectedApproval(newValue.name); // Assuming you have a function to set this state
+                    handleAddSignatory(newValue.approver);
+                  } else {
+                    setSelectedApproval(""); // Clear the selected approval name if no selection
+                  }
+                }}
+                options={approvalList}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) =>
+                  option._id === value._id
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{
+                      ...params.InputProps,
+                      readOnly: true,
+                    }}
+                    variant="outlined"
+                    label="Select Approval"
+                  />
+                )}
+                disabled={
+                  showSignatories === "topbar" || showSignatories === "view"
+                }
+                clearOnEscape
+                renderOption={(props, option) => (
+                  <li {...props}>{option.name}</li>
+                )}
+                fullWidth
+                size="small"
+                sx={{ mb: 2 }}
+                clearText="Remove"
+                noOptionsText="No Approvals"
+              />
+            )}
 
             {approvers.length > 0 &&
               (showSignatories === "" || showSignatories === "edit") && (
