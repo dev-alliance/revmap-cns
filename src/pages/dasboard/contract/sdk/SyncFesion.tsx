@@ -194,6 +194,13 @@ function SyncFusionEditor() {
         }
         break;
 
+      case "setupHeader":
+        setupHeader();
+        break;
+      case "setupFooter":
+        setupFooter();
+        break;
+
       case "findText":
         const searchText = "example"; // Example text to search for
         if (documentEditor) {
@@ -335,6 +342,25 @@ function SyncFusionEditor() {
     documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
   };
 
+  const setupHeader = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (!documentEditor || !documentEditor.documentEditor) {
+      console.error("Document Editor is not initialized yet.");
+      return;
+    }
+    // Command to open the header setup dialog
+    documentEditor.showHeaderFooterDialog('Header');
+  };
+
+  const setupFooter = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    if (!documentEditor || !documentEditor.documentEditor) {
+      console.error("Document Editor is not initialized yet.");
+      return;
+    }
+    // Command to open the footer setup dialog
+    documentEditor.showHeaderFooterDialog('Footer');
+  };
   // const addComment = (commentText: any, author: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
   //   if (!documentEditor || !documentEditor.editor) {
@@ -1401,6 +1427,10 @@ function SyncFusionEditor() {
               />
 
               <ItemDirective type="Separator" />
+              <ItemDirective id="setupHeader" prefixIcon="your-header-icon-class" text="Header" tooltipText="Setup Header" />
+              <ItemDirective id="setupFooter" prefixIcon="your-footer-icon-class" text="Footer" tooltipText="Setup Footer" />
+              <ItemDirective type="Separator" />
+
 
               {/* Font Color Picker */}
               <ItemDirective
@@ -1614,7 +1644,7 @@ function SyncFusionEditor() {
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-        // showPropertiesPane={false}
+      // showPropertiesPane={false}
       />
     </div>
   );
