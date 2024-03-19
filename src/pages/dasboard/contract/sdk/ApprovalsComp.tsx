@@ -33,6 +33,7 @@ import { json } from "stream/consumers";
 import warnig from "@/assets/Messages_Bubble_Warning.png";
 import send from "@/assets/Email_Sending.png";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ApprovalAlertDialog from "@/pages/dasboard/contract/sdk/ApprovalAlertDialog";
 
 type FormValues = {
   name: string;
@@ -67,6 +68,7 @@ const ApprovalsComp = () => {
   const [userList, setUserList] = useState<Array<any>>([]);
   const [feildList, setFeildList] = useState<Array<any>>([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [dialogData, setDialogData] = useState<any>(null);
   const [comparisonOperator, setComparisonOperator] = useState("");
   const [value, setValue] = useState<any>("");
@@ -151,6 +153,13 @@ const ApprovalsComp = () => {
     // Call the custom function with the new value
   };
 
+  const handleAlertOpenDialog = () => {
+    setOpenAlertDialog(true);
+  };
+
+  const handleAlertCloseDialog = () => {
+    setOpenAlertDialog(false);
+  };
   const handleAddSignatory = (data: string[]) => {
     console.log(data, "names");
     setApprovers(data);
@@ -182,12 +191,18 @@ const ApprovalsComp = () => {
     );
   };
   const handleCompanyApprovalClick = () => {
+    if (userApproval.length > 0) {
+      handleAlertOpenDialog();
+    }
     setShowCompanySelect(true);
     setShowConditionalSelect(false);
     setButtonState("company");
   };
 
   const handleConditionalApprovalClick = () => {
+    if (approvers.length > 0) {
+      handleAlertOpenDialog();
+    }
     setShowCompanySelect(false);
     setShowConditionalSelect(true);
     setButtonState("conditional");
@@ -700,6 +715,8 @@ const ApprovalsComp = () => {
                               setSelectedApprovalId(""),
                               setShowSignatories(""),
                               setUserApproval([]);
+                            setSelectedUserApproval("");
+                            setSelectedUserApproval("");
                           }}
                         >
                           Delete
@@ -747,7 +764,7 @@ const ApprovalsComp = () => {
                             if (typeof value === "string") {
                               // For free solo input, update directly with the value
                               setSelectedUserApproval(value);
-                              handleUserApproval(""); // Clear or handle as needed for free solo value
+                              setSelectedUserApproval(""); // Clear or handle as needed for free solo value
                               field.onChange(value); // Ensure the field value is updated
                             } else if (value && "email" in value) {
                               // For selected object, update with formatted name and call handleUserApproval
@@ -1059,6 +1076,12 @@ const ApprovalsComp = () => {
         onClose={handleCloseDialog}
         onSubmit={handleDialogSubmit}
         dialogData={dialogData}
+      />
+      <ApprovalAlertDialog
+        open={openAlertDialog}
+        onClose={handleAlertCloseDialog}
+        // onSubmit={handleDialogSubmit}
+        // dialogData={dialogData}
       />
     </div>
   );
