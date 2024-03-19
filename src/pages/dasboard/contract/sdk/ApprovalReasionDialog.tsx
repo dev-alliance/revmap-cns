@@ -80,7 +80,7 @@ const ApprovalReasionDialog: React.FC<ApprovalReasionDialogProps> = ({
       <Dialog
         open={open}
         onClose={onClose}
-        maxWidth="md"
+        // maxWidth="md"
         sx={{ alignItems: "center" }}
         // aria-labelledby="responsive-dialog-title"
         fullWidth={true}

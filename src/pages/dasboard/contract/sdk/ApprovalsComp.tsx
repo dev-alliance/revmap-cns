@@ -18,6 +18,7 @@ import {
   TextField,
   Input,
   IconButton,
+  Checkbox,
 } from "@mui/material";
 import { getList as getApprovalList } from "@/service/api/approval";
 import { FormControl } from "@mui/material";
@@ -78,6 +79,11 @@ const ApprovalsComp = () => {
   const [selectedUserApproval, setSelectedUserApproval] = useState("");
   const removeCondition = (indexToRemove: any) => {
     setConditions(conditions.filter((_, index) => index !== indexToRemove));
+  };
+  const [notifyApprovers, setNotifyApprovers] = useState(false);
+
+  const handleCheckboxChange = (event: any) => {
+    setNotifyApprovers(event.target.checked);
   };
 
   const handleFieldChange = (index: any, event: any) => {
@@ -755,6 +761,7 @@ const ApprovalsComp = () => {
                               {...params}
                               label="Search user"
                               variant="outlined"
+                              size="small"
                             />
                           )}
                           onInputChange={(event, value) => {
@@ -1070,6 +1077,23 @@ const ApprovalsComp = () => {
             )}
           </React.Fragment>
         )}
+        <FormControlLabel
+          sx={{
+            mt: "3rem",
+            "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
+            // Apply any additional styling you need for the FormControlLabel here
+          }}
+          control={
+            <Checkbox
+              checked={notifyApprovers}
+              onChange={handleCheckboxChange}
+              name="notifyApprovers"
+              color="primary"
+              sx={{ padding: "5px" }} // Adjust Checkbox size as needed
+            />
+          }
+          label="Automatically notify next approvers when a step is complete."
+        />
       </div>
       <ApprovalReasionDialog
         open={openDialog}
