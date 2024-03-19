@@ -980,6 +980,7 @@ function SyncFusionEditor() {
   };
 
   const insertImage = (imageSrc: any) => {
+    console.log('image')
     const documentEditor = editorContainerRef.current.documentEditor;
 
     // Assuming you have the image dimensions or you can specify default values
@@ -990,7 +991,7 @@ function SyncFusionEditor() {
   };
 
   const showHyperlinkDialog = () => {
-    console.log('hyper link')
+
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.showDialog('Hyperlink');
   }
