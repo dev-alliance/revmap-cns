@@ -344,23 +344,42 @@ function SyncFusionEditor() {
 
   const setupHeader = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (!documentEditor || !documentEditor.documentEditor) {
-      console.error("Document Editor is not initialized yet.");
-      return;
+    if (documentEditor && documentEditor.selection) {
+      // Ensure we have a section to work with
+      if (!documentEditor.selection.sectionFormat) {
+        console.error("No section format found.");
+        return;
+      }
+
+      // Move to the header region
+      documentEditor.selection.goToHeader();
+      // Insert text or other content into the header
+      documentEditor.editor.insertText("Your header content here");
+
+      // Move out of the header/footer editing mode
+      documentEditor.editor.toggleHeaderFooter();
     }
-    // Command to open the header setup dialog
-    documentEditor.showHeaderFooterDialog('Header');
   };
 
   const setupFooter = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (!documentEditor || !documentEditor.documentEditor) {
-      console.error("Document Editor is not initialized yet.");
-      return;
+    if (documentEditor && documentEditor.selection) {
+      // Ensure we have a section to work with
+      if (!documentEditor.selection.sectionFormat) {
+        console.error("No section format found.");
+        return;
+      }
+
+      // Move to the footer region
+      documentEditor.selection.goToFooter();
+      // Insert text or other content into the footer
+      documentEditor.editor.insertText("Your footer content here");
+
+      // Move out of the header/footer editing mode
+      documentEditor.editor.toggleHeaderFooter();
     }
-    // Command to open the footer setup dialog
-    documentEditor.showHeaderFooterDialog('Footer');
   };
+
   // const addComment = (commentText: any, author: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
   //   if (!documentEditor || !documentEditor.editor) {
@@ -1193,9 +1212,7 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_header");
-                }}
+                onClick={() => { setupHeader() }}
               >
                 <img src={headerIcon} className="h-4 w-4" alt="" />
                 Header
@@ -1203,9 +1220,7 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_footer");
-                }}
+                onClick={() => { setupFooter() }}
               >
                 <img src={footerIcon} className="h-4 w-4" alt="" />
                 Footer
@@ -1426,9 +1441,6 @@ function SyncFusionEditor() {
                 tooltipText="Superscript"
               />
 
-              <ItemDirective type="Separator" />
-              <ItemDirective id="setupHeader" prefixIcon="your-header-icon-class" text="Header" tooltipText="Setup Header" />
-              <ItemDirective id="setupFooter" prefixIcon="your-footer-icon-class" text="Footer" tooltipText="Setup Footer" />
               <ItemDirective type="Separator" />
 
 
