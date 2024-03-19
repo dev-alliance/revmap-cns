@@ -600,10 +600,6 @@ function SyncFusionEditor() {
         //Insert the specified number of columns to the table right to the column at cursor position
         documentEditor.editor.insertColumn();
         break;
-      case "delete_table":
-        //Delete the entire table
-        documentEditor.editor.deleteTable();
-        break;
       case "delete_rows":
         //Delete the selected number of rows
         documentEditor.editor.deleteRow();
@@ -997,6 +993,11 @@ function SyncFusionEditor() {
     documentEditor.editor.insertImage(imageSrc, width, height);
   };
 
+  const showHyperlinkDialog = () => {
+    console.log('hyper link')
+    const documentEditor = editorContainerRef.current.documentEditor;
+    documentEditor.showDialog('Hyperlink');
+  }
   return (
     <div>
       {showTableTools && (
@@ -1203,9 +1204,7 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_link");
-                }}
+                onClick={() => { showHyperlinkDialog() }}
               >
                 <img src={linkIcon} className="h-4 w-4" alt="" />
                 Link
