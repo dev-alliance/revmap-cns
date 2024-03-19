@@ -981,14 +981,10 @@ function SyncFusionEditor() {
 
   const insertImage = (imageSrc: any) => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (!documentEditor || !documentEditor.editor) {
-      console.error("Document Editor is not initialized yet.");
-      return;
-    }
 
     // Assuming you have the image dimensions or you can specify default values
-    const width = 100; // Example width
-    const height = 100; // Example height
+    const width = 400; // Example width
+    const height = 200; // Example height
 
     documentEditor.editor.insertImage(imageSrc, width, height);
   };
@@ -1182,12 +1178,12 @@ function SyncFusionEditor() {
                 Table
               </li>
               <li
-                className="px-3 hover:bg-gray-200 cursor-pointer  pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_image_local");
-                }}
+                className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
+              // onClick={() => {
+              //   triggerClick("container_toolbar_image_local");
+              // }}
               >
-                <label htmlFor="forimg" className="flex gap-2 cursor-pointer">
+                <label htmlFor="forimg" className="flex gap-2 px-3 pt-2 cursor-pointer w-full">
                   <img src={imageIcon} className="h-4 w-4" alt="" />
                   Image
                   <input
