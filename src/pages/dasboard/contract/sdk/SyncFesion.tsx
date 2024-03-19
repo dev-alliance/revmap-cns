@@ -987,7 +987,7 @@ function SyncFusionEditor() {
     const width = 400; // Example width
     const height = 200; // Example height
 
-    documentEditor.editor.insertImage(imageSrc, width, height);
+    documentEditor.editor.insertImage(imageSrc);
   };
 
   const showHyperlinkDialog = () => {
