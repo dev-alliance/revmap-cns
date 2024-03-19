@@ -634,6 +634,13 @@ function SyncFusionEditor() {
     }
   }
 
+
+  const addTable = () => {
+    console.log('adding table')
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    documentEditor.editor.insertTable(2, 2);
+  }
+
   // State for the cell fill color
   const [cellFillColor, setCellFillColor] = useState(""); // Default color
 
@@ -1171,9 +1178,7 @@ function SyncFusionEditor() {
             >
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_table");
-                }}
+                onClick={() => { addTable() }}
               >
                 <img src={tableIcon} className="h-4 w-4" alt="" />
                 Table
