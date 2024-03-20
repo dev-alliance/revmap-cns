@@ -96,10 +96,10 @@ const QuickSign = () => {
   return (
     <div style={{ textAlign: "left", position: "relative" }}>
       <Typography variant="body1" color="primary">
-        eSign
+        Recipients
       </Typography>
       <Typography variant="body2" color="textSecondary">
-        Add the signatory who will sign this document
+        Add recipients who will sign this document.
       </Typography>
       <Divider style={{ margin: "10px 0" }} />
 
@@ -132,6 +132,7 @@ const QuickSign = () => {
                   label="Add signatory"
                   margin="normal"
                   variant="outlined"
+                  size="small"
                   onKeyPress={handleKeyPress}
                 />
               )}

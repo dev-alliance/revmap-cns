@@ -233,7 +233,12 @@ const OverView = () => {
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
+          sx={{
+            minWidth: "75px",
+            mr: 2,
+            mb: 0.5,
+            whiteSpace: "nowrap",
+          }}
         >
           Contract Name
         </Typography>
@@ -285,7 +290,13 @@ const OverView = () => {
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
+          sx={{
+            minWidth: "75px",
+            mr: 2,
+            mb: 0.5,
+            mt: 0.5,
+            whiteSpace: "nowrap",
+          }}
         >
           Contract With
         </Typography>
@@ -334,7 +345,7 @@ const OverView = () => {
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", whiteSpace: "nowrap" }}
+          sx={{ minWidth: "75px", mb: 0.5, mt: 0.5, whiteSpace: "nowrap" }}
         >
           Annual Value
         </Typography>
@@ -383,7 +394,7 @@ const OverView = () => {
         />
       </Box>
       <Box sx={{ mb: 0 }}>
-        <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
+        <Typography variant="body2" sx={{ minWidth: "75px", mt: 0.5, mr: 2 }}>
           Currency
         </Typography>
         <Controller
@@ -794,42 +805,44 @@ const OverView = () => {
                     },
                   }}
                 />
-                <TextField
-                  value={field.value}
-                  onChange={(e) =>
-                    handleFieldChange(index, "value", e.target.value)
-                  }
-                  placeholder="Enter value"
-                  size="small"
-                  variant="standard"
-                  InputProps={{
-                    disableUnderline: true, // Disables the underline by default
-                    sx: {
-                      "::after": {
-                        borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
-                      },
-                      "::before": {
-                        borderBottom: "none !important", // Hides the underline
-                      },
-                      ":hover:not(.Mui-disabled)::before": {
-                        borderBottom: "none !important", // Ensures underline stays hidden on hover
-                      },
-                      "input:focus + fieldset": {
-                        border: "none", // Optional: for outlined variant if ever used
-                      },
-                      "::placeholder": {
-                        fontSize: "0.55rem",
-                      },
-                      input: {
-                        fontSize: "0.875rem",
-                        "&:focus": {
-                          // Shows the underline when the input is focused
-                          borderBottom: "2px solid", // Adjust color as needed
+                <Box sx={{ mt: 1 }}>
+                  <TextField
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(index, "value", e.target.value)
+                    }
+                    placeholder="Enter value"
+                    size="small"
+                    variant="standard"
+                    InputProps={{
+                      disableUnderline: true, // Disables the underline by default
+                      sx: {
+                        "::after": {
+                          borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                        },
+                        "::before": {
+                          borderBottom: "none !important", // Hides the underline
+                        },
+                        ":hover:not(.Mui-disabled)::before": {
+                          borderBottom: "none !important", // Ensures underline stays hidden on hover
+                        },
+                        "input:focus + fieldset": {
+                          border: "none", // Optional: for outlined variant if ever used
+                        },
+                        "::placeholder": {
+                          fontSize: "0.55rem",
+                        },
+                        input: {
+                          fontSize: "0.875rem",
+                          "&:focus": {
+                            // Shows the underline when the input is focused
+                            borderBottom: "2px solid", // Adjust color as needed
+                          },
                         },
                       },
-                    },
-                  }}
-                />
+                    }}
+                  />
+                </Box>
               </>
             ) : (
               <div style={{ display: "flex" }}>

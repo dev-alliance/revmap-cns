@@ -93,7 +93,7 @@ const ApprovalAlertDialog: React.FC<ApprovalAlertDialogProps> = ({
         </DialogTitle>
 
         <DialogContent>
-          <Typography variant="body1" sx={{ mt: 5, mb: 5 }}>
+          <Typography variant="body1" sx={{ mt: 3, mb: 5 }}>
             An approval workflow is already active for this document. To create
             a new approval process, please remove the existing one first.
           </Typography>
@@ -112,7 +112,7 @@ const ApprovalAlertDialog: React.FC<ApprovalAlertDialogProps> = ({
               sx={{ textTransform: "none" }}
               onClick={onClose}
             >
-              close
+              Close
             </Button>
           </div>
         </DialogContent>

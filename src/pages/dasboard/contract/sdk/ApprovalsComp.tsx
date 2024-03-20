@@ -197,7 +197,7 @@ const ApprovalsComp = () => {
     );
   };
   const handleCompanyApprovalClick = () => {
-    if (userApproval.length > 0) {
+    if (userApproval.length > 0 && showSignatories === "topbar") {
       handleAlertOpenDialog();
     }
     setShowCompanySelect(true);
@@ -206,7 +206,7 @@ const ApprovalsComp = () => {
   };
 
   const handleConditionalApprovalClick = () => {
-    if (approvers.length > 0) {
+    if (approvers.length > 0 && showSignatories === "topbar") {
       handleAlertOpenDialog();
     }
     setShowCompanySelect(false);
@@ -322,7 +322,7 @@ const ApprovalsComp = () => {
                   sx={{ textTransform: "none" }}
                   onClick={() =>
                     setShowSignatories((prev: any) =>
-                      prev === "view" ? "edit" : "view"
+                      prev === "view" ? "topbar" : "view"
                     )
                   }
                 >
@@ -359,7 +359,9 @@ const ApprovalsComp = () => {
             )}
             {selectedApproval !== "" &&
             (showSignatories === "topbar" || showSignatories === "view") ? (
-              <Typography variant="body1">{selectedApproval}</Typography>
+              <Typography variant="body1" sx={{ fontSize: "14px" }}>
+                {selectedApproval}
+              </Typography>
             ) : (
               <Autocomplete
                 style={{ marginTop: "1rem" }}
@@ -390,9 +392,15 @@ const ApprovalsComp = () => {
                     InputProps={{
                       ...params.InputProps,
                       readOnly: true,
+                      style: { fontSize: "14px" }, // Apply font size directly to the input element
                     }}
                     variant="outlined"
                     label="Select Approval"
+                    sx={{
+                      ".MuiInputLabel-root": { fontSize: "14px" }, // Adjusts the label font size
+                      ".MuiOutlinedInput-root": { fontSize: "14px" }, // This targets the root but might be redundant with the direct style approach
+                      // Add additional style adjustments here as needed
+                    }}
                   />
                 )}
                 disabled={
@@ -693,7 +701,7 @@ const ApprovalsComp = () => {
                         sx={{ textTransform: "none" }}
                         onClick={() =>
                           setShowSignatories((prev: any) =>
-                            prev === "view" ? "edit" : "view"
+                            prev === "view" ? "topbar" : "view"
                           )
                         }
                       >
@@ -733,7 +741,7 @@ const ApprovalsComp = () => {
 
                 {selectedUserApproval !== "" &&
                 (showSignatories === "topbar" || showSignatories === "view") ? (
-                  <Typography variant="body1" sx={{ mt: 3 }}>
+                  <Typography variant="body1" sx={{ mt: 3, fontSize: "14px" }}>
                     {selectedUserApproval}
                   </Typography>
                 ) : (
@@ -762,6 +770,10 @@ const ApprovalsComp = () => {
                               label="Search user"
                               variant="outlined"
                               size="small"
+                              sx={{
+                                ".MuiInputLabel-root": { fontSize: "14px" }, // Adjusts the label font size
+                                ".MuiOutlinedInput-root": { fontSize: "14px" },
+                              }}
                             />
                           )}
                           onInputChange={(event, value) => {
@@ -932,13 +944,13 @@ const ApprovalsComp = () => {
               <>
                 <>
                   {conditions.map((condition, index) => (
-                    <Card
+                    <div
                       key={index}
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        marginBottom: "20px",
-                        padding: "5px",
+                        marginBottom: "15px",
+                        marginTop: "15px",
                       }}
                     >
                       {/* Field Selection */}
@@ -958,6 +970,7 @@ const ApprovalsComp = () => {
                             color: "#155BE5",
                             marginBottom: "0.5rem",
                             borderRadius: "4px",
+                            fontSize: "12.5px",
                           }}
                         >
                           If
@@ -968,6 +981,7 @@ const ApprovalsComp = () => {
                           sx={{ mt: 0, mb: 1 }}
                         >
                           <Select
+                            style={{ fontSize: "12.5px" }}
                             value={condition.selectedApprovalId}
                             onChange={(event) =>
                               handleFieldChange(index, event)
@@ -979,7 +993,7 @@ const ApprovalsComp = () => {
                                   style={{
                                     color: "#C2C2C2",
                                     fontStyle: "normal",
-                                    fontSize: "15.5px",
+                                    fontSize: "12.5px",
                                   }}
                                 >
                                   Select field
@@ -998,7 +1012,7 @@ const ApprovalsComp = () => {
                             ))}
                           </Select>
                         </FormControl>
-                        <IconButton
+                        {/* <IconButton
                           sx={{
                             width: "5px",
                             position: "absolute",
@@ -1009,7 +1023,7 @@ const ApprovalsComp = () => {
                           aria-label="delete"
                         >
                           <DeleteIcon />
-                        </IconButton>
+                        </IconButton> */}
                       </div>
 
                       {/* Comparison Operator Selection and Value Input */}
@@ -1017,10 +1031,12 @@ const ApprovalsComp = () => {
                         sx={{
                           gap: "10px",
                           alignItems: "center",
+                          display: "flex",
                         }}
                       >
-                        <FormControl size="small" fullWidth sx={{ mb: 1 }}>
+                        <FormControl size="small" sx={{ width: "100%" }}>
                           <Select
+                            style={{ fontSize: "11.5px" }}
                             value={condition.comparisonOperator}
                             onChange={(event) =>
                               handleOperatorChange(index, event)
@@ -1032,7 +1048,7 @@ const ApprovalsComp = () => {
                                   style={{
                                     color: "#C2C2C2",
                                     fontStyle: "normal",
-                                    fontSize: "15.5px",
+                                    fontSize: "10.5px",
                                   }}
                                 >
                                   Select condition
@@ -1054,14 +1070,20 @@ const ApprovalsComp = () => {
                         </FormControl>
 
                         <TextField
-                          placeholder="Enter value"
+                          placeholder="Value"
                           value={condition.value}
                           size="small"
                           onChange={(event) => handleValueChange(index, event)}
-                          style={{ flexGrow: 1 }}
+                          style={{
+                            flexGrow: 1,
+                            width: "50%",
+                          }}
+                          InputProps={{
+                            style: { fontSize: "11px" }, // Directly sets the input text font size
+                          }}
                         />
                       </Box>
-                    </Card>
+                    </div>
                   ))}
 
                   <Button
@@ -1089,7 +1111,13 @@ const ApprovalsComp = () => {
               onChange={handleCheckboxChange}
               name="notifyApprovers"
               color="primary"
-              sx={{ padding: "5px" }} // Adjust Checkbox size as needed
+              sx={{
+                padding: "5px", // Adjusts padding around the checkbox
+                "& .MuiSvgIcon-root": {
+                  // Targets the SVG icon representing the checkbox
+                  fontSize: "18px", // Adjust this value to scale the icon size
+                },
+              }}
             />
           }
           label="Automatically notify next approvers when a step is complete."

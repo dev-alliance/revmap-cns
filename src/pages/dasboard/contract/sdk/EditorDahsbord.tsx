@@ -68,28 +68,8 @@ import SignatureDialog from "@/pages/dasboard/contract/sdk/SignatureDialog";
 import QuickSign from "@/pages/dasboard/contract/sdk/QuickSign";
 import { ContractContext } from "@/context/ContractContext";
 import OpenSignatureDialog from "@/pages/dasboard/contract/sdk/OpenSignatureDialog";
-import logo from "@/assets/logo.jpg";
-import about_icon from "@/assets/about_icon.png";
-import attachments from "@/assets/attachments.png";
-import clauses from "@/assets/clauses.png";
-import { CloudDownload as DownloadIcon } from "@mui/icons-material";
-import comments from "@/assets/comments.png";
-import life_sycle from "@/assets/life_sycle.png";
-import sign_smal from "@/assets/sign_smal.png";
-import timeline from "@/assets/timeline.png";
-import approval from "@/assets/approval_icon.png";
 import { debounce } from "lodash";
-
-// icon for sidebar
-
-import dangerIcon from "../../../../assets/leftsideicon/danger.png";
-import writingIcon from "../../../../assets/leftsideicon/writing.png";
-import userIcon from "../../../../assets/leftsideicon/user.png";
-import clipboardIcon from "../../../../assets/leftsideicon/clipboard3.png";
-import attachIcon from "../../../../assets/leftsideicon/attached.png";
-import timelineIcon from "../../../../assets/leftsideicon/timing.png";
-import lifecycleIcon from "../../../../assets/leftsideicon/lifecyle2.png";
-import commentIcon from "../../../../assets/leftsideicon/comment.png";
+import { Close, PushPin } from "@mui/icons-material";
 
 interface Module {
   icon: ReactNode;
@@ -108,9 +88,20 @@ const MyComponent: React.FC = () => {
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [isPinned, setIsPinned] = useState(false);
 
-  // Calculate width based on input length. Adjust the multiplier as needed for your specific font and design.
-  // You might also want to set a minimum and maximum width.
+  const handlePinClick = () => {
+    setIsPinned(!isPinned); // Toggle the pinned state
+    setSidebarExpanded(true); // Ensure sidebar is expanded when pinning
+  };
+
+  const toggleSidebar = () => {
+    if (!isPinned) {
+      setSidebarExpanded((prev: any) => !prev);
+      // Only allow toggling if not pinned
+    }
+  };
+
   const inputWidth =
     inputValue.length > 0 ? `${Math.max(100, inputValue.length * 8)}px` : "70%";
 
@@ -143,41 +134,54 @@ const MyComponent: React.FC = () => {
     setAnchorEl(null);
   };
   const modules: Record<string, Module> = {
-    toggle: {
-      icon: <MenuIcon />,
-    },
     overview: {
       icon: (
         <Tooltip title="Overview">
-          {/* <img src={dangerIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
-            width="30"
-            height="30"
-            viewBox="0 0 30 30"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              d="M15 27.5C21.9036 27.5 27.5 21.9036 27.5 15C27.5 8.09644 21.9036 2.5 15 2.5C8.09644 2.5 2.5 8.09644 2.5 15C2.5 21.9036 8.09644 27.5 15 27.5Z"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+            <rect
+              x="0.5"
+              y="0.5"
+              width="23"
+              height="22.9202"
+              fill="white"
+              stroke="#575757"
             />
-            <path
-              d="M15 10V15"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M15 20H15.0125"
-              stroke="currentColor"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
+            <g clip-path="url(#clip0_4158_11401)">
+              <path
+                d="M12.0007 18.6044C15.6825 18.6044 18.6673 15.6296 18.6673 11.9599C18.6673 8.29027 15.6825 5.31543 12.0007 5.31543C8.31875 5.31543 5.33398 8.29027 5.33398 11.9599C5.33398 15.6296 8.31875 18.6044 12.0007 18.6044Z"
+                stroke="#575757"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 9.30176V11.9596"
+                stroke="#575757"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 14.6172H12.0067"
+                stroke="#575757"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_4158_11401">
+                <rect
+                  width="16"
+                  height="15.9468"
+                  fill="white"
+                  transform="translate(4 3.98633)"
+                />
+              </clipPath>
+            </defs>
           </svg>
         </Tooltip>
       ),
@@ -188,31 +192,31 @@ const MyComponent: React.FC = () => {
         <Tooltip title="eSign">
           {/* <img src={writingIcon} alt="Logo" style={{ width: '5%' }} /> */}
           <svg
-            width="31"
-            height="31"
-            viewBox="0 0 31 31"
+            width="24"
+            height="25"
+            viewBox="0 0 24 25"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              d="M21.1572 11.7793L21.3136 11.3335L25.9846 13.0266L25.8281 13.4725L21.1572 11.7793Z"
-              fill="currentColor"
+            <rect
+              x="0.5"
+              y="1.30078"
+              width="23"
+              height="22.9202"
+              fill="white"
+              stroke="#575757"
             />
             <path
-              d="M17.9966 20.7783C17.5307 22.1139 18.2555 24.8062 18.4626 25.5318L18.1623 26.3837C18.0795 26.6256 18.2037 26.899 18.4419 26.9936C18.4937 27.0147 18.5454 27.0252 18.5972 27.0252C18.7836 27.0252 18.9699 26.9095 19.0321 26.7097L19.3324 25.8579C19.9536 25.4372 22.1902 23.8176 22.6561 22.4821L25.5035 14.3738L20.8337 12.6807L17.9966 20.7783Z"
-              fill="currentColor"
+              d="M9.89648 20.7344H20.0001"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             />
             <path
-              d="M30.6904 3.18335C30.4523 3.09921 30.183 3.22541 30.0898 3.46729L29.9967 3.73021L29.3236 3.48833C29.7689 2.07913 29.1372 0.585704 27.8741 0.133503C26.5902 -0.329227 25.1302 0.448996 24.6332 1.87923L21.6201 10.4397L26.2899 12.1328L28.2676 6.50643L28.9406 6.74831L26.8698 12.6587C26.7869 12.9005 26.9112 13.174 27.1493 13.2686C27.2011 13.2897 27.2529 13.3002 27.3046 13.3002C27.491 13.3002 27.6774 13.1845 27.7395 12.9847L29.9761 6.62213L30.2556 5.82287L30.9701 3.79321C31.0633 3.54081 30.9287 3.27789 30.6905 3.18324L30.6904 3.18335ZM28.5885 5.61271L28.9302 4.64523L29.0234 4.38232L29.6964 4.6242L29.4479 5.32881L29.2615 5.85464L28.5885 5.61271Z"
-              fill="currentColor"
-            />
-            <path
-              d="M15.4387 28.8017C15.3352 28.8017 15.242 28.7807 15.1799 28.7491C14.8589 28.6124 14.7347 28.2654 14.6104 27.9394C14.424 27.4556 14.3205 27.2768 14.1134 27.2768C13.6889 27.2768 13.1712 27.6239 12.6638 27.9604C12.1772 28.2864 11.6801 28.6229 11.1314 28.7491C10.8414 28.8228 10.5515 28.7491 10.3237 28.5598C9.88884 28.1918 9.72317 27.3715 9.66105 26.6774C8.35643 27.6975 5.58143 29.4222 2.47518 28.5072C1.08773 28.0971 0.290439 26.7194 0.217923 24.6161C0.114376 21.2823 2.00923 16.0661 4.09041 15.3089C7.03098 14.2362 8.81197 18.2115 8.88449 18.3798C8.98803 18.6217 8.88449 18.8951 8.64634 19.0003C8.40819 19.1054 8.13897 19.0003 8.03544 18.7584C8.01473 18.7058 6.5341 15.4246 4.41146 16.1923C3.01359 16.7076 1.05661 21.2087 1.16018 24.5845C1.19124 25.7519 1.50187 27.2242 2.74435 27.5922C6.43053 28.6859 9.75423 25.3627 9.78528 25.3311C9.91989 25.1944 10.127 25.1523 10.303 25.2365C10.479 25.3101 10.5929 25.4889 10.5826 25.6887C10.5515 26.6352 10.7172 27.6868 10.9243 27.834H10.9346C11.3074 27.7499 11.7215 27.4659 12.1564 27.182C12.7673 26.7718 13.4092 26.3407 14.1134 26.3407C15.0038 26.3407 15.2938 27.1294 15.4802 27.6131C15.5009 27.6762 15.532 27.7499 15.563 27.8129C15.8736 27.7288 16.1946 27.7288 16.4846 27.7393C16.6813 27.7393 17.0333 27.7499 17.1058 27.6867C17.2922 27.4974 17.5821 27.4974 17.7685 27.6867C17.9549 27.8761 17.9549 28.1705 17.7685 28.3598C17.4268 28.7069 16.9194 28.6963 16.4846 28.6963C16.2154 28.6963 15.9358 28.6858 15.7494 28.77C15.6252 28.7805 15.5217 28.8015 15.4388 28.8015L15.4387 28.8017Z"
-              fill="currentColor"
-            />
-            <path
-              d="M24.7369 31.0002H0.465945C0.207085 31.0002 0 30.7899 0 30.527C0 30.264 0.207085 30.0537 0.465945 30.0537H24.7369C24.9958 30.0537 25.2029 30.264 25.2029 30.527C25.2029 30.7899 24.9958 31.0002 24.7369 31.0002Z"
-              fill="currentColor"
+              d="M5.4277 10.8544C4.52774 9.99543 4.13272 9.47044 4.01552 8.20962C3.90444 7.01468 4.40081 5.78259 5.14707 5.1532C6.18486 4.27795 7.41719 5.10143 8.10631 6.26239C8.85308 7.52048 9.49883 11.1574 9.54823 12.7172C9.60433 14.4881 9.34637 16.0971 8.68262 17.6364C8.22737 18.6921 7.5547 19.9367 6.65939 20.3582C5.84802 20.7403 4.96631 20.5979 4.80301 19.3054C4.60286 17.7212 5.15436 16.1778 5.75727 14.8686C6.55665 13.1328 7.56614 11.6957 8.9642 10.8544C14.3553 7.61052 11.1718 18.0559 12.9598 18.0559C14.7477 18.0559 14.8632 12.9245 16.1166 13.7448C17.3701 14.565 14.9737 19.6593 19.4591 16.44"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             />
           </svg>
         </Tooltip>
@@ -224,30 +228,35 @@ const MyComponent: React.FC = () => {
         <Tooltip title="Approvals">
           {/* <img src={userIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
-            width="30"
-            height="30"
-            viewBox="0 0 30 30"
+            width="24"
+            height="25"
+            viewBox="0 0 24 25"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
+            <rect
+              x="0.5"
+              y="0.901367"
+              width="23"
+              height="22.9202"
+              fill="white"
+              stroke="#575757"
+            />
             <path
-              d="M20 26.25V23.75C20 22.4239 19.4732 21.1521 18.5355 20.2145C17.5979 19.2768 16.3261 18.75 15 18.75H6.25C4.92392 18.75 3.65215 19.2768 2.71447 20.2145C1.77678 21.1521 1.25 22.4239 1.25 23.75V26.25"
-              stroke="currentColor"
-              stroke-width="2"
+              d="M14.666 18.3412V17.0123C14.666 16.3074 14.3851 15.6314 13.885 15.1329C13.3849 14.6345 12.7066 14.3545 11.9993 14.3545H7.33268C6.62544 14.3545 5.94716 14.6345 5.44706 15.1329C4.94697 15.6314 4.66602 16.3074 4.66602 17.0123V18.3412"
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
-              d="M10.625 13.75C13.3864 13.75 15.625 11.5114 15.625 8.75C15.625 5.98858 13.3864 3.75 10.625 3.75C7.86358 3.75 5.625 5.98858 5.625 8.75C5.625 11.5114 7.86358 13.75 10.625 13.75Z"
-              stroke="currentColor"
-              stroke-width="2"
+              d="M9.66667 11.6965C11.1394 11.6965 12.3333 10.5065 12.3333 9.03866C12.3333 7.5708 11.1394 6.38086 9.66667 6.38086C8.19391 6.38086 7 7.5708 7 9.03866C7 10.5065 8.19391 11.6965 9.66667 11.6965Z"
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
-              d="M21.25 13.75L23.75 16.25L28.75 11.25"
-              stroke="currentColor"
-              stroke-width="2"
+              d="M15.334 11.6971L16.6673 13.026L19.334 10.3682"
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -261,15 +270,25 @@ const MyComponent: React.FC = () => {
         <Tooltip title="Clause">
           {/* <img src={clipboardIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
-            width="27"
-            height="21"
-            viewBox="0 0 27 21"
+            width="24"
+            height="25"
+            viewBox="0 0 24 25"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
+            <rect
+              x="0.5"
+              y="0.702148"
+              width="23"
+              height="22.9202"
+              fill="white"
+              stroke="#575757"
+            />
             <path
-              d="M24.3 21H2.7C1.98392 21 1.29716 20.7234 0.790812 20.2312C0.284463 19.7389 0 19.0712 0 18.375V2.625C0 1.92881 0.284463 1.26113 0.790812 0.768845C1.29716 0.276562 1.98392 0 2.7 0H24.3C25.0161 0 25.7028 0.276562 26.2092 0.768845C26.7155 1.26113 27 1.92881 27 2.625V18.375C27 19.0712 26.7155 19.7389 26.2092 20.2312C25.7028 20.7234 25.0161 21 24.3 21ZM2.7 2.625V18.375H24.3V2.625H2.7ZM5.4 6.5625H21.6V9.1875H5.4V6.5625ZM5.4 11.8125H18.9V14.4375H5.4V11.8125Z"
-              fill="currentColor"
+              d="M10.0118 18.8066H7.83268C7.39065 18.8066 6.96673 18.6316 6.65417 18.32C6.34161 18.0085 6.16602 17.586 6.16602 17.1454V7.1787C6.16602 6.73814 6.34161 6.31563 6.65417 6.00411C6.96673 5.69259 7.39065 5.51758 7.83268 5.51758H14.4993C14.9414 5.51758 15.3653 5.69259 15.6779 6.00411C15.9904 6.31563 16.166 6.73814 16.166 7.1787V13.8232M13.666 17.976L15.3327 19.6371L18.666 16.3149M9.49935 8.83982H12.8327M9.49935 12.1621H11.166"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             />
           </svg>
         </Tooltip>
@@ -281,15 +300,31 @@ const MyComponent: React.FC = () => {
         <Tooltip title="Attachement">
           {/* <img src={attachIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
-            width="21"
-            height="29"
-            viewBox="0 0 21 29"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
+            <rect
+              x="0.5"
+              y="0.501953"
+              width="23"
+              height="22.9202"
+              fill="white"
+              stroke="#575757"
+            />
             <path
-              d="M14.4375 15.9368C13.7419 16.0555 13.0856 16.2664 12.4688 16.5432V6.59091H14.4375V15.9368ZM7.21875 27.0227C4.31812 27.0227 1.96875 24.6632 1.96875 21.75V5.27273C1.96875 3.45364 3.43875 1.97727 5.25 1.97727C7.06125 1.97727 8.53125 3.45364 8.53125 5.27273V19.1136C8.53125 19.8386 7.94063 20.4318 7.21875 20.4318C6.49687 20.4318 5.90625 19.8386 5.90625 19.1136V6.59091H3.9375V19.1136C3.9375 20.9327 5.4075 22.4091 7.21875 22.4091C7.49438 22.4091 7.75688 22.3695 8.00625 22.3036C8.33438 20.5373 9.22688 18.995 10.5 17.8482V5.27273C10.5 2.35955 8.15063 0 5.25 0C2.34938 0 0 2.35955 0 5.27273V21.75C0 25.7573 3.22875 29 7.21875 29C8.04562 29 8.83313 28.855 9.56812 28.6045C9.14812 28.0641 8.79375 27.4709 8.53125 26.8382C8.09813 26.9436 7.665 27.0227 7.21875 27.0227ZM17.0625 22.4091V18.4545H14.4375V22.4091H10.5V25.0455H14.4375V29H17.0625V25.0455H21V22.4091H17.0625Z"
-              fill="currentColor"
+              d="M15.955 17.2663V13.4491C15.955 13.1825 16.0616 12.9268 16.2512 12.7383C16.4408 12.5498 16.698 12.4439 16.9662 12.4439C17.2344 12.4439 17.4916 12.5498 17.6812 12.7383C17.8708 12.9268 17.9773 13.1825 17.9773 13.4491V17.8869C17.9824 18.1541 17.9338 18.4197 17.8344 18.668C17.735 18.9164 17.5868 19.1425 17.3985 19.3333C17.2102 19.524 16.9855 19.6756 16.7376 19.779C16.4897 19.8824 16.2235 19.9357 15.9547 19.9357C15.6858 19.9357 15.4196 19.8824 15.1717 19.779C14.9238 19.6756 14.6991 19.524 14.5108 19.3333C14.3225 19.1425 14.1743 18.9164 14.0749 18.668C13.9755 18.4197 13.927 18.1541 13.932 17.8869V13.0143C13.932 12.2144 14.2517 11.4472 14.8207 10.8815C15.3897 10.3158 16.1615 9.99805 16.9662 9.99805C17.7709 9.99805 18.5427 10.3158 19.1117 10.8815C19.6807 11.4472 20.0004 12.2144 20.0004 13.0143V17.2663"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M11.6441 17.7726H5.06662C4.78374 17.7726 4.51244 17.6609 4.31241 17.462C4.11238 17.2632 4 16.9935 4 16.7123V5.04861C4 4.7674 4.11238 4.4977 4.31241 4.29885C4.51244 4.09999 4.78374 3.98828 5.06662 3.98828H12.6247C12.9074 3.98834 13.1785 4.09996 13.3785 4.29861L15.4207 6.32879C15.6205 6.52756 15.7328 6.79707 15.7329 7.07809V7.92635"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             />
           </svg>
         </Tooltip>
@@ -321,15 +356,49 @@ const MyComponent: React.FC = () => {
         <Tooltip title="Lifecycle">
           {/* <img src={lifecycleIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
-            width="30"
-            height="25"
-            viewBox="0 0 30 25"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
+            <rect
+              x="0.5"
+              y="0.5"
+              width="23"
+              height="22.9202"
+              fill="white"
+              stroke="#575757"
+            />
             <path
-              d="M17.8571 6.94444H15.7143V13.8889L21.8286 17.4167L22.8571 15.7361L17.8571 12.8472V6.94444ZM17.1429 0C13.7329 0 10.4627 1.31696 8.05148 3.66116C5.6403 6.00537 4.28571 9.18479 4.28571 12.5H0L5.65714 18.0972L11.4286 12.5H7.14286C7.14286 9.92151 8.19643 7.44862 10.0718 5.62535C11.9472 3.80208 14.4907 2.77778 17.1429 2.77778C19.795 2.77778 22.3386 3.80208 24.2139 5.62535C26.0893 7.44862 27.1429 9.92151 27.1429 12.5C27.1429 15.0785 26.0893 17.5514 24.2139 19.3746C22.3386 21.1979 19.795 22.2222 17.1429 22.2222C14.3857 22.2222 11.8857 21.125 10.0857 19.3611L8.05714 21.3333C10.3857 23.6111 13.5714 25 17.1429 25C20.5528 25 23.823 23.683 26.2342 21.3388C28.6454 18.9946 30 15.8152 30 12.5C30 9.18479 28.6454 6.00537 26.2342 3.66116C23.823 1.31696 20.5528 0 17.1429 0Z"
-              fill="currentColor"
+              d="M10.334 11.9997C10.334 12.4417 10.5096 12.8656 10.8221 13.1782C11.1347 13.4907 11.5586 13.6663 12.0007 13.6663C12.4427 13.6663 12.8666 13.4907 13.1792 13.1782C13.4917 12.8656 13.6673 12.4417 13.6673 11.9997C13.6673 11.5576 13.4917 11.1337 13.1792 10.8212C12.8666 10.5086 12.4427 10.333 12.0007 10.333C11.5586 10.333 11.1347 10.5086 10.8221 10.8212C10.5096 11.1337 10.334 11.5576 10.334 11.9997Z"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M16.4713 7.99911C15.6611 7.09364 14.5951 6.45549 13.4143 6.16908C12.2335 5.88267 10.9936 5.9615 9.85861 6.39514C8.7236 6.82878 7.74699 7.5968 7.05799 8.59758C6.36898 9.59836 6.00005 10.7847 6 11.9998V12.5018"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M7.5293 16.0013C8.33946 16.9068 9.40541 17.5449 10.5861 17.8313C11.7668 18.1178 13.0067 18.039 14.1417 17.6054C15.2767 17.1718 16.2533 16.404 16.9424 15.4032C17.6314 14.4026 18.0004 13.2163 18.0006 12.0013V11.502"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M16.5 13L18 11.5L19.5 13"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M7.5 11L6 12.5L4.5 11"
+              stroke="#575757"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             />
           </svg>
         </Tooltip>
@@ -383,10 +452,6 @@ const MyComponent: React.FC = () => {
     },
 
     // Add more modules as needed
-  };
-
-  const toggleSidebar = () => {
-    setSidebarExpanded(!sidebarExpanded);
   };
 
   const handleModuleClick = (moduleName: string) => {
@@ -578,7 +643,7 @@ const MyComponent: React.FC = () => {
             height: "87vh",
             overflowY: "auto",
             backgroundColor: "#fff", // Cards usually have a solid background color
-            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)", // Adds a subtle shadow similar to Material-UI cards
+            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.05)", // Adds a subtle shadow similar to Material-UI cards
             borderRadius: "4px", // Card-like elements often have rounded corners
             transition: "box-shadow 0.3s", // Smooth transition for the shadow, makes interaction more lively
             "&:hover": {
@@ -619,7 +684,34 @@ const MyComponent: React.FC = () => {
             </Grid>
             <Grid item xs={10}>
               {sidebarExpanded && selectedModule !== "toggle" && (
-                <Box sx={{ padding: 2 }}>{modules[selectedModule].content}</Box>
+                <Box sx={{ position: "relative", padding: 2 }}>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 5,
+                      right: 0,
+                      padding: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    {/* Always show the pin icon, change color when pinned */}
+                    <PushPin
+                      onClick={handlePinClick}
+                      sx={{
+                        cursor: "pointer",
+                        color: isPinned ? "primary.main" : "action.active", // Change color when pinned
+                      }}
+                    />
+                    {/* Close Icon */}
+                    <Close
+                      onClick={toggleSidebar}
+                      sx={{ cursor: "pointer", color: "action.active" }}
+                    />
+                  </Box>
+                  {modules[selectedModule].content}
+                </Box>
               )}
             </Grid>
           </Grid>
