@@ -226,7 +226,7 @@ const OverView = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="body1" color="primary">
+      <Typography variant="body1" color="black">
         Overview
       </Typography>
       <Divider style={{ margin: "10px 0" }} />
@@ -238,6 +238,7 @@ const OverView = () => {
             mr: 2,
             mb: 0.5,
             whiteSpace: "nowrap",
+            color: "#155BE5",
           }}
         >
           Contract Name
@@ -296,6 +297,7 @@ const OverView = () => {
             mb: 0.5,
             mt: 0.5,
             whiteSpace: "nowrap",
+            color: "#155BE5",
           }}
         >
           Contract With
@@ -345,7 +347,13 @@ const OverView = () => {
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", mb: 0.5, mt: 0.5, whiteSpace: "nowrap" }}
+          sx={{
+            minWidth: "75px",
+            mb: 0.5,
+            mt: 0.5,
+            whiteSpace: "nowrap",
+            color: "#155BE5",
+          }}
         >
           Annual Value
         </Typography>
@@ -394,7 +402,10 @@ const OverView = () => {
         />
       </Box>
       <Box sx={{ mb: 0 }}>
-        <Typography variant="body2" sx={{ minWidth: "75px", mt: 0.5, mr: 2 }}>
+        <Typography
+          variant="body2"
+          sx={{ minWidth: "75px", mt: 0.5, mr: 2, color: "#155BE5" }}
+        >
           Currency
         </Typography>
         <Controller
@@ -413,7 +424,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "0.70rem", // Reduced font size for placeholder
+                          fontSize: "13px", // Reduced font size for placeholder
                         }}
                       >
                         Choose currency
@@ -426,7 +437,7 @@ const OverView = () => {
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "0.70rem", // Ensure consistent font size
+                    fontSize: "13px", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -447,7 +458,12 @@ const OverView = () => {
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
+          sx={{
+            minWidth: "75px",
+            mr: 2,
+            whiteSpace: "nowrap",
+            color: "#155BE5",
+          }}
         >
           Branch
         </Typography>
@@ -470,7 +486,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "0.70rem", // Reduced font size for placeholder
+                          fontSize: "13px", // Reduced font size for placeholder
                         }}
                       >
                         Select branch
@@ -485,7 +501,7 @@ const OverView = () => {
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "0.70rem", // Ensure consistent font size
+                    fontSize: "13px", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -508,7 +524,12 @@ const OverView = () => {
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
+          sx={{
+            minWidth: "75px",
+            mr: 2,
+            whiteSpace: "nowrap",
+            color: "#155BE5",
+          }}
         >
           Team
         </Typography>
@@ -531,7 +552,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "0.70rem", // Reduced font size for placeholder
+                          fontSize: "13px", // Reduced font size for placeholder
                         }}
                       >
                         Select team
@@ -548,7 +569,7 @@ const OverView = () => {
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "0.70rem", // Ensure consistent font size
+                    fontSize: "13px", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -569,7 +590,10 @@ const OverView = () => {
         </FormControl>
       </Box>
       <Box sx={{ mb: 0 }}>
-        <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
+        <Typography
+          variant="body2"
+          sx={{ minWidth: "75px", mr: 2, color: "#155BE5" }}
+        >
           Category
         </Typography>
         <Controller
@@ -594,7 +618,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "0.70rem", // Reduced font size for placeholder
+                          fontSize: "13px", // Reduced font size for placeholder
                         }}
                       >
                         Select category
@@ -610,7 +634,7 @@ const OverView = () => {
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "0.70rem", // Ensure consistent font size
+                    fontSize: "13px", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -631,7 +655,10 @@ const OverView = () => {
         />
       </Box>
       <Box sx={{ mb: 0 }}>
-        <Typography variant="body2" sx={{ minWidth: "75px", mr: 2 }}>
+        <Typography
+          variant="body2"
+          sx={{ minWidth: "75px", mr: 2, color: "#155BE5" }}
+        >
           Subcategory
         </Typography>
         <Controller
@@ -650,7 +677,7 @@ const OverView = () => {
                       style={{
                         color: "#C2C2C2",
                         fontStyle: "normal",
-                        fontSize: "0.70rem", // Reduced font size for placeholder
+                        fontSize: "13px", // Reduced font size for placeholder
                       }}
                     >
                       Select subcategory
@@ -662,7 +689,7 @@ const OverView = () => {
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "0.70rem", // Ensure consistent font size
+                    fontSize: "13px", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -685,7 +712,12 @@ const OverView = () => {
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
-          sx={{ minWidth: "75px", mr: 2, whiteSpace: "nowrap" }}
+          sx={{
+            minWidth: "75px",
+            mr: 2,
+            whiteSpace: "nowrap",
+            color: "#155BE5",
+          }}
         >
           Tag
         </Typography>
@@ -707,7 +739,7 @@ const OverView = () => {
                         style={{
                           color: "#C2C2C2",
                           fontStyle: "normal",
-                          fontSize: "0.70rem", // Reduced font size for placeholder
+                          fontSize: "14px", // Reduced font size for placeholder
                         }}
                       >
                         Select category
@@ -723,7 +755,7 @@ const OverView = () => {
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "0.70rem", // Ensure consistent font size
+                    fontSize: "13px", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -749,7 +781,8 @@ const OverView = () => {
           onClick={handleAddField}
           variant="text"
           sx={{
-            color: "inherit",
+            marginLeft: "-0.6rem",
+            color: "#155BE5",
             backgroundColor: "transparent",
             boxShadow: "none",
             "&:hover": {
@@ -762,7 +795,7 @@ const OverView = () => {
             textTransform: "none", // Optional: prevents uppercase transformation
           }}
         >
-          <AddIcon sx={{ color: "blue" }} /> Add Field
+          <AddIcon sx={{ color: "black", fontSize: "14px" }} /> Add Field
         </Button>
         {fields.map((field, index) => (
           <Box key={index} sx={{ mb: 0 }}>
