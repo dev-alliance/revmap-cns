@@ -344,23 +344,42 @@ function SyncFusionEditor() {
 
   const setupHeader = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (!documentEditor || !documentEditor.documentEditor) {
-      console.error("Document Editor is not initialized yet.");
-      return;
+    if (documentEditor && documentEditor.selection) {
+      // Ensure we have a section to work with
+      if (!documentEditor.selection.sectionFormat) {
+        console.error("No section format found.");
+        return;
+      }
+
+      // Move to the header region
+      documentEditor.selection.goToHeader();
+      // Insert text or other content into the header
+      documentEditor.editor.insertText("Your header content here");
+
+      // Move out of the header/footer editing mode
+      documentEditor.editor.toggleHeaderFooter();
     }
-    // Command to open the header setup dialog
-    documentEditor.showHeaderFooterDialog('Header');
   };
 
   const setupFooter = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (!documentEditor || !documentEditor.documentEditor) {
-      console.error("Document Editor is not initialized yet.");
-      return;
+    if (documentEditor && documentEditor.selection) {
+      // Ensure we have a section to work with
+      if (!documentEditor.selection.sectionFormat) {
+        console.error("No section format found.");
+        return;
+      }
+
+      // Move to the footer region
+      documentEditor.selection.goToFooter();
+      // Insert text or other content into the footer
+      documentEditor.editor.insertText("Your footer content here");
+
+      // Move out of the header/footer editing mode
+      documentEditor.editor.toggleHeaderFooter();
     }
-    // Command to open the footer setup dialog
-    documentEditor.showHeaderFooterDialog('Footer');
   };
+
   // const addComment = (commentText: any, author: any) => {
   //   const documentEditor = editorContainerRef.current.documentEditor;
   //   if (!documentEditor || !documentEditor.editor) {
@@ -581,10 +600,6 @@ function SyncFusionEditor() {
         //Insert the specified number of columns to the table right to the column at cursor position
         documentEditor.editor.insertColumn();
         break;
-      case "delete_table":
-        //Delete the entire table
-        documentEditor.editor.deleteTable();
-        break;
       case "delete_rows":
         //Delete the selected number of rows
         documentEditor.editor.deleteRow();
@@ -617,6 +632,13 @@ function SyncFusionEditor() {
       default:
         console.warn("Unhandled toolbar item:", arg.item.id);
     }
+  }
+
+
+  const addTable = () => {
+    console.log('adding table')
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    documentEditor.editor.insertTable(2, 2);
   }
 
   // State for the cell fill color
@@ -965,19 +987,21 @@ function SyncFusionEditor() {
   };
 
   const insertImage = (imageSrc: any) => {
+    console.log('image')
     const documentEditor = editorContainerRef.current.documentEditor;
-    if (!documentEditor || !documentEditor.editor) {
-      console.error("Document Editor is not initialized yet.");
-      return;
-    }
 
     // Assuming you have the image dimensions or you can specify default values
-    const width = 100; // Example width
-    const height = 100; // Example height
+    const width = 400; // Example width
+    const height = 200; // Example height
 
-    documentEditor.editor.insertImage(imageSrc, width, height);
+    documentEditor.editor.insertImage(imageSrc);
   };
 
+  const showHyperlinkDialog = () => {
+
+    const documentEditor = editorContainerRef.current.documentEditor;
+    documentEditor.showDialog('Hyperlink');
+  }
   return (
     <div>
       {showTableTools && (
@@ -1154,20 +1178,18 @@ function SyncFusionEditor() {
             >
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_table");
-                }}
+                onClick={() => { addTable() }}
               >
                 <img src={tableIcon} className="h-4 w-4" alt="" />
                 Table
               </li>
               <li
-                className="px-3 hover:bg-gray-200 cursor-pointer  pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_image_local");
-                }}
+                className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
+              // onClick={() => {
+              //   triggerClick("container_toolbar_image_local");
+              // }}
               >
-                <label htmlFor="forimg" className="flex gap-2 cursor-pointer">
+                <label htmlFor="forimg" className="flex gap-2 px-3 pt-2 cursor-pointer w-full">
                   <img src={imageIcon} className="h-4 w-4" alt="" />
                   Image
                   <input
@@ -1184,18 +1206,14 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_link");
-                }}
+                onClick={() => { showHyperlinkDialog() }}
               >
                 <img src={linkIcon} className="h-4 w-4" alt="" />
                 Link
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_header");
-                }}
+                onClick={() => { setupHeader() }}
               >
                 <img src={headerIcon} className="h-4 w-4" alt="" />
                 Header
@@ -1203,9 +1221,7 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_footer");
-                }}
+                onClick={() => { setupFooter() }}
               >
                 <img src={footerIcon} className="h-4 w-4" alt="" />
                 Footer
@@ -1426,9 +1442,6 @@ function SyncFusionEditor() {
                 tooltipText="Superscript"
               />
 
-              <ItemDirective type="Separator" />
-              <ItemDirective id="setupHeader" prefixIcon="your-header-icon-class" text="Header" tooltipText="Setup Header" />
-              <ItemDirective id="setupFooter" prefixIcon="your-footer-icon-class" text="Footer" tooltipText="Setup Footer" />
               <ItemDirective type="Separator" />
 
 
