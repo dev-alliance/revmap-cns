@@ -170,6 +170,17 @@ function SyncFusionEditor() {
     // }
 
     switch (args.item.id) {
+      case "undo":
+        documentEditor.editorHistory.undo();
+        break;
+      case "redo":
+        documentEditor.editorHistory.redo();
+        break;
+      case "delete":
+
+        documentEditor.editor.delete();
+        break;
+
       case "bold":
         // Toggles the bold of selected content
         documentEditor.editor.toggleBold();
@@ -342,14 +353,18 @@ function SyncFusionEditor() {
     documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
   };
 
+
+
+  const clearAndCloseFooter = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+
+    documentEditor.selection.closeHeaderFooter();
+  };
+
+
   const setupHeader = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
-      // Ensure we have a section to work with
-      if (!documentEditor.selection.sectionFormat) {
-        console.error("No section format found.");
-        return;
-      }
 
       // Move to the header region
       documentEditor.selection.goToHeader();
@@ -364,11 +379,7 @@ function SyncFusionEditor() {
   const setupFooter = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
-      // Ensure we have a section to work with
-      if (!documentEditor.selection.sectionFormat) {
-        console.error("No section format found.");
-        return;
-      }
+
 
       // Move to the footer region
       documentEditor.selection.goToFooter();
@@ -990,10 +1001,6 @@ function SyncFusionEditor() {
     console.log('image')
     const documentEditor = editorContainerRef.current.documentEditor;
 
-    // Assuming you have the image dimensions or you can specify default values
-    const width = 400; // Example width
-    const height = 200; // Example height
-
     documentEditor.editor.insertImage(imageSrc);
   };
 
@@ -1002,6 +1009,8 @@ function SyncFusionEditor() {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.showDialog('Hyperlink');
   }
+
+
   return (
     <div>
       {showTableTools && (
@@ -1170,7 +1179,7 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.insert && (
             <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
@@ -1204,6 +1213,7 @@ function SyncFusionEditor() {
                   />
                 </label>
               </li>
+
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => { showHyperlinkDialog() }}
@@ -1225,6 +1235,14 @@ function SyncFusionEditor() {
               >
                 <img src={footerIcon} className="h-4 w-4" alt="" />
                 Footer
+              </li>
+
+              <li
+                className="px-3 hover:bg-gray-200 cursor-pointer pb-2 border-b border-[#a1a1a1] flex items-center gap-x-2"
+                onClick={clearAndCloseFooter}
+              >
+                <img src={crossIcon} className="h-3 w-3" alt="" />
+                Clear Header/Footer
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
@@ -1384,7 +1402,7 @@ function SyncFusionEditor() {
 
       <div className="  ">
         <div className="text styling flex items-center">
-          <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
+          {/* <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
             <p
               onClick={() => {
                 triggerClick("container_toolbar_undo ");
@@ -1399,13 +1417,27 @@ function SyncFusionEditor() {
             >
               <img src={redo} className="h-6 w-5 cursor-pointer" />{" "}
             </p>
-          </div>
+          </div> */}
 
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
+
+              <ItemDirective id="undo" prefixIcon="e-icons e-undo" tooltipText="Undo" />
+              <ItemDirective id="redo" prefixIcon="e-icons e-redo" tooltipText="Redo" />
+
+
               <ItemDirective template={contentTemplate2} />
               <ItemDirective template={contentTemplate3} />
               {/* <ItemDirective id="customPageSetup" prefixIcon="e-icons e-page-setup" tooltipText="Page Setup" /> */}
+              <ItemDirective type="Separator" />
+
+              <ItemDirective
+                id="delete"
+                prefixIcon="e-icons e-trash"
+                tooltipText="Delete"
+              />
+              <ItemDirective type="Separator" />
+
               <ItemDirective
                 id="bold"
                 prefixIcon="e-icons e-bold"
