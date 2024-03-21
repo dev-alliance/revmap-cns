@@ -35,7 +35,7 @@ import warnig from "@/assets/Messages_Bubble_Warning.png";
 import send from "@/assets/Email_Sending.png";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ApprovalAlertDialog from "@/pages/dasboard/contract/sdk/ApprovalAlertDialog";
-
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 type FormValues = {
   name: string;
 };
@@ -53,6 +53,11 @@ const ApprovalsComp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [approvalList, setApprovallist] = useState<any[]>([]);
   const [signatories, setSignatories] = useState<any[]>([]);
+  const [compnyApproval, setCompanyApproval] = useState({
+    showCompanySelect: false,
+    showConditionalSelect: true, // Assuming default values based on your provided logic
+    buttonState: "", // Assuming an empty string as default, adjust as needed
+  });
   const [showCompanySelect, setShowCompanySelect] = useState(false);
   const [showConditionalSelect, setShowConditionalSelect] = useState(false);
   const [showSignatories, setShowSignatories] = useState<any>("");
@@ -73,14 +78,15 @@ const ApprovalsComp = () => {
   const [dialogData, setDialogData] = useState<any>(null);
   const [comparisonOperator, setComparisonOperator] = useState("");
   const [value, setValue] = useState<any>("");
+  const [type, setType] = useState("");
+  const [viewUser, setViewUser] = useState(false);
   const [conditions, setConditions] = useState([
     { selectedApprovalId: "", comparisonOperator: "", value: "" },
   ]);
   const [selectedUserApproval, setSelectedUserApproval] = useState("");
-  const removeCondition = (indexToRemove: any) => {
-    setConditions(conditions.filter((_, index) => index !== indexToRemove));
-  };
   const [notifyApprovers, setNotifyApprovers] = useState(false);
+
+  const [selectedFeild, setSeletedFeild] = useState("");
 
   const handleCheckboxChange = (event: any) => {
     setNotifyApprovers(event.target.checked);
@@ -169,13 +175,7 @@ const ApprovalsComp = () => {
   const handleAddSignatory = (data: string[]) => {
     console.log(data, "names");
     setApprovers(data);
-    // setApprovers(() => {
-    //   // Instead of creating a set from prev, create an empty set for a fresh list
-    //   const newSignatories = new Set(names); // Directly add new names, ensuring they're unique within this selection
-    //   return Array.from(newSignatories);
-    // });
   };
-  console.log(approvers, "approvers");
   // Function to remove a signatory from the list
   const handleRemoveSignatory = (signatoryToRemove: any) => {
     setApprovers(
@@ -196,6 +196,17 @@ const ApprovalsComp = () => {
       signatories.filter((signatory: any) => signatory !== signatoryToRemove)
     );
   };
+  // const handleCompanyApprovalClick = () => {
+  //   if (userApproval.length > 0 && showSignatories === "topbar") {
+  //     handleAlertOpenDialog();
+  //   }
+  //   // Update the entire state object at once
+  //   setState({
+  //     showCompanySelect: true,
+  //     showConditionalSelect: false,
+  //     buttonState: "company",
+  //   });
+  // };
   const handleCompanyApprovalClick = () => {
     if (userApproval.length > 0 && showSignatories === "topbar") {
       handleAlertOpenDialog();
@@ -350,6 +361,9 @@ const ApprovalsComp = () => {
                         setSelectedApprovalId(""),
                         setShowSignatories(""),
                         setApprovers([]);
+                      setShowCompanySelect(false);
+                      setShowConditionalSelect(false);
+                      setButtonState("");
                     }}
                   >
                     Delete
@@ -731,6 +745,9 @@ const ApprovalsComp = () => {
                               setUserApproval([]);
                             setSelectedUserApproval("");
                             setSelectedUserApproval("");
+                            setShowCompanySelect(false);
+                            setShowConditionalSelect(false);
+                            setButtonState("");
                           }}
                         >
                           Delete
@@ -942,159 +959,500 @@ const ApprovalsComp = () => {
 
             {selectedApproval === "conditional" && (
               <>
-                <>
-                  {conditions.map((condition, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginBottom: "15px",
-                        marginTop: "15px",
-                      }}
+                {(showSignatories === "topbar" ||
+                  showSignatories === "view" ||
+                  showSignatories === "edit") && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <Button
+                      variant="text"
+                      sx={{ textTransform: "none" }}
+                      onClick={() =>
+                        setShowSignatories((prev: any) =>
+                          prev === "view" ? "topbar" : "view"
+                        )
+                      }
                     >
-                      {/* Field Selection */}
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
+                      View
+                    </Button>
+                    <div style={{ textAlign: "right" }}>
+                      <Button
+                        variant="text"
+                        sx={{ textTransform: "none" }}
+                        onClick={() => {
+                          // setSignatories([]),
+                          // setSelectedApprovalId(""),
+                          setShowSignatories("edit");
                         }}
                       >
-                        <Box
-                          sx={{
-                            border: "1px solid #C2C2C2",
-                            padding: "8px",
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "8px",
-                            color: "#155BE5",
-                            marginBottom: "0.5rem",
-                            borderRadius: "4px",
-                            fontSize: "12.5px",
-                          }}
-                        >
-                          If
-                        </Box>
-                        <FormControl
-                          fullWidth
-                          size="small"
-                          sx={{ mt: 0, mb: 1 }}
-                        >
-                          <Select
-                            style={{ fontSize: "12.5px" }}
-                            value={condition.selectedApprovalId}
-                            onChange={(event) =>
-                              handleFieldChange(index, event)
-                            }
-                            displayEmpty
-                            renderValue={(selectedValue) =>
-                              selectedValue === "" ? (
-                                <em
+                        Edit
+                      </Button>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <Button
+                        variant="text"
+                        sx={{ textTransform: "none" }}
+                        onClick={() => {
+                          setSignatories([]),
+                            setSelectedApprovalId(""),
+                            setShowSignatories(""),
+                            setApprovers([]);
+                          setShowCompanySelect(false);
+                          setShowConditionalSelect(false);
+                          setButtonState("");
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      border: "1px solid #C2C2C2",
+                      padding: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      marginRight: "8px",
+                      color: "#155BE5",
+                      marginBottom: "0.5rem",
+                      borderRadius: "4px",
+                      fontSize: "12.5px",
+                    }}
+                  >
+                    If
+                  </Box>
+                  <FormControl fullWidth size="small" sx={{ mt: 0, mb: 1 }}>
+                    <Select
+                      style={{ fontSize: "12.5px" }}
+                      value={selectedFeild}
+                      onChange={(event: any) =>
+                        setSeletedFeild(event.target.value)
+                      }
+                      displayEmpty
+                      renderValue={(selectedValue) => {
+                        return selectedValue === "" ? (
+                          <em
+                            style={{
+                              color: "#C2C2C2",
+                              fontStyle: "normal",
+                              fontSize: "12.5px",
+                            }}
+                          >
+                            Select field
+                          </em>
+                        ) : (
+                          (() => {
+                            const foundTeam = feildList.find(
+                              (team) => team._id === selectedValue
+                            );
+                            if (foundTeam) {
+                              // Set the type in state
+                              setType(foundTeam.type);
+                              return `${foundTeam.name}`;
+                            } else {
+                              return (
+                                <div
                                   style={{
                                     color: "#C2C2C2",
                                     fontStyle: "normal",
                                     fontSize: "12.5px",
                                   }}
                                 >
-                                  Select field
-                                </em>
-                              ) : (
-                                feildList.find(
-                                  (team) => team._id === selectedValue
-                                )?.name || ""
-                              )
+                                  Not found
+                                </div>
+                              );
+                            }
+                          })()
+                        );
+                      }}
+                    >
+                      {feildList.map((approval) => (
+                        <MenuItem key={approval._id} value={approval._id}>
+                          {approval.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+
+                {conditions.map((condition, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      marginBottom: "15px",
+                      // marginTop: "1rem",
+                    }}
+                  >
+                    {type && (
+                      <>
+                        <Box
+                          sx={{
+                            gap: "10px",
+                            alignItems: "center",
+                            display: "flex",
+                            mt: 1,
+                          }}
+                        >
+                          {type === "number" ? (
+                            <FormControl size="small" sx={{ width: "100%" }}>
+                              <Select
+                                style={{ fontSize: "11.5px" }}
+                                value={condition.comparisonOperator}
+                                onChange={(event) =>
+                                  handleOperatorChange(index, event)
+                                }
+                                displayEmpty
+                                renderValue={(selectedValue) =>
+                                  selectedValue === "" ? (
+                                    <em
+                                      style={{
+                                        color: "#C2C2C2",
+                                        fontStyle: "normal",
+                                        fontSize: "10.5px",
+                                      }}
+                                    >
+                                      Select condition
+                                    </em>
+                                  ) : (
+                                    selectedValue
+                                  )
+                                }
+                              >
+                                <MenuItem value="greater or equal to">
+                                  greater or equal to
+                                </MenuItem>
+                                <MenuItem value="equals">equals</MenuItem>
+                                <MenuItem value="does not equal">
+                                  does not equal
+                                </MenuItem>
+                                <MenuItem value="less than">less than</MenuItem>
+                              </Select>
+                            </FormControl>
+                          ) : (
+                            <FormControl size="small" sx={{ width: "100%" }}>
+                              <Select
+                                style={{ fontSize: "11.5px" }}
+                                value={condition.comparisonOperator}
+                                onChange={(event) =>
+                                  handleOperatorChange(index, event)
+                                }
+                                displayEmpty
+                                renderValue={(selectedValue) =>
+                                  selectedValue === "" ? (
+                                    <em
+                                      style={{
+                                        color: "#C2C2C2",
+                                        fontStyle: "normal",
+                                        fontSize: "10.5px",
+                                      }}
+                                    >
+                                      Select condition
+                                    </em>
+                                  ) : (
+                                    selectedValue
+                                  )
+                                }
+                              >
+                                <MenuItem value="Contains">Contains</MenuItem>
+                                <MenuItem value="equal">equal</MenuItem>
+                                <MenuItem value="does not equal">
+                                  does not equal
+                                </MenuItem>
+                              </Select>
+                            </FormControl>
+                          )}
+
+                          <TextField
+                            placeholder="Value"
+                            value={condition.value}
+                            size="small"
+                            onChange={(event) =>
+                              handleValueChange(index, event)
+                            }
+                            style={{
+                              flexGrow: 1,
+                              width: "50%",
+                            }}
+                            InputProps={{
+                              style: { fontSize: "11px" }, // Directly sets the input text font size
+                            }}
+                          />
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            mt: 1,
+                            width: "100%",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Button
+                            variant="text"
+                            color={
+                              buttonState === "company" ? "primary" : "inherit"
+                            }
+                            sx={{ textTransform: "none", mt: 1 }}
+                            // onClick={handleCompanyApprovalClick}
+                          >
+                            Get approval from
+                          </Button>
+
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            sx={{
+                              textTransform: "none",
+                              mt: 1,
+                              padding: "2px 5px !important",
+                              height: "34px !important",
+                              fontSize: "0.85rem",
+                              width: "32%",
+                            }}
+                            onClick={() =>
+                              setViewUser((prevState) => !prevState)
                             }
                           >
-                            {feildList.map((approval) => (
-                              <MenuItem key={approval._id} value={approval._id}>
-                                {approval.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                        {/* <IconButton
-                          sx={{
-                            width: "5px",
-                            position: "absolute",
-                            right: -17,
-                            marginTop: "-15px",
-                          }}
-                          onClick={() => removeCondition(index)}
-                          aria-label="delete"
-                        >
-                          <DeleteIcon />
-                        </IconButton> */}
-                      </div>
-
-                      {/* Comparison Operator Selection and Value Input */}
-                      <Box
-                        sx={{
-                          gap: "10px",
-                          alignItems: "center",
-                          display: "flex",
-                        }}
-                      >
-                        <FormControl size="small" sx={{ width: "100%" }}>
-                          <Select
-                            style={{ fontSize: "11.5px" }}
-                            value={condition.comparisonOperator}
-                            onChange={(event) =>
-                              handleOperatorChange(index, event)
-                            }
-                            displayEmpty
-                            renderValue={(selectedValue) =>
-                              selectedValue === "" ? (
-                                <em
+                            &nbsp;
+                            <PersonAddIcon />
+                            &nbsp;
+                          </Button>
+                        </Box>
+                      </>
+                    )}
+                    {viewUser && (
+                      <>
+                        <Controller
+                          name="name"
+                          control={control}
+                          render={({ field, fieldState: { error } }) => (
+                            <FormControl fullWidth size="small">
+                              <Autocomplete
+                                sx={{ mt: 1 }}
+                                {...field}
+                                freeSolo
+                                options={userList}
+                                getOptionLabel={(option) =>
+                                  typeof option === "string"
+                                    ? option
+                                    : `${option.firstName} ${option.lastName}`
+                                }
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="Search user"
+                                    variant="outlined"
+                                    size="small"
+                                    sx={{
+                                      ".MuiInputLabel-root": {
+                                        fontSize: "14px",
+                                      }, // Adjusts the label font size
+                                      ".MuiOutlinedInput-root": {
+                                        fontSize: "14px",
+                                      },
+                                    }}
+                                  />
+                                )}
+                                onInputChange={(event, value) => {
+                                  // Handle free solo input change if necessary
+                                }}
+                                onChange={(event, value) => {
+                                  if (typeof value === "string") {
+                                    // For free solo input, update directly with the value
+                                    setSelectedUserApproval(value);
+                                    setSelectedUserApproval(""); // Clear or handle as needed for free solo value
+                                    field.onChange(value); // Ensure the field value is updated
+                                  } else if (value && "email" in value) {
+                                    // For selected object, update with formatted name and call handleUserApproval
+                                    const formattedName = `${value.firstName} ${value.lastName}`;
+                                    setSelectedUserApproval(formattedName);
+                                    handleUserApproval(value.email);
+                                    field.onChange(formattedName); // Update field value with formatted name
+                                  }
+                                }}
+                              />
+                            </FormControl>
+                          )}
+                        />
+                        <div>
+                          {showSignatories === "" &&
+                            userApproval.map((signatory, index) => (
+                              <Box
+                                key={index}
+                                sx={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "flex-start",
+                                  mb: 1,
+                                  mt: 1,
+                                }}
+                              >
+                                <div
                                   style={{
-                                    color: "#C2C2C2",
-                                    fontStyle: "normal",
-                                    fontSize: "10.5px",
+                                    display: "flex",
+                                    alignItems: "center",
                                   }}
                                 >
-                                  Select condition
-                                </em>
-                              ) : (
-                                selectedValue
-                              )
-                            }
-                          >
-                            <MenuItem value="greater or equal to">
-                              greater or equal to
-                            </MenuItem>
-                            <MenuItem value="equals">equals</MenuItem>
-                            <MenuItem value="does not equal">
-                              does not equal
-                            </MenuItem>
-                            <MenuItem value="less than">less than</MenuItem>
-                          </Select>
-                        </FormControl>
+                                  <Box
+                                    sx={{
+                                      width: 25,
+                                      height: 25,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      borderRadius: "50%",
+                                      backgroundColor:
+                                        bubbleColors[
+                                          index % bubbleColors.length
+                                        ],
+                                      color: "#FFFFFF",
+                                      marginRight: 1,
+                                    }}
+                                  >
+                                    <Typography sx={{ fontSize: "14px" }}>
+                                      {signatory?.charAt(0).toUpperCase()}
+                                    </Typography>
+                                  </Box>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      width: "160px",
+                                      // overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                      fontSize: "15px",
+                                    }}
+                                  >
+                                    {signatory}
+                                  </Typography>
+                                </div>
+                                <Box sx={{ display: "flex", mt: 1 }}>
+                                  <Button
+                                    variant="text"
+                                    sx={{
+                                      textTransform: "none",
+                                      fontSize: "16px",
+                                      color: "#31C65B",
+                                      fontWeight: "bold",
+                                      padding: "0 8px",
+                                      minWidth: "auto",
+                                      "&:first-of-type": {
+                                        ml: 2.5, // Only applies margin-left to the first button
+                                      },
+                                    }}
+                                    onClick={() =>
+                                      handleRemoveSignatory(signatory)
+                                    } // Assuming true signifies approval
+                                  >
+                                    <CheckCircleOutlineIcon />
+                                  </Button>
+                                  <Button
+                                    variant="text"
+                                    sx={{
+                                      textTransform: "none",
+                                      fontSize: "16px",
+                                      color: "#BEBEBE",
+                                      fontWeight: "bold",
+                                      padding: "0 8px",
+                                      minWidth: "auto",
+                                    }}
+                                    onClick={() =>
+                                      handleRemoveSignatory(signatory)
+                                    } // Assuming false signifies removal
+                                  >
+                                    <HighlightOffIcon />
+                                  </Button>
+                                </Box>
+                              </Box>
+                            ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
 
-                        <TextField
-                          placeholder="Value"
-                          value={condition.value}
-                          size="small"
-                          onChange={(event) => handleValueChange(index, event)}
-                          style={{
-                            flexGrow: 1,
-                            width: "50%",
+                <Button
+                  variant="text"
+                  color="primary"
+                  sx={{ textTransform: "none" }}
+                  onClick={addCondition}
+                >
+                  + Add Condition
+                </Button>
+                {userApproval.length > 0 &&
+                  (showSignatories === "" || showSignatories === "edit") && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      {showSignatories !== "edit" && (
+                        <Button
+                          variant="contained"
+                          color="inherit"
+                          sx={{
+                            mr: "20px",
+                            textTransform: "none",
+                            backgroundColor: "#DCDCDC",
+                            "&:hover": {
+                              backgroundColor: "#757575",
+                            },
+                            color: "white",
+                            padding: "2px 5px !important",
+                            height: "25px !important",
+                            fontSize: "0.675rem",
                           }}
-                          InputProps={{
-                            style: { fontSize: "11px" }, // Directly sets the input text font size
+                          onClick={() => {
+                            setSignatories([]),
+                              setSelectedApprovalId(""),
+                              setShowSignatories(""),
+                              setApprovers([]);
+                            setShowCompanySelect(false);
+                            setShowConditionalSelect(false);
+                            setButtonState("");
                           }}
-                        />
-                      </Box>
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                      <Button
+                        variant="contained"
+                        color="inherit"
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: "#62BD6B",
+                          "&:hover": {
+                            backgroundColor: "#62BD6d",
+                          },
+                          color: "white",
+                          padding: "2px 5px !important",
+                          height: "25px !important",
+                          fontSize: "0.675rem",
+                        }}
+                        onClick={() => setShowSignatories("topbar")} // Toggle visibility
+                      >
+                        Save
+                      </Button>
                     </div>
-                  ))}
-
-                  <Button
-                    variant="text"
-                    color="primary"
-                    sx={{ textTransform: "none" }}
-                    onClick={addCondition}
-                  >
-                    + Add Condition
-                  </Button>
-                </>
+                  )}
               </>
             )}
           </React.Fragment>
