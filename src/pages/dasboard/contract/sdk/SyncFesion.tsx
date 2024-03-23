@@ -1101,7 +1101,7 @@ function SyncFusionEditor() {
 
 
 
-
+  console.log('close popup')
 
   return (
     <div>
@@ -1134,7 +1134,7 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_toolbar_open");
+                  triggerClick("container_toolbar_open"); toggleDropdown("file")
                 }}
               >
                 <img src={downloadIcon} className="h-5 w-5" alt="" />
@@ -1142,7 +1142,7 @@ function SyncFusionEditor() {
                 {/* <input type="file" accept=".docx" onChange={handleFileChange} /> */}
               </li>
               <li
-                onClick={saveDocumentToState}
+                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
                 className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
               >
                 <img src={saveIcon} className="h-4 w-4" alt="" />
@@ -1151,7 +1151,7 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_editor_font_properties_properties");
+                  triggerClick("container_editor_font_properties_properties"); toggleDropdown("file")
                 }}
               >
                 <img src={editIcon} className="h-4 w-4" alt="" />
@@ -1183,14 +1183,14 @@ function SyncFusionEditor() {
             >
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2 "
-                onClick={() => { ShowHideOptionsPane() }}
+                onClick={() => { ShowHideOptionsPane(); toggleDropdown("view") }}
               >
                 <img src={searchIcon} className="h-4 w-4" alt="" />
                 Find
               </li>
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { addComment() }}
+                onClick={() => { addComment(); toggleDropdown("view") }}
               >
                 <img src={commentIcon} className="h-4 w-4" alt="" />
                 Add comment
@@ -1217,7 +1217,7 @@ function SyncFusionEditor() {
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
-                  toggleTrackChanges();
+                  toggleTrackChanges(); toggleDropdown("view")
                   // triggerClick("container_toolbar_track");
                 }}
               >
@@ -1227,14 +1227,14 @@ function SyncFusionEditor() {
 
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { rejectAllChanges() }}
+                onClick={() => { rejectAllChanges(); toggleDropdown("view") }}
               >
                 <img src={crossIcon} className="h-3 w-3" alt="" />
                 Reject all changes
               </li>
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => acceptFirstChange()}
+                onClick={() => { acceptFirstChange(); toggleDropdown("view") }}
               >
                 <img src={tickIcon} className="h-4 w-4" alt="" />
                 Accept all changes
@@ -1242,14 +1242,14 @@ function SyncFusionEditor() {
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
+                  triggerClick("container_editor_font_properties_bold"); toggleDropdown("view")
                 }}
               >
                 <img src={viewIcon} className="h-4 w-4" alt="" />
                 View Audit trail
               </li>
               <div
-                onClick={() => toggleDropdown("view")}
+                onClick={() => { toggleDropdown("view"); toggleDropdown("view") }}
                 className="w-full h-full  fixed inset-0 z-[-9]"
               ></div>
             </ul>
@@ -1274,7 +1274,7 @@ function SyncFusionEditor() {
             >
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { addTable() }}
+                onClick={() => { addTable(); toggleDropdown("insert") }}
               >
                 <img src={tableIcon} className="h-4 w-4" alt="" />
                 Table
@@ -1303,14 +1303,14 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { showHyperlinkDialog() }}
+                onClick={() => { showHyperlinkDialog(); toggleDropdown("insert") }}
               >
                 <img src={linkIcon} className="h-4 w-4" alt="" />
                 Link
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { setupHeader() }}
+                onClick={() => { setupHeader(); toggleDropdown("insert") }}
               >
                 <img src={headerIcon} className="h-4 w-4" alt="" />
                 Header
@@ -1318,7 +1318,7 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { setupFooter() }}
+                onClick={() => { setupFooter(); toggleDropdown("insert") }}
               >
                 <img src={footerIcon} className="h-4 w-4" alt="" />
                 Footer
@@ -1326,14 +1326,14 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer pb-2 border-b border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={clearAndCloseFooter}
+                onClick={() => { clearAndCloseFooter(); toggleDropdown("insert") }}
               >
                 <img src={crossIcon} className="h-3 w-3" alt="" />
                 Clear Header/Footer
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={ShowPageSetupDialog}
+                onClick={() => { ShowPageSetupDialog(); toggleDropdown("insert") }}
               >
                 <img src={pageSetupIcon} className="h-5 w-5" alt="" />
                 Page Setup
@@ -1341,7 +1341,7 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_toolbar_page_number");
+                  triggerClick("container_toolbar_page_number"); toggleDropdown("insert")
                 }}
               >
                 <img src={pageNoIcon} className="h-5 w-5" alt="" />
