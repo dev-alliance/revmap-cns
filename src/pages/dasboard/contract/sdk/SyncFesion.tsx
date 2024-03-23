@@ -1010,6 +1010,12 @@ function SyncFusionEditor() {
     documentEditor.showDialog('Hyperlink');
   }
 
+  const addpagenumber = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    documentEditor.editor.insertPageNumber();
+
+  }
+
   const ShowHideOptionsPane = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.showOptionsPane();
@@ -1341,7 +1347,7 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_toolbar_page_number"); toggleDropdown("insert")
+                  addpagenumber(); toggleDropdown("insert")
                 }}
               >
                 <img src={pageNoIcon} className="h-5 w-5" alt="" />
