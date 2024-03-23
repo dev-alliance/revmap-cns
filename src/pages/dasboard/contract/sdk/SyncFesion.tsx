@@ -10,7 +10,6 @@ import {
   Toolbar,
   CustomToolbarItemModel,
 } from "@syncfusion/ej2-react-documenteditor";
-
 import "@syncfusion/ej2-base/styles/material.css";
 import "@syncfusion/ej2-buttons/styles/material.css";
 import "@syncfusion/ej2-calendars/styles/material.css";
@@ -35,8 +34,6 @@ registerLicense(
 );
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
-// import $ from 'jquery';
-
 // other imports...
 import {
   TextField,
@@ -750,28 +747,13 @@ function SyncFusionEditor() {
   //     element.click();
   //   }
   // };
-  console.log('get fit')
+
   // $(".e-toolbar-item").css("display", "none");
   // $(".e-btn-icon").css("display", "none");
-  useEffect(() => {
-    // Attach click event handlers to each item
-    items.forEach((item: any) => {
-      $(`#${item}`).click(function () {
-        // Perform operations specific to this item here
-        // Example: Hide the element
-        // $(this).hide();
-      });
-    });
 
-    // Example of programmatically triggering a click event for 'Open'
-    triggerClick('Open');
-    triggerClick('Header');
-
-  }, [items]); // Dependencies array includes items, though it's static in this case
-
-  // This function will programmatically trigger a click event on an element by its ID
   const triggerClick = (id: string) => {
     $(`#${id}`).trigger("click");
+    // $("#container_toolbar_open").parent().css("display", "block");
   };
   const fontStyle: string[] = [
     "Algerian",
@@ -1052,6 +1034,13 @@ function SyncFusionEditor() {
 
 
 
+  // Function to reject the second change
+  const rejectSecondChange = () => {
+    const revisions = editorContainerRef.current.documentEditor.revisions;
+    if (revisions.length > 1) {
+      revisions.get(1).reject();
+    }
+  };
   // Function to accept the first change
   const acceptFirstChange = () => {
     const revisions = editorContainerRef.current.documentEditor.revisions;
@@ -1061,13 +1050,6 @@ function SyncFusionEditor() {
     }
   };
 
-  // Function to reject the second change
-  const rejectSecondChange = () => {
-    const revisions = editorContainerRef.current.documentEditor.revisions;
-    if (revisions.length > 1) {
-      revisions.get(1).reject();
-    }
-  };
   return (
     <div>
       {showTableTools && (
@@ -1272,7 +1254,7 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { triggerClick('container_toolbar_header') }}
+                onClick={() => { setupHeader() }}
               >
                 <img src={headerIcon} className="h-4 w-4" alt="" />
                 Header
