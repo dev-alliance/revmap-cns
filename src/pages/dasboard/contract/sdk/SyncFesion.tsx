@@ -1058,46 +1058,46 @@ function SyncFusionEditor() {
 
   const fileInputRef = useRef(null);
 
-  const onImportClick = () => {
-    fileInputRef.current.click();
-  };
+  // const onImportClick = () => {
+  //   fileInputRef.current.click();
+  // };
 
-  const onFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target.result;
-        // Construct a more detailed SFDT document with the file's text content
-        const sfdt = {
-          sections: [{
-            blocks: [{
-              paragraphFormat: {
-                // Apply some paragraph formatting if needed
-                afterSpacing: 8,
-                beforeSpacing: 0,
-                lineSpacing: 1.15,
-                lineSpacingType: 'Multiple' // Example formatting
-              },
-              inlines: [
-                {
-                  name: '',
-                  text: content,
-                  characterFormat: {
-                    // Apply any needed character formatting
-                    fontSize: 11,
-                    fontFamily: 'Calibri'
-                  }
-                }
-              ]
-            }]
-          }]
-        };
-        editorContainerRef.current.documentEditor.open(JSON.stringify(sfdt));
-      };
-      reader.readAsText(file);
-    }
-  };
+  // const onFileChange = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       const content = e.target.result;
+  //       // Construct a more detailed SFDT document with the file's text content
+  //       const sfdt = {
+  //         sections: [{
+  //           blocks: [{
+  //             paragraphFormat: {
+  //               // Apply some paragraph formatting if needed
+  //               afterSpacing: 8,
+  //               beforeSpacing: 0,
+  //               lineSpacing: 1.15,
+  //               lineSpacingType: 'Multiple' // Example formatting
+  //             },
+  //             inlines: [
+  //               {
+  //                 name: '',
+  //                 text: content,
+  //                 characterFormat: {
+  //                   // Apply any needed character formatting
+  //                   fontSize: 11,
+  //                   fontFamily: 'Calibri'
+  //                 }
+  //               }
+  //             ]
+  //           }]
+  //         }]
+  //       };
+  //       editorContainerRef.current.documentEditor.open(JSON.stringify(sfdt));
+  //     };
+  //     reader.readAsText(file);
+  //   }
+  // };
 
 
 
