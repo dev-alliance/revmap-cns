@@ -762,6 +762,8 @@ function SyncFusionEditor() {
 
     // Example of programmatically triggering a click event for 'Open'
     triggerClick('Open');
+    triggerClick('Header');
+
   }, [items]); // Dependencies array includes items, though it's static in this case
 
   // This function will programmatically trigger a click event on an element by its ID
@@ -1267,7 +1269,7 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { setupHeader() }}
+                onClick={() => { triggerClick('container_toolbar_header') }}
               >
                 <img src={headerIcon} className="h-4 w-4" alt="" />
                 Header
