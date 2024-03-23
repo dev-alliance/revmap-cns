@@ -752,13 +752,13 @@ function SyncFusionEditor() {
   // $(".e-btn-icon").css("display", "none");
   useEffect(() => {
     // Attach click event handlers to each item
-    items.forEach((item: any) => {
-      $(`#${item}`).click(function () {
-        // Perform operations specific to this item here
-        // Example: Hide the element
-        // $(this).hide();
-      });
+
+    $(`#${items}`).click(function () {
+      // Perform operations specific to this item here
+      // Example: Hide the element
+      // $(this).hide();
     });
+
 
     // Example of programmatically triggering a click event for 'Open'
     triggerClick('Open');
