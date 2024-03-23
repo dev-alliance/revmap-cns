@@ -1015,6 +1015,26 @@ function SyncFusionEditor() {
     documentEditor.showOptionsPane();
   }
 
+  const addComment = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+
+    const selectedText = documentEditor.selection.text;
+    documentEditor.editor.insertComment(selectedText);
+
+
+    // if (documentEditor && documentEditor.editor) {
+    //   // Example: Add a comment to the selected text
+    //   // This is a conceptual example; you'll need to replace it with the actual API call
+    //   if (selectedText) {
+    //     // Assuming 'addComment' is the method and it takes parameters like the selected text and comment text
+    //     // Note: This is hypothetical and serves to illustrate the approach
+    //     documentEditor.editor.addComment(selectedText, "This is a comment.");
+    //   } else {
+    //     alert("Please select some text to comment on.");
+    //   }
+    // }
+  };
+
   return (
     <div>
       {showTableTools && (
@@ -1099,9 +1119,7 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_comment");
-                }}
+                onClick={() => { addComment() }}
               >
                 <img src={commentIcon} className="h-4 w-4" alt="" />
                 Add comment
