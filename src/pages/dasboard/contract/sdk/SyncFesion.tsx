@@ -348,10 +348,10 @@ function SyncFusionEditor() {
     documentEditor.showDialog("PageSetup");
   }
 
-  const toggleTrackChanges = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
-  };
+  // const toggleTrackChanges = () => {
+  //   const documentEditor = editorContainerRef.current.documentEditor;
+  //   documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
+  // };
 
 
 
@@ -750,10 +750,23 @@ function SyncFusionEditor() {
 
   // $(".e-toolbar-item").css("display", "none");
   // $(".e-btn-icon").css("display", "none");
+  useEffect(() => {
+    // Attach click event handlers to each item
+    items.forEach((item: any) => {
+      $(`#${item}`).click(function () {
+        // Perform operations specific to this item here
+        // Example: Hide the element
+        // $(this).hide();
+      });
+    });
 
+    // Example of programmatically triggering a click event for 'Open'
+    triggerClick('Open');
+  }, [items]); // Dependencies array includes items, though it's static in this case
+
+  // This function will programmatically trigger a click event on an element by its ID
   const triggerClick = (id: string) => {
     $(`#${id}`).trigger("click");
-    // $("#container_toolbar_open").parent().css("display", "block");
   };
   const fontStyle: string[] = [
     "Algerian",
@@ -1021,20 +1034,35 @@ function SyncFusionEditor() {
     const selectedText = documentEditor.selection.text;
     documentEditor.editor.insertComment(selectedText);
 
-
-    // if (documentEditor && documentEditor.editor) {
-    //   // Example: Add a comment to the selected text
-    //   // This is a conceptual example; you'll need to replace it with the actual API call
-    //   if (selectedText) {
-    //     // Assuming 'addComment' is the method and it takes parameters like the selected text and comment text
-    //     // Note: This is hypothetical and serves to illustrate the approach
-    //     documentEditor.editor.addComment(selectedText, "This is a comment.");
-    //   } else {
-    //     alert("Please select some text to comment on.");
-    //   }
-    // }
   };
 
+  const toggleTrackChanges = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    // Toggle the track changes state
+    if (documentEditor) {
+      const trackChangesEnabled = documentEditor.enableTrackChanges;
+      documentEditor.enableTrackChanges = !trackChangesEnabled;
+    }
+  };
+
+
+
+  // Function to accept the first change
+  const acceptFirstChange = () => {
+    const revisions = editorContainerRef.current.documentEditor.revisions;
+    console.log(revisions)
+    if (revisions.length > 0) {
+      revisions.get(0).accept();
+    }
+  };
+
+  // Function to reject the second change
+  const rejectSecondChange = () => {
+    const revisions = editorContainerRef.current.documentEditor.revisions;
+    if (revisions.length > 1) {
+      revisions.get(1).reject();
+    }
+  };
   return (
     <div>
       {showTableTools && (
@@ -1156,18 +1184,14 @@ function SyncFusionEditor() {
 
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
-                }}
+                onClick={() => { rejectSecondChange() }}
               >
                 <img src={crossIcon} className="h-3 w-3" alt="" />
                 Reject all changes
               </li>
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
-                }}
+                onClick={() => acceptFirstChange()}
               >
                 <img src={tickIcon} className="h-4 w-4" alt="" />
                 Accept all changes
