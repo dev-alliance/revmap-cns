@@ -10,6 +10,7 @@ import {
   Toolbar,
   CustomToolbarItemModel,
 } from "@syncfusion/ej2-react-documenteditor";
+
 import "@syncfusion/ej2-base/styles/material.css";
 import "@syncfusion/ej2-buttons/styles/material.css";
 import "@syncfusion/ej2-calendars/styles/material.css";
@@ -34,6 +35,8 @@ registerLicense(
 );
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
+// import $ from 'jquery';
+
 // other imports...
 import {
   TextField,
@@ -747,18 +750,18 @@ function SyncFusionEditor() {
   //     element.click();
   //   }
   // };
-  console.log('get')
+
   // $(".e-toolbar-item").css("display", "none");
   // $(".e-btn-icon").css("display", "none");
   useEffect(() => {
     // Attach click event handlers to each item
-
-    $(`#${items}`).click(function () {
-      // Perform operations specific to this item here
-      // Example: Hide the element
-      // $(this).hide();
+    items.forEach((item: any) => {
+      $(`#${item}`).click(function () {
+        // Perform operations specific to this item here
+        // Example: Hide the element
+        // $(this).hide();
+      });
     });
-
 
     // Example of programmatically triggering a click event for 'Open'
     triggerClick('Open');
