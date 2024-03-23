@@ -1010,6 +1010,10 @@ function SyncFusionEditor() {
     documentEditor.showDialog('Hyperlink');
   }
 
+  const ShowHideOptionsPane = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    documentEditor.showOptionsPane();
+  }
 
   return (
     <div>
@@ -1030,7 +1034,7 @@ function SyncFusionEditor() {
           </button>
           {openDropdowns.file && (
             <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-40 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
@@ -1042,7 +1046,7 @@ function SyncFusionEditor() {
                   triggerClick("container_toolbar_open");
                 }}
               >
-                <img src={openFolder} className="h-4 w-4" alt="" />
+                <img src={downloadIcon} className="h-5 w-5" alt="" />
                 Import Document
                 {/* <input type="file" accept=".docx" onChange={handleFileChange} /> */}
               </li>
@@ -1088,9 +1092,7 @@ function SyncFusionEditor() {
             >
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2 "
-                onClick={() => {
-                  triggerClick("container_toolbar_find");
-                }}
+                onClick={() => { ShowHideOptionsPane() }}
               >
                 <img src={searchIcon} className="h-4 w-4" alt="" />
                 Find
