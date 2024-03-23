@@ -750,7 +750,7 @@ function SyncFusionEditor() {
   //     element.click();
   //   }
   // };
-
+  console.log('get fit')
   // $(".e-toolbar-item").css("display", "none");
   // $(".e-btn-icon").css("display", "none");
   useEffect(() => {
