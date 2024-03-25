@@ -58,7 +58,6 @@ const ApprovalReasionDialog: React.FC<ApprovalReasionDialogProps> = ({
   dialogData,
 }) => {
   const [reason, setReason] = useState("");
-  console.log(dialogData, "dialogData");
 
   useEffect(() => {
     if (dialogData?.reason) {

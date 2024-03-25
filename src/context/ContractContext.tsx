@@ -53,6 +53,31 @@ interface ContractContextProps {
   setSelectedModule: Dispatch<SetStateAction<any>>;
   sidebarExpanded: any | null;
   setSidebarExpanded: Dispatch<SetStateAction<any>>;
+
+  showCompanySelect: any | null;
+  setShowCompanySelect: Dispatch<SetStateAction<any>>;
+  showConditionalSelect: any | null;
+  setShowConditionalSelect: Dispatch<SetStateAction<any>>;
+  showSignatories: any | null;
+  setShowSignatories: Dispatch<SetStateAction<any>>;
+  selectedApproval: any | null;
+  setSelectedApproval: Dispatch<SetStateAction<any>>;
+  approvers: any | null;
+  setApprovers: Dispatch<SetStateAction<any>>;
+  selectedUserApproval: any | null;
+  setSelectedUserApproval: Dispatch<SetStateAction<any>>;
+  userApproval: any | null;
+  setUserApproval: Dispatch<SetStateAction<any>>;
+  selectedConditionalApproval: any | null;
+  setSelectedConditionalApproval: Dispatch<SetStateAction<any>>;
+  userConditionalApproval: any | null;
+  setUserConditionalApproval: Dispatch<SetStateAction<any>>;
+  conditions: any | null;
+  setConditions: Dispatch<SetStateAction<any>>;
+  selectedFeild: any | null;
+  setSeletedFeild: Dispatch<SetStateAction<any>>;
+  type: any | null;
+  setType: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -69,6 +94,30 @@ export const ContractContext = createContext<ContractContextProps>({
   setSelectedModule: () => {},
   sidebarExpanded: {},
   setSidebarExpanded: () => {},
+  showCompanySelect: {},
+  setShowCompanySelect: () => {},
+  showConditionalSelect: {},
+  setShowConditionalSelect: () => {},
+  showSignatories: {},
+  setShowSignatories: () => {},
+  selectedApproval: {},
+  setSelectedApproval: () => {},
+  approvers: {},
+  setApprovers: () => {},
+  selectedUserApproval: {},
+  setSelectedUserApproval: () => {},
+  userApproval: {},
+  setUserApproval: () => {},
+  selectedConditionalApproval: {},
+  setSelectedConditionalApproval: () => {},
+  userConditionalApproval: {},
+  setUserConditionalApproval: () => {},
+  conditions: [],
+  setConditions: () => {},
+  selectedFeild: [],
+  setSeletedFeild: () => {},
+  type: {},
+  setType: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -79,6 +128,29 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [openDocoment, setOpenDocoment] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
+  const [showCompanySelect, setShowCompanySelect] = useState(false);
+  const [showConditionalSelect, setShowConditionalSelect] = useState(false);
+  const [showSignatories, setShowSignatories] = useState<any>("");
+  const [selectedApproval, setSelectedApproval] = useState("");
+  const [approvers, setApprovers] = useState<any[]>([]);
+  const [selectedUserApproval, setSelectedUserApproval] = useState("");
+  const [userApproval, setUserApproval] = useState<any[]>([]);
+  const [selectedFeild, setSeletedFeild] = useState("");
+  const [type, setType] = useState("");
+
+  const [conditions, setConditions] = useState([
+    {
+      comparisonOperator: "",
+      value: "",
+      userSelection: "",
+      userDisplayName: "",
+    },
+  ]);
+  const [selectedConditionalApproval, setSelectedConditionalApproval] =
+    useState("");
+  const [userConditionalApproval, setUserConditionalApproval] = useState<any[]>(
+    []
+  );
   const [contractStatus, setContractStatus] = useState<ContractStatus>({
     status: "",
     expire: "",
@@ -126,6 +198,62 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedContractsidebarExand) {
       setSelectedModule(JSON.parse(storedContractsidebarExand));
     }
+    const storedshowConditionalSelect =
+      localStorage.getItem("ConditionalSelect");
+    if (storedshowConditionalSelect) {
+      setShowConditionalSelect(JSON.parse(storedshowConditionalSelect));
+    }
+    const storedsetShowCompanySelect = localStorage.getItem("CompanySelect");
+    if (storedsetShowCompanySelect) {
+      setShowCompanySelect(JSON.parse(storedsetShowCompanySelect));
+    }
+    const storedsetShowsignatori = localStorage.getItem("showSignatories");
+    if (storedsetShowsignatori) {
+      setShowSignatories(JSON.parse(storedsetShowsignatori));
+    }
+    const storedsetselectedApproval = localStorage.getItem("selectedApproval");
+
+    if (storedsetselectedApproval) {
+      setSelectedApproval(JSON.parse(storedsetselectedApproval));
+    }
+    const storedsetApprovers = localStorage.getItem("approvers");
+    if (storedsetApprovers) {
+      setApprovers(JSON.parse(storedsetApprovers));
+    }
+    const storedselectedUserApproval = localStorage.getItem("selecteApprover");
+    if (storedselectedUserApproval) {
+      setSelectedApproval(JSON.parse(storedselectedUserApproval));
+    }
+    const storeduserApproval = localStorage.getItem("userApproval");
+    if (storeduserApproval) {
+      setUserApproval(JSON.parse(storeduserApproval));
+    }
+    const storeduserconditions = localStorage.getItem("conditions");
+    if (storeduserconditions) {
+      setConditions(JSON.parse(storeduserconditions));
+    }
+    const storeduserselectedConditionalApproval = localStorage.getItem(
+      "selectedConditionalApproval"
+    );
+    if (storeduserselectedConditionalApproval) {
+      setSelectedConditionalApproval(
+        JSON.parse(storeduserselectedConditionalApproval)
+      );
+    }
+    const storeduserConditionalApproval = localStorage.getItem(
+      "userConitioanalApproval"
+    );
+    if (storeduserConditionalApproval) {
+      setUserConditionalApproval(JSON.parse(storeduserConditionalApproval));
+    }
+    const storedselectedFeild = localStorage.getItem("selectedFeild");
+    if (storedselectedFeild) {
+      setSeletedFeild(JSON.parse(storedselectedFeild));
+    }
+    const storedtype = localStorage.getItem("type");
+    if (storedtype) {
+      setSeletedFeild(JSON.parse(storedtype));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -150,6 +278,30 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setSelectedModule,
         sidebarExpanded,
         setSidebarExpanded,
+        setShowCompanySelect,
+        showCompanySelect,
+        setShowConditionalSelect,
+        showConditionalSelect,
+        setShowSignatories,
+        showSignatories,
+        setSelectedApproval,
+        selectedApproval,
+        approvers,
+        setApprovers,
+        setSelectedUserApproval,
+        selectedUserApproval,
+        setUserApproval,
+        userApproval,
+        setSelectedConditionalApproval,
+        selectedConditionalApproval,
+        setUserConditionalApproval,
+        userConditionalApproval,
+        conditions,
+        setConditions,
+        selectedFeild,
+        setSeletedFeild,
+        setType,
+        type,
       }}
     >
       {children}
