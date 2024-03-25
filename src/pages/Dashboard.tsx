@@ -210,6 +210,7 @@ export default function Dashboard() {
           }}
         />
       </Toolbar>
+
       <Divider />
       <List onClick={handleDrawerToggle}>
         <ListItemButton
@@ -422,8 +423,8 @@ export default function Dashboard() {
 
         <ListItemButton
           onClick={() => handleSectionClick("setting")}
-          // component={Link}
-          // to="/dashboard/contract-list"
+        // component={Link}
+        // to="/dashboard/contract-list"
         >
           <ListItemIcon>
             <img
@@ -528,8 +529,8 @@ export default function Dashboard() {
 
         <ListItemButton
           onClick={() => handleSectionClick("configuration")}
-          // component={Link}
-          // to="/dashboard/contract-list"
+        // component={Link}
+        // to="/dashboard/contract-list"
         >
           <ListItemIcon>
             <img
@@ -856,6 +857,7 @@ export default function Dashboard() {
           />
         </ListItemButton> */}
       </List>
+
     </div>
   );
 
@@ -950,7 +952,9 @@ export default function Dashboard() {
             </div>
           </IconButton>
         </Toolbar>
+
       </AppBar>
+
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}

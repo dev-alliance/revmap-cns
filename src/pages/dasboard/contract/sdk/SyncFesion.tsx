@@ -50,8 +50,8 @@ import {
 } from "@mui/material";
 import linepng from "../../../../assets/line.png";
 import bucket from "../../../../assets/bucket.png";
-import undo from "../../../../assets/undo.png";
-import redo from "../../../../assets/redo.png";
+import deleteIcon from "../../../../assets/icons/delete.png";
+import copyIcon from "../../../../assets/icons/copy.png";
 // icons
 import openFolder from "../../../../assets/icons/folder.png";
 import saveIcon from "../../../../assets/icons/save.png";
@@ -1140,12 +1140,11 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_toolbar_open"); toggleDropdown("file")
+                  triggerClick("container_editor_font_properties_properties"); toggleDropdown("file")
                 }}
               >
-                <img src={downloadIcon} className="h-5 w-5" alt="" />
-                Import Document
-                {/* <input type="file" accept=".docx" onChange={handleFileChange} /> */}
+                <img src={editIcon} className="h-4 w-4" alt="" />
+                Edit
               </li>
               <li
                 onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
@@ -1154,14 +1153,40 @@ function SyncFusionEditor() {
                 <img src={saveIcon} className="h-4 w-4" alt="" />
                 Save
               </li>
+
+              <li
+                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
+                className="px-3   hover:bg-gray-200  cursor-pointer   flex items-center gap-x-2"
+              >
+                <img src={crossIcon} className="h-4 w-4" alt="" />
+                Cancel
+              </li>
+
+              <li
+                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
+                className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
+              >
+                <img src={copyIcon} className="h-[18px] w-[20px]" alt="" />
+                Copy as a template
+              </li>
+
+              <li
+                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
+                className="px-3 pb-2 hover:bg-gray-200  cursor-pointer border-b border-[#a1a1a1] flex items-center gap-x-2"
+              >
+                <img src={deleteIcon} className="h-[18px] w-[18px]" alt="" />
+                Move to trash
+              </li>
+
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_editor_font_properties_properties"); toggleDropdown("file")
+                  triggerClick("container_toolbar_open"); toggleDropdown("file")
                 }}
               >
-                <img src={editIcon} className="h-4 w-4" alt="" />
-                Edit
+                <img src={downloadIcon} className="h-5 w-5" alt="" />
+                Import Document
+                {/* <input type="file" accept=".docx" onChange={handleFileChange} /> */}
               </li>
               <div
                 onClick={() => toggleDropdown("file")}
