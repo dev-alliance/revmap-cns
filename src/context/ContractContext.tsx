@@ -78,6 +78,8 @@ interface ContractContextProps {
   setSeletedFeild: Dispatch<SetStateAction<any>>;
   type: any | null;
   setType: Dispatch<SetStateAction<any>>;
+  viewUser: any | null;
+  setViewUser: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -118,6 +120,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setSeletedFeild: () => {},
   type: {},
   setType: () => {},
+  viewUser: {},
+  setViewUser: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -137,7 +141,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [userApproval, setUserApproval] = useState<any[]>([]);
   const [selectedFeild, setSeletedFeild] = useState("");
   const [type, setType] = useState("");
-
+  const [viewUser, setViewUser] = useState(false);
   const [conditions, setConditions] = useState([
     {
       comparisonOperator: "",
@@ -224,6 +228,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedselectedUserApproval) {
       setSelectedApproval(JSON.parse(storedselectedUserApproval));
     }
+    const storedviewUser = localStorage.getItem("viewUser");
+    if (storedviewUser) {
+      setViewUser(JSON.parse(storedviewUser));
+    }
     const storeduserApproval = localStorage.getItem("userApproval");
     if (storeduserApproval) {
       setUserApproval(JSON.parse(storeduserApproval));
@@ -302,6 +310,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setSeletedFeild,
         setType,
         type,
+        viewUser,
+        setViewUser,
       }}
     >
       {children}
