@@ -113,7 +113,7 @@ import SystemsRole from "@/pages/dasboard/role_permission/SystemsRole";
 import UserDetailSingleUser from "@/pages/dasboard/users/UserDetailSingleUser";
 import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
 import { useContract } from "@/hooks/useContract";
-
+import { useLocation } from 'react-router-dom';
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -136,6 +136,20 @@ export default function Dashboard() {
     setting: false,
     configuration: false,
   });
+
+
+  const location = useLocation();
+
+  // Split the pathname by '/' and filter out empty strings
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+
+  // Assuming 'editor-dahsbord' is always after 'dashboard',
+  // and you want to get the segment after 'dashboard'
+  const editorDashboardSegment = pathSegments[pathSegments.indexOf('dashboard') + 1];
+
+
+
+
   const [selectedModule, setSelectedModule] = useState(null);
 
   const handleModuleClick = (moduleName: any) => {
@@ -862,9 +876,9 @@ export default function Dashboard() {
   );
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <div style={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar
+      {editorDashboardSegment !== 'editor-dahsbord' && <AppBar
         position="fixed"
         sx={{
           bgcolor: "#FFFFFF",
@@ -954,7 +968,7 @@ export default function Dashboard() {
         </Toolbar>
 
       </AppBar>
-
+      }
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -999,11 +1013,11 @@ export default function Dashboard() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          pl: 1,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        <Toolbar />
+        {editorDashboardSegment !== 'editor-dahsbord' && <Toolbar />}
         {/* routes  */}
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -1070,6 +1084,6 @@ export default function Dashboard() {
           <Route path="/editor" element={<CustomTextEditor />} />
         </Routes>
       </Box>
-    </Box>
+    </div>
   );
 }
