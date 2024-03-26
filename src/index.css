@@ -5,7 +5,24 @@
 /* for now  */
 
 /* for now end  */
+.condition-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  position: relative;
+}
 
+.condition-item .remove-btn {
+  position: absolute;
+  right: 0;
+  top: 0 !important;
+  opacity: 0; /* Button is initially invisible */
+  transition: opacity 0.2s ease; /* Smooth transition for opacity change */
+}
+
+.condition-item:hover .remove-btn {
+  opacity: 1; /* Button becomes visible on hover */
+}
 .link-no-underline {
   text-decoration: none;
   color: inherit;
@@ -488,7 +505,8 @@
 /* end */
 
 /* sidebar hidden  */
-.e-de-pane {}
+.e-de-pane {
+}
 
 /* .e-de-ctnr-segment { 
   position: absolute !important;
