@@ -87,6 +87,8 @@ const ApprovalsComp = () => {
     setSeletedFeild,
     type,
     setType,
+    viewUser,
+    setViewUser,
     setSelectedConditionalApproval,
     selectedConditionalApproval,
   } = useContext(ContractContext);
@@ -96,7 +98,6 @@ const ApprovalsComp = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [dialogData, setDialogData] = useState<any>(null);
-  const [viewUser, setViewUser] = useState(false);
 
   const [notifyApprovers, setNotifyApprovers] = useState(false);
 
@@ -602,7 +603,7 @@ const ApprovalsComp = () => {
                       </Typography>
                     ) : (
                       <>
-                        <Tooltip title="Approved">
+                        <Tooltip title="Approve">
                           <Button
                             variant="text"
                             sx={{
@@ -626,7 +627,7 @@ const ApprovalsComp = () => {
                             <CheckCircleOutlineIcon fontSize="medium" />
                           </Button>
                         </Tooltip>
-                        <Tooltip title="Rejected">
+                        <Tooltip title="Reject">
                           <Button
                             variant="text"
                             sx={{
@@ -948,41 +949,114 @@ const ApprovalsComp = () => {
                           {signatory}
                         </Typography>
                       </div>
-                      <div style={{ display: "flex", marginTop: "5px" }}>
-                        {" "}
-                        <Tooltip title="Approved">
-                          <Button
-                            variant="text"
+                      <div style={{ display: "flex" }}>
+                        {signatory?.status ? (
+                          <Typography
+                            variant="body1"
                             sx={{
-                              textTransform: "none",
-                              fontSize: "16px",
-                              color: "#31C65B",
-                              fontWeight: "bold",
-                              padding: "0 8px", // Reduce padding here
-                              minWidth: "auto",
-                              ml: 3, // Ensures the button width is only as wide as its content
+                              ml: 4,
+                              display: "flex",
+                              // fontWeight: "bold",
+                              color:
+                                signatory?.status === "Rejected"
+                                  ? "red"
+                                  : signatory?.status === "Approved"
+                                  ? "green"
+                                  : "inherit", // Default text color
                             }}
-                            onClick={() => handleRemoveSignatory(signatory)}
                           >
-                            <CheckCircleOutlineIcon />
-                          </Button>
-                        </Tooltip>
-                        <Tooltip title="Rejected">
-                          <Button
-                            variant="text"
-                            sx={{
-                              textTransform: "none",
-                              fontSize: "16px",
-                              color: "#BEBEBE",
-                              fontWeight: "bold",
-                              padding: "0 8px", // Reduce padding here
-                              minWidth: "auto", // Ensures the button width is only as wide as its content
-                            }}
-                            onClick={() => handleRemoveSignatory(signatory)}
-                          >
-                            <HighlightOffIcon />
-                          </Button>
-                        </Tooltip>
+                            {signatory?.status === "Rejected" && (
+                              <Tooltip title={signatory?.reason}>
+                                <img
+                                  onClick={() =>
+                                    handleDialogSubmit("", "", signatory, "")
+                                  }
+                                  src={send}
+                                  alt="Logo"
+                                  style={{
+                                    width: "20px",
+                                    height: "20px",
+                                    marginRight: "1rem",
+                                  }}
+                                />
+                              </Tooltip>
+                            )}{" "}
+                            {signatory?.status}
+                          </Typography>
+                        ) : (
+                          <>
+                            <Tooltip title="Approve">
+                              <Button
+                                variant="text"
+                                sx={{
+                                  textTransform: "none",
+                                  fontSize: "16px",
+                                  color: "#31C65B",
+                                  fontWeight: "bold",
+                                  padding: "0 8px", // Reduce padding here
+                                  minWidth: "auto",
+                                  ml: 3, // Ensures the button width is only as wide as its content
+                                }}
+                                onClick={() =>
+                                  handleDialogSubmit(
+                                    "Approved",
+                                    "",
+                                    signatory,
+                                    ""
+                                  )
+                                }
+                              >
+                                <CheckCircleOutlineIcon fontSize="medium" />
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title="Reject">
+                              <Button
+                                variant="text"
+                                sx={{
+                                  textTransform: "none",
+                                  fontSize: "16px",
+                                  color: "#BEBEBE",
+                                  fontWeight: "bold",
+                                  padding: "0 8px", // Style adjustments as needed
+                                  minWidth: "auto", // Ensures button width is only as wide as its content
+                                }}
+                                onClick={() => handleOpenDialog(signatory)}
+                              >
+                                <HighlightOffIcon />{" "}
+                              </Button>
+                            </Tooltip>
+                            <Tooltip title="Send">
+                              <img
+                                onClick={() =>
+                                  handleDialogSubmit("", "", signatory, "")
+                                }
+                                src={send}
+                                alt="Logo"
+                                style={{
+                                  width: "20px",
+                                  height: "20px",
+                                  marginLeft: "0.6rem",
+                                  marginTop: "0.2rem",
+                                }}
+                              />
+                            </Tooltip>
+                          </>
+                        )}
+                        {signatory?.reason && (
+                          <Tooltip title={signatory?.reason}>
+                            <img
+                              onClick={() => handleOpenDialog(signatory)}
+                              src={warnig}
+                              alt="Logo"
+                              style={{
+                                width: "20px",
+                                height: "20px",
+                                marginTop: "-0.4rem",
+                                marginLeft: "1rem",
+                              }}
+                            />
+                          </Tooltip>
+                        )}
                       </div>
                     </Box>
                   ))}
@@ -1046,9 +1120,11 @@ const ApprovalsComp = () => {
                 )}
 
                 {!(
-                  conditions.some(
+                  (conditions.some(
                     (condition: any) => condition.userSelection?.length > 0
-                  ) && showSignatories === "topbar"
+                  ) &&
+                    showSignatories === "topbar") ||
+                  showSignatories === "view"
                 ) && (
                   <>
                     <div
@@ -1130,13 +1206,17 @@ const ApprovalsComp = () => {
                     </div>
                     {conditions.map((condition: any, index: any) => (
                       <div key={index} className="condition-item">
-                        <IconButton
-                          onClick={() => removeCondition(index)}
-                          size="small"
-                          className="remove-btn" // Apply the CSS class
-                        >
-                          <CloseIcon />
-                        </IconButton>
+                        <Tooltip title="Delete">
+                          <IconButton
+                            onClick={() => removeCondition(index)}
+                            size="small"
+                            className="remove-btn" // Apply the CSS class
+                          >
+                            <CloseIcon
+                              sx={{ fontSize: "small", color: "red" }}
+                            />
+                          </IconButton>
+                        </Tooltip>
 
                         {type && (
                           <>
@@ -1273,6 +1353,10 @@ const ApprovalsComp = () => {
                                 <Button
                                   variant="outlined"
                                   color="primary"
+                                  disabled={
+                                    !condition.value ||
+                                    !condition.comparisonOperator
+                                  }
                                   sx={{
                                     textTransform: "none",
                                     mt: 1,
@@ -1282,7 +1366,7 @@ const ApprovalsComp = () => {
                                     width: "32%",
                                   }}
                                   onClick={() =>
-                                    setViewUser((prevState) => !prevState)
+                                    setViewUser((prevState: any) => !prevState)
                                   }
                                 >
                                   &nbsp;
@@ -1351,7 +1435,66 @@ const ApprovalsComp = () => {
                     </Button>
                   </>
                 )}
-
+                {conditions.some(
+                  (condition: any) => condition.userSelection?.length > 0
+                ) &&
+                  showSignatories === "view" && (
+                    <div
+                      style={{ justifyContent: "center", marginLeft: "10px" }}
+                    >
+                      <Typography
+                        variant="body2"
+                        color="#8A8A8A"
+                        sx={{ fontSize: "14px", mt: 1 }}
+                      >
+                        {
+                          feildList?.find((val) => val._id === selectedFeild)
+                            ?.name
+                        }
+                      </Typography>
+                      {conditions.map((val: any, index: number) => (
+                        <>
+                          <Typography
+                            variant="body2"
+                            color="#8A8A8A"
+                            sx={{ fontSize: "11px", mt: 1 }}
+                          >
+                            {val?.comparisonOperator} {val?.value}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="#8A8A8A"
+                            sx={{ fontSize: "11px", mt: 1, display: "flex" }}
+                          >
+                            get approval from
+                            <Tooltip title={val?.userDisplayName}>
+                              <Box
+                                sx={{
+                                  width: 25,
+                                  height: 25,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  borderRadius: "50%",
+                                  backgroundColor: "#DCDCDC",
+                                  // bubbleColors[index % bubbleColors.length],
+                                  color: "#FFFFFF",
+                                  marginLeft: 1,
+                                  marginTop: -0.5,
+                                }}
+                              >
+                                <Typography sx={{ fontSize: "14px" }}>
+                                  {val?.userDisplayName
+                                    ?.charAt(0)
+                                    .toUpperCase()}
+                                </Typography>
+                              </Box>
+                            </Tooltip>
+                          </Typography>
+                        </>
+                      ))}
+                    </div>
+                  )}
                 {conditions.some(
                   (condition: any) => condition.userSelection?.length > 0
                 ) && (
@@ -1408,8 +1551,8 @@ const ApprovalsComp = () => {
                                 {conditions?.userSelection}
                               </Typography>
                             </div>
-                            <Box sx={{ display: "flex", mt: 1 }}>
-                              <Tooltip title="Approved">
+                            {/* <Box sx={{ display: "flex", mt: 1 }}>
+                              <Tooltip title="Approve">
                                 <Button
                                   variant="text"
                                   sx={{
@@ -1432,7 +1575,7 @@ const ApprovalsComp = () => {
                                   <CheckCircleOutlineIcon />
                                 </Button>
                               </Tooltip>
-                              <Tooltip title="Rejected">
+                              <Tooltip title="Reject">
                                 <Button
                                   variant="text"
                                   sx={{
@@ -1452,7 +1595,128 @@ const ApprovalsComp = () => {
                                   <HighlightOffIcon />
                                 </Button>
                               </Tooltip>
-                            </Box>
+                            </Box> */}
+                            <div style={{ display: "flex" }}>
+                              {conditions?.status ? (
+                                <Typography
+                                  variant="body1"
+                                  sx={{
+                                    ml: 4,
+                                    display: "flex",
+                                    // fontWeight: "bold",
+                                    color:
+                                      conditions?.status === "Rejected"
+                                        ? "red"
+                                        : conditions?.status === "Approved"
+                                        ? "green"
+                                        : "inherit", // Default text color
+                                  }}
+                                >
+                                  {conditions?.status === "Rejected" && (
+                                    <Tooltip title={conditions?.reason}>
+                                      <img
+                                        onClick={() =>
+                                          handleDialogSubmit(
+                                            "",
+                                            "",
+                                            conditions,
+                                            ""
+                                          )
+                                        }
+                                        src={send}
+                                        alt="Logo"
+                                        style={{
+                                          width: "20px",
+                                          height: "20px",
+                                          marginRight: "1rem",
+                                        }}
+                                      />
+                                    </Tooltip>
+                                  )}{" "}
+                                  {conditions?.status}
+                                </Typography>
+                              ) : (
+                                <>
+                                  <Tooltip title="Approve">
+                                    <Button
+                                      variant="text"
+                                      sx={{
+                                        textTransform: "none",
+                                        fontSize: "16px",
+                                        color: "#31C65B",
+                                        fontWeight: "bold",
+                                        padding: "0 8px", // Reduce padding here
+                                        minWidth: "auto",
+                                        ml: 3, // Ensures the button width is only as wide as its content
+                                      }}
+                                      onClick={() =>
+                                        handleDialogSubmit(
+                                          "Approved",
+                                          "",
+                                          conditions,
+                                          ""
+                                        )
+                                      }
+                                    >
+                                      <CheckCircleOutlineIcon fontSize="medium" />
+                                    </Button>
+                                  </Tooltip>
+                                  <Tooltip title="Reject">
+                                    <Button
+                                      variant="text"
+                                      sx={{
+                                        textTransform: "none",
+                                        fontSize: "16px",
+                                        color: "#BEBEBE",
+                                        fontWeight: "bold",
+                                        padding: "0 8px", // Style adjustments as needed
+                                        minWidth: "auto", // Ensures button width is only as wide as its content
+                                      }}
+                                      onClick={() =>
+                                        handleOpenDialog(conditions)
+                                      }
+                                    >
+                                      <HighlightOffIcon />{" "}
+                                    </Button>
+                                  </Tooltip>
+                                  <Tooltip title="Send">
+                                    <img
+                                      onClick={() =>
+                                        handleDialogSubmit(
+                                          "",
+                                          "",
+                                          conditions,
+                                          ""
+                                        )
+                                      }
+                                      src={send}
+                                      alt="Logo"
+                                      style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        marginLeft: "0.6rem",
+                                        marginTop: "0.2rem",
+                                      }}
+                                    />
+                                  </Tooltip>
+                                </>
+                              )}
+                              {conditions?.reason && (
+                                <Tooltip title={conditions?.reason}>
+                                  <img
+                                    onClick={() => handleOpenDialog(conditions)}
+                                    src={warnig}
+                                    alt="Logo"
+                                    style={{
+                                      width: "20px",
+                                      height: "20px",
+                                      marginTop: "-0.4rem",
+                                      marginLeft: "1rem",
+                                    }}
+                                  />
+                                </Tooltip>
+                              )}
+                            </div>
                           </Box>
                         ))}
                     </div>

@@ -10,12 +10,13 @@
   flex-direction: column;
   margin-bottom: 20px;
   position: relative;
+  margin-top: 1px; /* Ensure there's space above for the button */
 }
 
 .condition-item .remove-btn {
   position: absolute;
   right: 0;
-  top: 0 !important;
+  top: -10px !important; /* Move the button 10px above the top of the container */
   opacity: 0; /* Button is initially invisible */
   transition: opacity 0.2s ease; /* Smooth transition for opacity change */
 }
@@ -23,6 +24,7 @@
 .condition-item:hover .remove-btn {
   opacity: 1; /* Button becomes visible on hover */
 }
+
 .link-no-underline {
   text-decoration: none;
   color: inherit;

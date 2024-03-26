@@ -25,13 +25,20 @@ import { getUserListNameID } from "@/service/api/apiMethods";
 import { useAuth } from "@/hooks/useAuth";
 import { TextareaAutosize } from "@mui/material";
 import { ContractContext } from "@/context/ContractContext";
+type FormValues = {
+  name: string;
+  content: any;
+};
 const Discussion = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    register,
     reset,
-  } = useForm<any>();
+    formState: { errors },
+  } = useForm<FormValues>({
+    mode: "onBlur",
+  });
 
   const { user } = useAuth();
 
@@ -66,7 +73,7 @@ const Discussion = () => {
   };
 
   // Handle input change to track current value
-  const handleInputChange = (event: any, newInputValue: any) => {
+  const handleInputChange = (newInputValue: any) => {
     setInputValue(newInputValue);
   };
 
@@ -219,36 +226,31 @@ const Discussion = () => {
             />
           </div>
           <Controller
-            name="name"
+            name="signatoryEmail"
             control={control}
             defaultValue=""
-            render={({ field }: any) => (
+            render={({ field }) => (
               <Autocomplete
-                sx
-                {...field}
                 freeSolo
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) =>
+                  setInputValue(newInputValue)
+                }
                 options={userList.map((user) => ({
                   label: `${user.firstName} ${user.lastName}`,
                   email: user.email,
                 }))}
-                getOptionLabel={(option: any) => option.label || ""}
-                onInputChange={handleInputChange}
-                inputValue={inputValue}
-                onChange={(_, value: any) =>
-                  handleAddSignatory(value ? value.email : "")
+                getOptionLabel={(option) => option.label || ""}
+                onChange={(_, value) =>
+                  field.onChange(value ? value.email : "")
                 }
-                renderInput={(params: any) => (
+                renderInput={(params) => (
                   <TextField
                     {...params}
                     label="Add signatory"
                     margin="normal"
                     variant="outlined"
                     size="small"
-                    onKeyPress={handleKeyPress}
-                    sx={{
-                      ".MuiInputLabel-root": { fontSize: "14px" }, // Adjusts the label font size
-                      ".MuiOutlinedInput-root": { fontSize: "14px" },
-                    }}
                   />
                 )}
               />
@@ -369,7 +371,7 @@ const Discussion = () => {
               <TextareaAutosize
                 {...field}
                 placeholder="Enter description"
-                minRows={1} // Adjust the number of rows as needed
+                minRows={1}
                 style={{
                   width: "100%",
                   fontSize: "16px",
