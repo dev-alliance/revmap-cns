@@ -535,6 +535,8 @@ const ApprovalsComp = () => {
                       mt: 2,
                     }}
                   >
+                    {" "}
+                    {index + 1} &nbsp;
                     <Box
                       sx={{
                         width: "25px !important",
@@ -613,7 +615,7 @@ const ApprovalsComp = () => {
                               fontWeight: "bold",
                               padding: "0 8px", // Reduce padding here
                               minWidth: "auto",
-                              ml: 3, // Ensures the button width is only as wide as its content
+                              ml: 5.5, // Ensures the button width is only as wide as its content
                             }}
                             onClick={() =>
                               handleDialogSubmit(
@@ -917,6 +919,7 @@ const ApprovalsComp = () => {
                       }}
                     >
                       <div style={{ display: "flex" }}>
+                        {index + 1} &nbsp;
                         <Box
                           sx={{
                             width: 25,
@@ -995,7 +998,7 @@ const ApprovalsComp = () => {
                                   fontWeight: "bold",
                                   padding: "0 8px", // Reduce padding here
                                   minWidth: "auto",
-                                  ml: 3, // Ensures the button width is only as wide as its content
+                                  ml: 5.5, // Ensures the button width is only as wide as its content
                                 }}
                                 onClick={() =>
                                   handleDialogSubmit(
@@ -1518,6 +1521,7 @@ const ApprovalsComp = () => {
                                 alignItems: "center",
                               }}
                             >
+                              {index + 1} &nbsp;
                               <Box
                                 sx={{
                                   width: 25,
@@ -1647,7 +1651,7 @@ const ApprovalsComp = () => {
                                         fontWeight: "bold",
                                         padding: "0 8px", // Reduce padding here
                                         minWidth: "auto",
-                                        ml: 3, // Ensures the button width is only as wide as its content
+                                        ml: 5.5, // Ensures the button width is only as wide as its content
                                       }}
                                       onClick={() =>
                                         handleDialogSubmit(

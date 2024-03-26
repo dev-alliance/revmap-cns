@@ -25,23 +25,16 @@ import { getUserListNameID } from "@/service/api/apiMethods";
 import { useAuth } from "@/hooks/useAuth";
 import { TextareaAutosize } from "@mui/material";
 import { ContractContext } from "@/context/ContractContext";
-type FormValues = {
-  name: string;
-  content: any;
-};
 const Discussion = () => {
   const {
     control,
     handleSubmit,
-    register,
-    reset,
     formState: { errors },
-  } = useForm<FormValues>({
-    mode: "onBlur",
-  });
+    reset,
+  } = useForm<any>();
 
   const { user } = useAuth();
-
+  const [activeSection, setActiveSection] = useState("collaborate");
   const [isLoading, setIsLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [userList, setUserList] = useState<Array<any>>([]);
@@ -73,7 +66,7 @@ const Discussion = () => {
   };
 
   // Handle input change to track current value
-  const handleInputChange = (newInputValue: any) => {
+  const handleInputChange = (event: any, newInputValue: any) => {
     setInputValue(newInputValue);
   };
 
@@ -138,43 +131,56 @@ const Discussion = () => {
         execute contract.
       </Typography>
       <Divider sx={{ mt: 1, mb: 2 }} />
-      <Tabs
-        value={tabValue}
-        onChange={handleTabChange}
-        aria-label="basic tabs example"
-        variant="fullWidth" // Make tabs stretch to fill the available space
-        sx={{
-          fontSize: "11px",
-          textDecoration: "none",
-          ".MuiTabs-flexContainer": {
-            justifyContent: "space-between", // Adjusts tabs to distribute space between them evenly
-          },
-          ".MuiTabs-indicator": {
-            height: "2px",
-          },
-        }}
+      <Box
+        sx={{ display: "flex", mb: 2, borderBottom: 1, borderColor: "divider" }}
       >
-        <Tab
-          label="+ Add Collaborator"
+        <Button
+          fullWidth
           sx={{
-            fontWeight: "bold",
-            fontSize: "11px",
-            minWidth: "0",
-            textTransform: "none",
-            whiteSpace: "nowrap",
+            textDecoration: "none",
+            borderBottom: activeSection === "collaborate" ? 2 : 0,
+            borderColor:
+              activeSection === "collaborate" ? "primary.main" : "transparent",
+            borderRadius: 0, // Remove border radius to mimic tab appearance
+            color:
+              activeSection === "collaborate"
+                ? "primary.main"
+                : "action.active",
+            fontWeight: activeSection === "collaborate" ? "bold" : "normal",
+            "&:hover": {
+              borderBottom: 2,
+              borderColor: "primary.main",
+              backgroundColor: "transparent",
+            },
           }}
-        />
-        <Tab
-          label="Message"
+          onClick={() => setActiveSection("collaborate")}
+        >
+          Collaborate
+        </Button>
+        <Button
+          fullWidth
           sx={{
-            fontWeight: "bold",
-            fontSize: "11px",
-            minWidth: "0",
-            textTransform: "none",
+            textDecoration: "none",
+            borderBottom: activeSection === "message" ? 2 : 0,
+            borderColor:
+              activeSection === "message" ? "primary.main" : "transparent",
+            borderRadius: 0,
+            color:
+              activeSection === "message" ? "primary.main" : "action.active",
+            fontWeight: activeSection === "message" ? "bold" : "normal",
+            "&:hover": {
+              borderBottom: 2,
+              borderColor: "primary.main",
+              backgroundColor: "transparent",
+            },
           }}
-        />
-      </Tabs>
-      <TabPanel value={tabValue} index={0}>
+          onClick={() => setActiveSection("message")}
+        >
+          Message
+        </Button>
+      </Box>
+
+      {activeSection === "collaborate" && (
         <>
           <div
             style={{
@@ -222,27 +228,26 @@ const Discussion = () => {
                   }}
                 />
               }
-              label="Option B"
+              label="Internal"
             />
           </div>
           <Controller
-            name="signatoryEmail"
+            name="name"
             control={control}
             defaultValue=""
-            render={({ field }) => (
+            render={({ field }: any) => (
               <Autocomplete
+                {...field}
                 freeSolo
-                inputValue={inputValue}
-                onInputChange={(event, newInputValue) =>
-                  setInputValue(newInputValue)
-                }
                 options={userList.map((user) => ({
                   label: `${user.firstName} ${user.lastName}`,
                   email: user.email,
                 }))}
-                getOptionLabel={(option) => option.label || ""}
-                onChange={(_, value) =>
-                  field.onChange(value ? value.email : "")
+                getOptionLabel={(option: any) => option.label || ""}
+                onInputChange={handleInputChange}
+                inputValue={inputValue}
+                onChange={(_, value: any) =>
+                  handleAddSignatory(value ? value.email : "")
                 }
                 renderInput={(params) => (
                   <TextField
@@ -251,6 +256,7 @@ const Discussion = () => {
                     margin="normal"
                     variant="outlined"
                     size="small"
+                    onKeyPress={handleKeyPress}
                   />
                 )}
               />
@@ -360,39 +366,42 @@ const Discussion = () => {
 
           <div />
         </>
-      </TabPanel>
-      <TabPanel value={tabValue} index={1}>
-        <Box sx={{ mb: 2, mt: 2, alignItems: "center" }}>
-          <Controller
-            name="content"
-            control={control}
-            // rules={{ required: "Tag Name is required" }}
-            render={({ field }) => (
-              <TextareaAutosize
-                {...field}
-                placeholder="Enter description"
-                minRows={1}
-                style={{
-                  width: "100%",
-                  fontSize: "16px",
-                  // color: "#9A9A9A",
-                  border: "1px solid #ced4da",
-                  borderRadius: "4px",
-                  padding: "10px",
-                }}
-              />
-            )}
-          />
-          <Button
-            sx={{ ml: 2, textTransform: "none" }}
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
-            Send
-          </Button>
+      )}
+
+      {activeSection === "message" && (
+        <Box>
+          <Box sx={{ mb: 2, mt: 2, alignItems: "center" }}>
+            <Controller
+              name="content"
+              control={control}
+              // rules={{ required: "Tag Name is required" }}
+              render={({ field }) => (
+                <TextareaAutosize
+                  {...field}
+                  placeholder="Enter description"
+                  minRows={1} // Adjust the number of rows as needed
+                  style={{
+                    width: "100%",
+                    fontSize: "16px",
+                    // color: "#9A9A9A",
+                    border: "1px solid #ced4da",
+                    borderRadius: "4px",
+                    padding: "10px",
+                  }}
+                />
+              )}
+            />
+            <Button
+              sx={{ ml: 2, textTransform: "none" }}
+              type="submit"
+              variant="contained"
+              color="primary"
+            >
+              Send
+            </Button>
+          </Box>
         </Box>
-      </TabPanel>
+      )}
     </div>
   );
 };
