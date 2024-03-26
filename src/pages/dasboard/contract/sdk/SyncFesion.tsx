@@ -649,7 +649,7 @@ function SyncFusionEditor() {
   const addTable = () => {
     console.log('adding table')
     const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.editor.insertTable(2, 2);
+    documentEditor.showDialog('Table');
   }
 
   // State for the cell fill color
@@ -1293,7 +1293,7 @@ function SyncFusionEditor() {
                 View Audit trail
               </li>
               <div
-                onClick={() => { toggleDropdown("view") }}
+                onClick={() => { toggleDropdown("view"); }}
                 className="w-full h-full  fixed inset-0 z-[-9]"
               ></div>
             </ul>
