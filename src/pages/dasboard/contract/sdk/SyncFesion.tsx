@@ -1293,7 +1293,7 @@ function SyncFusionEditor() {
                 View Audit trail
               </li>
               <div
-                onClick={() => { toggleDropdown("view"); toggleDropdown("view") }}
+                onClick={() => { toggleDropdown("view") }}
                 className="w-full h-full  fixed inset-0 z-[-9]"
               ></div>
             </ul>
