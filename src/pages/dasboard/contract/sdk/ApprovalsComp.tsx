@@ -20,6 +20,7 @@ import {
   IconButton,
   Checkbox,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { getList as getApprovalList } from "@/service/api/approval";
 import { FormControl } from "@mui/material";
 import { Select } from "@mui/material";
@@ -129,8 +130,6 @@ const ApprovalsComp = () => {
   };
 
   const handleComparisonOperatorChange = (index: any, event: any) => {
-    console.log(event); // Log the entire event
-    console.log(event.target.value);
     const updatedConditions = conditions.map((condition: any, i: any) =>
       i === index
         ? { ...condition, comparisonOperator: event.target.value }
@@ -145,7 +144,9 @@ const ApprovalsComp = () => {
     );
     setConditions(updatedConditions);
   };
-
+  const removeCondition = (index: any) => {
+    setConditions(conditions.filter((_: any, i: any) => i !== index));
+  };
   const onSubmit = (data: any) => {};
 
   console.log(conditions, "condtion");
@@ -179,11 +180,6 @@ const ApprovalsComp = () => {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-  };
-  const handleChange = (event: any) => {
-    const newValue = event.target.value;
-    setSelectedApproval(newValue); // Update the selected approval state
-    // Call the custom function with the new value
   };
 
   const handleAlertOpenDialog = () => {
@@ -226,10 +222,21 @@ const ApprovalsComp = () => {
       signatories.filter((signatory: any) => signatory !== signatoryToRemove)
     );
   };
+  const handleChange = (event: any) => {
+    if (
+      (userApproval.length > 0 && showSignatories === "topbar") ||
+      conditions.some((condition: any) => condition.userSelection?.length > 0)
+    ) {
+      handleAlertOpenDialog();
+    } else {
+      const newValue = event.target.value;
+      setSelectedApproval(newValue); // Update the selected approval state
+      // Call the custom function with the new value
+    }
+  };
   const handleCompanyApprovalClick = () => {
     if (
-      userApproval.length > 0 &&
-      showSignatories === "topbar" &&
+      (userApproval.length > 0 && showSignatories === "topbar") ||
       conditions.some((condition: any) => condition.userSelection?.length > 0)
     ) {
       handleAlertOpenDialog();
@@ -241,8 +248,7 @@ const ApprovalsComp = () => {
 
   const handleConditionalApprovalClick = () => {
     if (
-      approvers.length > 0 &&
-      showSignatories === "topbar" &&
+      (approvers.length > 0 && showSignatories === "topbar") ||
       conditions.some((condition: any) => condition.userSelection?.length > 0)
     ) {
       handleAlertOpenDialog();
@@ -596,43 +602,47 @@ const ApprovalsComp = () => {
                       </Typography>
                     ) : (
                       <>
-                        <Button
-                          variant="text"
-                          sx={{
-                            textTransform: "none",
-                            fontSize: "16px",
-                            color: "#31C65B",
-                            fontWeight: "bold",
-                            padding: "0 8px", // Reduce padding here
-                            minWidth: "auto",
-                            ml: 3, // Ensures the button width is only as wide as its content
-                          }}
-                          onClick={() =>
-                            handleDialogSubmit(
-                              "Approved",
-                              "",
-                              companyApproval,
-                              ""
-                            )
-                          }
-                        >
-                          <CheckCircleOutlineIcon fontSize="medium" />
-                        </Button>
-                        <Button
-                          variant="text"
-                          sx={{
-                            textTransform: "none",
-                            fontSize: "16px",
-                            color: "#BEBEBE",
-                            fontWeight: "bold",
-                            padding: "0 8px", // Style adjustments as needed
-                            minWidth: "auto", // Ensures button width is only as wide as its content
-                          }}
-                          onClick={() => handleOpenDialog(companyApproval)}
-                        >
-                          <HighlightOffIcon />{" "}
-                        </Button>
-                        <Tooltip title={companyApproval?.reason}>
+                        <Tooltip title="Approved">
+                          <Button
+                            variant="text"
+                            sx={{
+                              textTransform: "none",
+                              fontSize: "16px",
+                              color: "#31C65B",
+                              fontWeight: "bold",
+                              padding: "0 8px", // Reduce padding here
+                              minWidth: "auto",
+                              ml: 3, // Ensures the button width is only as wide as its content
+                            }}
+                            onClick={() =>
+                              handleDialogSubmit(
+                                "Approved",
+                                "",
+                                companyApproval,
+                                ""
+                              )
+                            }
+                          >
+                            <CheckCircleOutlineIcon fontSize="medium" />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Rejected">
+                          <Button
+                            variant="text"
+                            sx={{
+                              textTransform: "none",
+                              fontSize: "16px",
+                              color: "#BEBEBE",
+                              fontWeight: "bold",
+                              padding: "0 8px", // Style adjustments as needed
+                              minWidth: "auto", // Ensures button width is only as wide as its content
+                            }}
+                            onClick={() => handleOpenDialog(companyApproval)}
+                          >
+                            <HighlightOffIcon />{" "}
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Send">
                           <img
                             onClick={() =>
                               handleDialogSubmit("", "", companyApproval, "")
@@ -766,9 +776,9 @@ const ApprovalsComp = () => {
                             setSignatories([]),
                               setSelectedApprovalId(""),
                               setShowSignatories(""),
-                              setUserApproval([]);
+                              setUserApproval("");
                             setSelectedUserApproval("");
-                            setSelectedUserApproval("");
+                            setSelectedApproval("");
                             setShowCompanySelect(false);
                             setShowConditionalSelect(false);
                           }}
@@ -940,35 +950,39 @@ const ApprovalsComp = () => {
                       </div>
                       <div style={{ display: "flex", marginTop: "5px" }}>
                         {" "}
-                        <Button
-                          variant="text"
-                          sx={{
-                            textTransform: "none",
-                            fontSize: "16px",
-                            color: "#31C65B",
-                            fontWeight: "bold",
-                            padding: "0 8px", // Reduce padding here
-                            minWidth: "auto",
-                            ml: 3, // Ensures the button width is only as wide as its content
-                          }}
-                          onClick={() => handleRemoveSignatory(signatory)}
-                        >
-                          <CheckCircleOutlineIcon />
-                        </Button>
-                        <Button
-                          variant="text"
-                          sx={{
-                            textTransform: "none",
-                            fontSize: "16px",
-                            color: "#BEBEBE",
-                            fontWeight: "bold",
-                            padding: "0 8px", // Reduce padding here
-                            minWidth: "auto", // Ensures the button width is only as wide as its content
-                          }}
-                          onClick={() => handleRemoveSignatory(signatory)}
-                        >
-                          <HighlightOffIcon />
-                        </Button>
+                        <Tooltip title="Approved">
+                          <Button
+                            variant="text"
+                            sx={{
+                              textTransform: "none",
+                              fontSize: "16px",
+                              color: "#31C65B",
+                              fontWeight: "bold",
+                              padding: "0 8px", // Reduce padding here
+                              minWidth: "auto",
+                              ml: 3, // Ensures the button width is only as wide as its content
+                            }}
+                            onClick={() => handleRemoveSignatory(signatory)}
+                          >
+                            <CheckCircleOutlineIcon />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Rejected">
+                          <Button
+                            variant="text"
+                            sx={{
+                              textTransform: "none",
+                              fontSize: "16px",
+                              color: "#BEBEBE",
+                              fontWeight: "bold",
+                              padding: "0 8px", // Reduce padding here
+                              minWidth: "auto", // Ensures the button width is only as wide as its content
+                            }}
+                            onClick={() => handleRemoveSignatory(signatory)}
+                          >
+                            <HighlightOffIcon />
+                          </Button>
+                        </Tooltip>
                       </div>
                     </Box>
                   ))}
@@ -993,7 +1007,7 @@ const ApprovalsComp = () => {
                       sx={{ textTransform: "none" }}
                       onClick={() =>
                         setShowSignatories((prev: any) =>
-                          prev === "view" ? "topbar" : "view"
+                          prev === "view" ? "view" : "view"
                         )
                       }
                     >
@@ -1017,8 +1031,8 @@ const ApprovalsComp = () => {
                         variant="text"
                         sx={{ textTransform: "none" }}
                         onClick={() => {
-                          setSignatories([]),
-                            setSeletedFeild(""),
+                          setSignatories([]), setSelectedApproval("");
+                          setSeletedFeild(""),
                             setShowSignatories(""),
                             setConditions([]);
                           setShowCompanySelect(false);
@@ -1034,8 +1048,7 @@ const ApprovalsComp = () => {
                 {!(
                   conditions.some(
                     (condition: any) => condition.userSelection?.length > 0
-                  ) &&
-                  (showSignatories === "topbar" || showSignatories === "view")
+                  ) && showSignatories === "topbar"
                 ) && (
                   <>
                     <div
@@ -1052,7 +1065,8 @@ const ApprovalsComp = () => {
                           display: "flex",
                           alignItems: "center",
                           marginRight: "8px",
-                          color: "#155BE5",
+                          color:
+                            showSignatories === "view" ? "gray" : "#155BE5",
                           marginBottom: "0.5rem",
                           borderRadius: "4px",
                           fontSize: "12.5px",
@@ -1062,6 +1076,7 @@ const ApprovalsComp = () => {
                       </Box>
                       <FormControl fullWidth size="small" sx={{ mt: 0, mb: 1 }}>
                         <Select
+                          disabled={showSignatories === "view"}
                           style={{ fontSize: "12.5px" }}
                           value={selectedFeild}
                           onChange={(event: any) =>
@@ -1077,7 +1092,7 @@ const ApprovalsComp = () => {
                                   fontSize: "12.5px",
                                 }}
                               >
-                                Select field
+                                Select custom field
                               </em>
                             ) : (
                               (() => {
@@ -1114,15 +1129,15 @@ const ApprovalsComp = () => {
                       </FormControl>
                     </div>
                     {conditions.map((condition: any, index: any) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          marginBottom: "15px",
-                          // marginTop: "1rem",
-                        }}
-                      >
+                      <div key={index} className="condition-item">
+                        <IconButton
+                          onClick={() => removeCondition(index)}
+                          size="small"
+                          className="remove-btn" // Apply the CSS class
+                        >
+                          <CloseIcon />
+                        </IconButton>
+
                         {type && (
                           <>
                             <Box
@@ -1139,6 +1154,7 @@ const ApprovalsComp = () => {
                                   sx={{ width: "100%" }}
                                 >
                                   <Select
+                                    disabled={showSignatories === "view"}
                                     style={{ fontSize: "11.5px" }}
                                     value={condition.comparisonOperator}
                                     onChange={(event) =>
@@ -1182,6 +1198,7 @@ const ApprovalsComp = () => {
                                   sx={{ width: "100%" }}
                                 >
                                   <Select
+                                    disabled={showSignatories === "view"}
                                     style={{ fontSize: "11.5px" }}
                                     value={condition.comparisonOperator}
                                     onChange={(event) =>
@@ -1219,6 +1236,7 @@ const ApprovalsComp = () => {
                               )}
 
                               <TextField
+                                disabled={showSignatories === "view"}
                                 placeholder="Value"
                                 value={condition.value}
                                 size="small"
@@ -1278,6 +1296,7 @@ const ApprovalsComp = () => {
                         {viewUser && (
                           <>
                             <Autocomplete
+                              disabled={showSignatories === "view"}
                               size="small"
                               options={userList}
                               getOptionLabel={(option) =>
@@ -1326,6 +1345,7 @@ const ApprovalsComp = () => {
                       color="primary"
                       sx={{ textTransform: "none" }}
                       onClick={addCondition}
+                      disabled={showSignatories === "view"}
                     >
                       + Add Condition
                     </Button>
@@ -1337,7 +1357,7 @@ const ApprovalsComp = () => {
                 ) && (
                   <>
                     <div>
-                      {showSignatories === "view" &&
+                      {showSignatories === "topbar" &&
                         conditions?.map((conditions: any, index: any) => (
                           <Box
                             key={index}
@@ -1389,45 +1409,49 @@ const ApprovalsComp = () => {
                               </Typography>
                             </div>
                             <Box sx={{ display: "flex", mt: 1 }}>
-                              <Button
-                                variant="text"
-                                sx={{
-                                  textTransform: "none",
-                                  fontSize: "16px",
-                                  color: "#31C65B",
-                                  fontWeight: "bold",
-                                  padding: "0 8px",
-                                  minWidth: "auto",
-                                  "&:first-of-type": {
-                                    ml: 2.5, // Only applies margin-left to the first button
-                                  },
-                                }}
-                                onClick={() =>
-                                  handleRemoveSignatory(
-                                    conditions?.userSelection
-                                  )
-                                } // Assuming true signifies approval
-                              >
-                                <CheckCircleOutlineIcon />
-                              </Button>
-                              <Button
-                                variant="text"
-                                sx={{
-                                  textTransform: "none",
-                                  fontSize: "16px",
-                                  color: "#BEBEBE",
-                                  fontWeight: "bold",
-                                  padding: "0 8px",
-                                  minWidth: "auto",
-                                }}
-                                onClick={() =>
-                                  handleRemoveSignatory(
-                                    conditions?.userSelection
-                                  )
-                                } // Assuming false signifies removal
-                              >
-                                <HighlightOffIcon />
-                              </Button>
+                              <Tooltip title="Approved">
+                                <Button
+                                  variant="text"
+                                  sx={{
+                                    textTransform: "none",
+                                    fontSize: "16px",
+                                    color: "#31C65B",
+                                    fontWeight: "bold",
+                                    padding: "0 8px",
+                                    minWidth: "auto",
+                                    "&:first-of-type": {
+                                      ml: 2.5, // Only applies margin-left to the first button
+                                    },
+                                  }}
+                                  onClick={() =>
+                                    handleRemoveSignatory(
+                                      conditions?.userSelection
+                                    )
+                                  } // Assuming true signifies approval
+                                >
+                                  <CheckCircleOutlineIcon />
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Rejected">
+                                <Button
+                                  variant="text"
+                                  sx={{
+                                    textTransform: "none",
+                                    fontSize: "16px",
+                                    color: "#BEBEBE",
+                                    fontWeight: "bold",
+                                    padding: "0 8px",
+                                    minWidth: "auto",
+                                  }}
+                                  onClick={() =>
+                                    handleRemoveSignatory(
+                                      conditions?.userSelection
+                                    )
+                                  } // Assuming false signifies removal
+                                >
+                                  <HighlightOffIcon />
+                                </Button>
+                              </Tooltip>
                             </Box>
                           </Box>
                         ))}
