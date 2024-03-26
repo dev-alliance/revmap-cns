@@ -1111,6 +1111,19 @@ function SyncFusionEditor() {
 
   return (
     <div>
+
+      <div className="flex justify-between items-center gap-x-9 max-w-[720px] py-3 ">
+
+        <p className="text-[12px] font-regular ">Approvals: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
+
+        <p className="text-[12px] font-regular ">Signatures: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
+
+        <p className="text-[12px] font-regular ">Collaborators: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
+
+        <p className="text-[12px] font-regular ">Custom Fields: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
+
+      </div>
+
       {/* <input
         type="file"
         id="file_upload"
@@ -1166,7 +1179,7 @@ function SyncFusionEditor() {
                 onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
                 className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
               >
-                <img src={copyIcon} className="h-[18px] w-[20px]" alt="" />
+                <img src={copyIcon} className="h-[18px] w-[px]" alt="" />
                 Copy as a template
               </li>
 
