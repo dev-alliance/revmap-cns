@@ -44,7 +44,7 @@ import LifeSycle from "@/pages/dasboard/contract/sdk/LifeSycle";
 import ShareIcon from "@mui/icons-material/Share";
 import ShareComp from "@/pages/dasboard/contract/sdk/ShareComp";
 import ChatIcon from "@mui/icons-material/Chat";
-import Discussion from "@/pages/dasboard/contract/sdk/Discussion";
+import Collaburater from "@/pages/dasboard/contract/sdk/Collaburater";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import DrawIcon from "@mui/icons-material/Draw";
 import {
@@ -305,7 +305,7 @@ const MyComponent: React.FC = () => {
           </svg>
         </Tooltip>
       ),
-      content: <Discussion />,
+      content: <Collaburater />,
     },
     approval: {
       icon: (
@@ -559,7 +559,7 @@ const MyComponent: React.FC = () => {
           </svg>
         </Tooltip>
       ),
-      content: <Discussion />,
+      content: <Collaburater />,
     },
 
     // Add more modules as needed
