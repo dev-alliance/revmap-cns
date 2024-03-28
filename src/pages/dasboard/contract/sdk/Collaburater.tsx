@@ -36,21 +36,23 @@ const Discussion = () => {
   } = useForm<any>();
 
   const { user } = useAuth();
-  const [activeSection, setActiveSection] = useState("collaborate");
+  const {
+    activeSection,
+    setActiveSection,
+    showButtons,
+    setShowButtons,
+    collaborater,
+    setCollaborater,
+  } = useContext(ContractContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [showButtons, setShowButtons] = useState(true);
+  const [inputValue, setInputValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState(null);
+
   const [userList, setUserList] = useState<Array<any>>([]);
-  const [member, setMamber] = useState<Array<any>>([]);
 
-  const { signatories, setSignatories } = useContext(ContractContext);
   const [checked, setChecked] = React.useState(false);
-
-  const [selectedData, setSelectedData] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
+  const [ClickData, setClickData] = useState("");
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -59,22 +61,29 @@ const Discussion = () => {
     setChecked(event.target.checked);
   };
 
-  const [inputValue, setInputValue] = useState(""); // Track the input value
-
-  // Function to handle adding new signatory
+  // Adjust handleAddSignatory to also update the selectedValue
   const handleAddSignatory = (newSignatoryEmail: string) => {
-    if (newSignatoryEmail && !signatories.includes(newSignatoryEmail)) {
-      setSignatories((prev: any) => [...prev, newSignatoryEmail]);
-      reset(); // Assuming reset is a function to clear the form
-      setInputValue(""); // Assuming you manage the input value for Autocomplete
+    console.log(newSignatoryEmail, "caca");
+
+    if (newSignatoryEmail && !collaborater.includes(newSignatoryEmail)) {
+      setCollaborater((prev: any) => [...prev, { email: newSignatoryEmail }]);
+      reset(); // Resetting form
+      setInputValue(""); // Clearing the input value for Autocomplete
+      setSelectedValue(null); // Resetting selected value
     }
   };
 
   // Function to remove a signatory from the list
   const handleRemoveSignatory = (signatoryToRemove: any) => {
-    setSignatories(
-      signatories.filter((signatory: any) => signatory !== signatoryToRemove)
+    setCollaborater(
+      collaborater.filter((signatory: any) => signatory !== signatoryToRemove)
     );
+  };
+
+  const handleShareDilog = (signatory: any) => {
+    setOpenDialog(true);
+    const user = userList.find((user) => user.email === signatory);
+    setClickData(user);
   };
 
   // Handle input change to track current value
@@ -102,12 +111,29 @@ const Discussion = () => {
       setIsLoading(false);
     }
   };
+  const handleRemove = (emailToRemove: any) => {
+    // Update collaboraters by removing the 'permission' property from the specified collaborator
+    const updatedCollaboraters = collaborater.map((colb: any) => {
+      if (colb.email === emailToRemove) {
+        // Destructure to separate 'permission' and the rest of the properties
+        const { permission, ...rest } = colb;
+        // Return the rest, effectively omitting 'permission'
+        return rest;
+      }
+      // Return unchanged if not the one being removed
+      return colb;
+    });
+
+    // Update your state here with updatedCollaboraters
+    // Assuming you're managing the collaborater array in a state
+    setCollaborater(updatedCollaboraters);
+  };
 
   useEffect(() => {
     if (user?._id) listData();
   }, [user?._id]);
 
-  const bubbleColors = ["#FEC85E", "#BC3D89", "#725FE7,#00A7B1"]; // Yellow, Green, Blue
+  const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
@@ -150,7 +176,9 @@ const Discussion = () => {
               },
             }}
             onClick={() => {
-              setActiveSection("collaborate"), setShowButtons(true);
+              setActiveSection("collaborate"),
+                setShowButtons((prevShowButtons: any) => !prevShowButtons);
+              setSelectedValue(null), setInputValue("");
             }}
           >
             + Add Collaborator
@@ -184,57 +212,91 @@ const Discussion = () => {
           <>
             {showButtons && (
               <>
-                <Controller
-                  name="name"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }: any) => (
-                    <Autocomplete
-                      {...field}
-                      freeSolo
-                      options={userList.map((user) => ({
-                        label: `${user.firstName} ${user.lastName}`,
-                        email: user.email,
-                      }))}
-                      getOptionLabel={(option: any) => option.label || ""}
-                      onInputChange={handleInputChange}
-                      inputValue={inputValue}
-                      onChange={(_, value: any) =>
-                        handleAddSignatory(value ? value.email : "")
-                      }
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Search by name or add email"
-                          margin="normal"
-                          variant="outlined"
-                          size="small"
-                          onKeyPress={handleKeyPress}
-                          sx={{
-                            ".MuiInputLabel-root": { fontSize: "14px" }, // Adjusts the label font size
-                            ".MuiOutlinedInput-root": { fontSize: "14px" },
-                          }}
-                        />
-                      )}
+                <Autocomplete
+                  freeSolo
+                  options={userList.map((user) => ({
+                    label: `${user.firstName} ${user.lastName}`,
+                    email: user.email,
+                  }))}
+                  getOptionLabel={(option: any) => option.label || ""}
+                  onInputChange={handleInputChange}
+                  inputValue={inputValue}
+                  value={selectedValue}
+                  onChange={(_, value: any) => {
+                    if (value) {
+                      handleAddSignatory(value.email);
+                      setSelectedValue(value); // Update selectedValue when a new value is selected
+                    } else {
+                      setSelectedValue(null); // Reset if no value is selected
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Search by name or add email"
+                      margin="normal"
+                      variant="outlined"
+                      size="small"
+                      onKeyPress={handleKeyPress}
+                      sx={{
+                        ".MuiInputLabel-root": { fontSize: "14px" },
+                        ".MuiOutlinedInput-root": { fontSize: "14px" },
+                      }}
                     />
                   )}
                 />
-                <div style={{ flex: 1, textAlign: "right", marginTop: "-8px" }}>
+                <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
                   <Button
-                    variant="text"
-                    color="primary"
-                    disabled={!inputValue}
-                    sx={{ textTransform: "none", fontSize: "11px" }}
-                    onClick={() => handleAddSignatory(inputValue)}
+                    variant="contained"
+                    color="inherit"
+                    sx={{
+                      mr: "20px",
+                      textTransform: "none",
+                      backgroundColor: "#DCDCDC",
+                      "&:hover": {
+                        backgroundColor: "#757575",
+                      },
+                      color: "white",
+                      padding: "2px 5px !important",
+                      height: "25px !important",
+                      fontSize: "0.675rem",
+                    }}
+                    onClick={() => {
+                      setShowButtons(false);
+                    }}
                   >
-                    Add Collaborater
+                    Cancel
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    color="inherit"
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#62BD6B",
+                      "&:hover": {
+                        backgroundColor: "#62BD6d",
+                      },
+                      color: "white",
+                      padding: "2px 5px !important",
+                      height: "25px !important",
+                      fontSize: "0.675rem",
+                    }}
+                    onClick={() => {
+                      if (!selectedValue && inputValue.trim() !== "") {
+                        handleAddSignatory(inputValue);
+                      }
+                      setShowButtons(false);
+                    }}
+                  >
+                    Save
                   </Button>
                 </div>
               </>
             )}
 
-            <div style={{ flex: 1, textAlign: "right" }}>
-              {signatories.length > 0 && showButtons && (
+            {/* <div style={{ flex: 1, textAlign: "right" }}>
+              {collaborater.length > 0 && showButtons && (
                 <div
                   style={{
                     display: "flex",
@@ -259,7 +321,7 @@ const Discussion = () => {
                       fontSize: "0.675rem",
                     }}
                     onClick={() => {
-                      setSignatories([]), setShowButtons(false);
+                      setCollaborater([]), setShowButtons(false);
                     }}
                   >
                     Cancel
@@ -285,109 +347,122 @@ const Discussion = () => {
                   </Button>
                 </div>
               )}
-            </div>
-            {/* {showButtons && */}
-            {signatories?.map((signatory: any, index: any) => {
-              // Check if the signatory's email is in the userList
-              const isInternal = userList.some(
-                (user) => user.email === signatory
-              );
+            </div> */}
+            {!showButtons &&
+              collaborater?.map((colb: any, index: any) => {
+                // Check if the colb's email is in the userList
 
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    mb: 1,
-                    mt: 1,
-                  }}
-                >
-                  <div
-                    style={{
+                const isInternal = userList.some(
+                  (user) => user.email === colb?.email
+                );
+
+                return (
+                  <Box
+                    key={index}
+                    sx={{
                       display: "flex",
-                      alignItems: "center",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      mb: 1,
+                      mt: 1,
                     }}
                   >
-                    <Box
-                      sx={{
-                        width: 25,
-                        height: 25,
+                    <div
+                      style={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        backgroundColor:
-                          bubbleColors[index % bubbleColors.length],
-                        color: "#FFFFFF",
-                        marginRight: 1,
                       }}
                     >
-                      <Typography sx={{ fontSize: "14px" }}>
-                        {signatory?.charAt(0).toUpperCase()}
+                      <Box
+                        sx={{
+                          width: 25,
+                          height: 25,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "50%",
+                          backgroundColor:
+                            bubbleColors[index % bubbleColors.length],
+                          color: "#FFFFFF",
+                          marginRight: 1,
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "14px" }}>
+                          {colb?.email?.charAt(0).toUpperCase()}
+                        </Typography>
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          width: "160px",
+                          // overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {colb?.email}
                       </Typography>
+                    </div>
+                    <Box sx={{ display: "flex", mt: 1 }}>
+                      <Button
+                        variant="contained"
+                        color="inherit"
+                        sx={{
+                          textTransform: "none",
+                          backgroundColor: "#DCDCDC",
+                          "&:hover": {
+                            backgroundColor: "#757575",
+                          },
+                          "&:first-of-type": {
+                            ml: 4.5, // Only applies margin-left to the first button
+                          },
+                          color: "white",
+                          padding: "2px 5px !important",
+                          height: "25px !important",
+                          fontSize: "0.675rem",
+                        }}
+                      >
+                        {isInternal ? "Internal" : "External"}
+                      </Button>
+                      <IconButton
+                        aria-label="delete" // Providing an accessible label is important for assistive technologies
+                        color="error"
+                        // size="small" // Makes the button smaller; options are "small", "medium" (default), and "large"
+                        onClick={() => handleRemoveSignatory(colb?.email)}
+                        sx={{
+                          mt: -1,
+                          ml: 1,
+                        }}
+                      >
+                        <DeleteIcon /> {/* Adjust the icon size if needed */}
+                      </IconButton>
                     </Box>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        width: "160px",
-                        // overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        fontSize: "15px",
-                      }}
-                    >
-                      {signatory}
-                    </Typography>
-                  </div>
-                  <Box sx={{ display: "flex", mt: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="inherit"
-                      sx={{
-                        textTransform: "none",
-                        backgroundColor: "#DCDCDC",
-                        "&:hover": {
-                          backgroundColor: "#757575",
-                        },
-                        "&:first-of-type": {
-                          ml: 4.5, // Only applies margin-left to the first button
-                        },
-                        color: "white",
-                        padding: "2px 5px !important",
-                        height: "25px !important",
-                        fontSize: "0.675rem",
-                      }}
-                    >
-                      {isInternal ? "Internal" : "External"}
-                    </Button>
-                    <IconButton
-                      aria-label="delete" // Providing an accessible label is important for assistive technologies
-                      color="error"
-                      // size="small" // Makes the button smaller; options are "small", "medium" (default), and "large"
-                      onClick={() => handleRemoveSignatory(signatory)}
-                      sx={{
-                        mt: -1,
-                        ml: 1,
-                      }}
-                    >
-                      <DeleteIcon /> {/* Adjust the icon size if needed */}
-                    </IconButton>
+                    <Box sx={{ display: "flex", mt: 1 }}>
+                      <Button
+                        variant="text"
+                        color="primary"
+                        sx={{ textTransform: "none", whiteSpace: "nowrap" }}
+                        onClick={() => handleShareDilog(colb?.email)}
+                      >
+                        {colb.permission ? "Document Shared" : "Share Document"}
+                      </Button>
+                      {colb.permission && (
+                        <Button
+                          variant="text"
+                          color="error"
+                          sx={{ textTransform: "none", whiteSpace: "nowrap" }}
+                          onClick={() => handleRemove(colb?.email)}
+                        >
+                          Remove Access
+                          {/* {colb.permission ? "Document Shared" : "Share Document"} */}
+                        </Button>
+                      )}
+                    </Box>
                   </Box>
-                </Box>
-              );
-            })}
-            {!showButtons && (
-              <Button
-                variant="text"
-                color="primary"
-                sx={{ textTransform: "none" }}
-                onClick={() => setOpenDialog(true)}
-              >
-                Share Document
-              </Button>
-            )}
+                );
+              })}
+
             <div />
           </>
         )}
@@ -475,7 +550,11 @@ const Discussion = () => {
           </Box>
         )}
       </div>
-      <CollaburaterDilog open={openDialog} onClose={handleCloseDialog} />
+      <CollaburaterDilog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        ClickData={ClickData}
+      />
       {/* <CollaburaterDilog
         // onButtonClick={handleNextStep}
         onClose={handleCloseDialog}

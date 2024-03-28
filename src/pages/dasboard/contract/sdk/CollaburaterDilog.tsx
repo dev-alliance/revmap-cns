@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import DialogActions from "@mui/material/DialogActions";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -28,21 +28,58 @@ import { getBranchByid, getUserId } from "@/service/api/apiMethods";
 import CloseIcon from "@mui/icons-material/Close";
 import logo from "@/assets/logo.jpg";
 import CollaburaterSharedDilog from "@/pages/dasboard/contract/sdk/CollaburaterSharedDilog ";
+import { ContractContext } from "@/context/ContractContext";
 
 interface DetailDialogProps {
   open: boolean;
-
+  ClickData: any;
   onClose: () => void;
 }
 
 const CollaburaterDilog: React.FC<DetailDialogProps> = ({
   open,
-  // id,
+  ClickData,
   onClose,
 }) => {
+  const { collaborater, setCollaborater } = useContext(ContractContext);
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   const [openDialog, setOpenDialog] = useState(false);
+  const [selectedPermission, setSelectedPermission] = useState("");
+
+  useEffect(() => {
+    // Reset selectedPermission when dialog opens or the ClickData changes
+    console.log(ClickData, "click");
+
+    const index = collaborater.findIndex(
+      (user: any) =>
+        user?.email?.trim().toLowerCase() ===
+        ClickData?.email?.trim().toLowerCase()
+    );
+    console.log(index, "ff");
+    if (index !== -1) {
+      setSelectedPermission(collaborater[index].permission || ""); // Assume each collaborator has a `permission` field
+    }
+  }, [ClickData, collaborater, open]);
+
+  const handlePermissionChange = (event: any) => {
+    const newPermission = event.target.value as string; // Assuming value is always a string
+    setSelectedPermission(newPermission);
+
+    // Update the collaborator's permission in the context
+    setCollaborater((prevCollaborater: any[]) => {
+      return prevCollaborater.map((user) => {
+        console.log(ClickData?.email);
+
+        if (user.email === ClickData?.email) {
+          return { ...user, permission: newPermission };
+        }
+        return user;
+      });
+    });
+  };
+  console.log(collaborater, "collaborater");
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -50,6 +87,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
     setOpenDialog(true);
     onClose();
   };
+
   return (
     <>
       <Dialog
@@ -115,7 +153,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                   }}
                 >
                   <Typography sx={{ fontSize: "14px" }}>
-                    {"name"?.charAt(0).toUpperCase()}
+                    {ClickData?.email?.charAt(0).toUpperCase()}
                   </Typography>
                 </Box>
                 <div>
@@ -128,7 +166,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                       fontSize: "16px",
                     }}
                   >
-                    {"name"}
+                    {ClickData?.firstName}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -139,14 +177,16 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                       fontSize: "16px",
                     }}
                   >
-                    {"name"}
+                    {ClickData?.email}
                   </Typography>
                 </div>
               </div>
               <div style={{ float: "right" }}>
                 <Select
                   size="small"
-                  labelId="status-label"
+                  labelId="permession-label"
+                  value={selectedPermission}
+                  onChange={handlePermissionChange}
                   displayEmpty
                   renderValue={(value: any) => {
                     if (value === "") {
@@ -158,15 +198,13 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                             fontSize: "15.5px",
                           }}
                         >
-                          {" "}
-                          Choose a status
-                        </em> // Placeholder text with custom color
+                          Choose a permission
+                        </em>
                       );
                     }
                     return value;
                   }}
                 >
-                  {/* Placeholder */}
                   <MenuItem value="Can view, edit, and comment">
                     Can view, edit, and comment
                   </MenuItem>

@@ -80,6 +80,12 @@ interface ContractContextProps {
   setType: Dispatch<SetStateAction<any>>;
   viewUser: any | null;
   setViewUser: Dispatch<SetStateAction<any>>;
+  collaborater: any | null;
+  setCollaborater: Dispatch<SetStateAction<any>>;
+  showButtons: any | null;
+  setShowButtons: Dispatch<SetStateAction<any>>;
+  activeSection: any | null;
+  setActiveSection: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -122,6 +128,12 @@ export const ContractContext = createContext<ContractContextProps>({
   setType: () => {},
   viewUser: {},
   setViewUser: () => {},
+  collaborater: {},
+  setCollaborater: () => {},
+  showButtons: {},
+  setShowButtons: () => {},
+  activeSection: {},
+  setActiveSection: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -129,6 +141,9 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
   const [signatories, setSignatories] = useState<string[]>([]);
+  const [collaborater, setCollaborater] = useState<string[]>([]);
+  const [activeSection, setActiveSection] = useState("");
+  const [showButtons, setShowButtons] = useState(true);
   const [openDocoment, setOpenDocoment] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
@@ -180,7 +195,6 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedContractData) {
       setContract(JSON.parse(storedContractData));
     }
-
     const storedContractStatus = localStorage.getItem("contractStatus");
     if (storedContractStatus) {
       setContractStatus(JSON.parse(storedContractStatus));
@@ -262,6 +276,14 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedtype) {
       setSeletedFeild(JSON.parse(storedtype));
     }
+    const storedapproval = localStorage.getItem("approval");
+    if (storedapproval) {
+      setUserApproval(JSON.parse(storedapproval));
+    }
+    const storedShowbutton = localStorage.getItem("showButtons");
+    if (storedShowbutton) {
+      setShowButtons(JSON.parse(storedShowbutton));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -312,6 +334,12 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         type,
         viewUser,
         setViewUser,
+        collaborater,
+        setCollaborater,
+        showButtons,
+        setShowButtons,
+        setActiveSection,
+        activeSection,
       }}
     >
       {children}
