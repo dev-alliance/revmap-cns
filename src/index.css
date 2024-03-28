@@ -111,8 +111,28 @@
   margin-top: -10px !important;
 }
 
-/* breadcrumbs for editor page  */
+.e-de-ctn {
+  background-color: #fff !important;
+}
 
+.e-de-status-bar {
+  background-color: #fff;
+}
+
+.e-de-statusbar-pageweb {
+  display: none !important;
+}
+
+#e-dropdown-btn_16 {
+  display: none !important;
+}
+
+
+
+
+
+
+/* breadcrumbs for editor page  */
 :root {
   --blue-gray: #34495e;
   --blue-gray-darken: #2c3e50;
@@ -146,11 +166,12 @@
   background: var(--blue);
   text-decoration: none;
   position: relative;
-  height: 31px;
-  line-height: 34px;
+  height: 22px;
+  line-height: 22px;
   padding: 0 10px 0 5px;
   text-align: center;
   margin-right: 23px;
+  font-size: 12px;
 }
 
 #breadcrumb li:nth-child(even) a {
@@ -190,13 +211,14 @@
   position: absolute;
   top: 0;
   border: 0 solid var(--blue);
-  border-width: 16px 10px;
+  border-width: 11px 10px;
   width: 0;
   height: 0;
+
 }
 
 #breadcrumb li a:before {
-  left: -20px;
+  left: -18px;
   border-left-color: transparent;
 }
 

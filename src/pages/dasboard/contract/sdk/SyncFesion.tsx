@@ -1024,9 +1024,13 @@ function SyncFusionEditor() {
   const addComment = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
 
-    const selectedText = documentEditor.selection.text;
-    documentEditor.editor.insertComment(selectedText);
-
+    // Ensure there's a selection
+    if (documentEditor.selection && !documentEditor.selection.isEmpty) {
+      // Add comment to the selected text
+      documentEditor.editor.insertComment('Add your comment here');
+    } else {
+      alert('Please select a text to add comment.');
+    }
   };
 
   const toggleTrackChanges = () => {
@@ -1111,7 +1115,7 @@ function SyncFusionEditor() {
 
   return (
     <div>
-      <ul className="my-3" id="breadcrumb" >
+      <ul className="mt-2" id="breadcrumb" >
         {/* <li><a href="#"><span className="icon icon-home"> </span></a></li> */}
         <li><a href="#"><span className="icon icon-beaker"> </span> Draft</a></li>
         <li><a href="#"><span className="icon icon-double-angle-right"></span> Review</a></li>
@@ -1120,7 +1124,7 @@ function SyncFusionEditor() {
         <li><a href="#"><span className="icon icon-arrow-down"> </span> Active</a></li>
 
       </ul>
-      <div className="flex justify-between items-center gap-x-9 max-w-[720px] py-3 ">
+      <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 ">
 
         <p className="text-[12px] font-regular ">Approvals: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
 
@@ -1245,7 +1249,7 @@ function SyncFusionEditor() {
                 onClick={() => { addComment(); toggleDropdown("view") }}
               >
                 <img src={commentIcon} className="h-4 w-4" alt="" />
-                Add comment
+                View message
               </li>
 
               {/* <li
@@ -1824,7 +1828,7 @@ function SyncFusionEditor() {
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
-        height="70vh"
+        height="600px"
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
