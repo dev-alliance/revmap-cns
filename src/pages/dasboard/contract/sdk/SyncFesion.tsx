@@ -1111,7 +1111,15 @@ function SyncFusionEditor() {
 
   return (
     <div>
+      <ul className="my-3" id="breadcrumb" >
+        {/* <li><a href="#"><span className="icon icon-home"> </span></a></li> */}
+        <li><a href="#"><span className="icon icon-beaker"> </span> Draft</a></li>
+        <li><a href="#"><span className="icon icon-double-angle-right"></span> Review</a></li>
+        <li><a href="#"><span className="icon icon-rocket"> </span> Signing</a></li>
+        <li><a href="#"><span className="icon icon-arrow-down"> </span> Signed</a></li>
+        <li><a href="#"><span className="icon icon-arrow-down"> </span> Active</a></li>
 
+      </ul>
       <div className="flex justify-between items-center gap-x-9 max-w-[720px] py-3 ">
 
         <p className="text-[12px] font-regular ">Approvals: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
