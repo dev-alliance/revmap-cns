@@ -51,7 +51,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: "#f0f2f5",
+          backgroundColor: "#fff",
           // wordSpacing: "3px",
           // letterSpacing: "0.5px",
         },

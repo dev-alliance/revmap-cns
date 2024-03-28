@@ -502,15 +502,7 @@ const CategoryList = () => {
             </Box>
           </div>
 
-          {/* <Breadcrumbs
-            aria-label="breadcrumb"
-            sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
-          >
-            <Link to="category-list" className="link-no-underline">
-              Home
-            </Link>
-            <Typography color="text.primary">Categories</Typography>
-          </Breadcrumbs> */}
+
           <Card>
             <Box
               sx={{

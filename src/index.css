@@ -10,19 +10,24 @@
   flex-direction: column;
   margin-bottom: 20px;
   position: relative;
-  margin-top: 1px; /* Ensure there's space above for the button */
+  margin-top: 1px;
+  /* Ensure there's space above for the button */
 }
 
 .condition-item .remove-btn {
   position: absolute;
   right: 0;
-  top: -10px !important; /* Move the button 10px above the top of the container */
-  opacity: 0; /* Button is initially invisible */
-  transition: opacity 0.2s ease; /* Smooth transition for opacity change */
+  top: -10px !important;
+  /* Move the button 10px above the top of the container */
+  opacity: 0;
+  /* Button is initially invisible */
+  transition: opacity 0.2s ease;
+  /* Smooth transition for opacity change */
 }
 
 .condition-item:hover .remove-btn {
-  opacity: 1; /* Button becomes visible on hover */
+  opacity: 1;
+  /* Button becomes visible on hover */
 }
 
 .link-no-underline {
@@ -105,6 +110,154 @@
 #_tab_header_items {
   margin-top: -10px !important;
 }
+
+.e-de-ctn {
+  background-color: #fff !important;
+}
+
+.e-de-status-bar {
+  background-color: #fff;
+}
+
+.e-de-statusbar-pageweb {
+  display: none !important;
+}
+
+#e-dropdown-btn_16 {
+  display: none !important;
+}
+
+
+
+
+
+
+/* breadcrumbs for editor page  */
+:root {
+  --blue-gray: #34495e;
+  --blue-gray-darken: #2c3e50;
+  --blue: #D9D9D9;
+  --blue-darken: #D9D9D9;
+  --green: #9a9a9a;
+  --green-darken: #9f9f9f;
+}
+
+
+
+
+
+
+#breadcrumb {
+  list-style: none;
+  display: inline-block;
+}
+
+#breadcrumb .icon {
+  font-size: 14px;
+}
+
+#breadcrumb li {
+  float: left;
+}
+
+#breadcrumb li a {
+  color: #FFF;
+  display: block;
+  background: var(--blue);
+  text-decoration: none;
+  position: relative;
+  height: 22px;
+  line-height: 22px;
+  padding: 0 10px 0 5px;
+  text-align: center;
+  margin-right: 23px;
+  font-size: 12px;
+}
+
+#breadcrumb li:nth-child(even) a {
+  background-color: var(--blue-darken);
+}
+
+#breadcrumb li:nth-child(even) a:before {
+  border-color: var(--blue-darken);
+  border-left-color: transparent;
+}
+
+#breadcrumb li:nth-child(even) a:after {
+  border-left-color: var(--blue-darken);
+}
+
+#breadcrumb li:first-child a {
+  padding-left: 15px;
+  /* border-radius: 4px 0 0 4px; */
+}
+
+#breadcrumb li:first-child a:before {
+  border: none;
+}
+
+#breadcrumb li:last-child a {
+  padding-right: 15px;
+  /* border-radius: 0 4px 4px 0; */
+}
+
+#breadcrumb li:last-child a:after {
+  border: none;
+}
+
+#breadcrumb li a:before,
+#breadcrumb li a:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  border: 0 solid var(--blue);
+  border-width: 11px 10px;
+  width: 0;
+  height: 0;
+
+}
+
+#breadcrumb li a:before {
+  left: -18px;
+  border-left-color: transparent;
+}
+
+#breadcrumb li a:after {
+  left: 100%;
+  border-color: transparent;
+  border-left-color: var(--blue);
+}
+
+#breadcrumb li a:hover {
+  background-color: var(--green);
+}
+
+#breadcrumb li a:hover:before {
+  border-color: var(--green);
+  border-left-color: transparent;
+}
+
+#breadcrumb li a:hover:after {
+  border-left-color: var(--green);
+}
+
+#breadcrumb li a:active {
+  background-color: var(--green-darken);
+}
+
+#breadcrumb li a:active:before {
+  border-color: var(--green-darken);
+  border-left-color: transparent;
+}
+
+#breadcrumb li a:active:after {
+  border-left-color: var(--green-darken);
+}
+
+
+
+
+
 
 /* .css-hyum1k-MuiToolbar-root {
   display: none !important;
@@ -511,8 +664,7 @@
 /* end */
 
 /* sidebar hidden  */
-.e-de-pane {
-}
+.e-de-pane {}
 
 /* .e-de-ctnr-segment { 
   position: absolute !important;

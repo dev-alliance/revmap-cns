@@ -1024,9 +1024,13 @@ function SyncFusionEditor() {
   const addComment = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
 
-    const selectedText = documentEditor.selection.text;
-    documentEditor.editor.insertComment(selectedText);
-
+    // Ensure there's a selection
+    if (documentEditor.selection && !documentEditor.selection.isEmpty) {
+      // Add comment to the selected text
+      documentEditor.editor.insertComment('Add your comment here');
+    } else {
+      alert('Please select a text to add comment.');
+    }
   };
 
   const toggleTrackChanges = () => {
@@ -1106,13 +1110,44 @@ function SyncFusionEditor() {
   // };
 
 
-
-  console.log('close popup')
-
+  let mentionData: any = [
+    { "Name": "Selma Rose", "Eimg": "3", "EmailId": "selma@mycompany.com" },
+    { "Name": "Russo Kay", "Eimg": "8", "EmailId": "russo@mycompany.com" },
+    { "Name": "Camden Kate", "Eimg": "9", "EmailId": "camden@mycompany.com" },
+    { "Name": "Mary Kate", "Eimg": "4", "EmailId": "marry@mycompany.com" },
+    { "Name": "Ursula Ann", "Eimg": "2", "EmailId": "ursula@mycompany.com" },
+    { "Name": "Margaret", "Eimg": "5", "EmailId": "margaret@mycompany.com" },
+    { "Name": "Laura Grace", "Eimg": "6", "EmailId": "laura@mycompany.com" },
+    { "Name": "Robert", "Eimg": "8", "EmailId": "robert@mycompany.com" },
+    { "Name": "Albert", "Eimg": "9", "EmailId": "albert@mycompany.com" },
+    { "Name": "Michale", "Eimg": "10", "EmailId": "michale@mycompany.com" },
+    { "Name": "Andrew James", "Eimg": "7", "EmailId": "james@mycompany.com" },
+    { "Name": "Rosalie", "Eimg": "4", "EmailId": "rosalie@mycompany.com" },
+    { "Name": "Stella Ruth", "Eimg": "2", "EmailId": "stella@mycompany.com" },
+    { "Name": "Richard Rose", "Eimg": "10", "EmailId": "richard@mycompany.com" },
+    { "Name": "Gabrielle", "Eimg": "3", "EmailId": "gabrielle@mycompany.com" },
+    { "Name": "Thomas", "Eimg": "7", "EmailId": "thomas@mycompany.com" },
+    { "Name": "Charles Danny", "Eimg": "8", "EmailId": "charles@mycompany.com" },
+    { "Name": "Daniel", "Eimg": "10", "EmailId": "daniel@mycompany.com" },
+    { "Name": "Matthew", "Eimg": "7", "EmailId": "matthew@mycompany.com" },
+    { "Name": "Donald Krish", "Eimg": "9", "EmailId": "donald@mycompany.com" },
+    { "Name": "Yohana", "Eimg": "1", "EmailId": "yohana@mycompany.com" },
+    { "Name": "Kevin Paul", "Eimg": "10", "EmailId": "kevin@mycompany.com" },
+    { "Name": "Andrew Fuller", "Eimg": "3", "EmailId": "andrew@mycompany.com" }
+  ];
+  let settings = { showRuler: true, mentionSettings: { dataSource: mentionData, fields: { text: 'Name' } } };
   return (
     <div>
+      <ul className="mt-2" id="breadcrumb" >
+        {/* <li><a href="#"><span className="icon icon-home"> </span></a></li> */}
+        <li><a href="#"><span className="icon icon-beaker"> </span> Draft</a></li>
+        <li><a href="#"><span className="icon icon-double-angle-right"></span> Review</a></li>
+        <li><a href="#"><span className="icon icon-rocket"> </span> Signing</a></li>
+        <li><a href="#"><span className="icon icon-arrow-down"> </span> Signed</a></li>
+        <li><a href="#"><span className="icon icon-arrow-down"> </span> Active</a></li>
 
-      <div className="flex justify-between items-center gap-x-9 max-w-[720px] py-3 ">
+      </ul>
+      <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 ">
 
         <p className="text-[12px] font-regular ">Approvals: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
 
@@ -1237,7 +1272,7 @@ function SyncFusionEditor() {
                 onClick={() => { addComment(); toggleDropdown("view") }}
               >
                 <img src={commentIcon} className="h-4 w-4" alt="" />
-                Add comment
+                View message
               </li>
 
               {/* <li
@@ -1816,10 +1851,11 @@ function SyncFusionEditor() {
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
-        height="70vh"
+        height="600px"
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
+        documentEditorSettings={settings}
       // showPropertiesPane={false}
       />
     </div>

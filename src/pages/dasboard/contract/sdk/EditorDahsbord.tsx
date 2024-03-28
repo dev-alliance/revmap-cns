@@ -791,12 +791,12 @@ const MyComponent: React.FC = () => {
 
         <Box
           sx={{
-            width: sidebarExpanded ? 320 : 55, // Adjust width based on sidebarExpanded state
+            width: sidebarExpanded ? 320 : 60, // Adjust width based on sidebarExpanded state
             flexShrink: 0,
             display: "flex",
             flexDirection: "column", // Typically, card content is laid out vertically
-            height: "87vh",
-            overflowY: "auto",
+            height: "100vh",
+            // overflowY: "auto",
             backgroundColor: "#fff", // Cards usually have a solid background color
             boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.05)", // Adds a subtle shadow similar to Material-UI cards
             borderRadius: "4px", // Card-like elements often have rounded corners
