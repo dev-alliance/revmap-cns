@@ -115,7 +115,12 @@ const Discussion = () => {
   const handleAddSignatory = (newSignatoryEmail: string) => {
     console.log(newSignatoryEmail, "caca");
 
-    if (newSignatoryEmail && !collaborater.includes(newSignatoryEmail)) {
+    // Check if the email already exists in the collaborater array
+    const emailExists = collaborater.some(
+      (collaborator: any) => collaborator.email === newSignatoryEmail
+    );
+
+    if (newSignatoryEmail && !emailExists) {
       setCollaborater((prev: any) => [...prev, { email: newSignatoryEmail }]);
       reset(); // Resetting form
       setInputValue(""); // Clearing the input value for Autocomplete
@@ -316,7 +321,7 @@ const Discussion = () => {
                       fontSize: "0.675rem",
                     }}
                     onClick={() => {
-                      setShowButtons(false);
+                      setSelectedValue(null), setInputValue("");
                     }}
                   >
                     Cancel
