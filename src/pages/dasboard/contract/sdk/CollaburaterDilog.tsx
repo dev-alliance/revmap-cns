@@ -63,16 +63,16 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
   }, [ClickData, collaborater, open]);
 
   const handlePermissionChange = (event: any) => {
-    const newPermission = event.target.value as string; // Assuming value is always a string
+    const newPermission = event.target.value as string;
     setSelectedPermission(newPermission);
+  };
 
-    // Update the collaborator's permission in the context
+  // New function to update the collaborator's permission, called on button click
+  const updateCollaboratorPermission = () => {
     setCollaborater((prevCollaborater: any[]) => {
       return prevCollaborater.map((user) => {
-        console.log(ClickData?.email);
-
         if (user.email === ClickData?.email) {
-          return { ...user, permission: newPermission };
+          return { ...user, permission: selectedPermission };
         }
         return user;
       });
@@ -153,7 +153,8 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                   }}
                 >
                   <Typography sx={{ fontSize: "14px" }}>
-                    {ClickData?.email?.charAt(0).toUpperCase()}
+                    {ClickData?.firstName?.charAt(0).toUpperCase()}
+                    {ClickData?.lastName?.charAt(0).toUpperCase()}
                   </Typography>
                 </Box>
                 <div>
@@ -226,8 +227,21 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
           >
             <Button
               variant="outlined"
+              sx={{ textTransform: "none", mt: "4", mr: 2 }}
+              onClick={onClose}
+              // onClick={() => setOpenDialog(true)}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={!selectedPermission}
+              variant="contained"
+              color="primary"
               sx={{ textTransform: "none", mt: "4" }}
-              onClick={handleClick}
+              onClick={() => {
+                handleClick();
+                updateCollaboratorPermission(); // Call the new function here
+              }}
             >
               Share document
             </Button>

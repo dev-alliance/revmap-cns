@@ -86,6 +86,8 @@ interface ContractContextProps {
   setShowButtons: Dispatch<SetStateAction<any>>;
   activeSection: any | null;
   setActiveSection: Dispatch<SetStateAction<any>>;
+  comments: any | null;
+  setComments: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -134,6 +136,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setShowButtons: () => {},
   activeSection: {},
   setActiveSection: () => {},
+  comments: {},
+  setComments: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -141,9 +145,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
   const [signatories, setSignatories] = useState<string[]>([]);
+  const [comments, setComments] = useState<Array<any>>([]);
   const [collaborater, setCollaborater] = useState<string[]>([]);
   const [activeSection, setActiveSection] = useState("");
-  const [showButtons, setShowButtons] = useState(true);
+  const [showButtons, setShowButtons] = useState(false);
   const [openDocoment, setOpenDocoment] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
@@ -284,13 +289,20 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedShowbutton) {
       setShowButtons(JSON.parse(storedShowbutton));
     }
+    const storedComments = localStorage.getItem("comments");
+    if (storedComments) {
+      setComments(JSON.parse(storedComments));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
     if (contract) {
       localStorage.setItem("contract", JSON.stringify(contract));
     }
-  }, [contract]);
+    if (comments) {
+      localStorage.setItem("comments", JSON.stringify(comments));
+    }
+  }, [contract, comments]);
 
   return (
     <ContractContext.Provider
@@ -340,6 +352,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setShowButtons,
         setActiveSection,
         activeSection,
+        comments,
+        setComments,
       }}
     >
       {children}

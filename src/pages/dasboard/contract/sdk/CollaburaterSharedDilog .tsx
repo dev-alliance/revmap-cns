@@ -98,7 +98,7 @@ const CollaburaterSharedDilog: React.FC<DetailDialogProps> = ({
               display: "flex",
               alignItems: "flex-end",
               float: "right",
-              marginTop: "16px",
+              marginTop: "8px",
             }}
           >
             <Button

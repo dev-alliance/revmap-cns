@@ -324,7 +324,7 @@ const ApprovalsComp = () => {
   };
   console.log(approvers, "ok");
 
-  const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"]; // Yellow, Green, Blue
+  const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   return (
     <div style={{ textAlign: "left", position: "relative" }}>
       <Typography variant="body1" color="primary">

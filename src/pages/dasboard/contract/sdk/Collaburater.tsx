@@ -12,7 +12,7 @@ import {
   FormControl,
   Select,
   MenuItem,
-  Tabs,
+  Card,
   Tab,
   Divider,
   Checkbox,
@@ -43,6 +43,8 @@ const Discussion = () => {
     setShowButtons,
     collaborater,
     setCollaborater,
+    comments,
+    setComments,
   } = useContext(ContractContext);
   const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -53,7 +55,55 @@ const Discussion = () => {
   const [checked, setChecked] = React.useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [ClickData, setClickData] = useState("");
+  const [message, setMessage] = useState(""); // State for the message input
+  const [isInternal, setIsInternal] = useState<any>(""); // State to track if the comment is internal or external
 
+  const handleSendMessage = () => {
+    // Create a new comment object
+    console.log(user.firstName);
+
+    const newComment = {
+      message,
+      isInternal,
+      name: user?.firstName,
+      userId: user?._id,
+      date: new Date().toLocaleString(),
+    };
+
+    // Update the comments state to include the new comment
+    setComments([...comments, newComment]);
+
+    // Clear the input field
+    setMessage("");
+  };
+  function formatTimeAgo(date: Date | string) {
+    const seconds = Math.floor(
+      (new Date().getTime() - new Date(date).getTime()) / 1000
+    );
+
+    let interval = seconds / 31536000; // 365 * 24 * 60 * 60
+
+    if (interval > 1) {
+      return Math.floor(interval) + " years ago";
+    }
+    interval = seconds / 2592000; // 30 * 24 * 60 * 60
+    if (interval > 1) {
+      return Math.floor(interval) + " months ago";
+    }
+    interval = seconds / 86400; // 24 * 60 * 60
+    if (interval > 1) {
+      return Math.floor(interval) + " days ago";
+    }
+    interval = seconds / 3600; // 60 * 60
+    if (interval > 1) {
+      return Math.floor(interval) + " hours ago";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + " minutes ago";
+    }
+    return "Just now";
+  }
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -76,7 +126,9 @@ const Discussion = () => {
   // Function to remove a signatory from the list
   const handleRemoveSignatory = (signatoryToRemove: any) => {
     setCollaborater(
-      collaborater.filter((signatory: any) => signatory !== signatoryToRemove)
+      collaborater.filter(
+        (signatory: any) => signatory.email !== signatoryToRemove
+      )
     );
   };
 
@@ -137,7 +189,7 @@ const Discussion = () => {
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
-        <Typography variant="body1" color="primary">
+        <Typography variant="body1" color="primary" sx={{ fontSize: "15px" }}>
           Collaborate & Communicate
         </Typography>
         <Typography variant="body2" color="textSecondary">
@@ -157,7 +209,7 @@ const Discussion = () => {
             style={{}}
             sx={{
               width: "100%",
-              fontSize: "11px",
+              fontSize: "12px",
               whiteSpace: "nowrap",
 
               textTransform: "none !important",
@@ -186,7 +238,7 @@ const Discussion = () => {
           <Button
             fullWidth
             sx={{
-              fontSize: "11px",
+              fontSize: "12px",
               textTransform: "none",
               // borderBottom: activeSection === "message" ? 2 : 0,
               borderColor:
@@ -201,10 +253,11 @@ const Discussion = () => {
               },
             }}
             onClick={() => {
-              setActiveSection("message"), setShowButtons(false);
+              setActiveSection("message"),
+                setShowButtons((prevShowButtons: any) => !prevShowButtons);
             }}
           >
-            Message
+            + Add Message
           </Button>
         </Box>
 
@@ -417,7 +470,7 @@ const Discussion = () => {
                           "&:first-of-type": {
                             ml: 4.5, // Only applies margin-left to the first button
                           },
-                          color: "white",
+                          color: "black",
                           padding: "2px 5px !important",
                           height: "25px !important",
                           fontSize: "0.675rem",
@@ -438,7 +491,7 @@ const Discussion = () => {
                         <DeleteIcon /> {/* Adjust the icon size if needed */}
                       </IconButton>
                     </Box>
-                    <Box sx={{ display: "flex", mt: 1 }}>
+                    <Box sx={{ display: "flex", mt: -0.5 }}>
                       <Button
                         variant="text"
                         color="primary"
@@ -469,84 +522,204 @@ const Discussion = () => {
 
         {activeSection === "message" && (
           <Box>
-            <div
-              style={{
-                width: "100%",
-                padding: 0,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {" "}
-              <FormControlLabel
-                sx={{
-                  "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
-                  // Apply any additional styling you need for the FormControlLabel here
-                }}
-                control={
-                  <Checkbox
-                    name="Internal"
-                    sx={{
-                      padding: "5px", // Adjusts padding around the checkbox
-                      "& .MuiSvgIcon-root": {
-                        // Targets the SVG icon representing the checkbox
-                        fontSize: "18px", // Adjust this value to scale the icon size
-                      },
-                    }}
-                  />
-                }
-                label="Visible to everyone on the document"
-              />
-              <FormControlLabel
-                sx={{
-                  "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
-                  // Apply any additional styling you need for the FormControlLabel here
-                }}
-                control={
-                  <Checkbox
-                    name="Internal"
-                    sx={{
-                      padding: "5px", // Adjusts padding around the checkbox
-                      "& .MuiSvgIcon-root": {
-                        // Targets the SVG icon representing the checkbox
-                        fontSize: "18px", // Adjust this value to scale the icon size
-                      },
-                    }}
-                  />
-                }
-                label="Internal"
-              />
-            </div>
-            <Box sx={{ mb: 2, mt: 2, alignItems: "center" }}>
-              <Controller
-                name="content"
-                control={control}
-                // rules={{ required: "Tag Name is required" }}
-                render={({ field }) => (
-                  <TextareaAutosize
-                    {...field}
-                    placeholder="Enter description"
-                    minRows={1} // Adjust the number of rows as needed
+            {showButtons && (
+              <>
+                <div
+                  style={{
+                    width: "100%",
+                    padding: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <div
                     style={{
                       width: "100%",
-                      fontSize: "16px",
-                      // color: "#9A9A9A",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <FormControlLabel
+                      sx={{
+                        whiteSpace: "nowrap",
+                        "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
+                        // Apply any additional styling you need for the FormControlLabel here
+                      }}
+                      control={
+                        <Checkbox
+                          checked={isInternal === false}
+                          onChange={() => setIsInternal(false)}
+                          sx={{
+                            padding: "5px", // Adjusts padding around the checkbox
+                            "& .MuiSvgIcon-root": {
+                              // Targets the SVG icon representing the checkbox
+                              fontSize: "18px", // Adjust this value to scale the icon size
+                            },
+                          }}
+                        />
+                      }
+                      label="Visible to everyone on the document"
+                    />
+                    <FormControlLabel
+                      sx={{
+                        whiteSpace: "nowrap",
+                        "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
+                        // Apply any additional styling you need for the FormControlLabel here
+                      }}
+                      control={
+                        <Checkbox
+                          checked={isInternal === true}
+                          onChange={() => setIsInternal(true)}
+                          sx={{
+                            padding: "5px", // Adjusts padding around the checkbox
+                            "& .MuiSvgIcon-root": {
+                              // Targets the SVG icon representing the checkbox
+                              fontSize: "18px", // Adjust this value to scale the icon size
+                            },
+                          }}
+                        />
+                      }
+                      label="Internal"
+                    />
+                  </div>
+                </div>
+                <Box sx={{ mb: 2, mt: 2, alignItems: "center" }}>
+                  <textarea
+                    disabled={isInternal === ""}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Add your message..."
+                    maxLength={100}
+                    rows={1}
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      fontSize: "13px",
+                      lineHeight: "20px", // Adjust line-height for better vertical alignment
+                      padding: "10px 10px", // Adjust vertical padding to help center the text
                       border: "1px solid #ced4da",
                       borderRadius: "4px",
-                      padding: "10px",
+                      resize: "block",
                     }}
                   />
-                )}
-              />
-              <Button
-                sx={{ ml: 2, textTransform: "none" }}
-                type="submit"
-                variant="contained"
-                color="primary"
-              >
-                Send
-              </Button>
-            </Box>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="inherit"
+                      sx={{
+                        mr: "20px",
+                        textTransform: "none",
+                        backgroundColor: "#DCDCDC",
+                        "&:hover": {
+                          backgroundColor: "#757575",
+                        },
+                        color: "white",
+                        padding: "2px 5px !important",
+                        height: "25px !important",
+                        fontSize: "0.675rem",
+                      }}
+                      onClick={() => {
+                        setMessage("");
+                        setIsInternal("");
+                      }}
+                    >
+                      Cancel
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      color="inherit"
+                      disabled={!message}
+                      sx={{
+                        textTransform: "none",
+                        backgroundColor: "#62BD6B",
+                        "&:hover": {
+                          backgroundColor: "#62BD6d",
+                        },
+                        color: "white",
+                        padding: "2px 5px !important",
+                        height: "25px !important",
+                        fontSize: "0.675rem",
+                      }}
+                      onClick={() => {
+                        handleSendMessage(), setShowButtons(false);
+                      }}
+                    >
+                      Post
+                    </Button>
+                  </div>
+                </Box>
+              </>
+            )}
+            {!showButtons && (
+              <div>
+                {comments.map((comment: any, index: any) => {
+                  // Render all comments if user.email exists, otherwise render only external comments
+                  if (user.email || (!user.email && !comment.isInternal)) {
+                    return (
+                      <Box key={index} sx={{ mt: 2 }}>
+                        <Typography
+                          variant="body2"
+                          color="primary"
+                          sx={{ fontWeight: "bold" }}
+                        >
+                          {comment.name}
+                        </Typography>
+
+                        <Box sx={{ display: "flex", mt: 0.5, mb: 1 }}>
+                          <Button
+                            variant="contained"
+                            color="inherit"
+                            sx={{
+                              textTransform: "none",
+                              backgroundColor: "#DCDCDC",
+                              "&:hover": {
+                                backgroundColor: "#757575",
+                              },
+                              color: "black",
+                              padding: "2px 5px !important",
+                              height: "20px !important",
+                              fontSize: "0.675rem",
+                            }}
+                          >
+                            {comment.isInternal ? "Internal" : "External"}
+                          </Button>
+
+                          <div
+                            style={{
+                              color: "#BDBDBD",
+                              fontSize: "11px",
+                              marginLeft: "1rem",
+                              marginTop: "0.2rem",
+                            }}
+                          >
+                            {formatTimeAgo(comment.date)}
+                          </div>
+                        </Box>
+
+                        <Card
+                          sx={{
+                            color: "#BDBDBD",
+                            padding: 1,
+                            fontSize: "12px",
+                          }}
+                        >
+                          {comment.message}
+                        </Card>
+                      </Box>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            )}
           </Box>
         )}
       </div>
