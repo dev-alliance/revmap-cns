@@ -134,12 +134,10 @@
 
 /* breadcrumbs for editor page  */
 :root {
-  --blue-gray: #34495e;
-  --blue-gray-darken: #2c3e50;
-  --blue: #D9D9D9;
-  --blue-darken: #D9D9D9;
-  --green: #9a9a9a;
-  --green-darken: #9f9f9f;
+  --gray-color: #D9D9D9;
+  --blue-color: #155BE5;
+
+
 }
 
 
@@ -163,7 +161,7 @@
 #breadcrumb li a {
   color: #FFF;
   display: block;
-  background: var(--blue);
+  background: var(--gray-color);
   text-decoration: none;
   position: relative;
   height: 22px;
@@ -174,17 +172,17 @@
   font-size: 12px;
 }
 
-#breadcrumb li:nth-child(even) a {
-  background-color: var(--blue-darken);
+#breadcrumb li a {
+  background-color: var(--gray-color);
 }
 
-#breadcrumb li:nth-child(even) a:before {
-  border-color: var(--blue-darken);
+#breadcrumb li a:before {
+  border-color: var(--gray-color);
   border-left-color: transparent;
 }
 
-#breadcrumb li:nth-child(even) a:after {
-  border-left-color: var(--blue-darken);
+#breadcrumb li a:after {
+  border-left-color: var(--gray-color);
 }
 
 #breadcrumb li:first-child a {
@@ -210,7 +208,7 @@
   content: "";
   position: absolute;
   top: 0;
-  border: 0 solid var(--blue);
+  border: 0 solid var(--gray-color);
   border-width: 11px 10px;
   width: 0;
   height: 0;
@@ -225,465 +223,43 @@
 #breadcrumb li a:after {
   left: 100%;
   border-color: transparent;
-  border-left-color: var(--blue);
+  border-left-color: var(--gray-color);
 }
 
+/* extra */
 #breadcrumb li a:hover {
-  background-color: var(--green);
+  background-color: var(--gray-color);
 }
 
 #breadcrumb li a:hover:before {
-  border-color: var(--green);
+  border-color: var(--gray-color);
   border-left-color: transparent;
 }
 
 #breadcrumb li a:hover:after {
-  border-left-color: var(--green);
+  border-left-color: var(--gray-color);
 }
 
 #breadcrumb li a:active {
-  background-color: var(--green-darken);
+  background-color: var(--gray-color);
 }
 
 #breadcrumb li a:active:before {
-  border-color: var(--green-darken);
+  border-color: var(--gray-color);
   border-left-color: transparent;
 }
 
 #breadcrumb li a:active:after {
-  border-left-color: var(--green-darken);
+  border-left-color: var(--gray-color);
 }
 
 
 
 
-
-
-/* .css-hyum1k-MuiToolbar-root {
-  display: none !important;
-} */
-
-/* #container_editor_font_properties_leftDiv {
-  position: absolute !important;
-  left: -25% !important;
-  top: -90px !important;
-} */
-
-/* paragraph  */
-
-/* style */
-/* #container_editor_font_properties_leftDiv {
-  position: absolute !important;
-  left: -81% !important;
-  top: -115px !important;
-} */
-
-/* align */
-/* #container_editor_font_properties_indentWholeDiv {
-  position: absolute !important;
-  left: -81% !important;
-  top: -80px !important;
-} */
-
-/* font FAMILY AND SIZE*/
-/* #container_editor_font_properties_sizeStyle {
-  position: absolute !important;
-  left: -62% !important;
-  top: -80px !important;
-} */
-
-/* font color */
-/* #container_editor_font_properties_colorDiv {
-  position: absolute !important;
-  left: -68% !important;
-  top: -115px !important;
-} */
-
-/* bulits  */
-/* #container_editor_font_properties_listDiv {
-  position: absolute !important;
-  left: -46% !important;
-  top: -115px !important;
-} */
-
-/* paragraph heading etc  */
-/* #container_editor_font_properties_styleDiv {
-  position: absolute !important;
-  left: -43% !important;
-  top: -115px !important;
-} */
-
-/* X power  */
-/* #container_editor_font_properties_rightDiv {
-  position: absolute !important;
-  left: -52% !important;
-  top: -115px !important;
-} */
-
-/* uppercase  */
-/* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
-  position: absolute !important;
-  left: -56% !important;
-  top: -115px !important;
-} */
-
-/* .e-de-ctnr-prop-label {
-  color: rgba(0, 0, 0, 0.54);
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.05px;
-  margin-bottom: 12px;
-  opacity: 0.87;
-  display: none;
-} */
-
-/************** paragraph end   ********************** */
-
-/******************** table start ******************************** */
-
-/* dell and insert cell  */
-/* .e-de-insert-del-cell {
-  position: absolute !important;
-  left: -81% !important;
-  top: -115px !important;
-} */
-
-/* .e-de-ctnr-group-btn-top {
-  position: absolute !important;
-  left: -81% !important;
-  top: -80px !important;
-} */
-
-/* .e-de-ctnr-group-btn-middle {
-  position: absolute !important;
-  left: -75% !important;
-  top: -80px !important;
-} */
-
-/* .e-de-ctnr-group-btn-bottom {
-  position: absolute !important;
-  left: -69% !important;
-  top: -80px !important;
-} */
-
-/* fill color  */
-/* .e-de-prop-font-colorpicker {
-  position: absolute !important;
-  left: -63% !important;
-  top: -80px !important;
-} */
-
-/* font color  */
-/* .e-de-border-clr-picker {
-  position: absolute !important;
-  left: -69% !important;
-  top: -115px !important;
-} */
-
-/* border width  */
-/* #container_editor_tableBorderSize {
-  position: absolute !important;
-  left: -64% !important;
-  top: -128px !important;
-} */
-
-/* cell margin  */
-/* .e-de-cellmargin-text {
-  position: absolute !important;
-  left: -57% !important;
-  top: -170px !important;
-} */
-
-/* =========================================================================== */
-/* *****MEDIA QUESRRY ************** */
-@media screen and (max-width: 1450px) {
-  /* style */
-  /* #container_editor_font_properties_leftDiv {
-    left: -68% !important;
-    top: -115px !important;
-  } */
-
-  /* align */
-  /* #container_editor_font_properties_indentWholeDiv {
-    left: -68% !important;
-    top: -80px !important;
-  } */
-
-  /* font color */
-  /* #container_editor_font_properties_colorDiv {
-    position: absolute !important;
-    left: -48.5% !important;
-    top: -115px !important;
-  } */
-
-  /* font FAMILY AND SIZE*/
-  /* #container_editor_font_properties_sizeStyle {
-    left: -38% !important;
-    top: -80px !important;
-  } */
-
-  /* uppercase  */
-  /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
-    position: absolute !important;
-    left: -30% !important;
-    top: -115px !important;
-  } */
-
-  /* X power  */
-  /* #container_editor_font_properties_rightDiv {
-    position: absolute !important;
-    left: -24% !important;
-    top: -115px !important;
-  } */
-
-  /* bulits  */
-  /* #container_editor_font_properties_listDiv {
-    position: absolute !important;
-    left: -15% !important;
-    top: -115px !important;
-  } */
-
-  /* paragraph heading etc  */
-  /* #container_editor_font_properties_styleDiv {
-    left: -9% !important;
-    top: -115px !important;
-  } */
-
-  /******************** table start ******************************** */
-  /* dell and insert cell  */
-  /* .e-de-insert-del-cell {
-    position: absolute !important;
-    left: -65% !important;
-    top: -115px !important;
-  } */
-
-  /* .e-de-ctnr-group-btn-top {
-    position: absolute !important;
-    left: -65% !important;
-    top: -80px !important;
-  }
-
-  .e-de-ctnr-group-btn-middle {
-    position: absolute !important;
-    left: -50% !important;
-    top: -80px !important;
-  }
-
-  .e-de-ctnr-group-btn-bottom {
-    position: absolute !important;
-    left: -35% !important;
-    top: -80px !important;
-  } */
-
-  /* fill color  */
-  /* .e-de-prop-font-colorpicker {
-    position: absolute !important;
-    left: -20% !important;
-    top: -80px !important;
-  } */
-
-  /* font color  */
-  /* .e-de-border-clr-picker {
-    position: absolute !important;
-    left: -35% !important;
-    top: -115px !important;
-  } */
-
-  /* border width  */
-  /* #container_editor_tableBorderSize {
-    position: absolute !important;
-    left: -22% !important;
-    top: -128px !important;
-  } */
-
-  /* cell margin  */
-  /* .e-de-cellmargin-text {
-    position: absolute !important;
-    left: -12% !important;
-    top: -170px !important;
-  } */
-}
-
-@media screen and (min-width: 1450px) and (max-width: 1700px) {
-  /* paragraph  */
-
-  /* style */
-  /* #container_editor_font_properties_leftDiv {
-    left: -75% !important;
-    top: -115px !important;
-  } */
-
-  /* align */
-  /* #container_editor_font_properties_indentWholeDiv {
-    left: -75% !important;
-    top: -80px !important;
-  } */
-
-  /* font color */
-  /* #container_editor_font_properties_colorDiv {
-    position: absolute !important;
-    left: -60% !important;
-    top: -115px !important;
-  } */
-
-  /* font FAMILY AND SIZE*/
-  /* #container_editor_font_properties_sizeStyle {
-    left: -51% !important;
-    top: -80px !important;
-  } */
-
-  /* uppercase  */
-  /* #container_editor_font_properties_rightDiv2_changeCase_dropdownBtn {
-    position: absolute !important;
-    left: -45% !important;
-    top: -115px !important;
-  } */
-
-  /* X power  */
-  /* #container_editor_font_properties_rightDiv {
-    position: absolute !important;
-    left: -40% !important;
-    top: -115px !important;
-  } */
-
-  /* bulits  */
-  /* #container_editor_font_properties_listDiv {
-    position: absolute !important;
-    left: -33% !important;
-    top: -115px !important;
-  } */
-
-  /* paragraph heading etc  */
-  /* #container_editor_font_properties_styleDiv {
-    left: -28% !important;
-    top: -115px !important;
-  } */
-
-  /******************** table start ******************************** */
-  /* dell and insert cell  */
-  /* .e-de-insert-del-cell {
-    position: absolute !important;
-    left: -75% !important;
-    top: -115px !important;
-  }
-
-  .e-de-ctnr-group-btn-top {
-    position: absolute !important;
-    left: -75% !important;
-    top: -80px !important;
-  }
-
-  .e-de-ctnr-group-btn-middle {
-    position: absolute !important;
-    left: -63% !important;
-    top: -80px !important;
-  }
-
-  .e-de-ctnr-group-btn-bottom {
-    position: absolute !important;
-    left: -51% !important;
-    top: -80px !important;
-  } */
-
-  /* fill color  */
-  /* .e-de-prop-font-colorpicker {
-    position: absolute !important;
-    left: -39% !important;
-    top: -80px !important;
-  } */
-
-  /* font color  */
-  /* .e-de-border-clr-picker {
-    position: absolute !important;
-    left: -51% !important;
-    top: -115px !important;
-  } */
-
-  /* border width  */
-  /* #container_editor_tableBorderSize {
-    position: absolute !important;
-    left: -40% !important;
-    top: -128px !important;
-  } */
-
-  /* cell margin  */
-  /* .e-de-cellmargin-text {
-    position: absolute !important;
-    left: -20% !important;
-    top: -190px !important;
-  } */
-}
-
-/* @media screen and (max-width: 1600px) {
-  #container_editor_font_properties_leftDiv {
-    left: 10% !important;
-  }
-} */
-
-/* table  */
-/* .e-de-property-div-padding {
-  border-bottom: 0.5px solid #e0e0e0;
-  padding: 12.5px;
-  position: absolute;
-  top: -141px;
-  left: -400px;
-}
-
-.e-de-grp-btn-ctnr .e-de-ctnr-group-btn {
-  height: 85px !important;
-  position: absolute;
-  top: 50px;
-  left: -291px;
-}
-.e-de-prop-pane .e-de-ctnr-group-btn.e-btn-group:not(.e-outline) {
-  box-shadow: none;
-  height: 28px;
-  position: absolute;
-  top: 53px;
-}
-.e-split-btn-wrapper {
-  display: inline-flex;
-  white-space: nowrap;
-  width: -moz-min-content;
-  width: min-content;
-  position: absolute;
-  left: -90px;
-  top: 93px;
-}
-.de-tbl-fill-clr {
-  position: absolute;
-  top: 62px;
-}
-.e-de-insert-del-cell {
-  display: inline-flex;
-  position: absolute;
-  top: 0px;
-  left: -170px;
-} */
-/* end */
-
-/* sidebar hidden  */
-.e-de-pane {}
-
-/* .e-de-ctnr-segment { 
-  position: absolute !important;
-  left: -20% !important;
-  top: 121px !important;
-  height: 100px; 
-} */
 .e-tab {
   display: block;
   position: absolute !important;
 }
-
-/* 
- 
-/* .e-btn-group {
-  position: absolute !important;
-  left: -160px !important;
-  
-} */
 
 .e-tab .e-content .e-item {
   background: inherit;
