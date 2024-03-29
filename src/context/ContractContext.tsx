@@ -293,6 +293,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedComments) {
       setComments(JSON.parse(storedComments));
     }
+    const storedCollaborater = localStorage.getItem("collaborater");
+    if (storedCollaborater) {
+      setComments(JSON.parse(storedCollaborater));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -302,7 +306,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (comments) {
       localStorage.setItem("comments", JSON.stringify(comments));
     }
-  }, [contract, comments]);
+    if (collaborater) {
+      localStorage.setItem("collaborater", JSON.stringify(collaborater));
+    }
+  }, [contract, comments, collaborater]);
 
   return (
     <ContractContext.Provider
