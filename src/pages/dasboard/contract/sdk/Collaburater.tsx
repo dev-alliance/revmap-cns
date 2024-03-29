@@ -254,6 +254,7 @@ const Discussion = () => {
             }}
             onClick={() => {
               setActiveSection("message"),
+                setIsInternal(""),
                 setShowButtons((prevShowButtons: any) => !prevShowButtons);
             }}
           >
@@ -324,6 +325,7 @@ const Discussion = () => {
                   <Button
                     variant="contained"
                     color="inherit"
+                    disabled={!selectedValue && !inputValue}
                     sx={{
                       textTransform: "none",
                       backgroundColor: "#62BD6B",
