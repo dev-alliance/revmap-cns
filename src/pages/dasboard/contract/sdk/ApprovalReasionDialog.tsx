@@ -28,8 +28,8 @@ import {
   useMediaQuery,
   useTheme,
   Card,
-  TextareaAutosize,
 } from "@mui/material";
+import { TextareaAutosize } from "@mui/base";
 import CloseIcon from "@mui/icons-material/Close";
 import { useAuth } from "@/hooks/useAuth";
 import toast from "react-hot-toast";
