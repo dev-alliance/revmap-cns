@@ -1109,7 +1109,6 @@ function SyncFusionEditor() {
   //   }
   // };
 
-
   return (
     <div>
       <ul className="mt-2" id="breadcrumb" >
@@ -1825,7 +1824,7 @@ function SyncFusionEditor() {
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
-        height="85vh"
+        height="83vh"
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
