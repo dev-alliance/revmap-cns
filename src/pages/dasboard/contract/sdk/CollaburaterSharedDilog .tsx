@@ -72,7 +72,10 @@ const CollaburaterSharedDilog: React.FC<DetailDialogProps> = ({
             textAlign: "center",
           }}
         >
-          <strong style={{ display: "flex" }}> Document sent to sign!</strong>
+          <strong style={{ display: "flex" }}>
+            {" "}
+            Document sent to Collaborate!
+          </strong>
         </DialogTitle>
         <DialogContent
           sx={{

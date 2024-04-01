@@ -65,7 +65,7 @@ import "@syncfusion/ej2-react-documenteditor/styles/material.css";
 import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
 import { Link, useLocation } from "react-router-dom";
 import SignatureDialog from "@/pages/dasboard/contract/sdk/SignatureDialog";
-import QuickSign from "@/pages/dasboard/contract/sdk/QuickSign";
+import Signature from "@/pages/dasboard/contract/sdk/Signature";
 import { ContractContext } from "@/context/ContractContext";
 import OpenSignatureDialog from "@/pages/dasboard/contract/sdk/OpenSignatureDialog";
 import { debounce } from "lodash";
@@ -187,7 +187,7 @@ const MyComponent: React.FC = () => {
       ),
       content: <OverView />,
     },
-    quickSign: {
+    signature: {
       icon: (
         <Tooltip title="Signature">
           {/* <img src={writingIcon} alt="Logo" style={{ width: '5%' }} /> */}
@@ -221,7 +221,7 @@ const MyComponent: React.FC = () => {
           </svg>
         </Tooltip>
       ),
-      content: <QuickSign />,
+      content: <Signature />,
     },
     share: {
       icon: (

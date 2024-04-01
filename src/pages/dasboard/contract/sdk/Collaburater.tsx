@@ -46,17 +46,18 @@ const Discussion = () => {
     comments,
     setComments,
   } = useContext(ContractContext);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [inputValue, setInputValue] = useState("");
   const [selectedValue, setSelectedValue] = useState(null);
-
+  const [isInternal, setIsInternal] = useState<any>("");
+  const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
 
   const [checked, setChecked] = React.useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [ClickData, setClickData] = useState("");
   const [message, setMessage] = useState(""); // State for the message input
-  const [isInternal, setIsInternal] = useState<any>(""); // State to track if the comment is internal or external
+  // State to track if the comment is internal or external
 
   const handleSendMessage = () => {
     // Create a new comment object
@@ -139,8 +140,12 @@ const Discussion = () => {
 
   const handleShareDilog = (signatory: any) => {
     setOpenDialog(true);
-    const user = userList.find((user) => user.email === signatory);
-    setClickData(user);
+    const user = userList.find((user) => user.email === signatory?.email);
+    if (user) {
+      setClickData(user);
+    } else {
+      setClickData(signatory);
+    }
   };
 
   // Handle input change to track current value
@@ -355,59 +360,6 @@ const Discussion = () => {
               </>
             )}
 
-            {/* <div style={{ flex: 1, textAlign: "right" }}>
-              {collaborater.length > 0 && showButtons && (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    color="inherit"
-                    sx={{
-                      mr: "20px",
-                      textTransform: "none",
-                      backgroundColor: "#DCDCDC",
-                      "&:hover": {
-                        backgroundColor: "#757575",
-                      },
-                      color: "white",
-                      padding: "2px 5px !important",
-                      height: "25px !important",
-                      fontSize: "0.675rem",
-                    }}
-                    onClick={() => {
-                      setCollaborater([]), setShowButtons(false);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-
-                  <Button
-                    variant="contained"
-                    color="inherit"
-                    sx={{
-                      textTransform: "none",
-                      backgroundColor: "#62BD6B",
-                      "&:hover": {
-                        backgroundColor: "#62BD6d",
-                      },
-                      color: "white",
-                      padding: "2px 5px !important",
-                      height: "25px !important",
-                      fontSize: "0.675rem",
-                    }}
-                    onClick={() => setShowButtons(false)}
-                  >
-                    Save
-                  </Button>
-                </div>
-              )}
-            </div> */}
             {!showButtons &&
               collaborater?.map((colb: any, index: any) => {
                 // Check if the colb's email is in the userList
@@ -503,7 +455,7 @@ const Discussion = () => {
                         variant="text"
                         color="primary"
                         sx={{ textTransform: "none", whiteSpace: "nowrap" }}
-                        onClick={() => handleShareDilog(colb?.email)}
+                        onClick={() => handleShareDilog(colb)}
                       >
                         {colb.permission ? "Document Shared" : "Share Document"}
                       </Button>

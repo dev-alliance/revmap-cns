@@ -88,6 +88,8 @@ interface ContractContextProps {
   setActiveSection: Dispatch<SetStateAction<any>>;
   comments: any | null;
   setComments: Dispatch<SetStateAction<any>>;
+  recipients: any | null;
+  setRecipients: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -138,12 +140,15 @@ export const ContractContext = createContext<ContractContextProps>({
   setActiveSection: () => {},
   comments: {},
   setComments: () => {},
+  recipients: {},
+  setRecipients: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
+  const [recipients, setRecipients] = useState<string[]>([]);
   const [signatories, setSignatories] = useState<string[]>([]);
   const [comments, setComments] = useState<Array<any>>([]);
   const [collaborater, setCollaborater] = useState<string[]>([]);
@@ -297,6 +302,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedCollaborater) {
       setComments(JSON.parse(storedCollaborater));
     }
+    const storedrecipients = localStorage.getItem("recipients");
+    if (storedrecipients) {
+      setComments(JSON.parse(storedrecipients));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -308,6 +317,9 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     }
     if (collaborater) {
       localStorage.setItem("collaborater", JSON.stringify(collaborater));
+    }
+    if (recipients) {
+      localStorage.setItem("recipients", JSON.stringify(recipients));
     }
   }, [contract, comments, collaborater]);
 
@@ -361,6 +373,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         activeSection,
         comments,
         setComments,
+        recipients,
+        setRecipients,
       }}
     >
       {children}

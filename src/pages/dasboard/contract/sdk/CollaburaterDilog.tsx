@@ -56,7 +56,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
         user?.email?.trim().toLowerCase() ===
         ClickData?.email?.trim().toLowerCase()
     );
-    console.log(index, "ff");
+
     if (index !== -1) {
       setSelectedPermission(collaborater[index].permission || ""); // Assume each collaborator has a `permission` field
     }
@@ -74,10 +74,12 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
         if (user.email === ClickData?.email) {
           return { ...user, permission: selectedPermission };
         }
+        // return { ...user, permission: selectedPermission };
         return user;
       });
     });
   };
+
   console.log(collaborater, "collaborater");
 
   const handleCloseDialog = () => {
@@ -153,7 +155,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                   }}
                 >
                   <Typography sx={{ fontSize: "14px" }}>
-                    {ClickData?.firstName?.charAt(0).toUpperCase()}
+                    {ClickData?.email?.charAt(0).toUpperCase()}
                     {ClickData?.lastName?.charAt(0).toUpperCase()}
                   </Typography>
                 </Box>
