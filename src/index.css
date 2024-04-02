@@ -272,3 +272,7 @@
   display: flex;
   vertical-align: middle;
 }
+
+.e-de-blink-cursor {
+  border-left: 1px solid rgb(0, 136, 255) !important;
+}
