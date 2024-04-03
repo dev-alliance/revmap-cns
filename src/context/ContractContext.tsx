@@ -92,60 +92,66 @@ interface ContractContextProps {
   setRecipients: Dispatch<SetStateAction<any>>;
   openMultiDialog: any | null;
   setOpenMultiDialog: Dispatch<SetStateAction<any>>;
+
+  dragFields: any | null;
+  setDragFields: Dispatch<SetStateAction<any>>;
+
 }
 
 export const ContractContext = createContext<ContractContextProps>({
   contract: null,
-  setContract: () => {},
+  setContract: () => { },
   contractStatus: { status: "", expire: "" },
-  setContractStatus: () => {},
-  updateContractOverview: () => {},
+  setContractStatus: () => { },
+  updateContractOverview: () => { },
   signatories: [],
-  setSignatories: () => {},
+  setSignatories: () => { },
   openDocoment: [],
-  setOpenDocoment: () => {},
+  setOpenDocoment: () => { },
   selectedModule: {},
-  setSelectedModule: () => {},
+  setSelectedModule: () => { },
   sidebarExpanded: {},
-  setSidebarExpanded: () => {},
+  setSidebarExpanded: () => { },
   showCompanySelect: {},
-  setShowCompanySelect: () => {},
+  setShowCompanySelect: () => { },
   showConditionalSelect: {},
-  setShowConditionalSelect: () => {},
+  setShowConditionalSelect: () => { },
   showSignatories: {},
-  setShowSignatories: () => {},
+  setShowSignatories: () => { },
   selectedApproval: {},
-  setSelectedApproval: () => {},
+  setSelectedApproval: () => { },
   approvers: {},
-  setApprovers: () => {},
+  setApprovers: () => { },
   selectedUserApproval: {},
-  setSelectedUserApproval: () => {},
+  setSelectedUserApproval: () => { },
   userApproval: {},
-  setUserApproval: () => {},
+  setUserApproval: () => { },
   selectedConditionalApproval: {},
-  setSelectedConditionalApproval: () => {},
+  setSelectedConditionalApproval: () => { },
   userConditionalApproval: {},
-  setUserConditionalApproval: () => {},
+  setUserConditionalApproval: () => { },
   conditions: [],
-  setConditions: () => {},
+  setConditions: () => { },
   selectedFeild: [],
-  setSeletedFeild: () => {},
+  setSeletedFeild: () => { },
   type: {},
-  setType: () => {},
+  setType: () => { },
   viewUser: {},
-  setViewUser: () => {},
+  setViewUser: () => { },
   collaborater: {},
-  setCollaborater: () => {},
+  setCollaborater: () => { },
   showButtons: {},
-  setShowButtons: () => {},
+  setShowButtons: () => { },
   activeSection: {},
-  setActiveSection: () => {},
+  setActiveSection: () => { },
   comments: {},
-  setComments: () => {},
+  setComments: () => { },
   recipients: {},
-  setRecipients: () => {},
+  setRecipients: () => { },
   openMultiDialog: {},
-  setOpenMultiDialog: () => {},
+  setOpenMultiDialog: () => { },
+  dragFields: {},
+  setDragFields: () => { },
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -172,6 +178,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [selectedFeild, setSeletedFeild] = useState("");
   const [type, setType] = useState("");
   const [viewUser, setViewUser] = useState(false);
+  const [dragFields, setDragFields] = useState('');
   const [conditions, setConditions] = useState([
     {
       comparisonOperator: "",
@@ -315,6 +322,12 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedopenMultiDialog) {
       setOpenMultiDialog(JSON.parse(storedopenMultiDialog));
     }
+
+    const storeDragFields = localStorage.getItem("dragFields");
+    if (storeDragFields) {
+      setDragFields(JSON.parse(storeDragFields));
+    }
+
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -386,6 +399,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setRecipients,
         setOpenMultiDialog,
         openMultiDialog,
+        dragFields,
+        setDragFields
       }}
     >
       {children}
