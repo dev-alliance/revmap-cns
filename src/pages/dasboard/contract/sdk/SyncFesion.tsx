@@ -1122,78 +1122,98 @@ function SyncFusionEditor() {
 
 
 
-  // const DraggableField = ({ field }: any) => {
-  //   const handleDragStart = (e: any) => {
-  //     e.dataTransfer.setData("text/plain", field.placeholder);
-  //   };
+  const DraggableField = ({ field }: any) => {
+    const handleDragStart = (e: any) => {
+      e.dataTransfer.setData("text/plain", field.placeholder);
+    };
 
-  //   return (
-  //     <div
-  //       draggable
-  //       onDragStart={handleDragStart}
-  //       style={{ cursor: 'grab', marginBottom: '10px' }}
-  //     >
-  //       {field.label}
-  //     </div>
-  //   );
-  // };
-
-
-
-  // const Sidebar = () => {
-  //   const fields = [
-  //     { id: 'name', label: 'Name', placeholder: '[Name]' },
-  //     { id: 'date', label: 'Date', placeholder: '[Date]' },
-  //     { id: 'company', label: 'Company', placeholder: '[Company]' },
-  //   ];
-
-  //   return (
-  //     <div style={{ padding: '10px' }}>
-  //       {fields.map((field) => (
-  //         <DraggableField key={field.id} field={field} />
-  //       ))}
-  //     </div>
-  //   );
-  // };
+    return (
+      <div
+        draggable
+        onDragStart={handleDragStart}
+        style={{ cursor: 'grab', marginBottom: '10px' }}
+      >
+        {field.label}
+      </div>
+    );
+  };
 
 
 
-  // useEffect(() => {
-  //   const editorContainer = document.getElementById('container');
-  //   const documentEditor = editorContainerRef.current.documentEditor;
+  const Sidebar = () => {
+    const fields = [
+      { id: 'name', label: 'Name', placeholder: '[Name]' },
+      { id: 'date', label: 'Date', placeholder: '[Date]' },
+      { id: 'company', label: 'Company', placeholder: '[Company]' },
+    ];
 
-  //   const handleDragOver = (e: any) => {
-  //     e.preventDefault(); // Necessary to allow dropping
-  //   };
+    return (
+      <div style={{ padding: '10px' }}>
+        {fields.map((field) => (
+          <DraggableField key={field.id} field={field} />
+        ))}
+      </div>
+    );
+  };
 
-  //   const handleDrop = (e: any) => {
-  //     e.preventDefault();
-  //     const fieldPlaceholder = e.dataTransfer.getData("text/plain");
 
-  //     // Now insert the content into the Document Editor at the current cursor position
-  //     if (documentEditor) {
 
-  //       documentEditor.editor.insertText(fieldPlaceholder);
-  //     }
-  //   };
+  useEffect(() => {
+    const editorContainer = document.getElementById('container');
+    const documentEditor = editorContainerRef.current.documentEditor;
 
-  //   editorContainer.addEventListener('dragover', handleDragOver);
-  //   editorContainer.addEventListener('drop', handleDrop);
+    const handleDragOver = (e: any) => {
+      e.preventDefault(); // Necessary to allow dropping
+    };
 
-  //   return () => {
-  //     editorContainer.removeEventListener('dragover', handleDragOver);
-  //     editorContainer.removeEventListener('drop', handleDrop);
-  //   };
-  // }, []);
+    const handleDrop = (e: any) => {
+      e.preventDefault();
+      const fieldPlaceholder = e.dataTransfer.getData("text/plain");
+
+      // Now insert the content into the Document Editor at the current cursor position
+      if (documentEditor) {
+
+        documentEditor.editor.insertText(fieldPlaceholder);
+      }
+    };
+
+
+    editorContainer.addEventListener('dragover', handleDragOver);
+    editorContainer.addEventListener('drop', handleDrop);
+
+    return () => {
+      editorContainer.removeEventListener('dragover', handleDragOver);
+      editorContainer.removeEventListener('drop', handleDrop);
+    };
+  }, []);
+
+
+  const extractDataFromDocument = () => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    const content = documentEditor.editor.getDocumentText(); // Get the plain text content
+    const dataEntries = [];
+
+    // Assuming placeholders are uniquely identifiable
+    const regex = /\[([^\]]+)_\d+\]/g; // Adjust based on your unique ID strategy
+    let match;
+
+    while ((match = regex.exec(content)) !== null) {
+      dataEntries.push(match[1]); // Extract the data without the unique ID
+    }
+
+    console.log('sdfsdfsdf', dataEntries);
+    return dataEntries;
+  };
+
 
 
 
   return (
     <div>
-      {/* <Sidebar /> */}
+      <Sidebar />
       <ul className="mt-2" id="breadcrumb" >
         {/* <li><a href="#"><span className="icon icon-home"> </span></a></li> */}
-        <li><a href="#"><span className="icon icon-beaker"> </span> Draft</a></li>
+        <li><a onClick={extractDataFromDocument} href="#"><span className="icon icon-beaker"> </span> Draft</a></li>
         <li><a href="#"><span className="icon icon-double-angle-right"></span> Review</a></li>
         <li><a href="#"><span className="icon icon-rocket"> </span> Signing</a></li>
         <li><a href="#"><span className="icon icon-arrow-down"> </span> Signed</a></li>
