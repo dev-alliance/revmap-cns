@@ -1027,11 +1027,16 @@ function SyncFusionEditor() {
     // Ensure there's a selection
     if (documentEditor.selection && !documentEditor.selection.isEmpty) {
       // Add comment to the selected text
-      documentEditor.editor.insertComment('Add your comment here');
+      //Add new commnt in the document.
+      documentEditor.editor.insertComment("");
     } else {
       alert('Please select a text to add comment.');
     }
   };
+
+
+
+
 
   const toggleTrackChanges = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -1108,7 +1113,12 @@ function SyncFusionEditor() {
   //     reader.readAsText(file);
   //   }
   // };
-
+  const mentionData = [
+    { "Name": "Selma Rose", "Eimg": "3", "EmailId": "selma@mycompany.com" },
+    { "Name": "Russo Kay", "Eimg": "8", "EmailId": "russo@mycompany.com" },
+    { "Name": "Camden Kate", "Eimg": "9", "EmailId": "camden@mycompany.com" },
+    // Other mention data...
+  ];
   return (
     <div>
       <ul className="mt-2" id="breadcrumb" >
@@ -1824,11 +1834,14 @@ function SyncFusionEditor() {
       <DocumentEditorContainerComponent
         ref={editorContainerRef}
         id="container"
-        height="83vh"
+        height="78vh"
         toolbarItems={items}
         toolbarClick={onToolbarClick}
         enableToolbar={true}
-      // showPropertiesPane={false}
+        // showPropertiesPane={false}
+        documentEditorSettings={{
+          searchHighlightColor: 'red',
+        }}
       />
     </div>
   );
