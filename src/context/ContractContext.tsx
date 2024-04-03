@@ -90,6 +90,8 @@ interface ContractContextProps {
   setComments: Dispatch<SetStateAction<any>>;
   recipients: any | null;
   setRecipients: Dispatch<SetStateAction<any>>;
+  openMultiDialog: any | null;
+  setOpenMultiDialog: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -142,6 +144,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setComments: () => {},
   recipients: {},
   setRecipients: () => {},
+  openMultiDialog: {},
+  setOpenMultiDialog: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -153,6 +157,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [comments, setComments] = useState<Array<any>>([]);
   const [collaborater, setCollaborater] = useState<string[]>([]);
   const [activeSection, setActiveSection] = useState("");
+  const [openMultiDialog, setOpenMultiDialog] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [openDocoment, setOpenDocoment] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
@@ -306,6 +311,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (storedrecipients) {
       setComments(JSON.parse(storedrecipients));
     }
+    const storedopenMultiDialog = localStorage.getItem("openMultiDialog");
+    if (storedopenMultiDialog) {
+      setOpenMultiDialog(JSON.parse(storedopenMultiDialog));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -375,6 +384,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setComments,
         recipients,
         setRecipients,
+        setOpenMultiDialog,
+        openMultiDialog,
       }}
     >
       {children}

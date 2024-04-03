@@ -27,16 +27,15 @@ import {
 import { getBranchByid, getUserId } from "@/service/api/apiMethods";
 import CloseIcon from "@mui/icons-material/Close";
 import logo from "@/assets/collaburater_icon.png";
+import signAll from "@/assets/signAll.png";
 
 interface DetailDialogProps {
   open: boolean;
   onClose: () => void;
+  title: any;
 }
 
-const CollaburaterSharedDilog: React.FC<DetailDialogProps> = ({
-  open,
-  onClose,
-}) => {
+const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
 
@@ -72,10 +71,7 @@ const CollaburaterSharedDilog: React.FC<DetailDialogProps> = ({
             textAlign: "center",
           }}
         >
-          <strong style={{ display: "flex" }}>
-            {" "}
-            Document sent to Collaborate!
-          </strong>
+          <strong style={{ display: "flex" }}> {title}</strong>
         </DialogTitle>
         <DialogContent
           sx={{
@@ -85,17 +81,32 @@ const CollaburaterSharedDilog: React.FC<DetailDialogProps> = ({
             textAlign: "center",
           }}
         >
-          <img
-            src={logo}
-            alt="Logo"
-            style={{
-              // maxWidth: isMobile ? "20px" : "50px",
-              width: "18%",
-              // height: "auto",
-              marginTop: "1rem", // Adjust as needed
-              marginBottom: "2rem", // Adjust as needed
-            }}
-          />
+          {title == "Document has been sent to sign!" ? (
+            <img
+              src={signAll}
+              alt="Logo"
+              style={{
+                // maxWidth: isMobile ? "20px" : "50px",
+                width: "18%",
+                // height: "auto",
+                marginTop: "1rem", // Adjust as needed
+                marginBottom: "2rem", // Adjust as needed
+              }}
+            />
+          ) : (
+            <img
+              src={logo}
+              alt="Logo"
+              style={{
+                // maxWidth: isMobile ? "20px" : "50px",
+                width: "18%",
+                // height: "auto",
+                marginTop: "1rem", // Adjust as needed
+                marginBottom: "2rem", // Adjust as needed
+              }}
+            />
+          )}
+
           <div
             style={{
               display: "flex",
@@ -110,7 +121,9 @@ const CollaburaterSharedDilog: React.FC<DetailDialogProps> = ({
               onClick={onClose}
               // onClick={() => setOpenDialog(true)}
             >
-              Continue
+              {title == "Document has been sent to sign!"
+                ? "Close"
+                : "Continue"}
             </Button>
           </div>
         </DialogContent>
@@ -118,4 +131,4 @@ const CollaburaterSharedDilog: React.FC<DetailDialogProps> = ({
     </>
   );
 };
-export default CollaburaterSharedDilog;
+export default SharedDilog;
