@@ -70,6 +70,7 @@ import { ContractContext } from "@/context/ContractContext";
 import OpenSignatureDialog from "@/pages/dasboard/contract/sdk/OpenSignatureDialog";
 import { debounce } from "lodash";
 import { Close, PushPin } from "@mui/icons-material";
+import Fields from "@/pages/dasboard/contract/sdk/Fields";
 
 interface Module {
   icon: ReactNode;
@@ -559,7 +560,7 @@ const MyComponent: React.FC = () => {
           </svg>
         </Tooltip>
       ),
-      content: <Collaburater />,
+      content: <Fields />,
     },
 
     // Add more modules as needed
