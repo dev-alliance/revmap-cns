@@ -27,8 +27,9 @@ import {
 import { getBranchByid, getUserId } from "@/service/api/apiMethods";
 import CloseIcon from "@mui/icons-material/Close";
 import logo from "@/assets/logo.jpg";
-import CollaburaterSharedDilog from "@/pages/dasboard/contract/sdk/CollaburaterSharedDilog ";
+import CollaburaterSharedDilog from "@/pages/dasboard/contract/sdk/SharedDilog ";
 import { ContractContext } from "@/context/ContractContext";
+import SharedDilog from "@/pages/dasboard/contract/sdk/SharedDilog ";
 
 interface DetailDialogProps {
   open: boolean;
@@ -250,7 +251,11 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-      <CollaburaterSharedDilog open={openDialog} onClose={handleCloseDialog} />
+      <SharedDilog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        title={"Document has been sent to Collaborate!"}
+      />
     </>
   );
 };

@@ -44,6 +44,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
       open={open}
       onClose={onClose}
       maxWidth="sm"
+      fullWidth
       sx={{ alignItems: "center" }}
     >
       <DialogTitle

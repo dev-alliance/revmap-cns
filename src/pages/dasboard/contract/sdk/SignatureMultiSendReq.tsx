@@ -1,0 +1,269 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useContext, useState, useEffect } from "react";
+
+import DialogActions from "@mui/material/DialogActions";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Box,
+  Typography,
+  Button,
+  Select,
+  Autocomplete,
+  Divider,
+  TextField,
+  FormControl,
+  FormHelperText,
+  Checkbox,
+  IconButton,
+  FormControlLabel,
+  Grid,
+  Tab,
+  Tabs,
+  Card,
+  MenuItem,
+} from "@mui/material";
+import {
+  getBranchByid,
+  getUserId,
+  getUserListNameID,
+} from "@/service/api/apiMethods";
+import CloseIcon from "@mui/icons-material/Close";
+import logo from "@/assets/logo.jpg";
+import SharedDilog from "@/pages/dasboard/contract/sdk/SharedDilog ";
+import { ContractContext } from "@/context/ContractContext";
+import { useAuth } from "@/hooks/useAuth";
+import SignatureSendReq from "@/pages/dasboard/contract/sdk/SignatureSendReq";
+import SignatureSendReqComponent from "@/pages/dasboard/contract/sdk/SignatureSendReqComponent";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+interface DetailDialogProps {
+  open: boolean;
+  ClickData: any;
+  onClose: () => void;
+}
+
+const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
+  open,
+  ClickData,
+  onClose,
+}) => {
+  const { user } = useAuth();
+  const { recipients, setRecipients } = useContext(ContractContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
+  const [userList, setUserList] = useState<Array<any>>([]);
+  const [requestOption, setRequestOption] = useState({
+    message: "",
+    autoReminder: false,
+    daysFirstReminder: "",
+    daysBtwReminder: "",
+    daysBeforeExp: "",
+    daysFinalExp: "",
+    forwarding: false,
+  });
+  const [tabValue, setTabValue] = useState(0);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+  const moveToNextTab = () => {
+    if (tabValue < recipients.length - 1) {
+      setTabValue((prevTabValue) => prevTabValue + 1);
+    }
+  };
+  const handleRequestOptionChange = (event: any) => {
+    const { name, value, type, checked } = event.target;
+    setRequestOption((prev) => ({
+      ...prev, // Spread the previous state
+      [name]: type === "checkbox" ? checked : value, // Use checked for checkboxes, value for other inputs
+    }));
+  };
+  useEffect(() => {
+    // Reset requestOption when dialog opens or the ClickData changes
+    console.log(ClickData, "click");
+
+    const index = recipients.findIndex(
+      (recip: any) =>
+        recip?.email?.trim().toLowerCase() ===
+        ClickData?.email?.trim().toLowerCase()
+    );
+
+    if (index !== -1) {
+      setRequestOption(recipients[index].permission || ""); // Assume each collaborator has a `permission` field
+    }
+  }, [ClickData, recipients, open]);
+
+  // New function to update the collaborator's permission, called on button click
+  const updateDocment = () => {
+    setRecipients((pre: any[]) => {
+      return pre.map((user) => {
+        if (user.email === ClickData?.email) {
+          return { ...user, ReqOption: requestOption };
+        }
+        // return { ...user, permission: requestOption };
+        return user;
+      });
+    });
+  };
+  console.log(requestOption, "requestOption");
+
+  console.log(recipients, "recipients");
+
+  const listData = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await getUserListNameID(user?._id);
+      console.log({ data });
+
+      setUserList(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user?._id) listData();
+  }, [user?._id]);
+
+  return (
+    <>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="sm"
+        fullWidth
+        sx={{ alignItems: "center" }}
+      >
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            onClick={onClose}
+            aria-label="close"
+            sx={{ position: "absolute", top: 8, right: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "16px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <PersonAddIcon color="primary" sx={{ mt: -0.5, mr: 2 }} />
+            Advanced Options
+          </Typography>
+        </DialogTitle>
+
+        <DialogContent sx={{ height: "42  0px" }}>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="recipient tabs"
+          >
+            {recipients.map((recipient: any, index: any) => {
+              const user = userList.find(
+                (user) => user.email === recipient?.email
+              );
+              return (
+                <Tab
+                  key={index} // It's better to use a unique identifier if available
+                  label={user?.firstName || recipient.email}
+                  sx={{ fontWeight: "bold" }}
+                />
+              );
+            })}
+          </Tabs>
+
+          {recipients.map((recipient: any, index: any) => {
+            const user = userList.find(
+              (user) => user.email === recipient?.email
+            );
+            const isSelected = index === tabValue;
+            return (
+              <Box
+                key={index} // Again, use a unique identifier if possible
+                role="tabpanel"
+                hidden={!isSelected}
+                id={`tabpanel-${index}`}
+                aria-labelledby={`tab-${index}`}
+              >
+                {isSelected && (
+                  <SignatureSendReqComponent
+                    moveToNextTab={moveToNextTab}
+                    ClickData={user}
+                    tabValue={tabValue}
+                  />
+                )}
+              </Box>
+            );
+          })}
+          {/* 
+          <div
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              float: "right",
+              marginTop: "16px",
+            }}
+          >
+            <Button
+              variant="outlined"
+              sx={{ textTransform: "none", mt: "4", mr: 2 }}
+              onClick={onClose}
+              // onClick={() => setOpenDialog(true)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ textTransform: "none", mt: "4" }}
+              onClick={moveToNextTab}
+              // onClick={() => {
+              //   handleClick();
+              //   updateDocment(); // Call the new function here
+              // }}
+            >
+              Share document
+            </Button>
+          </div> */}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+export default SignatureMultiSendReq;

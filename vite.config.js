@@ -18,6 +18,11 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: ["react-beautiful-dnd"],
+    },
+  },
   server: {
     port: 3000, // Set your desired port number here
   },
