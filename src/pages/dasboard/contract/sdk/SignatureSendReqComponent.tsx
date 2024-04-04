@@ -36,12 +36,14 @@ interface DetailDialogProps {
   ClickData: any;
   moveToNextTab: () => void;
   tabValue: any;
+  onclose: () => void;
 }
 
 const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
   ClickData,
   moveToNextTab,
   tabValue,
+  onclose,
 }) => {
   const { user } = useAuth();
   const { recipients, setRecipients, setOpenMultiDialog } =
@@ -122,6 +124,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
                 color: "#FFFFFF",
                 marginRight: -1,
                 mr: 1,
+                mb: 1,
               }}
             >
               <Typography sx={{ fontSize: "13px" }}>
@@ -175,7 +178,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
               <span
                 style={{
                   color: "#92929D",
-                  marginRight: "10px",
+                  marginRight: "27px",
                   fontSize: "14px",
                 }}
               >
@@ -192,7 +195,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
             boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
             borderRadius: "4px",
             // padding: 16px (2 * theme spacing unit)
-            mt: 1, // margin-top: 8px (1 * theme spacing unit)
+            mt: 2, // margin-top: 8px (1 * theme spacing unit)
             mb: 2, // margin-bottom: 16px (2 * theme spacing unit)
             alignItems: "center",
           }}
@@ -202,8 +205,8 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
             onChange={handleRequestOptionChange}
             name="message"
             placeholder="Add message (optional)"
-            maxLength={100}
-            rows={3}
+            maxLength={150}
+            rows={5}
             style={{
               width: "100%",
               boxSizing: "border-box",
@@ -230,7 +233,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
           <FormControlLabel
             sx={{
               "& .MuiFormControlLabel-label": {
-                fontSize: "16px",
+                fontSize: "14px",
                 whiteSpace: "nowrap",
               },
             }}
@@ -245,6 +248,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
                   "& .MuiSvgIcon-root": {
                     fontSize: "20px",
                     color: "gray",
+                    marginLeft: 0.5,
                   },
                 }}
               />
@@ -256,18 +260,20 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
           {" "}
           <Typography
             variant="body1"
-            sx={
-              {
-                // fontSize: "16px",
-              }
-            }
+            sx={{
+              fontSize: "14px",
+            }}
           >
             Number of days before sending first reminder :
           </Typography>
           <TextField
             type="number"
             size="small"
-            sx={{ width: "60px", ml: 1 }}
+            sx={{
+              width: "60px",
+              ml: 1,
+              alignItems: "center",
+            }}
             name="daysFirstReminder"
             value={requestOption.daysFirstReminder}
             onChange={handleRequestOptionChange}
@@ -278,11 +284,9 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
           {" "}
           <Typography
             variant="body1"
-            sx={
-              {
-                // fontSize: "16px",
-              }
-            }
+            sx={{
+              fontSize: "14px",
+            }}
           >
             Number of days between reminders:
           </Typography>
@@ -311,11 +315,9 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
           {" "}
           <Typography
             variant="body1"
-            sx={
-              {
-                // fontSize: "16px",
-              }
-            }
+            sx={{
+              fontSize: "14px",
+            }}
           >
             Number of days before signature request expires:
           </Typography>
@@ -333,11 +335,9 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
           {" "}
           <Typography
             variant="body1"
-            sx={
-              {
-                // fontSize: "16px",
-              }
-            }
+            sx={{
+              fontSize: "14px",
+            }}
           >
             Days before final expiration reminder:
           </Typography>
@@ -365,7 +365,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
           <FormControlLabel
             sx={{
               "& .MuiFormControlLabel-label": {
-                fontSize: "16px",
+                fontSize: "14px",
                 whiteSpace: "nowrap",
               },
             }}
@@ -376,10 +376,11 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
                 name="forwarding"
                 color="primary"
                 sx={{
-                  padding: "5px", // Adjusts padding around the checkbox
+                  padding: "4px", // Adjusts padding around the checkbox
                   "& .MuiSvgIcon-root": {
                     fontSize: "20px",
                     color: "gray",
+                    marginLeft: 0.5,
                   },
                 }}
               />
@@ -397,17 +398,17 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
         >
           <Button
             variant="outlined"
-            sx={{ textTransform: "none", mt: "4", mr: 2 }}
-            // onClick={onClose}
+            sx={{ textTransform: "none", mt: "4", mr: 2, marginBottom: "20px" }}
+            onClick={onclose}
             // onClick={() => setOpenLDialog(true)}
           >
             Cancel
           </Button>
           <Button
-            disabled={!requestOption}
+            // disabled={!requestOption}
             variant="contained"
             color="primary"
-            sx={{ textTransform: "none", mt: "4" }}
+            sx={{ textTransform: "none", mt: "4", marginBottom: "20px" }}
             onClick={() => {
               if (tabValue === recipients.length - 1) {
                 handleClick();

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // DetailDialog.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import DialogActions from "@mui/material/DialogActions";
+import { useLocation } from "react-router-dom";
 import { TextareaAutosize } from "@mui/material";
 import {
   getBranchByid,
@@ -34,6 +35,8 @@ import { useAuth } from "@/hooks/useAuth";
 import toast from "react-hot-toast";
 import { useForm, Controller } from "react-hook-form";
 import logo from "@/assets/logo.jpg";
+import { ContractContext } from "@/context/ContractContext";
+import { log } from "console";
 type FormValues = {
   name: string;
   checkboxName: any;
@@ -46,7 +49,6 @@ interface DetailDialogProps {
 const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
   onButtonClick,
   handleCloseDialog,
-  email,
 }) => {
   const {
     control,
@@ -59,10 +61,21 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
   });
   const { user } = useAuth();
   const theme = useTheme();
+  const { recipients, setRecipients, setOpenMultiDialog } =
+    useContext(ContractContext);
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [email, setEmail] = useState("");
+  const location = useLocation();
 
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const emailParam = queryParams.get("email");
+    if (emailParam) {
+      setEmail(emailParam);
+    }
+  }, [location]);
   const onSubmit = async (data: FormValues) => {
     // try {
     //   const payload = {
@@ -91,6 +104,8 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
     //   console.error(errorMessage);
     // }
   };
+  console.log(recipients, "recipients");
+
   return (
     <>
       <DialogTitle
@@ -186,7 +201,16 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
             sx={{ textTransform: "none" }}
             onClick={() => onButtonClick()}
           >
-            Open the document
+            {recipients.map((recipient: any) => {
+              console.log(recipient, "recipient");
+
+              return recipient.email === email
+                ? recipient.forwarding
+                  ? "Review and forward the document"
+                  : "Review and sign"
+                : undefined;
+              recipient; // Or some other fallback value as needed
+            })}
           </Button>
         </div>
       </DialogContent>

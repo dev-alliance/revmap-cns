@@ -184,8 +184,15 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ height: "420px", mt: -3 }}>
-          <Box sx={{ mb: 2 }}>
+        <DialogContent sx={{ height: "420px", mt: -1 }}>
+          <Box
+            sx={{
+              mb: 2,
+              mt: 0.3,
+              boxShadow: "4px 4px 8px 4px rgba(220, 220, 220, 1)", // Corrected the color format to RGBA
+              borderRadius: "4px",
+            }}
+          >
             <Tabs
               value={tabValue}
               onChange={handleTabChange}
@@ -201,7 +208,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
                   <Tab
                     key={index} // It's better to use a unique identifier if available
                     label={user?.firstName || recipient.email}
-                    sx={{ fontWeight: "bold" }}
+                    sx={{ fontWeight: "bold", textTransform: "none" }}
                   />
                 );
               })}
@@ -225,6 +232,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
                     moveToNextTab={moveToNextTab}
                     ClickData={user}
                     tabValue={tabValue}
+                    onclose={onClose}
                   />
                 )}
               </Box>
