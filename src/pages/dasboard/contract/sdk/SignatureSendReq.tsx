@@ -139,7 +139,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent>
+        <DialogContent sx={{ height: "420px" }}>
           <div>
             <div style={{ display: "flex" }}>
               <Box

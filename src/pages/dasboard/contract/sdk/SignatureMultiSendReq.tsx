@@ -180,33 +180,33 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
               whiteSpace: "nowrap",
             }}
           >
-            <PersonAddIcon color="primary" sx={{ mt: -0.5, mr: 2 }} />
-            Advanced Options
+            {user?.firstName} has shared Residential Rental Agreement to sign.
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ height: "42  0px" }}>
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="recipient tabs"
-          >
-            {recipients.map((recipient: any, index: any) => {
-              const user = userList.find(
-                (user) => user.email === recipient?.email
-              );
-              return (
-                <Tab
-                  key={index} // It's better to use a unique identifier if available
-                  label={user?.firstName || recipient.email}
-                  sx={{ fontWeight: "bold" }}
-                />
-              );
-            })}
-          </Tabs>
-
+        <DialogContent sx={{ height: "420px", mt: -3 }}>
+          <Box sx={{ mb: 2 }}>
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+              aria-label="recipient tabs"
+            >
+              {recipients.map((recipient: any, index: any) => {
+                const user = userList.find(
+                  (user) => user.email === recipient?.email
+                );
+                return (
+                  <Tab
+                    key={index} // It's better to use a unique identifier if available
+                    label={user?.firstName || recipient.email}
+                    sx={{ fontWeight: "bold" }}
+                  />
+                );
+              })}
+            </Tabs>
+          </Box>
           {recipients.map((recipient: any, index: any) => {
             const user = userList.find(
               (user) => user.email === recipient?.email
