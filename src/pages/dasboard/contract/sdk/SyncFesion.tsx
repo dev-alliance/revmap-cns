@@ -177,7 +177,6 @@ function SyncFusionEditor() {
         documentEditor.editorHistory.redo();
         break;
       case "delete":
-
         documentEditor.editor.delete();
         break;
 
@@ -353,19 +352,15 @@ function SyncFusionEditor() {
   //   documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
   // };
 
-
-
   const clearAndCloseFooter = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
 
     documentEditor.selection.closeHeaderFooter();
   };
 
-
   const setupHeader = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
-
       // Move to the header region
       documentEditor.selection.goToHeader();
       // Insert text or other content into the header
@@ -379,8 +374,6 @@ function SyncFusionEditor() {
   const setupFooter = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     if (documentEditor && documentEditor.selection) {
-
-
       // Move to the footer region
       documentEditor.selection.goToFooter();
       // Insert text or other content into the footer
@@ -645,12 +638,11 @@ function SyncFusionEditor() {
     }
   }
 
-
   const addTable = () => {
-    console.log('adding table')
+    console.log("adding table");
     const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.showDialog('Table');
-  }
+    documentEditor.showDialog("Table");
+  };
 
   // State for the cell fill color
   const [cellFillColor, setCellFillColor] = useState(""); // Default color
@@ -998,28 +990,26 @@ function SyncFusionEditor() {
   };
 
   const insertImage = (imageSrc: any) => {
-    console.log('image')
+    console.log("image");
     const documentEditor = editorContainerRef.current.documentEditor;
 
     documentEditor.editor.insertImage(imageSrc);
   };
 
   const showHyperlinkDialog = () => {
-
     const documentEditor = editorContainerRef.current.documentEditor;
-    documentEditor.showDialog('Hyperlink');
-  }
+    documentEditor.showDialog("Hyperlink");
+  };
 
   const addpagenumber = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.editor.insertPageNumber();
-
-  }
+  };
 
   const ShowHideOptionsPane = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.showOptionsPane();
-  }
+  };
 
   const addComment = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -1030,13 +1020,9 @@ function SyncFusionEditor() {
       //Add new commnt in the document.
       documentEditor.editor.insertComment("");
     } else {
-      alert('Please select a text to add comment.');
+      alert("Please select a text to add comment.");
     }
   };
-
-
-
-
 
   const toggleTrackChanges = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -1046,8 +1032,6 @@ function SyncFusionEditor() {
       documentEditor.enableTrackChanges = !trackChangesEnabled;
     }
   };
-
-
 
   // Function to reject the second change
   // Function to reject all changes
@@ -1064,12 +1048,11 @@ function SyncFusionEditor() {
   // Function to accept the first change
   const acceptFirstChange = () => {
     const revisions = editorContainerRef.current.documentEditor.revisions;
-    console.log(revisions)
+    console.log(revisions);
     if (revisions.length > 0) {
       revisions.get(0).accept();
     }
   };
-
 
   const fileInputRef = useRef(null);
 
@@ -1114,13 +1097,11 @@ function SyncFusionEditor() {
   //   }
   // };
   const mentionData = [
-    { "Name": "Selma Rose", "Eimg": "3", "EmailId": "selma@mycompany.com" },
-    { "Name": "Russo Kay", "Eimg": "8", "EmailId": "russo@mycompany.com" },
-    { "Name": "Camden Kate", "Eimg": "9", "EmailId": "camden@mycompany.com" },
+    { Name: "Selma Rose", Eimg: "3", EmailId: "selma@mycompany.com" },
+    { Name: "Russo Kay", Eimg: "8", EmailId: "russo@mycompany.com" },
+    { Name: "Camden Kate", Eimg: "9", EmailId: "camden@mycompany.com" },
     // Other mention data...
   ];
-
-
 
   // const DraggableField = ({ field }: any) => {
   //   const handleDragStart = (e: any) => {
@@ -1138,8 +1119,6 @@ function SyncFusionEditor() {
   //   );
   // };
 
-
-
   // const Sidebar = () => {
   //   const fields = [
   //     { id: 'name', label: 'Name', placeholder: '[Name]' },
@@ -1156,23 +1135,49 @@ function SyncFusionEditor() {
   //   );
   // };
 
+  // useEffect(() => {
+  //   const editorContainer = document.getElementById('container');
+  //   const documentEditor = editorContainerRef.current.documentEditor;
 
+  //   const handleDragOver = (e: any) => {
+  //     e.preventDefault(); // Necessary to allow dropping
+  //   };
 
+  //   const handleDrop = (e: any) => {
+  //     e.preventDefault();
+  //     const fieldPlaceholder = e.dataTransfer.getData("text/plain");
+
+  //     // Now insert the content into the Document Editor at the current cursor position
+  //     if (documentEditor) {
+
+  //       documentEditor.editor.insertText(fieldPlaceholder);
+  //     }
+  //   };
+
+  //   editorContainer.addEventListener('dragover', handleDragOver);
+  //   editorContainer.addEventListener('drop', handleDrop);
+
+  //   return () => {
+  //     editorContainer.removeEventListener('dragover', handleDragOver);
+  //     editorContainer.removeEventListener('drop', handleDrop);
+  //   };
+  // }, []);
   useEffect(() => {
-    const editorContainer = document.getElementById('container');
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const editorContainer = document.getElementById("container");
+    if (!editorContainer) return; // Exit if the element is not found
 
-    const handleDragOver = (e: any) => {
+    const handleDragOver = (e: DragEvent) => {
       e.preventDefault(); // Necessary to allow dropping
     };
 
-    const handleDrop = (e: any) => {
+    const handleDrop = (e: DragEvent) => {
       e.preventDefault();
-      const fieldPlaceholder = e.dataTransfer.getData("text/plain");
+      const fieldPlaceholder = e.dataTransfer?.getData("text/plain");
 
-      // Now insert the content into the Document Editor at the current cursor position
-      if (documentEditor) {
-
+      // Assuming documentEditor is correctly initialized elsewhere
+      // and you're sure about its non-nullness
+      const documentEditor = editorContainerRef.current?.documentEditor;
+      if (documentEditor && fieldPlaceholder) {
         documentEditor.editor.insertText(fieldPlaceholder);
       }
     };
@@ -1182,6 +1187,7 @@ function SyncFusionEditor() {
       editorContainer.addEventListener('drop', handleDrop);
     }
 
+    // Cleanup function to remove the event listeners
     return () => {
       if (editorContainer) {
         editorContainer.removeEventListener('dragover', handleDragOver);
@@ -1189,32 +1195,59 @@ function SyncFusionEditor() {
       }
 
     };
-  }, []);
-
-
+  }, []); // Assuming no dependencies, adjust if necessary
 
   return (
     <div>
       {/* <Sidebar /> */}
-      <ul className="mt-2" id="breadcrumb" >
+      <ul className="mt-2" id="breadcrumb">
         {/* <li><a href="#"><span className="icon icon-home"> </span></a></li> */}
-        <li><a href="#"><span className="icon icon-beaker"> </span> Draft</a></li>
-        <li><a href="#"><span className="icon icon-double-angle-right"></span> Review</a></li>
-        <li><a href="#"><span className="icon icon-rocket"> </span> Signing</a></li>
-        <li><a href="#"><span className="icon icon-arrow-down"> </span> Signed</a></li>
-        <li><a href="#"><span className="icon icon-arrow-down"> </span> Active</a></li>
-
+        <li>
+          <a href="#">
+            <span className="icon icon-beaker"> </span> Draft
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span className="icon icon-double-angle-right"></span> Review
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span className="icon icon-rocket"> </span> Signing
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span className="icon icon-arrow-down"> </span> Signed
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span className="icon icon-arrow-down"> </span> Active
+          </a>
+        </li>
       </ul>
       <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 ">
+        <p className="text-[12px] font-regular ">
+          Approvals: 0/0{" "}
+          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+        </p>
 
-        <p className="text-[12px] font-regular ">Approvals: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
+        <p className="text-[12px] font-regular ">
+          Signatures: 0/0{" "}
+          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+        </p>
 
-        <p className="text-[12px] font-regular ">Signatures: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
+        <p className="text-[12px] font-regular ">
+          Collaborators: 0/0{" "}
+          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+        </p>
 
-        <p className="text-[12px] font-regular ">Collaborators: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
-
-        <p className="text-[12px] font-regular ">Custom Fields: 0/0 <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span> </p>
-
+        <p className="text-[12px] font-regular ">
+          Custom Fields: 0/0{" "}
+          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+        </p>
       </div>
 
       {/* <input
@@ -1246,14 +1279,18 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_editor_font_properties_properties"); toggleDropdown("file")
+                  triggerClick("container_editor_font_properties_properties");
+                  toggleDropdown("file");
                 }}
               >
                 <img src={editIcon} className="h-4 w-4" alt="" />
                 Edit
               </li>
               <li
-                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
+                onClick={() => {
+                  saveDocumentToState();
+                  toggleDropdown("file");
+                }}
                 className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
               >
                 <img src={saveIcon} className="h-4 w-4" alt="" />
@@ -1261,7 +1298,10 @@ function SyncFusionEditor() {
               </li>
 
               <li
-                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
+                onClick={() => {
+                  saveDocumentToState();
+                  toggleDropdown("file");
+                }}
                 className="px-3   hover:bg-gray-200  cursor-pointer   flex items-center gap-x-2"
               >
                 <img src={crossIcon} className="h-4 w-4" alt="" />
@@ -1269,7 +1309,10 @@ function SyncFusionEditor() {
               </li>
 
               <li
-                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
+                onClick={() => {
+                  saveDocumentToState();
+                  toggleDropdown("file");
+                }}
                 className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
               >
                 <img src={copyIcon} className="h-[18px] w-[px]" alt="" />
@@ -1277,7 +1320,10 @@ function SyncFusionEditor() {
               </li>
 
               <li
-                onClick={() => { saveDocumentToState(); toggleDropdown("file") }}
+                onClick={() => {
+                  saveDocumentToState();
+                  toggleDropdown("file");
+                }}
                 className="px-3 pb-2 hover:bg-gray-200  cursor-pointer border-b border-[#a1a1a1] flex items-center gap-x-2"
               >
                 <img src={deleteIcon} className="h-[18px] w-[18px]" alt="" />
@@ -1287,7 +1333,8 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_toolbar_open"); toggleDropdown("file")
+                  triggerClick("container_toolbar_open");
+                  toggleDropdown("file");
                 }}
               >
                 <img src={downloadIcon} className="h-5 w-5" alt="" />
@@ -1320,14 +1367,20 @@ function SyncFusionEditor() {
             >
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2 "
-                onClick={() => { ShowHideOptionsPane(); toggleDropdown("view") }}
+                onClick={() => {
+                  ShowHideOptionsPane();
+                  toggleDropdown("view");
+                }}
               >
                 <img src={searchIcon} className="h-4 w-4" alt="" />
                 Find
               </li>
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { addComment(); toggleDropdown("view") }}
+                onClick={() => {
+                  addComment();
+                  toggleDropdown("view");
+                }}
               >
                 <img src={commentIcon} className="h-4 w-4" alt="" />
                 View message
@@ -1354,7 +1407,8 @@ function SyncFusionEditor() {
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
                 onClick={() => {
-                  toggleTrackChanges(); toggleDropdown("view")
+                  toggleTrackChanges();
+                  toggleDropdown("view");
                   // triggerClick("container_toolbar_track");
                 }}
               >
@@ -1364,14 +1418,20 @@ function SyncFusionEditor() {
 
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { rejectAllChanges(); toggleDropdown("view") }}
+                onClick={() => {
+                  rejectAllChanges();
+                  toggleDropdown("view");
+                }}
               >
                 <img src={crossIcon} className="h-3 w-3" alt="" />
                 Reject all changes
               </li>
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { acceptFirstChange(); toggleDropdown("view") }}
+                onClick={() => {
+                  acceptFirstChange();
+                  toggleDropdown("view");
+                }}
               >
                 <img src={tickIcon} className="h-4 w-4" alt="" />
                 Accept all changes
@@ -1379,14 +1439,17 @@ function SyncFusionEditor() {
               <li
                 className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
-                  triggerClick("container_editor_font_properties_bold"); toggleDropdown("view")
+                  triggerClick("container_editor_font_properties_bold");
+                  toggleDropdown("view");
                 }}
               >
                 <img src={viewIcon} className="h-4 w-4" alt="" />
                 View Audit trail
               </li>
               <div
-                onClick={() => { toggleDropdown("view"); }}
+                onClick={() => {
+                  toggleDropdown("view");
+                }}
                 className="w-full h-full  fixed inset-0 z-[-9]"
               ></div>
             </ul>
@@ -1411,7 +1474,10 @@ function SyncFusionEditor() {
             >
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { addTable(); toggleDropdown("insert") }}
+                onClick={() => {
+                  addTable();
+                  toggleDropdown("insert");
+                }}
               >
                 <img src={tableIcon} className="h-4 w-4" alt="" />
                 Table
@@ -1422,7 +1488,10 @@ function SyncFusionEditor() {
               //   triggerClick("container_toolbar_image_local");
               // }}
               >
-                <label htmlFor="forimg" className="flex gap-2 px-3 pt-2 cursor-pointer w-full">
+                <label
+                  htmlFor="forimg"
+                  className="flex gap-2 px-3 pt-2 cursor-pointer w-full"
+                >
                   <img src={imageIcon} className="h-4 w-4" alt="" />
                   Image
                   <input
@@ -1440,14 +1509,20 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { showHyperlinkDialog(); toggleDropdown("insert") }}
+                onClick={() => {
+                  showHyperlinkDialog();
+                  toggleDropdown("insert");
+                }}
               >
                 <img src={linkIcon} className="h-4 w-4" alt="" />
                 Link
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { setupHeader(); toggleDropdown("insert") }}
+                onClick={() => {
+                  setupHeader();
+                  toggleDropdown("insert");
+                }}
               >
                 <img src={headerIcon} className="h-4 w-4" alt="" />
                 Header
@@ -1455,7 +1530,10 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { setupFooter(); toggleDropdown("insert") }}
+                onClick={() => {
+                  setupFooter();
+                  toggleDropdown("insert");
+                }}
               >
                 <img src={footerIcon} className="h-4 w-4" alt="" />
                 Footer
@@ -1463,14 +1541,20 @@ function SyncFusionEditor() {
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer pb-2 border-b border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => { clearAndCloseFooter(); toggleDropdown("insert") }}
+                onClick={() => {
+                  clearAndCloseFooter();
+                  toggleDropdown("insert");
+                }}
               >
                 <img src={crossIcon} className="h-3 w-3" alt="" />
                 Clear Header/Footer
               </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => { ShowPageSetupDialog(); toggleDropdown("insert") }}
+                onClick={() => {
+                  ShowPageSetupDialog();
+                  toggleDropdown("insert");
+                }}
               >
                 <img src={pageSetupIcon} className="h-5 w-5" alt="" />
                 Page Setup
@@ -1478,7 +1562,8 @@ function SyncFusionEditor() {
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
                 onClick={() => {
-                  addpagenumber(); toggleDropdown("insert")
+                  addpagenumber();
+                  toggleDropdown("insert");
                 }}
               >
                 <img src={pageNoIcon} className="h-5 w-5" alt="" />
@@ -1645,10 +1730,16 @@ function SyncFusionEditor() {
 
           <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
             <ItemsDirective>
-
-              <ItemDirective id="undo" prefixIcon="e-icons e-undo" tooltipText="Undo" />
-              <ItemDirective id="redo" prefixIcon="e-icons e-redo" tooltipText="Redo" />
-
+              <ItemDirective
+                id="undo"
+                prefixIcon="e-icons e-undo"
+                tooltipText="Undo"
+              />
+              <ItemDirective
+                id="redo"
+                prefixIcon="e-icons e-redo"
+                tooltipText="Redo"
+              />
 
               <ItemDirective template={contentTemplate2} />
               <ItemDirective template={contentTemplate3} />
@@ -1699,7 +1790,6 @@ function SyncFusionEditor() {
               />
 
               <ItemDirective type="Separator" />
-
 
               {/* Font Color Picker */}
               <ItemDirective
@@ -1915,7 +2005,7 @@ function SyncFusionEditor() {
         enableToolbar={true}
         // showPropertiesPane={false}
         documentEditorSettings={{
-          searchHighlightColor: 'red',
+          searchHighlightColor: "red",
         }}
       />
     </div>

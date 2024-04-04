@@ -102,7 +102,7 @@ const SignatureSendDoc: React.FC<DetailDialogProps> = ({
         <strong style={{ display: "flex" }}> Send document to sign</strong>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ height: "420px" }}>
         <Typography variant="body2">To: {email}</Typography>
         {/* <Card> */}
         <Typography variant="body1" sx={{ mt: 1, mb: 2 }}>

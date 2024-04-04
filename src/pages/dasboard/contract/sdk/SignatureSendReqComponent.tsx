@@ -99,9 +99,9 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
 
   const handleCloseDialog = () => {
     setOpenLDialog(false);
+    setOpenMultiDialog(false);
   };
   const handleClick = () => {
-    // setOpenMultiDialog(false);
     setOpenLDialog(true);
   };
 
@@ -426,7 +426,9 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
       <SharedDilog
         open={openLDialog}
         onClose={handleCloseDialog}
-        title={"Document has been sent to sign!"}
+        title={
+          "Document will be shared for signing in the order you specified."
+        }
       />
     </>
   );

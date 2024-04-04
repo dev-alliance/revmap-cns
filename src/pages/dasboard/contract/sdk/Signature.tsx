@@ -79,8 +79,12 @@ const Signature = () => {
     setOpenMultiDialog(false);
   };
   const handleShareDilog = (signatory: any) => {
-    setOpenMultiDialog(true);
-    /// setOpenSignatureDialog(true);
+    if (siningOrder) {
+      setOpenSignatureDialog(true);
+    } else {
+      setOpenMultiDialog(true);
+    }
+
     const user = userList.find((user) => user.email === signatory?.email);
     if (user) {
       setClickData(user);
@@ -105,9 +109,6 @@ const Signature = () => {
     setSiningOrder(event.target.checked);
   };
   const handleAddSignatory = (newSignatoryEmail: string) => {
-    console.log(newSignatoryEmail, "caca");
-
-    // Check if the email already exists in the collaborater array
     const emailExists = recipients.some(
       (collaborator: any) => collaborator.email === newSignatoryEmail
     );

@@ -63,25 +63,31 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogTitle
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-          }}
-        >
-          <strong style={{ display: "flex" }}> {title}</strong>
-        </DialogTitle>
+
         <DialogContent
           sx={{
+            height: "420px",
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
             textAlign: "center",
+            lineHeight: "auto",
           }}
         >
-          {title == "Document has been sent to sign!" ? (
+          <DialogTitle
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <strong style={{ display: "flex" }}> {title}</strong>
+          </DialogTitle>
+          {title == "Document has been sent to sign!" ||
+          title ==
+            "Document will be shared for signing in the order you specified." ? (
             <img
               src={signAll}
               alt="Logo"
@@ -121,7 +127,9 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
               onClick={onClose}
               // onClick={() => setOpenDialog(true)}
             >
-              {title == "Document has been sent to sign!"
+              {title == "Document has been sent to sign!" ||
+              title ==
+                "Document will be shared for signing in the order you specified."
                 ? "Close"
                 : "Continue"}
             </Button>
