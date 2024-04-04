@@ -11,15 +11,39 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import {
+  DocumentEditorComponent,
+  Selection,
+  Editor,
+  EditorHistory,
+  ContextMenu,
+  TableDialog,
+  BorderSettings,
+  PageSetupDialog,
+  CheckBoxFormFieldInfo,
+} from "@syncfusion/ej2-react-documenteditor";
 import React, { useContext, useEffect, useState } from "react";
 import ps from "../../../../assets/icons/ps.svg";
 import userIcon from "../../../../assets/icons/user.svg";
 import companyIcon from "../../../../assets/icons/company.svg";
 import signIcon from "../../../../assets/icons/sign.svg";
-import titleIcon from "../../../../assets/icons/user.svg";
+import titleIcon from "../../../../assets/icons/title.svg";
 import dateIcon from "../../../../assets/icons/date.svg";
 
+
+import textIcon from "../../../../assets/icons/textIcon.svg";
+import checkIcon from "../../../../assets/icons/checkIcon.svg";
+import radioIcon from "../../../../assets/icons/radioIcon.svg";
+import shortIcon from "../../../../assets/icons/short.svg";
+
 import { useForm } from "react-hook-form";
+
+
+interface OptionType {
+  email: string;
+  name: string;
+}
+
 
 const Fields = () => {
   const {
@@ -41,6 +65,7 @@ const Fields = () => {
     openMultiDialog,
     setDragFields,
     dragFields,
+    editorRefContext
   } = useContext(ContractContext);
 
   const [inputValue, setInputValue] = useState("");
@@ -55,36 +80,65 @@ const Fields = () => {
   const [message, setMessage] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]); // State for the message input
   // State to track if the comment is internal or external
-  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [selectedEmails, setSelectedEmails] = useState<OptionType | null>(null);
 
   console.log("selected Emails : ", selectedEmails);
 
   const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB"];
   const [backgroundColor, setBackgroundColor] = useState("");
 
-  useEffect(() => {
-    // Function to select a random color
-    const selectRandomColor = () =>
-      colors[Math.floor(Math.random() * colors.length)];
+  const handleOnChange = (event: React.SyntheticEvent<Element, Event>, newValue: OptionType | null) => {
+    setSelectedEmails(newValue);
+    if (newValue) {
+      const index = options.findIndex((option: any) => option.email === newValue.email) % colors.length;
+      const selectedColor = colors[index];
+      setBackgroundColor(selectedColor); // Set the color state to the selected option's color
+    } else {
+      setBackgroundColor(""); // Reset or handle deselection
+    }
+  };
 
-    // Update the background color when selectedEmails changes
-    setBackgroundColor(selectRandomColor());
-  }, [selectedEmails]); // Dependency on selectedEmails
 
-  const DraggableField = ({ field, backgroundColor }: any) => {
+  const radioDrag = () => {
+    const documentEditor = editorRefContext;
+
+    //Insert Checkbox form field
+    documentEditor.editor.insertFormField('CheckBox');
+    //Insert Drop down form field 
+  }
+
+  const DraggableField = ({ field }: any) => {
+
+    console.log('fields : ', field)
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
     };
 
     return (
-      <div
-        className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
-        draggable
-        onDragStart={handleDragStart}
-        style={{ cursor: "grab", backgroundColor }}
-      >
-        <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
-      </div>
+      <>
+        {field?.id !== "RadioButton" &&
+
+          <div
+            className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
+            draggable
+            onDragStart={handleDragStart}
+            style={{ cursor: "grab", backgroundColor }}
+          >
+            <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
+          </div>
+        }
+        {field?.id == "RadioButton" &&
+
+          <div onClick={radioDrag}
+            className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
+            draggable
+            onDragStart={handleDragStart}
+            style={{ cursor: "grab", backgroundColor }}
+          >
+            <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
+          </div>
+        }
+      </>
     );
   };
 
@@ -93,28 +147,62 @@ const Fields = () => {
       id: "Signature",
       icon: signIcon,
       label: "Signature",
-      placeholder: "[Signature]",
+      placeholder: "[ Signature ]",
     },
+
     { id: "Initial", icon: ps, label: "Initial", placeholder: "[Initial]" },
+
     {
       id: "DateSigned",
       icon: dateIcon,
       label: "Date Signed",
-      placeholder: "[Date Signed]",
+      placeholder: "[ Date Signed ]",
     },
+
     {
       id: "FullName",
       icon: userIcon,
       label: "Full Name",
-      placeholder: "[Full Name]",
+      placeholder: "[ Full Name ]",
     },
-    { id: "Title", icon: titleIcon, label: "Title", placeholder: "[Title]" },
+
+    { id: "Title", icon: titleIcon, label: "Title", placeholder: "[ Title ]" },
+
     {
       id: "company",
       icon: companyIcon,
       label: "Company",
-      placeholder: "[Company]",
+      placeholder: "[ Company ]",
     },
+
+    {
+      id: "ShortAnswer",
+      icon: shortIcon,
+      label: "Short Answer",
+      placeholder: "[ Short Answer ]",
+    },
+
+    {
+      id: "Text",
+      icon: textIcon,
+      label: "Text",
+      placeholder: "[ Text ]",
+    },
+
+    {
+      id: "Checkbox",
+      icon: checkIcon,
+      label: "Checkbox",
+      placeholder: "[ Checkbox ]", // This will be a command to insert a checkbox form field
+    },
+
+    {
+      id: "RadioButton",
+      icon: radioIcon,
+      label: "RadioButton",
+      placeholder: "[ Radio Button ]", // Command to insert a radio button form field
+    },
+
   ];
 
   const listData = async () => {
@@ -163,35 +251,32 @@ const Fields = () => {
       name: `${user.firstName} ${user.lastName}`,
     };
   });
-  const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
+  const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1 , #f46464"];
 
-  const [optionBgColor, setOptionBgColor] = useState("#ffffff"); // Initial option background color, you can set it to any color
 
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
-        <Typography variant="body1" color="primary" sx={{ fontSize: "15px" }}>
+
+
+        <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
           Fields
         </Typography>
-        <Typography variant="body2" color="textSecondary">
+
+
+
+
+        <p className="text-[#8A8A8A] text-[10px] pt-1">
           Drag and drop to assign signature fields for the signer to sign or add
           custom fields to get additional information.
-        </Typography>
-        <Divider sx={{ mt: 1, mb: 2 }} />
-        <Typography
-          variant="body1"
-          color="primary"
-          sx={{
-            mb: 1,
-            // fontWeight: "bold",
-          }}
-        >
-          Signature Fields
-        </Typography>
+        </p>
+        <Divider sx={{ mt: 1, mb: 0.5 }} />
         <Box
           sx={{
             display: "flex",
             mb: 2,
+            mt: 2,
+            fontSize: "14px"
             // borderBottom: 1,
             // borderColor: "divider",
           }}
@@ -199,46 +284,42 @@ const Fields = () => {
           <Autocomplete
             size="small"
             fullWidth
-            // multiple
             options={options}
-            getOptionLabel={(option: any) => option.name} // Display the user's full name
+            getOptionLabel={(option) => option.name}
             value={selectedEmails}
-            onChange={(event, newValue: any) => {
-              const index = options.findIndex(
-                (option: any) => option.email === newValue.email
-              );
-              setSelectedEmails({ ...newValue, index });
-            }}
+            onChange={handleOnChange}
             renderInput={(params) => (
-              <TextField {...params} label="Select users" />
+              <TextField {...params} label="Select users" variant="outlined" />
             )}
-            isOptionEqualToValue={(option: any, value: any) =>
-              option.email === value.email
-            }
+            isOptionEqualToValue={(option, value) => option.email === value.email}
+            renderOption={(props, option, { selected }) => (
+              <li
+                {...props}
+                style={{
+                  backgroundColor: colors[options.findIndex((opt: any) => opt?.email === option.email) % colors?.length],
+                  color: selected ? 'white' : 'black',
+                }}
+              >
+                {option.name}
+              </li>
+            )}
           />
+
         </Box>
 
+        <p className="font-medium text-[14px] text-[#155be5] mt-10">Signature Fields</p>
         <div style={{ padding: "10px" }}>
           {fields.map((field) => (
             <DraggableField
               key={field.id}
               field={field}
-              backgroundColor={backgroundColor}
+            // backgroundColor={backgroundColor}
             />
           ))}
         </div>
 
         <Divider sx={{ mt: 1, mb: 2 }} />
-        <Typography
-          variant="body1"
-          color="primary"
-          sx={{
-            mb: 1,
-            // fontWeight: "bold",
-          }}
-        >
-          Custom Fields
-        </Typography>
+        <p className="font-medium text-[14px] text-[#155be5] my-3">Custom Fields</p>
         <Autocomplete
           size="small"
           fullWidth

@@ -96,6 +96,11 @@ interface ContractContextProps {
   dragFields: any | null;
   setDragFields: Dispatch<SetStateAction<any>>;
 
+  editorRefContext: any | null;
+  setEditorRefContext: Dispatch<SetStateAction<any>>;
+
+
+
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -152,7 +157,12 @@ export const ContractContext = createContext<ContractContextProps>({
   setOpenMultiDialog: () => { },
   dragFields: {},
   setDragFields: () => { },
+
+  editorRefContext: {},
+  setEditorRefContext: () => { },
 });
+
+
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -179,6 +189,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [type, setType] = useState("");
   const [viewUser, setViewUser] = useState(false);
   const [dragFields, setDragFields] = useState('');
+  const [editorRefContext, setEditorRefContext] = useState('');
+
   const [conditions, setConditions] = useState([
     {
       comparisonOperator: "",
@@ -328,6 +340,13 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
       setDragFields(JSON.parse(storeDragFields));
     }
 
+    const editorRefFun = localStorage.getItem("editorRefContext");
+    if (editorRefFun) {
+      setEditorRefContext(JSON.parse(editorRefFun));
+    }
+
+
+
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -400,7 +419,9 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setOpenMultiDialog,
         openMultiDialog,
         dragFields,
-        setDragFields
+        setDragFields,
+        editorRefContext,
+        setEditorRefContext,
       }}
     >
       {children}
