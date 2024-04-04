@@ -257,25 +257,15 @@ const Fields = () => {
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
-        <div className="flex justify-between pr-3">
 
-          <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
-            Fields
-          </Typography>
 
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_3745_36541)">
-              <path d="M4.00666 8.09868C3.97958 8.19035 3.97389 8.287 3.99002 8.3812C4.00615 8.47541 4.04367 8.56466 4.09969 8.64209C4.15572 8.71953 4.22876 8.78308 4.31319 8.82787C4.39763 8.87265 4.49121 8.89748 4.58674 8.90043L9.42376 9.05723C9.51928 9.06047 9.61427 9.04176 9.70143 9.00254C9.78859 8.96332 9.86559 8.90463 9.92651 8.83098C9.98743 8.75734 10.0307 8.67071 10.0529 8.57774C10.075 8.48478 10.0756 8.38796 10.0545 8.29474C9.87344 7.50874 9.39627 6.82282 8.72231 6.37968L9.52338 3.25619C9.54665 3.16555 9.54927 3.07083 9.53104 2.97903C9.51281 2.88724 9.4742 2.80071 9.41806 2.72583C9.36191 2.65095 9.28967 2.58964 9.20666 2.54642C9.12366 2.5032 9.032 2.47917 8.93846 2.4761L5.49725 2.36455C5.40372 2.36151 5.3107 2.37952 5.22506 2.41724C5.13941 2.45496 5.06333 2.51143 5.00243 2.58248C4.94153 2.65354 4.89736 2.73736 4.87319 2.82776C4.84901 2.91817 4.84545 3.01285 4.86276 3.10481L5.46013 6.27393C4.75889 6.67249 4.23829 7.32606 4.00666 8.09868Z" stroke="#575757" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M7.00533 8.98145L6.85254 13.6948" stroke="#575757" stroke-linecap="round" stroke-linejoin="round" />
-            </g>
-            <defs>
-              <clipPath id="clip0_3745_36541">
-                <rect width="10" height="10" fill="white" transform="translate(0 6.83984) rotate(-43.1433)" />
-              </clipPath>
-            </defs>
-          </svg>
+        <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
+          Fields
+        </Typography>
 
-        </div>
+
+
+
         <p className="text-[#8A8A8A] text-[10px] pt-1">
           Drag and drop to assign signature fields for the signer to sign or add
           custom fields to get additional information.
