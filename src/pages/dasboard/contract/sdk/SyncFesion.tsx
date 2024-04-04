@@ -1119,8 +1119,78 @@ function SyncFusionEditor() {
     { "Name": "Camden Kate", "Eimg": "9", "EmailId": "camden@mycompany.com" },
     // Other mention data...
   ];
+
+
+
+  // const DraggableField = ({ field }: any) => {
+  //   const handleDragStart = (e: any) => {
+  //     e.dataTransfer.setData("text/plain", field.placeholder);
+  //   };
+
+  //   return (
+  //     <div
+  //       draggable
+  //       onDragStart={handleDragStart}
+  //       style={{ cursor: 'grab', marginBottom: '10px' }}
+  //     >
+  //       {field.label}
+  //     </div>
+  //   );
+  // };
+
+
+
+  // const Sidebar = () => {
+  //   const fields = [
+  //     { id: 'name', label: 'Name', placeholder: '[Name]' },
+  //     { id: 'date', label: 'Date', placeholder: '[Date]' },
+  //     { id: 'company', label: 'Company', placeholder: '[Company]' },
+  //   ];
+
+  //   return (
+  //     <div style={{ padding: '10px' }}>
+  //       {fields.map((field) => (
+  //         <DraggableField key={field.id} field={field} />
+  //       ))}
+  //     </div>
+  //   );
+  // };
+
+
+
+  useEffect(() => {
+    const editorContainer = document.getElementById('container');
+    const documentEditor = editorContainerRef.current.documentEditor;
+
+    const handleDragOver = (e: any) => {
+      e.preventDefault(); // Necessary to allow dropping
+    };
+
+    const handleDrop = (e: any) => {
+      e.preventDefault();
+      const fieldPlaceholder = e.dataTransfer.getData("text/plain");
+
+      // Now insert the content into the Document Editor at the current cursor position
+      if (documentEditor) {
+
+        documentEditor.editor.insertText(fieldPlaceholder);
+      }
+    };
+
+    editorContainer.addEventListener('dragover', handleDragOver);
+    editorContainer.addEventListener('drop', handleDrop);
+
+    return () => {
+      editorContainer.removeEventListener('dragover', handleDragOver);
+      editorContainer.removeEventListener('drop', handleDrop);
+    };
+  }, []);
+
+
+
   return (
     <div>
+      {/* <Sidebar /> */}
       <ul className="mt-2" id="breadcrumb" >
         {/* <li><a href="#"><span className="icon icon-home"> </span></a></li> */}
         <li><a href="#"><span className="icon icon-beaker"> </span> Draft</a></li>
