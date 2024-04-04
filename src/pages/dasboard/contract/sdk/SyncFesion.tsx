@@ -1176,13 +1176,18 @@ function SyncFusionEditor() {
         documentEditor.editor.insertText(fieldPlaceholder);
       }
     };
+    if (editorContainer) {
 
-    editorContainer.addEventListener('dragover', handleDragOver);
-    editorContainer.addEventListener('drop', handleDrop);
+      editorContainer.addEventListener('dragover', handleDragOver);
+      editorContainer.addEventListener('drop', handleDrop);
+    }
 
     return () => {
-      editorContainer.removeEventListener('dragover', handleDragOver);
-      editorContainer.removeEventListener('drop', handleDrop);
+      if (editorContainer) {
+        editorContainer.removeEventListener('dragover', handleDragOver);
+        editorContainer.removeEventListener('drop', handleDrop);
+      }
+
     };
   }, []);
 

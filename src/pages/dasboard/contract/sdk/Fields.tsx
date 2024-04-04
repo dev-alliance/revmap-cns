@@ -21,6 +21,13 @@ import dateIcon from '../../../../assets/icons/date.svg'
 
 import { useForm } from "react-hook-form";
 
+
+interface OptionType {
+  email: string;
+  name: string;
+}
+
+
 const Fields = () => {
   const {
     control,
@@ -55,7 +62,7 @@ const Fields = () => {
   const [message, setMessage] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]); // State for the message input
   // State to track if the comment is internal or external
-  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [selectedEmails, setSelectedEmails] = useState<OptionType | null>(null);
 
   console.log('selected Emails : ', selectedEmails)
 
@@ -185,22 +192,24 @@ const Fields = () => {
           <Autocomplete
             size="small"
             fullWidth
-            // multiple
             options={options}
-            getOptionLabel={(option: any) => option.name} // Display the user's full name
-            value={selectedEmails}
-            onChange={(event, newValue) => {
-              const index = options.findIndex((option: any) => option.email === newValue.email);
-              setSelectedEmails({ ...newValue, index });
+            getOptionLabel={(option) => option.name} // TypeScript now knows `option` is of type `OptionType`
+            value={selectedEmails} // Assume this can be null or an OptionType object
+            onChange={(event, newValue: OptionType | null) => {
+              // Directly use newValue which is now properly typed
+              setSelectedEmails(newValue);
             }}
-
             renderInput={(params) => (
               <TextField {...params} label="Select users" />
             )}
-            isOptionEqualToValue={(option: any, value: any) =>
-              option.email === value.email
-            }
+            isOptionEqualToValue={(option, value) => option.email === value.email}
+            renderOption={(props, option) => (
+              <li {...props} style={{ backgroundColor: backgroundColor }}>
+                {option.name}
+              </li>
+            )}
           />
+
         </Box>
 
 
