@@ -106,6 +106,7 @@ const Fields = () => {
 
     //Insert Checkbox form field
     documentEditor.editor.insertFormField('CheckBox');
+
     //Insert Drop down form field 
   }
 
@@ -114,6 +115,15 @@ const Fields = () => {
     console.log('fields : ', field)
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
+      const documentEditor = editorRefContext;
+      documentEditor.editor.insertFormField('Text');
+    };
+
+
+    const handleDragStartCheckbox = (e: any) => {
+      e.dataTransfer.setData("text/plain", field.placeholder);
+      const documentEditor = editorRefContext;
+      documentEditor.editor.insertFormField('CheckBox');
     };
 
     return (
@@ -123,7 +133,7 @@ const Fields = () => {
           <div
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
             draggable
-            onDragStart={handleDragStart}
+            onDragEnd={handleDragStart}
             style={{ cursor: "grab", backgroundColor }}
           >
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
@@ -134,7 +144,7 @@ const Fields = () => {
           <div onClick={radioDrag}
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
             draggable
-            onDragStart={handleDragStart}
+            onDragEnd={handleDragStartCheckbox}
             style={{ cursor: "grab", backgroundColor }}
           >
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}

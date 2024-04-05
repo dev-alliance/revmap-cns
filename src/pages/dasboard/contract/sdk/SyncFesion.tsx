@@ -1018,6 +1018,9 @@ function SyncFusionEditor() {
   const addpagenumber = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.editor.insertPageNumber();
+
+
+
   };
 
   const ShowHideOptionsPane = () => {
@@ -1210,6 +1213,15 @@ function SyncFusionEditor() {
 
     };
   }, []); // Assuming no dependencies, adjust if necessary
+
+
+  useEffect(() => {
+    const documentEditor = editorContainerRef.current.documentEditor;
+    let formFieldsNames: string[] = documentEditor.exportFormData();
+    console.log('formFieldsNames : ', formFieldsNames)
+
+  }, [])
+
 
   return (
     <div>
