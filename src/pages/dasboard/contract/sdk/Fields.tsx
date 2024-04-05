@@ -37,6 +37,8 @@ import radioIcon from "../../../../assets/icons/radioIcon.svg";
 import shortIcon from "../../../../assets/icons/short.svg";
 
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import SignatureMultiSendReq from "./SignatureMultiSendReq";
 
 
 interface OptionType {
@@ -85,7 +87,7 @@ const Fields = () => {
   console.log("selected Emails : ", selectedEmails);
 
   const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB"];
-  const [backgroundColor, setBackgroundColor] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#D3DFFD");
 
   const handleOnChange = (event: React.SyntheticEvent<Element, Event>, newValue: OptionType | null) => {
     setSelectedEmails(newValue);
@@ -143,12 +145,12 @@ const Fields = () => {
   };
 
   const fields = [
-    {
-      id: "Signature",
-      icon: signIcon,
-      label: "Signature",
-      placeholder: "[ Signature ]",
-    },
+    // {
+    //   id: "Signature",
+    //   icon: signIcon,
+    //   label: "Signature",
+    //   placeholder: "[ Signature ]",
+    // },
 
     { id: "Initial", icon: ps, label: "Initial", placeholder: "[Initial]" },
 
@@ -254,10 +256,29 @@ const Fields = () => {
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1 , #f46464"];
 
 
+  const [signatureopenDialog, setOpenSignatureDialog] = useState(false);
+  const [siningOrder, setSiningOrder] = useState(false);
+  const handleCloseDialog = () => {
+    setOpenSignatureDialog(false);
+  };
+  const handleClosMultieDialog = () => {
+    setOpenMultiDialog(false);
+  };
+  const handleShareDilog = () => {
+    if (siningOrder) {
+      setOpenSignatureDialog(true);
+    } else {
+      setOpenMultiDialog(true);
+    }
+  }
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
-
+        <SignatureMultiSendReq
+          open={openMultiDialog}
+          onClose={handleClosMultieDialog}
+          ClickData={ClickData}
+        />
 
         <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
           Fields
@@ -289,7 +310,7 @@ const Fields = () => {
             value={selectedEmails}
             onChange={handleOnChange}
             renderInput={(params) => (
-              <TextField {...params} label="Select users" variant="outlined" />
+              <TextField {...params} label="Select Signer" variant="outlined" />
             )}
             isOptionEqualToValue={(option, value) => option.email === value.email}
             renderOption={(props, option, { selected }) => (
@@ -309,14 +330,34 @@ const Fields = () => {
 
         <p className="font-medium text-[14px] text-[#155be5] mt-10">Signature Fields</p>
         <div style={{ padding: "10px" }}>
-          {fields.map((field) => (
-            <DraggableField
-              key={field.id}
-              field={field}
-            // backgroundColor={backgroundColor}
-            />
+
+
+          <div onClick={() => handleShareDilog()}>
+            <div
+              className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
+              style={{ cursor: "grab", backgroundColor }}
+            >
+              <img src={signIcon} alt="" className="h-4 w-4" /> Signature
+            </div>
+          </div>
+
+
+
+
+          {fields.map((field, index) => (
+            <React.Fragment key={field.id}>
+              <DraggableField
+                field={field}
+              // Pass other necessary props
+              />
+              {/* Check if the current index is at a position that requires a Divider.
+          We add 1 to the index because arrays are 0-based, and we want to insert
+          after every sixth element, so we check if (index + 1) % 6 === 0. */}
+              {(index + 1) % 6 === 0 && <Divider sx={{ mt: 3, mb: 3 }} />}
+            </React.Fragment>
           ))}
         </div>
+
 
         <Divider sx={{ mt: 1, mb: 2 }} />
         <p className="font-medium text-[14px] text-[#155be5] my-3">Custom Fields</p>

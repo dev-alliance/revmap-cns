@@ -72,6 +72,8 @@ const Signature = () => {
 
   const [ClickData, setClickData] = useState("");
 
+  console.log('clidslfjd : ', ClickData)
+
   const handleCloseDialog = () => {
     setOpenSignatureDialog(false);
   };
