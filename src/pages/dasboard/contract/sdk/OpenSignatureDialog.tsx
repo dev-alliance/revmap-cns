@@ -67,13 +67,13 @@ const OpenSignatureDialog: React.FC<DetailDialogProps> = () => {
       );
       break;
     case 2:
-      componentToRender = (
-        <OpenDrawSignature
-          onButtonClick={handleNextStep}
-          onClose={handleCloseDialog}
-          handleCloseDialog={handleCloseDialog}
-        />
-      );
+      // componentToRender = (
+      // <OpenDrawSignature
+      //   onButtonClick={handleNextStep}
+      //   onClose={handleCloseDialog}
+      //   handleCloseDialog={handleCloseDialog}
+      // />
+      // );
       break;
     case 3:
       componentToRender = (

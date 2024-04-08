@@ -39,6 +39,7 @@ import { ContractContext } from "@/context/ContractContext";
 import { log } from "console";
 import { getcontractById } from "@/service/api/contract";
 import OpenSignatureAddFrwd from "@/pages/dasboard/contract/sdk/OpenSignatureAddFrwd";
+import OpenDrawSignature from "@/pages/dasboard/contract/sdk/OpenDrawSignature";
 type FormValues = {
   name: string;
   checkboxName: any;
@@ -72,6 +73,8 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
   const [email, setEmail] = useState("");
   const location = useLocation();
   const [openLDialog, setOpenLDialog] = useState(false);
+  const [OpenDrawSignatures, setOpenDrawSignatures] = useState(false);
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const emailParam = queryParams.get("email");
@@ -95,6 +98,10 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
 
   const handleClosefwdDialog = () => {
     setOpenLDialog(false);
+  };
+
+  const handleCloseDrawSigDialog = () => {
+    setOpenDrawSignatures(false);
   };
 
   useEffect(() => {
@@ -225,38 +232,38 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
             marginTop: "16px",
           }}
         >
-          <Button
-            variant="contained"
-            color="success"
-            sx={{ textTransform: "none" }}
-            onClick={() => {
-              const recipient = userList?.signature?.find(
-                (recipient: any) => recipient.email === email
-              );
-              if (recipient) {
-                if (recipient.ReqOption.forwarding) {
-                  setOpenLDialog(true);
-                } else {
-                  onButtonClick();
-                }
-              }
-            }}
-          >
-            {userList?.signature?.map((recipient: any) => {
-              return recipient?.email === email
-                ? recipient?.ReqOption?.forwarding
-                  ? "Review and forward the document"
-                  : "Review and sign"
-                : undefined;
-              recipient; // Or some other fallback value as needed
-            })}
-          </Button>
+          {userList?.signature?.map(
+            (recipient: any) =>
+              recipient.email === email && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{ textTransform: "none" }}
+                  key={recipient.email}
+                  onClick={() => {
+                    if (recipient?.ReqOption?.forwarding) {
+                      setOpenLDialog(true);
+                    } else {
+                      setOpenDrawSignatures(true);
+                    }
+                  }}
+                >
+                  {recipient?.ReqOption?.forwarding
+                    ? "Review and forward the document"
+                    : "Review and sign"}
+                </Button>
+              )
+          )}
         </div>
       </DialogContent>
       <OpenSignatureAddFrwd
         email={email}
         open={openLDialog}
         onClose={handleClosefwdDialog}
+      />
+      <OpenDrawSignature
+        openDilog={OpenDrawSignatures}
+        onClose={handleCloseDrawSigDialog}
       />
     </>
   );

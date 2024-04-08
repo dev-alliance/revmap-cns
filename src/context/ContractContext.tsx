@@ -99,75 +99,75 @@ interface ContractContextProps {
   editorRefContext: any | null;
   setEditorRefContext: Dispatch<SetStateAction<any>>;
 
-
-
+  Drawsignature: any | null;
+  setDrawSignature: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
   contract: null,
-  setContract: () => { },
+  setContract: () => {},
   contractStatus: { status: "", expire: "" },
-  setContractStatus: () => { },
-  updateContractOverview: () => { },
+  setContractStatus: () => {},
+  updateContractOverview: () => {},
   signatories: [],
-  setSignatories: () => { },
+  setSignatories: () => {},
   openDocoment: [],
-  setOpenDocoment: () => { },
+  setOpenDocoment: () => {},
   selectedModule: {},
-  setSelectedModule: () => { },
+  setSelectedModule: () => {},
   sidebarExpanded: {},
-  setSidebarExpanded: () => { },
+  setSidebarExpanded: () => {},
   showCompanySelect: {},
-  setShowCompanySelect: () => { },
+  setShowCompanySelect: () => {},
   showConditionalSelect: {},
-  setShowConditionalSelect: () => { },
+  setShowConditionalSelect: () => {},
   showSignatories: {},
-  setShowSignatories: () => { },
+  setShowSignatories: () => {},
   selectedApproval: {},
-  setSelectedApproval: () => { },
+  setSelectedApproval: () => {},
   approvers: {},
-  setApprovers: () => { },
+  setApprovers: () => {},
   selectedUserApproval: {},
-  setSelectedUserApproval: () => { },
+  setSelectedUserApproval: () => {},
   userApproval: {},
-  setUserApproval: () => { },
+  setUserApproval: () => {},
   selectedConditionalApproval: {},
-  setSelectedConditionalApproval: () => { },
+  setSelectedConditionalApproval: () => {},
   userConditionalApproval: {},
-  setUserConditionalApproval: () => { },
+  setUserConditionalApproval: () => {},
   conditions: [],
-  setConditions: () => { },
+  setConditions: () => {},
   selectedFeild: [],
-  setSeletedFeild: () => { },
+  setSeletedFeild: () => {},
   type: {},
-  setType: () => { },
+  setType: () => {},
   viewUser: {},
-  setViewUser: () => { },
+  setViewUser: () => {},
   collaborater: {},
-  setCollaborater: () => { },
+  setCollaborater: () => {},
   showButtons: {},
-  setShowButtons: () => { },
+  setShowButtons: () => {},
   activeSection: {},
-  setActiveSection: () => { },
+  setActiveSection: () => {},
   comments: {},
-  setComments: () => { },
+  setComments: () => {},
   recipients: {},
-  setRecipients: () => { },
+  setRecipients: () => {},
   openMultiDialog: {},
-  setOpenMultiDialog: () => { },
+  setOpenMultiDialog: () => {},
   dragFields: {},
-  setDragFields: () => { },
-
+  setDragFields: () => {},
   editorRefContext: {},
-  setEditorRefContext: () => { },
+  setEditorRefContext: () => {},
+  Drawsignature: {},
+  setDrawSignature: () => {},
 });
-
-
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
+  const [Drawsignature, setDrawSignature] = useState(null);
   const [recipients, setRecipients] = useState<string[]>([]);
   const [signatories, setSignatories] = useState<string[]>([]);
   const [comments, setComments] = useState<Array<any>>([]);
@@ -188,8 +188,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [selectedFeild, setSeletedFeild] = useState("");
   const [type, setType] = useState("");
   const [viewUser, setViewUser] = useState(false);
-  const [dragFields, setDragFields] = useState('');
-  const [editorRefContext, setEditorRefContext] = useState('');
+  const [dragFields, setDragFields] = useState("");
+  const [editorRefContext, setEditorRefContext] = useState("");
 
   const [conditions, setConditions] = useState([
     {
@@ -344,9 +344,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (editorRefFun) {
       setEditorRefContext(JSON.parse(editorRefFun));
     }
-
-
-
+    const Drawsignature = localStorage.getItem("Drawsignature");
+    if (Drawsignature) {
+      setDrawSignature(JSON.parse(Drawsignature));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -422,6 +423,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setDragFields,
         editorRefContext,
         setEditorRefContext,
+        Drawsignature,
+        setDrawSignature,
       }}
     >
       {children}
