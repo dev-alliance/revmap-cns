@@ -122,14 +122,7 @@ DocumentEditorComponent.Inject(
 DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFusionEditor() {
-
-
-  const {
-    setEditorRefContext
-  } = useContext(ContractContext);
-
-
-
+  const { setEditorRefContext } = useContext(ContractContext);
 
   const editorContainerRef: any = useRef(null);
   const [openDropdowns, setOpenDropdowns] = useState({
@@ -522,8 +515,8 @@ function SyncFusionEditor() {
 
   useEffect(() => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    setEditorRefContext(documentEditor)
-  }, [])
+    setEditorRefContext(documentEditor);
+  }, []);
   //Change the line spacing of selected or current paragraph
   function lineSpacingAction(args: any) {
     const documentEditor = editorContainerRef.current.documentEditor;
@@ -1018,9 +1011,6 @@ function SyncFusionEditor() {
   const addpagenumber = () => {
     const documentEditor = editorContainerRef.current.documentEditor;
     documentEditor.editor.insertPageNumber();
-
-
-
   };
 
   const ShowHideOptionsPane = () => {
@@ -1199,29 +1189,24 @@ function SyncFusionEditor() {
       }
     };
     if (editorContainer) {
-
-      editorContainer.addEventListener('dragover', handleDragOver);
-      editorContainer.addEventListener('drop', handleDrop);
+      editorContainer.addEventListener("dragover", handleDragOver);
+      editorContainer.addEventListener("drop", handleDrop);
     }
 
     // Cleanup function to remove the event listeners
     return () => {
       if (editorContainer) {
-        editorContainer.removeEventListener('dragover', handleDragOver);
-        editorContainer.removeEventListener('drop', handleDrop);
+        editorContainer.removeEventListener("dragover", handleDragOver);
+        editorContainer.removeEventListener("drop", handleDrop);
       }
-
     };
   }, []); // Assuming no dependencies, adjust if necessary
 
-
   useEffect(() => {
     const documentEditor = editorContainerRef.current.documentEditor;
-    let formFieldsNames: string[] = documentEditor.exportFormData();
-    console.log('formFieldsNames : ', formFieldsNames)
-
-  }, [])
-
+    const formFieldsNames: string[] = documentEditor.exportFormData();
+    console.log("formFieldsNames : ", formFieldsNames);
+  }, []);
 
   return (
     <div>
@@ -1510,9 +1495,9 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-              // onClick={() => {
-              //   triggerClick("container_toolbar_image_local");
-              // }}
+                // onClick={() => {
+                //   triggerClick("container_toolbar_image_local");
+                // }}
               >
                 <label
                   htmlFor="forimg"
