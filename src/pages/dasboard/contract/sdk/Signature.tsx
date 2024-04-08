@@ -80,9 +80,9 @@ const Signature = () => {
   };
   const handleShareDilog = (signatory: any) => {
     if (siningOrder) {
-      setOpenSignatureDialog(true);
-    } else {
       setOpenMultiDialog(true);
+    } else {
+      setOpenSignatureDialog(true);
     }
 
     const user = userList.find((user) => user.email === signatory?.email);

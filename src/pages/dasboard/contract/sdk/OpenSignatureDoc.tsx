@@ -37,6 +37,8 @@ import { useForm, Controller } from "react-hook-form";
 import logo from "@/assets/logo.jpg";
 import { ContractContext } from "@/context/ContractContext";
 import { log } from "console";
+import { getcontractById } from "@/service/api/contract";
+import OpenSignatureAddFrwd from "@/pages/dasboard/contract/sdk/OpenSignatureAddFrwd";
 type FormValues = {
   name: string;
   checkboxName: any;
@@ -64,11 +66,12 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
   const { recipients, setRecipients, setOpenMultiDialog } =
     useContext(ContractContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [userList, setUserList] = useState<Array<any>>([]);
+  const [userList, setUserList] = useState<any>("");
+  const [message, setMessage] = useState<any>();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [email, setEmail] = useState("");
   const location = useLocation();
-
+  const [openLDialog, setOpenLDialog] = useState(false);
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const emailParam = queryParams.get("email");
@@ -76,6 +79,28 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
       setEmail(emailParam);
     }
   }, [location]);
+  const listData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getcontractById(user?._id);
+      console.log(data);
+      setRecipients(data?.signature);
+      setUserList(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClosefwdDialog = () => {
+    setOpenLDialog(false);
+  };
+
+  useEffect(() => {
+    listData();
+  }, []);
+
   const onSubmit = async (data: FormValues) => {
     // try {
     //   const payload = {
@@ -104,7 +129,7 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
     //   console.error(errorMessage);
     // }
   };
-  console.log(recipients, "recipients");
+  console.log(userList, "userList");
 
   return (
     <>
@@ -160,31 +185,36 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
             </Box>
             ) has shared Residential Rental Agreement to sign.
           </Typography>
-          <Controller
-            name="name"
-            control={control}
-            // rules={{ required: "Tag Name is required", maxLength: 50 }}
-            render={({ field }) => (
-              <>
-                <TextareaAutosize
-                  {...field}
-                  placeholder="text"
-                  minRows={4}
-                  maxLength={50}
-                  onChange={(event) => {
-                    field.onChange(event); // react-hook-form Controller handle onChange
-                  }}
-                  style={{
-                    width: "100%",
-                    fontSize: "16px",
-                    border: "1px solid #ced4da",
-                    borderRadius: "4px",
-                    padding: "10px",
-                  }}
-                />
-              </>
-            )}
-          />
+
+          <Box
+            sx={{
+              width: "100%",
+              boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
+              borderRadius: "4px",
+              // padding: 16px (2 * theme spacing unit)
+              mt: 2, // margin-top: 8px (1 * theme spacing unit)
+              mb: 2, // margin-bottom: 16px (2 * theme spacing unit)
+            }}
+          >
+            <textarea
+              value={message}
+              onChange={(e: any) => setMessage(e.target.value)}
+              name="message"
+              placeholder="Add message (optional)"
+              maxLength={150}
+              rows={5}
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                fontSize: "13px",
+                lineHeight: "20px", // Adjust line-height for better vertical alignment
+                padding: "10px 10px", // Adjust vertical padding to help center the text
+                // border: "1px solid #ced4da",
+                borderRadius: "4px",
+                resize: "block",
+              }}
+            />
+          </Box>
         </Card>
 
         <div
@@ -199,13 +229,22 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
             variant="contained"
             color="success"
             sx={{ textTransform: "none" }}
-            onClick={() => onButtonClick()}
+            onClick={() => {
+              const recipient = userList?.signature?.find(
+                (recipient: any) => recipient.email === email
+              );
+              if (recipient) {
+                if (recipient.ReqOption.forwarding) {
+                  setOpenLDialog(true);
+                } else {
+                  onButtonClick();
+                }
+              }
+            }}
           >
-            {recipients.map((recipient: any) => {
-              console.log(recipient, "recipient");
-
-              return recipient.email === email
-                ? recipient.forwarding
+            {userList?.signature?.map((recipient: any) => {
+              return recipient?.email === email
+                ? recipient?.ReqOption?.forwarding
                   ? "Review and forward the document"
                   : "Review and sign"
                 : undefined;
@@ -214,6 +253,11 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
           </Button>
         </div>
       </DialogContent>
+      <OpenSignatureAddFrwd
+        email={email}
+        open={openLDialog}
+        onClose={handleClosefwdDialog}
+      />
     </>
   );
 };

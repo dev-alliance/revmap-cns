@@ -31,6 +31,7 @@ import logo from "@/assets/logo.jpg";
 import SharedDilog from "@/pages/dasboard/contract/sdk/SharedDilog ";
 import { ContractContext } from "@/context/ContractContext";
 import { useAuth } from "@/hooks/useAuth";
+import { updatecontract } from "@/service/api/contract";
 
 interface DetailDialogProps {
   open: boolean;
@@ -81,20 +82,29 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
   }, [ClickData, recipients, open]);
 
   // New function to update the collaborator's permission, called on button click
-  const updateDocment = () => {
+  const updateDocment = async () => {
     setRecipients((pre: any[]) => {
       return pre.map((user) => {
         if (user.email === ClickData?.email) {
-          return { ...user, ReqOption: requestOption };
+          return { ...user, ReqOption: requestOption, signature: "" };
         }
         // return { ...user, permission: requestOption };
         return user;
       });
     });
-  };
-  console.log(requestOption, "requestOption");
+    try {
+      console.log(recipients, "recipients");
 
-  console.log(recipients, "recipients");
+      const response = await updatecontract("656c3dfdc8115e4b49f6c100", {
+        recipient: recipients,
+      });
+      console.log(response, "response");
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -269,9 +279,9 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
               }}
               control={
                 <Checkbox
-                  checked={requestOption.forwarding}
+                  checked={requestOption.autoReminder}
                   onChange={handleRequestOptionChange}
-                  name="Forwarding"
+                  name="autoReminder"
                   color="primary"
                   sx={{
                     padding: "5px", // Adjusts padding around the checkbox

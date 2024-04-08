@@ -99,7 +99,6 @@ const SignatureSaveTempDoc: React.FC<DetailDialogProps> = ({
         }}
       >
         <strong style={{ display: "flex", textAlign: "center" }}>
-          {" "}
           Do you want to save as template before sending the document for
           signature?
         </strong>

@@ -93,13 +93,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
       setTabValue((prevTabValue) => prevTabValue + 1);
     }
   };
-  const handleRequestOptionChange = (event: any) => {
-    const { name, value, type, checked } = event.target;
-    setRequestOption((prev) => ({
-      ...prev, // Spread the previous state
-      [name]: type === "checkbox" ? checked : value, // Use checked for checkboxes, value for other inputs
-    }));
-  };
+
   useEffect(() => {
     // Reset requestOption when dialog opens or the ClickData changes
     console.log(ClickData, "click");
@@ -116,20 +110,6 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
   }, [ClickData, recipients, open]);
 
   // New function to update the collaborator's permission, called on button click
-  const updateDocment = () => {
-    setRecipients((pre: any[]) => {
-      return pre.map((user) => {
-        if (user.email === ClickData?.email) {
-          return { ...user, ReqOption: requestOption };
-        }
-        // return { ...user, permission: requestOption };
-        return user;
-      });
-    });
-  };
-  console.log(requestOption, "requestOption");
-
-  console.log(recipients, "recipients");
 
   const listData = async () => {
     try {
