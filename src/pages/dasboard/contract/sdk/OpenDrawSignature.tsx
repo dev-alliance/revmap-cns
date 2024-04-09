@@ -72,12 +72,16 @@ interface DetailDialogProps {
   onClose: any;
   openDilog: any;
   closeFirstOen: any;
+  selectedEmails: any,
 }
 const OpenDrawSignature: React.FC<DetailDialogProps> = ({
   openDilog,
   onClose,
   closeFirstOen,
+  selectedEmails = {}
 }) => {
+
+  console.log('selectedEmails in modal', selectedEmails)
   const [disable, setDisable] = useState(true);
   const { Drawsignature, setDrawSignature } = useContext(ContractContext);
   const signatureObj = useRef<any>(null);

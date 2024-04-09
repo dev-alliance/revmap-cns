@@ -40,6 +40,7 @@ import shortIcon from "../../../../assets/icons/short.svg";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import SignatureMultiSendReq from "./SignatureMultiSendReq";
+import OpenDrawSignature from "./OpenDrawSignature";
 
 
 interface OptionType {
@@ -91,6 +92,7 @@ const Fields = () => {
   const [backgroundColor, setBackgroundColor] = useState("#d9d9d9");
 
   const handleOnChange = (event: React.SyntheticEvent<Element, Event>, newValue: OptionType | null) => {
+    console.log('new', newValue)
     setSelectedEmails(newValue);
     if (newValue) {
       const index = options.findIndex((option: any) => option.email === newValue.email) % colors.length;
@@ -122,12 +124,12 @@ const Fields = () => {
       console.log('lable : ', field?.label)
 
       let textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo('Text1') as TextFormFieldInfo;
-      textfieldInfo.defaultValue = field?.label;
+      textfieldInfo.defaultValue = field?.label + ' * ';
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
       textfieldInfo.name = field?.label;
       documentEditor.setFormFieldInfo('Text1', textfieldInfo);
-      setDragFields(1)
+      setDragFields(dragFields + 1)
     };
 
 
@@ -277,30 +279,33 @@ const Fields = () => {
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1 , #f46464"];
 
 
-  const [signatureopenDialog, setOpenSignatureDialog] = useState(false);
+
+  const [OpenDrawSignatures, setOpenDrawSignatures] = useState(false);
+
+
   const [siningOrder, setSiningOrder] = useState(false);
-  const handleCloseDialog = () => {
-    setOpenSignatureDialog(false);
+  // const handleCloseDialog = () => {
+  //   setOpenSignatureDialog(false);
+  // };
+
+  const handleCloseDrawSigDialog = () => {
+    setOpenDrawSignatures(false);
   };
-  const handleClosMultieDialog = () => {
-    setOpenMultiDialog(false);
-  };
-  const handleShareDilog = () => {
-    if (siningOrder) {
-      setOpenSignatureDialog(true);
-    } else {
-      setOpenMultiDialog(true);
-    }
-  }
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
-        <SignatureMultiSendReq
+        {/* <SignatureMultiSendReq
           open={openMultiDialog}
           onClose={handleClosMultieDialog}
           ClickData={ClickData}
-        />
+        /> */}
 
+        <OpenDrawSignature
+          openDilog={OpenDrawSignatures}
+          onClose={handleCloseDrawSigDialog}
+          closeFirstOen={handleCloseDrawSigDialog}
+          selectedEmails={selectedEmails}
+        />
         <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
           Fields
         </Typography>
@@ -326,8 +331,8 @@ const Fields = () => {
           <Autocomplete
             size="small"
             fullWidth
-            options={options}
-            getOptionLabel={(option) => option.name}
+            options={validRecipients}
+            getOptionLabel={(option) => option.email}
             value={selectedEmails}
             onChange={handleOnChange}
             renderInput={(params) => (
@@ -342,7 +347,7 @@ const Fields = () => {
                   color: selected ? 'white' : 'black',
                 }}
               >
-                {option.name}
+                {option.email}
               </li>
             )}
           />
@@ -353,7 +358,7 @@ const Fields = () => {
         <div style={{ padding: "10px" }}>
 
 
-          <div onClick={() => handleShareDilog()}>
+          <div onClick={() => setOpenDrawSignatures(true)}>
             <div
               className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
               style={{ cursor: "grab", backgroundColor }}
