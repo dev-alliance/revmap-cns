@@ -21,6 +21,7 @@ import {
   BorderSettings,
   PageSetupDialog,
   CheckBoxFormFieldInfo,
+  TextFormFieldInfo,
 } from "@syncfusion/ej2-react-documenteditor";
 import React, { useContext, useEffect, useState } from "react";
 import ps from "../../../../assets/icons/ps.svg";
@@ -87,7 +88,7 @@ const Fields = () => {
   console.log("selected Emails : ", selectedEmails);
 
   const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB"];
-  const [backgroundColor, setBackgroundColor] = useState("#D3DFFD");
+  const [backgroundColor, setBackgroundColor] = useState("#d9d9d9");
 
   const handleOnChange = (event: React.SyntheticEvent<Element, Event>, newValue: OptionType | null) => {
     setSelectedEmails(newValue);
@@ -117,6 +118,16 @@ const Fields = () => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
       documentEditor.editor.insertFormField('Text');
+
+      console.log('lable : ', field?.label)
+
+      let textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo('Text1') as TextFormFieldInfo;
+      textfieldInfo.defaultValue = field?.label;
+      // textfieldInfo.format = "Lowercase";
+      textfieldInfo.type = "Text";
+      textfieldInfo.name = field?.label;
+      documentEditor.setFormFieldInfo('Text1', textfieldInfo);
+      setDragFields(1)
     };
 
 
@@ -211,7 +222,7 @@ const Fields = () => {
     {
       id: "RadioButton",
       icon: radioIcon,
-      label: "RadioButton",
+      label: "Radio Button",
       placeholder: "[ Radio Button ]", // Command to insert a radio button form field
     },
 
@@ -358,12 +369,10 @@ const Fields = () => {
             <React.Fragment key={field.id}>
               <DraggableField
                 field={field}
-              // Pass other necessary props
               />
-              {/* Check if the current index is at a position that requires a Divider.
-          We add 1 to the index because arrays are 0-based, and we want to insert
-          after every sixth element, so we check if (index + 1) % 6 === 0. */}
-              {(index + 1) % 6 === 0 && <Divider sx={{ mt: 3, mb: 3 }} />}
+              {(index + 1) % 6 === 0 &&
+                <Divider sx={{ mt: 3, mb: 3 }} />
+              }
             </React.Fragment>
           ))}
         </div>

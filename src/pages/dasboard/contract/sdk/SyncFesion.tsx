@@ -122,7 +122,7 @@ DocumentEditorComponent.Inject(
 DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFusionEditor() {
-  const { setEditorRefContext } = useContext(ContractContext);
+  const { setEditorRefContext, dragFields } = useContext(ContractContext);
 
   const editorContainerRef: any = useRef(null);
   const [openDropdowns, setOpenDropdowns] = useState({
@@ -1202,11 +1202,16 @@ function SyncFusionEditor() {
     };
   }, []); // Assuming no dependencies, adjust if necessary
 
+  const [fieldFreshData, setFieldFreshData] = useState(0); // Default font color
+
+
   useEffect(() => {
+
     const documentEditor = editorContainerRef.current.documentEditor;
     const formFieldsNames: string[] = documentEditor.exportFormData();
     console.log("formFieldsNames : ", formFieldsNames);
-  }, []);
+
+  }, [dragFields]);
 
   return (
     <div>
@@ -1495,9 +1500,9 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-                // onClick={() => {
-                //   triggerClick("container_toolbar_image_local");
-                // }}
+              // onClick={() => {
+              //   triggerClick("container_toolbar_image_local");
+              // }}
               >
                 <label
                   htmlFor="forimg"
