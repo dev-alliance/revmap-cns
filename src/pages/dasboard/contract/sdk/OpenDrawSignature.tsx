@@ -72,22 +72,21 @@ interface DetailDialogProps {
   onClose: any;
   openDilog: any;
   closeFirstOen: any;
-  selectedEmails: any,
+  selectedEmails: any;
 }
 const OpenDrawSignature: React.FC<DetailDialogProps> = ({
   openDilog,
   onClose,
   closeFirstOen,
-  selectedEmails = {}
+  selectedEmails = {},
 }) => {
-
-  console.log('selectedEmails in modal', selectedEmails)
+  console.log("selectedEmails in modal", selectedEmails);
   const [disable, setDisable] = useState(true);
-  const { Drawsignature, setDrawSignature } = useContext(ContractContext);
+  const { recipients, setRecipients } = useContext(ContractContext);
   const signatureObj = useRef<any>(null);
   const [tabValue, setTabValue] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [Drawsignature, setDrawSignature] = useState(null);
   const [typedSignature, setTypedSignature] = useState("");
   const [selectedFont, setSelectedFont] = useState(fonts[0].value); // Default to the first font
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -96,6 +95,35 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
   const folderName = new URLSearchParams(location.search).get("name");
   const decodedFolderName = folderName ? decodeURIComponent(folderName) : "";
   const [OpenDrawSignatures, setOpenFinshSignatures] = useState(false);
+
+  const updateDocment = async () => {
+    setRecipients((pre: any) => {
+      const updated = pre.map((user: any) => {
+        if (user.email === selectedEmails) {
+          alert("ok");
+          return { ...user, signature: Drawsignature };
+        }
+        return user;
+      });
+      return updated;
+    });
+
+    // try {
+    //   console.log(requestOption, "requestOption");
+    //   console.log(recipients, "requestOption");
+    //   const response = await updatecontract("656c3dfdc8115e4b49f6c100", {
+    //     recipient: recipients,
+    //   });
+    //   console.log(response, "response");
+
+    //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // } catch (error: any) {
+    //   console.log(error);
+    // }
+  };
+  useEffect(() => {
+    console.log(recipients, "recipients draw");
+  }, [recipients]);
   const handlefinshSigDialog = () => {
     setOpenFinshSignatures(false);
   };
@@ -513,7 +541,9 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
               variant="contained"
               color="success"
               sx={{ textTransform: "none", float: "right" }}
-              onClick={() => setOpenFinshSignatures(true)}
+              onClick={() => {
+                setOpenFinshSignatures(true), updateDocment();
+              }}
             >
               Accept and sign
             </Button>

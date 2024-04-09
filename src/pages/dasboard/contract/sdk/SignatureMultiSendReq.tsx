@@ -187,7 +187,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
                 return (
                   <Tab
                     key={index} // It's better to use a unique identifier if available
-                    label={user?.firstName || recipient.email}
+                    label={user?.firstName || recipient?.email}
                     sx={{ fontWeight: "bold", textTransform: "none" }}
                   />
                 );

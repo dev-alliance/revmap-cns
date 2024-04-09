@@ -226,6 +226,184 @@ const Signature = () => {
             </Button>
           </Box>
         )}
+
+        <>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable" isDropDisabled={!siningOrder}>
+              {(provided: any, snapshot: any) => (
+                <Box ref={provided.innerRef} {...provided.droppableProps}>
+                  {recipients.map((colb: any, index: any) => {
+                    const isInternal = userList.some(
+                      (user) => user.email === colb?.email
+                    );
+
+                    return (
+                      <Draggable
+                        key={colb?.email}
+                        draggableId={colb?.email}
+                        index={index}
+                        isDragDisabled={!siningOrder}
+                      >
+                        {(provided: any, snapshot: any) => (
+                          <Box
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            key={index}
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "flex-start",
+                              overflow: "auto",
+                              backgroundColor: snapshot.isDragging
+                                ? "lightblue"
+                                : "white",
+                              // Add other styling as needed
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
+                              {siningOrder && `${index + 1} \u00A0`}
+                              <Box
+                                sx={{
+                                  width: 25,
+                                  height: 25,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  borderRadius: "50%",
+                                  backgroundColor:
+                                    bubbleColors[index % bubbleColors.length],
+                                  color: "#FFFFFF",
+                                  marginRight: 1,
+                                }}
+                              >
+                                <Typography sx={{ fontSize: "14px" }}>
+                                  {colb?.email?.charAt(0).toUpperCase()}
+                                </Typography>
+                              </Box>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  width: "160px",
+                                  // overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                  fontSize: "15px",
+                                }}
+                              >
+                                {colb?.email}
+                              </Typography>
+                            </div>
+
+                            <Box sx={{ display: "contents", ml: 4.5 }}>
+                              <Button
+                                variant="contained"
+                                color="inherit"
+                                sx={{
+                                  textTransform: "none",
+                                  backgroundColor: "#DCDCDC",
+                                  "&:hover": {
+                                    backgroundColor: "#757575",
+                                  },
+                                  "&:first-of-type": {
+                                    // Only applies margin-left to the first button
+                                  },
+                                  color: "black",
+                                  padding: "2px 5px !important",
+                                  height: "25px !important",
+                                  fontSize: "0.675rem",
+                                  ml: 4.7,
+                                }}
+                              >
+                                {isInternal ? "Internal" : "External"}
+                              </Button>
+                              {!colb.signature && (
+                                <Button
+                                  variant="text"
+                                  color="success"
+                                  sx={{
+                                    textTransform: "none",
+                                    whiteSpace: "nowrap",
+                                    mt: -0.3,
+                                    ml: 4,
+                                  }}
+                                  onClick={() => handleShareDilog(colb)}
+                                >
+                                  {colb.ReqOption ? (
+                                    <>
+                                      <CheckCircleOutlineIcon fontSize="medium" />{" "}
+                                      Document shared to sign
+                                    </>
+                                  ) : (
+                                    "Send request to sign "
+                                  )}
+                                </Button>
+                              )}
+                              {colb.signature && (
+                                <Button
+                                  variant="text"
+                                  color="success"
+                                  disabled={colb.signature == ""}
+                                  sx={{
+                                    textTransform: "none",
+                                    whiteSpace: "nowrap",
+                                    mt: -0.3,
+                                    ml: 4,
+                                  }}
+                                  onClick={() => handleShareDilog(colb)}
+                                >
+                                  <CheckCircleOutlineIcon fontSize="medium" />{" "}
+                                  Signed
+                                </Button>
+                              )}
+
+                              <Button
+                                variant="text"
+                                color="warning"
+                                sx={{
+                                  textTransform: "none",
+                                  whiteSpace: "nowrap",
+                                  mt: -0.8,
+                                  ml: 4,
+                                }}
+                                onClick={() =>
+                                  handleRemoveSignatory(colb?.email)
+                                }
+                              >
+                                Replace signer
+                              </Button>
+                              <Button
+                                variant="text"
+                                color="error"
+                                sx={{
+                                  textTransform: "none",
+                                  whiteSpace: "nowrap",
+                                  mt: -0.8,
+                                  ml: 4,
+                                }}
+                                onClick={() =>
+                                  handleRemoveSignatory(colb?.email)
+                                }
+                              >
+                                Remove recipient
+                              </Button>
+                            </Box>
+                          </Box>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </Box>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </>
         {showButtons && (
           <>
             <Autocomplete
@@ -309,166 +487,6 @@ const Signature = () => {
             </div>
           </>
         )}
-
-        <>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable" isDropDisabled={!siningOrder}>
-              {(provided: any, snapshot: any) => (
-                <Box ref={provided.innerRef} {...provided.droppableProps}>
-                  {recipients.map((colb: any, index: any) => {
-                    const isInternal = userList.some(
-                      (user) => user.email === colb?.email
-                    );
-                    console.log("Rendering recipient", colb.email);
-                    return (
-                      <Draggable
-                        key={colb.email}
-                        draggableId={colb.email}
-                        index={index}
-                        isDragDisabled={!siningOrder}
-                      >
-                        {(provided: any, snapshot: any) => (
-                          <Box
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            key={index}
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "flex-start",
-                              overflow: "auto",
-                              backgroundColor: snapshot.isDragging
-                                ? "lightblue"
-                                : "white",
-                              // Add other styling as needed
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              {siningOrder && `${index + 1} \u00A0`}
-                              <Box
-                                sx={{
-                                  width: 25,
-                                  height: 25,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  borderRadius: "50%",
-                                  backgroundColor:
-                                    bubbleColors[index % bubbleColors.length],
-                                  color: "#FFFFFF",
-                                  marginRight: 1,
-                                }}
-                              >
-                                <Typography sx={{ fontSize: "14px" }}>
-                                  {colb?.email?.charAt(0).toUpperCase()}
-                                </Typography>
-                              </Box>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  width: "160px",
-                                  // overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  fontSize: "15px",
-                                }}
-                              >
-                                {colb?.email}
-                              </Typography>
-                            </div>
-
-                            <Box sx={{ display: "contents", ml: 4.5 }}>
-                              <Button
-                                variant="contained"
-                                color="inherit"
-                                sx={{
-                                  textTransform: "none",
-                                  backgroundColor: "#DCDCDC",
-                                  "&:hover": {
-                                    backgroundColor: "#757575",
-                                  },
-                                  "&:first-of-type": {
-                                    // Only applies margin-left to the first button
-                                  },
-                                  color: "black",
-                                  padding: "2px 5px !important",
-                                  height: "25px !important",
-                                  fontSize: "0.675rem",
-                                  ml: 4.7,
-                                }}
-                              >
-                                {isInternal ? "Internal" : "External"}
-                              </Button>
-                              <Button
-                                variant="text"
-                                color="success"
-                                sx={{
-                                  textTransform: "none",
-                                  whiteSpace: "nowrap",
-                                  mt: -0.3,
-                                  ml: 4,
-                                }}
-                                onClick={() => handleShareDilog(colb)}
-                              >
-                                {colb.ReqOption ? (
-                                  <>
-                                    <CheckCircleOutlineIcon fontSize="medium" />{" "}
-                                    Request Sent
-                                  </>
-                                ) : (
-                                  "Send request to sign "
-                                )}
-                              </Button>
-
-                              <Button
-                                variant="text"
-                                color="warning"
-                                sx={{
-                                  textTransform: "none",
-                                  whiteSpace: "nowrap",
-                                  mt: -0.8,
-                                  ml: 4,
-                                }}
-                                onClick={() =>
-                                  handleRemoveSignatory(colb?.email)
-                                }
-                              >
-                                Replace signer
-                              </Button>
-                              <Button
-                                variant="text"
-                                color="error"
-                                sx={{
-                                  textTransform: "none",
-                                  whiteSpace: "nowrap",
-                                  mt: -0.8,
-                                  ml: 4,
-                                }}
-                                onClick={() =>
-                                  handleRemoveSignatory(colb?.email)
-                                }
-                              >
-                                Remove recipient
-                              </Button>
-                            </Box>
-                          </Box>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </Box>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </>
-
         {!showButtons && recipients.length > 0 && (
           <>
             <Button
