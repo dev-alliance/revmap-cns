@@ -83,18 +83,21 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
 
   // New function to update the collaborator's permission, called on button click
   const updateDocment = async () => {
-    setRecipients((pre: any[]) => {
-      return pre.map((user) => {
+    setRecipients((pre: any) => {
+      const updated = pre.map((user: any) => {
         if (user.email === ClickData?.email) {
+          // If the email matches, modify the user object.
           return { ...user, ReqOption: requestOption, signature: "" };
         }
-        // return { ...user, permission: requestOption };
+        // Always return the user object, modified or not.
         return user;
       });
+      return updated;
     });
+
     try {
       console.log(requestOption, "requestOption");
-
+      console.log(recipients, "requestOption");
       const response = await updatecontract("656c3dfdc8115e4b49f6c100", {
         recipient: recipients,
       });
