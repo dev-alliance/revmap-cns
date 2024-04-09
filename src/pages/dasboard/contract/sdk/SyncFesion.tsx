@@ -122,7 +122,7 @@ DocumentEditorComponent.Inject(
 DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFusionEditor() {
-  const { setEditorRefContext, dragFields } = useContext(ContractContext);
+  const { setEditorRefContext, dragFields, editorRefContext } = useContext(ContractContext);
 
   const editorContainerRef: any = useRef(null);
   const [openDropdowns, setOpenDropdowns] = useState({
