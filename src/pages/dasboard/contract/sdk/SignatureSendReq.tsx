@@ -93,7 +93,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
       });
     });
     try {
-      console.log(recipients, "recipients");
+      console.log(requestOption, "requestOption");
 
       const response = await updatecontract("656c3dfdc8115e4b49f6c100", {
         recipient: recipients,

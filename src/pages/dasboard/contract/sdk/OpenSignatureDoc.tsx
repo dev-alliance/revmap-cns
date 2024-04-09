@@ -264,6 +264,7 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
       <OpenDrawSignature
         openDilog={OpenDrawSignatures}
         onClose={handleCloseDrawSigDialog}
+        closeFirstOen={handleCloseDialog}
       />
     </>
   );

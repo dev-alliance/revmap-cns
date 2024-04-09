@@ -189,7 +189,7 @@ const OpenSignatureAddFrwd: React.FC<DetailDialogProps> = ({
               borderRadius: "4px",
               // padding: 16px (2 * theme spacing unit)
               mt: 0.5, // margin-top: 8px (1 * theme spacing unit)
-              mb: 2, // margin-bottom: 16px (2 * theme spacing unit)
+              mb: 1, // margin-bottom: 16px (2 * theme spacing unit)
             }}
           >
             <textarea
@@ -211,19 +211,16 @@ const OpenSignatureAddFrwd: React.FC<DetailDialogProps> = ({
             />
 
             {/* Display remaining characters */}
-            <div
-              style={{ textAlign: "right", marginTop: "5px", fontSize: "12px" }}
-            >
-              {150 - message?.length} characters remaining
-            </div>
           </Box>
-
+          <div style={{ textAlign: "left", fontSize: "12px" }}>
+            {150 - message?.length} characters remaining
+          </div>
           <div
             style={{
               display: "flex",
               alignItems: "flex-end",
               float: "right",
-              marginTop: "8px",
+              marginTop: "29px",
             }}
           >
             <Button

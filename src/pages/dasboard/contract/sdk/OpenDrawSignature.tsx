@@ -38,6 +38,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
 import { ContractContext } from "@/context/ContractContext";
+import OpenSignaturFinish from "@/pages/dasboard/contract/sdk/OpenSignaturFinish";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -70,10 +71,12 @@ const fonts = [
 interface DetailDialogProps {
   onClose: any;
   openDilog: any;
+  closeFirstOen: any;
 }
 const OpenDrawSignature: React.FC<DetailDialogProps> = ({
   openDilog,
   onClose,
+  closeFirstOen,
 }) => {
   const [disable, setDisable] = useState(true);
   const { Drawsignature, setDrawSignature } = useContext(ContractContext);
@@ -88,7 +91,10 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
   const open = Boolean(anchorEl);
   const folderName = new URLSearchParams(location.search).get("name");
   const decodedFolderName = folderName ? decodeURIComponent(folderName) : "";
-
+  const [OpenDrawSignatures, setOpenFinshSignatures] = useState(false);
+  const handlefinshSigDialog = () => {
+    setOpenFinshSignatures(false);
+  };
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -503,7 +509,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
               variant="contained"
               color="success"
               sx={{ textTransform: "none", float: "right" }}
-              // onClick={() => onButtonClick()}
+              onClick={() => setOpenFinshSignatures(true)}
             >
               Accept and sign
             </Button>
@@ -525,6 +531,12 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
           )}
         </DialogContent>
       </Dialog>
+      <OpenSignaturFinish
+        openDilog={OpenDrawSignatures}
+        onClose={handlefinshSigDialog}
+        onCloseDrawSignature={onClose}
+        closeFirstOen={closeFirstOen}
+      />
     </>
   );
 };

@@ -49,13 +49,16 @@ type FormValues = {
   checkboxName: any;
 };
 interface DetailDialogProps {
-  onClose: any;
-  onButtonClick: () => void;
+  onClose: () => void;
+  openDilog: any;
+  onCloseDrawSignature: () => void;
+  closeFirstOen: any;
 }
 const OpenSignaturFinish: React.FC<DetailDialogProps> = ({
-  onButtonClick,
-
+  openDilog,
   onClose,
+  onCloseDrawSignature,
+  closeFirstOen,
 }) => {
   const {
     control,
@@ -102,10 +105,12 @@ const OpenSignaturFinish: React.FC<DetailDialogProps> = ({
   };
   return (
     <>
-      <Dialog open={true} onClose={onClose} fullWidth maxWidth="md">
+      <Dialog open={openDilog} onClose={onClose} fullWidth maxWidth="md">
         <DialogContent>
           <IconButton
-            onClick={onClose}
+            onClick={() => {
+              onClose(), onCloseDrawSignature();
+            }}
             style={{ position: "absolute", right: "8px", top: "8px" }}
           >
             <CloseIcon />
@@ -129,7 +134,7 @@ const OpenSignaturFinish: React.FC<DetailDialogProps> = ({
                 variant="text"
                 color="primary"
                 sx={{ mt: 3, textTransform: "none" }}
-                onClick={onButtonClick}
+                onClick={onClose}
               >
                 You’ve finished signing!
               </Button>
@@ -281,7 +286,9 @@ const OpenSignaturFinish: React.FC<DetailDialogProps> = ({
                 variant="contained"
                 color="primary"
                 sx={{ mt: 2, textTransform: "none" }}
-                onClick={onButtonClick}
+                onClick={() => {
+                  onClose(), onCloseDrawSignature(), closeFirstOen();
+                }}
               >
                 Start 14-day free trial
               </Button>
@@ -296,7 +303,7 @@ const OpenSignaturFinish: React.FC<DetailDialogProps> = ({
                 variant="text"
                 color="primary"
                 sx={{ mt: 3, textTransform: "none" }}
-                onClick={onButtonClick}
+                onClick={onClose}
               >
                 You’ve finished signing!
               </Button>
