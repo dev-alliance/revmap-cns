@@ -31,7 +31,6 @@ import signIcon from "../../../../assets/icons/sign.svg";
 import titleIcon from "../../../../assets/icons/title.svg";
 import dateIcon from "../../../../assets/icons/date.svg";
 
-
 import textIcon from "../../../../assets/icons/textIcon.svg";
 import checkIcon from "../../../../assets/icons/checkIcon.svg";
 import radioIcon from "../../../../assets/icons/radioIcon.svg";
@@ -42,12 +41,10 @@ import { Link } from "react-router-dom";
 import SignatureMultiSendReq from "./SignatureMultiSendReq";
 import OpenDrawSignature from "./OpenDrawSignature";
 
-
 interface OptionType {
   email: string;
   name: string;
 }
-
 
 const Fields = () => {
   const {
@@ -69,7 +66,7 @@ const Fields = () => {
     openMultiDialog,
     setDragFields,
     dragFields,
-    editorRefContext
+    editorRefContext,
   } = useContext(ContractContext);
 
   const [inputValue, setInputValue] = useState("");
@@ -91,11 +88,16 @@ const Fields = () => {
   const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB"];
   const [backgroundColor, setBackgroundColor] = useState("#d9d9d9");
 
-  const handleOnChange = (event: React.SyntheticEvent<Element, Event>, newValue: OptionType | null) => {
-    console.log('new', newValue)
+  const handleOnChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    newValue: OptionType | null
+  ) => {
+    console.log("new", newValue);
     setSelectedEmails(newValue);
     if (newValue) {
-      const index = options.findIndex((option: any) => option.email === newValue.email) % colors.length;
+      const index =
+        options.findIndex((option: any) => option.email === newValue.email) %
+        colors.length;
       const selectedColor = colors[index];
       setBackgroundColor(selectedColor); // Set the color state to the selected option's color
     } else {
@@ -103,46 +105,44 @@ const Fields = () => {
     }
   };
 
-
   const radioDrag = () => {
     const documentEditor = editorRefContext;
 
     //Insert Checkbox form field
-    documentEditor.editor.insertFormField('CheckBox');
+    documentEditor.editor.insertFormField("CheckBox");
 
-    //Insert Drop down form field 
-  }
+    //Insert Drop down form field
+  };
 
   const DraggableField = ({ field }: any) => {
-
-    console.log('fields : ', field)
+    console.log("fields : ", field);
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
-      documentEditor.editor.insertFormField('Text');
+      documentEditor.editor.insertFormField("Text");
 
-      console.log('lable : ', field?.label)
+      console.log("lable : ", field?.label);
 
-      let textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo('Text1') as TextFormFieldInfo;
-      textfieldInfo.defaultValue = field?.label + ' * ';
+      const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
+        "Text1"
+      ) as TextFormFieldInfo;
+      textfieldInfo.defaultValue = field?.label + " * ";
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
       textfieldInfo.name = field?.label;
-      documentEditor.setFormFieldInfo('Text1', textfieldInfo);
-      setDragFields(dragFields + 1)
+      documentEditor.setFormFieldInfo("Text1", textfieldInfo);
+      setDragFields(dragFields + 1);
     };
-
 
     const handleDragStartCheckbox = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
-      documentEditor.editor.insertFormField('CheckBox');
+      documentEditor.editor.insertFormField("CheckBox");
     };
 
     return (
       <>
-        {field?.id !== "RadioButton" &&
-
+        {field?.id !== "RadioButton" && (
           <div
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
             draggable
@@ -151,10 +151,10 @@ const Fields = () => {
           >
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
           </div>
-        }
-        {field?.id == "RadioButton" &&
-
-          <div onClick={radioDrag}
+        )}
+        {field?.id == "RadioButton" && (
+          <div
+            onClick={radioDrag}
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
             draggable
             onDragEnd={handleDragStartCheckbox}
@@ -162,7 +162,7 @@ const Fields = () => {
           >
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
           </div>
-        }
+        )}
       </>
     );
   };
@@ -227,7 +227,6 @@ const Fields = () => {
       label: "Radio Button",
       placeholder: "[ Radio Button ]", // Command to insert a radio button form field
     },
-
   ];
 
   const listData = async () => {
@@ -278,10 +277,7 @@ const Fields = () => {
   });
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1 , #f46464"];
 
-
-
   const [OpenDrawSignatures, setOpenDrawSignatures] = useState(false);
-
 
   const [siningOrder, setSiningOrder] = useState(false);
   // const handleCloseDialog = () => {
@@ -310,9 +306,6 @@ const Fields = () => {
           Fields
         </Typography>
 
-
-
-
         <p className="text-[#8A8A8A] text-[10px] pt-1">
           Drag and drop to assign signature fields for the signer to sign or add
           custom fields to get additional information.
@@ -323,7 +316,7 @@ const Fields = () => {
             display: "flex",
             mb: 2,
             mt: 2,
-            fontSize: "14px"
+            fontSize: "14px",
             // borderBottom: 1,
             // borderColor: "divider",
           }}
@@ -338,26 +331,32 @@ const Fields = () => {
             renderInput={(params) => (
               <TextField {...params} label="Select Signer" variant="outlined" />
             )}
-            isOptionEqualToValue={(option, value) => option.email === value.email}
+            isOptionEqualToValue={(option, value) =>
+              option.email === value.email
+            }
             renderOption={(props, option, { selected }) => (
               <li
                 {...props}
                 style={{
-                  backgroundColor: colors[options.findIndex((opt: any) => opt?.email === option.email) % colors?.length],
-                  color: selected ? 'white' : 'black',
+                  backgroundColor:
+                    colors[
+                      options.findIndex(
+                        (opt: any) => opt?.email === option.email
+                      ) % colors?.length
+                    ],
+                  color: selected ? "white" : "black",
                 }}
               >
                 {option.email}
               </li>
             )}
           />
-
         </Box>
 
-        <p className="font-medium text-[14px] text-[#155be5] mt-10">Signature Fields</p>
+        <p className="font-medium text-[14px] text-[#155be5] mt-10">
+          Signature Fields
+        </p>
         <div style={{ padding: "10px" }}>
-
-
           <div onClick={() => setOpenDrawSignatures(true)}>
             <div
               className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
@@ -367,24 +366,18 @@ const Fields = () => {
             </div>
           </div>
 
-
-
-
           {fields.map((field, index) => (
             <React.Fragment key={field.id}>
-              <DraggableField
-                field={field}
-              />
-              {(index + 1) % 6 === 0 &&
-                <Divider sx={{ mt: 3, mb: 3 }} />
-              }
+              <DraggableField field={field} />
+              {(index + 1) % 6 === 0 && <Divider sx={{ mt: 3, mb: 3 }} />}
             </React.Fragment>
           ))}
         </div>
 
-
         <Divider sx={{ mt: 1, mb: 2 }} />
-        <p className="font-medium text-[14px] text-[#155be5] my-3">Custom Fields</p>
+        <p className="font-medium text-[14px] text-[#155be5] my-3">
+          Custom Fields
+        </p>
         <Autocomplete
           size="small"
           fullWidth

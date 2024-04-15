@@ -26,6 +26,8 @@ import { ContractContext } from "@/context/ContractContext";
 import SignatureSendReq from "@/pages/dasboard/contract/sdk/SignatureSendReq";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import SignatureMultiSendReq from "@/pages/dasboard/contract/sdk/SignatureMultiSendReq";
+import SignatuereErrorDilog from "@/pages/dasboard/contract/sdk/SignatuereErrorDilog";
+import { title } from "process";
 type FormValues = {
   name: string;
   checkboxName: any;
@@ -69,16 +71,18 @@ const Signature = () => {
   const [checked, setChecked] = React.useState(false);
   const [siningOrder, setSiningOrder] = useState(false);
   const [signatureopenDialog, setOpenSignatureDialog] = useState(false);
-
+  const [emailToReplace, setEmailToReplace] = useState(null);
+  const [openErrorDilog, setopenErrorDilog] = useState(false);
   const [ClickData, setClickData] = useState("");
-
-  console.log("clidslfjd : ", ClickData);
-
+  const [title, setTitle] = useState("");
   const handleCloseDialog = () => {
     setOpenSignatureDialog(false);
   };
   const handleClosMultieDialog = () => {
     setOpenMultiDialog(false);
+  };
+  const handleClosErrorDilog = () => {
+    setopenErrorDilog(false);
   };
   const handleShareDilog = (signatory: any) => {
     if (siningOrder) {
@@ -108,20 +112,35 @@ const Signature = () => {
   };
 
   const handleAddSignatory = (newSignatoryEmail: string) => {
-    const emailExists = recipients.some(
-      (collaborator: any) => collaborator.email === newSignatoryEmail
-    );
-
-    if (newSignatoryEmail && !emailExists) {
-      setRecipients((prev: any) => [...prev, { email: newSignatoryEmail }]);
-      reset(); // Assuming this resets form states as needed
-      setInputValue(""); // Clearing the input value
-      setSelectedValue(null); // Resetting selected value
+    if (emailToReplace) {
+      // Replace the existing email with the new one
+      const updatedRecipients = recipients.map((recipient: any) =>
+        recipient.email === emailToReplace
+          ? { ...recipient, email: newSignatoryEmail }
+          : recipient
+      );
+      setRecipients(updatedRecipients);
+      setEmailToReplace(null); // Reset the replacement email
+    } else {
+      // Add new signatory logic remains the same
+      const emailExists = recipients.some(
+        (collaborator: any) => collaborator.email === newSignatoryEmail
+      );
+      if (newSignatoryEmail && !emailExists) {
+        setRecipients((prev: any) => [...prev, { email: newSignatoryEmail }]);
+      }
     }
+    reset(); // Assuming this resets form states as needed
+    setInputValue(""); // Clearing the input value
+    setSelectedValue(null); // Resetting selected value
   };
 
   // Function to remove a signatory from the list
   const handleRemoveSignatory = (signatoryToRemove: any) => {
+    setTitle(
+      "Please remove custom fields from the document before removing the recipient."
+    );
+    setopenErrorDilog(true);
     setRecipients(
       recipients.filter(
         (signatory: any) => signatory.email !== signatoryToRemove
@@ -322,7 +341,7 @@ const Signature = () => {
                               >
                                 {isInternal ? "Internal" : "External"}
                               </Button>
-                              {!colb.signature && (
+                              {!colb?.signature && (
                                 <Button
                                   variant="text"
                                   color="success"
@@ -334,7 +353,7 @@ const Signature = () => {
                                   }}
                                   onClick={() => handleShareDilog(colb)}
                                 >
-                                  {colb.ReqOption ? (
+                                  {colb?.ReqOption ? (
                                     <>
                                       <CheckCircleOutlineIcon fontSize="medium" />{" "}
                                       Document shared to sign
@@ -344,7 +363,7 @@ const Signature = () => {
                                   )}
                                 </Button>
                               )}
-                              {colb.signature && (
+                              {colb?.signature && (
                                 <Button
                                   variant="text"
                                   color="success"
@@ -371,9 +390,19 @@ const Signature = () => {
                                   mt: -0.8,
                                   ml: 4,
                                 }}
-                                onClick={() =>
-                                  handleRemoveSignatory(colb?.email)
-                                }
+                                onClick={() => {
+                                  setopenErrorDilog(true);
+                                  setTitle(
+                                    `Please review the fields previously assigned to ${colb.email},as they are now assigned to new replace email.`
+                                  );
+                                  setEmailToReplace(colb.email);
+                                  setActiveSection("collaborate");
+                                  setShowButtons(
+                                    (prevShowButtons: any) => !prevShowButtons
+                                  );
+                                  setSelectedValue(null);
+                                  setInputValue("");
+                                }}
                               >
                                 Replace signer
                               </Button>
@@ -386,9 +415,9 @@ const Signature = () => {
                                   mt: -0.8,
                                   ml: 4,
                                 }}
-                                onClick={() =>
-                                  handleRemoveSignatory(colb?.email)
-                                }
+                                onClick={() => {
+                                  handleRemoveSignatory(colb?.email);
+                                }}
                               >
                                 Remove recipient
                               </Button>
@@ -543,6 +572,11 @@ const Signature = () => {
         open={openMultiDialog}
         onClose={handleClosMultieDialog}
         ClickData={ClickData}
+      />
+      <SignatuereErrorDilog
+        open={openErrorDilog}
+        onClose={handleClosErrorDilog}
+        title={title}
       />
     </>
   );

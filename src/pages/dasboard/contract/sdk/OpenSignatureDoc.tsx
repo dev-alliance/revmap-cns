@@ -98,10 +98,12 @@ const OpenSignatureDoc: React.FC<DetailDialogProps> = ({
 
   const handleClosefwdDialog = () => {
     setOpenLDialog(false);
+    handleCloseDialog();
   };
 
   const handleCloseDrawSigDialog = () => {
     setOpenDrawSignatures(false);
+    handleCloseDialog();
   };
 
   useEffect(() => {

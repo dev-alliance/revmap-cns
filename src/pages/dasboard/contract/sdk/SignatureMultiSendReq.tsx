@@ -75,15 +75,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   const [userList, setUserList] = useState<Array<any>>([]);
-  const [requestOption, setRequestOption] = useState({
-    message: "",
-    autoReminder: false,
-    daysFirstReminder: "",
-    daysBtwReminder: "",
-    daysBeforeExp: "",
-    daysFinalExp: "",
-    forwarding: false,
-  });
+
   const [tabValue, setTabValue] = useState(0);
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -93,21 +85,6 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
       setTabValue((prevTabValue) => prevTabValue + 1);
     }
   };
-
-  useEffect(() => {
-    // Reset requestOption when dialog opens or the ClickData changes
-    console.log(ClickData, "click");
-
-    const index = recipients.findIndex(
-      (recip: any) =>
-        recip?.email?.trim().toLowerCase() ===
-        ClickData?.email?.trim().toLowerCase()
-    );
-
-    if (index !== -1) {
-      setRequestOption(recipients[index].permission || ""); // Assume each collaborator has a `permission` field
-    }
-  }, [ClickData, recipients, open]);
 
   // New function to update the collaborator's permission, called on button click
 

@@ -106,7 +106,7 @@ const OpenSignaturFinish: React.FC<DetailDialogProps> = ({
   return (
     <>
       <Dialog open={openDilog} onClose={onClose} fullWidth maxWidth="md">
-        <DialogContent>
+        <DialogContent sx={{ m: 2 }}>
           <IconButton
             onClick={() => {
               onClose(), onCloseDrawSignature();

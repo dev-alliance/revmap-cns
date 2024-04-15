@@ -67,9 +67,6 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
     }));
   };
   useEffect(() => {
-    // Reset requestOption when dialog opens or the ClickData changes
-    console.log(ClickData, "click");
-
     const index = recipients.findIndex(
       (recip: any) =>
         recip?.email?.trim().toLowerCase() ===
@@ -77,38 +74,47 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
     );
 
     if (index !== -1) {
-      setRequestOption(recipients[index].permission || ""); // Assume each collaborator has a `permission` field
+      setRequestOption(recipients[index].requestOption || ""); // Assume each collaborator has a `permission` field
     }
   }, [ClickData, recipients, open]);
 
-  // New function to update the collaborator's permission, called on button click
-  const updateDocment = async () => {
-    setRecipients((pre: any) => {
-      const updated = pre.map((user: any) => {
-        if (user.email === ClickData?.email) {
-          // If the email matches, modify the user object.
+  const updateDocument = async () => {
+    setRecipients((prev: any) => {
+      const updated = prev.map((user: any) => {
+        const matches =
+          user.email.trim().toLowerCase() ===
+          ClickData?.email.trim().toLowerCase();
+        console.log(user.email, ClickData?.email, matches); // Log the comparison result
+        if (matches) {
+          alert("ok");
           return { ...user, ReqOption: requestOption, signature: "" };
         }
-        // Always return the user object, modified or not.
         return user;
       });
+      console.log("Updated recipients:", updated); // Log the full updated array
       return updated;
     });
-
-    try {
-      console.log(requestOption, "requestOption");
-      console.log(recipients, "requestOption");
-      const response = await updatecontract("656c3dfdc8115e4b49f6c100", {
-        recipient: recipients,
-      });
-      console.log(response, "response");
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      console.log(error);
-    }
   };
 
+  useEffect(() => {
+    const makeApiCall = async () => {
+      if (recipients.length > 0) {
+        console.log("Making API call with:", recipients);
+        try {
+          const response = await updatecontract("656c3dfdc8115e4b49f6c100", {
+            recipient: recipients,
+          });
+          console.log("API Response:", response);
+        } catch (error) {
+          console.error("API Call Failed:", error);
+        }
+      }
+    };
+
+    makeApiCall();
+  }, [recipients]);
+
+  console.log(requestOption, "requestOption");
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -455,7 +461,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
               sx={{ textTransform: "none", mt: "4" }}
               onClick={() => {
                 handleClick();
-                updateDocment(); // Call the new function here
+                updateDocument(); // Call the new function here
               }}
             >
               Share document
