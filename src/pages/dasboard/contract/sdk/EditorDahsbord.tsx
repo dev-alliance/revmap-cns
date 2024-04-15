@@ -534,7 +534,7 @@ const MyComponent: React.FC = () => {
     //   icon: <ShareIcon />,
     //   content: <ShareComp />,
     // },
-    discussion: {
+    fields: {
       icon: (
         <Tooltip title="Fields">
           {/* <img src={commentIcon} alt="Logo" style={{ width: "4%" }} /> */}

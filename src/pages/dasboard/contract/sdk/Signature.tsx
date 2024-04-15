@@ -28,6 +28,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import SignatureMultiSendReq from "@/pages/dasboard/contract/sdk/SignatureMultiSendReq";
 import SignatuereErrorDilog from "@/pages/dasboard/contract/sdk/SignatuereErrorDilog";
 import { title } from "process";
+import SignatuereErrorfieldDilog from "@/pages/dasboard/contract/sdk/SignatuereErrorfieldDilog";
 type FormValues = {
   name: string;
   checkboxName: any;
@@ -73,6 +74,7 @@ const Signature = () => {
   const [signatureopenDialog, setOpenSignatureDialog] = useState(false);
   const [emailToReplace, setEmailToReplace] = useState(null);
   const [openErrorDilog, setopenErrorDilog] = useState(false);
+  const [openErrorFieldDilog, setopenErrorFieldDilog] = useState(false);
   const [ClickData, setClickData] = useState("");
   const [title, setTitle] = useState("");
   const handleCloseDialog = () => {
@@ -84,11 +86,21 @@ const Signature = () => {
   const handleClosErrorDilog = () => {
     setopenErrorDilog(false);
   };
+  const handleClosErrorFieldDilog = () => {
+    setopenErrorFieldDilog(false);
+  };
+
   const handleShareDilog = (signatory: any) => {
-    if (siningOrder) {
-      setOpenMultiDialog(true);
+    console.log(signatory, "signatory");
+
+    if (!signatory.field) {
+      setopenErrorFieldDilog(true);
     } else {
-      setOpenSignatureDialog(true);
+      if (siningOrder) {
+        setOpenMultiDialog(true);
+      } else {
+        setOpenSignatureDialog(true);
+      }
     }
 
     const user = userList.find((user) => user.email === signatory?.email);
@@ -137,15 +149,18 @@ const Signature = () => {
 
   // Function to remove a signatory from the list
   const handleRemoveSignatory = (signatoryToRemove: any) => {
-    setTitle(
-      "Please remove custom fields from the document before removing the recipient."
-    );
-    setopenErrorDilog(true);
-    setRecipients(
-      recipients.filter(
-        (signatory: any) => signatory.email !== signatoryToRemove
-      )
-    );
+    if (signatoryToRemove.field) {
+      setTitle(
+        "Please remove custom fields from the document before removing the recipient."
+      );
+      setopenErrorDilog(true);
+    } else {
+      setRecipients(
+        recipients.filter(
+          (signatory: any) => signatory.email !== signatoryToRemove.email
+        )
+      );
+    }
   };
 
   const handleInputChange = (event: any, newInputValue: any) => {
@@ -207,7 +222,7 @@ const Signature = () => {
         </Typography>
         <Divider style={{ margin: "10px 0" }} />
 
-        {(recipients.length === 0 || showButtons) && (
+        {recipients.length === 0 && (
           <Box
             sx={{
               display: "flex",
@@ -391,10 +406,12 @@ const Signature = () => {
                                   ml: 4,
                                 }}
                                 onClick={() => {
-                                  setopenErrorDilog(true);
-                                  setTitle(
-                                    `Please review the fields previously assigned to ${colb.email},as they are now assigned to new replace email.`
-                                  );
+                                  if (colb.field) {
+                                    setopenErrorDilog(true);
+                                    setTitle(
+                                      `Please review the fields previously assigned to ${colb.email},as they are now assigned to new replace email.`
+                                    );
+                                  }
                                   setEmailToReplace(colb.email);
                                   setActiveSection("collaborate");
                                   setShowButtons(
@@ -416,7 +433,7 @@ const Signature = () => {
                                   ml: 4,
                                 }}
                                 onClick={() => {
-                                  handleRemoveSignatory(colb?.email);
+                                  handleRemoveSignatory(colb);
                                 }}
                               >
                                 Remove recipient
@@ -482,6 +499,7 @@ const Signature = () => {
                 onClick={() => {
                   setSelectedValue(null);
                   setInputValue("");
+                  setShowButtons(false);
                 }}
               >
                 Cancel
@@ -537,6 +555,10 @@ const Signature = () => {
             >
               + Add Recipients
             </Button>
+          </>
+        )}
+        {recipients.length !== 0 && (
+          <>
             <Divider style={{ margin: "10px 0" }} />
             <FormControlLabel
               sx={{
@@ -577,6 +599,11 @@ const Signature = () => {
         open={openErrorDilog}
         onClose={handleClosErrorDilog}
         title={title}
+      />
+      <SignatuereErrorfieldDilog
+        open={openErrorFieldDilog}
+        onClose={handleClosErrorFieldDilog}
+        ClickData={ClickData}
       />
     </>
   );

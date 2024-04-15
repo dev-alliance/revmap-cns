@@ -120,7 +120,6 @@ const Fields = () => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
       documentEditor.editor.insertFormField("Text");
-
       console.log("lable : ", field?.label);
 
       const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
@@ -132,6 +131,21 @@ const Fields = () => {
       textfieldInfo.name = field?.label;
       documentEditor.setFormFieldInfo("Text1", textfieldInfo);
       setDragFields(dragFields + 1);
+
+      setRecipients((prev: any) => {
+        const updated = prev.map((user: any) => {
+          const matches =
+            user.email.trim().toLowerCase() ===
+            selectedEmails?.email.trim().toLowerCase();
+
+          if (matches) {
+            return { ...user, field: dragFields + 1 };
+          }
+          return user;
+        });
+        console.log("Updated recipients:", updated); // Log the full updated array
+        return updated;
+      });
     };
 
     const handleDragStartCheckbox = (e: any) => {
@@ -139,6 +153,7 @@ const Fields = () => {
       const documentEditor = editorRefContext;
       documentEditor.editor.insertFormField("CheckBox");
     };
+    console.log("recipients :", recipients);
 
     return (
       <>
