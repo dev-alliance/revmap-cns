@@ -121,10 +121,12 @@ DocumentEditorComponent.Inject(
 
 DocumentEditorContainerComponent.Inject(Toolbar);
 
-function SyncFusionEditor() {
-  const { setEditorRefContext, dragFields, editorRefContext } = useContext(ContractContext);
+function SyncFesion() {
+  const { setEditorRefContext, dragFields, recipients, setRecipients } =
+    useContext(ContractContext);
 
   const editorContainerRef: any = useRef(null);
+
   const [openDropdowns, setOpenDropdowns] = useState({
     file: false,
     view: false,
@@ -1204,28 +1206,120 @@ function SyncFusionEditor() {
 
   const [fieldFreshData, setFieldFreshData] = useState(0); // Default font color
 
-
   useEffect(() => {
-
     const documentEditor = editorContainerRef.current.documentEditor;
     const formFieldsNames: string[] = documentEditor.exportFormData();
     console.log("formFieldsNames : ", formFieldsNames);
-
   }, [dragFields]);
 
-  return (
-    <div>
-      {/* <Sidebar /> */}
+  const cancelAllSignatures = () => {
+    setRecipients((prev: any) => {
+      const updated = prev.map((user: any) => {
+        // Check if the user has a non-empty signature
+        if (user.signature) {
+          return { ...user, signature: "" }; // Set signature to empty
+        }
+        return user;
+      });
+      console.log("Updated recipients after cancelling signatures:", updated); // Log the updated array
+      return updated;
+    });
+  };
+  const reverToReview = () => {
+    setRecipients((prev: any) => {
+      const updated = prev.map((user: any) => {
+        // Check if the user has a non-empty signature
+        if (user.ReqOption) {
+          return { ...user, ReqOption: "" }; // Set signature to empty
+        }
+        return user;
+      });
+      console.log("Updated recipients after cancelling signatures:", updated); // Log the updated array
+      return updated;
+    });
+  };
+
+  const Breadcrumb = ({ recipients }: any) => {
+    const hasReqOption = recipients.some(
+      (recipient: any) => recipient.ReqOption
+    );
+
+    const hasSignature = recipients.some(
+      (recipient: any) => recipient.signature
+    );
+
+    // Determine which step to highlight
+    let highlightStep = "";
+    if (recipients.length > 0) {
+      highlightStep = "Review";
+    }
+    if (hasReqOption) {
+      highlightStep = "Signing";
+    }
+    if (hasSignature) {
+      highlightStep = "Signed";
+    }
+
+    return (
       <ul className="mt-2" id="breadcrumb">
-        {/* <li><a href="#"><span className="icon icon-home"> </span></a></li> */}
         <li>
           <a href="#">
             <span className="icon icon-beaker"> </span> Draft
           </a>
         </li>
         <li>
-          <a href="#">
+          <a
+            href="#"
+            style={{ color: highlightStep === "Review" ? "blue" : "white" }}
+          >
             <span className="icon icon-double-angle-right"></span> Review
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            style={{ color: highlightStep === "Signing" ? "blue" : "white" }}
+          >
+            <span className="icon icon-rocket"> </span> Signing
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            style={{ color: highlightStep === "Signed" ? "blue" : "white" }}
+          >
+            <span className="icon icon-arrow-down"> </span> Signed
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span className="icon icon-arrow-down"> </span> Active
+          </a>
+        </li>
+      </ul>
+    );
+  };
+
+  return (
+    <div>
+      {/* <Sidebar /> */}
+      {/* <ul className="mt-2" id="breadcrumb">
+        
+        <li>
+          <a href="#">
+            <span className="icon icon-beaker"> </span> Draft
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            style={{ color: recipients.length > 0 ? "#155BE5" : "inherit" }}
+          >
+            <span
+              className="icon icon-double-angle-right"
+              style={{ background: "red" }}
+            ></span>{" "}
+            Review
           </a>
         </li>
         <li>
@@ -1243,7 +1337,9 @@ function SyncFusionEditor() {
             <span className="icon icon-arrow-down"> </span> Active
           </a>
         </li>
-      </ul>
+      </ul> */}
+      <Breadcrumb recipients={recipients} />
+
       <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 ">
         <p className="text-[12px] font-regular ">
           Approvals: 0/0{" "}
@@ -1500,9 +1596,9 @@ function SyncFusionEditor() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-              // onClick={() => {
-              //   triggerClick("container_toolbar_image_local");
-              // }}
+                // onClick={() => {
+                //   triggerClick("container_toolbar_image_local");
+                // }}
               >
                 <label
                   htmlFor="forimg"
@@ -1613,13 +1709,70 @@ function SyncFusionEditor() {
                 <img src={requestIcon} className="h-4 w-4" alt="" /> Request
                 signature
               </li>
-              <li className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2">
-                <img src={crossIcon} className="h-4 w-4" alt="" /> Cancel all
-                signature
+              <li
+                className="px-3  py-2 border-y flex items-center gap-x-2"
+                onClick={cancelAllSignatures}
+                style={{
+                  color: !recipients.some(
+                    (recipient: any) => recipient.signature
+                  )
+                    ? "gray"
+                    : "inherit", // Light blue if condition is true, else no color
+                  borderColor: !recipients.some(
+                    (recipient: any) => recipient.signature
+                  )
+                    ? "gray"
+                    : "#a1a1a1", // Dark blue if true, else grey
+                  cursor: !recipients.some(
+                    (recipient: any) => recipient.signature
+                  )
+                    ? "auto"
+                    : "pointer",
+                }}
+              >
+                <img
+                  src={crossIcon}
+                  className="h-4 w-4"
+                  alt=""
+                  style={{
+                    filter: !recipients.some(
+                      (recipient: any) => recipient.signature
+                    )
+                      ? "invert(70%)"
+                      : "none",
+                  }}
+                />
+                Cancel all signature
               </li>
-              <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
-                <img src={websiteIcon} className="h-4 w-4" alt="" /> Revert to
-                review
+              <li
+                onClick={reverToReview}
+                className="px-3 cursor-pointer flex items-center gap-x-2"
+                style={{
+                  color: !recipients.some(
+                    (recipient: any) => recipient.ReqOption
+                  )
+                    ? "gray"
+                    : "inherit",
+                  cursor: !recipients.some(
+                    (recipient: any) => recipient.ReqOption
+                  )
+                    ? "auto"
+                    : "pointer",
+                }}
+              >
+                <img
+                  src={websiteIcon}
+                  className="h-4 w-4"
+                  alt=""
+                  style={{
+                    filter: !recipients.some(
+                      (recipient: any) => recipient.ReqOption
+                    )
+                      ? "invert(70%)"
+                      : "none",
+                  }}
+                />
+                Revert to review
               </li>
               <li className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2">
                 <img src={signatureIcon} className="h-4 w-4" alt="" /> Sign
@@ -2028,4 +2181,4 @@ function SyncFusionEditor() {
   );
 }
 
-export default SyncFusionEditor;
+export default SyncFesion;

@@ -48,7 +48,7 @@ const Discussion = () => {
   } = useContext(ContractContext);
 
   const [inputValue, setInputValue] = useState("");
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedValue, setSelectedValue] = useState<any>(null);
   const [isInternal, setIsInternal] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
@@ -245,6 +245,7 @@ const Discussion = () => {
           >
             + Add Collaborator
           </Button>
+
           <Button
             fullWidth
             sx={{
@@ -288,8 +289,7 @@ const Discussion = () => {
                   value={selectedValue}
                   onChange={(_, value: any) => {
                     if (value) {
-                      handleAddSignatory(value.email);
-                      setSelectedValue(value); // Update selectedValue when a new value is selected
+                      setSelectedValue(value); // Only update selectedValue when a new value is selected
                     } else {
                       setSelectedValue(null); // Reset if no value is selected
                     }
@@ -298,7 +298,6 @@ const Discussion = () => {
                     <TextField
                       {...params}
                       label="Search by name or add email"
-                      margin="normal"
                       variant="outlined"
                       size="small"
                       onKeyPress={handleKeyPress}
@@ -309,7 +308,8 @@ const Discussion = () => {
                     />
                   )}
                 />
-                <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
+
+                <div style={{ flex: 1, textAlign: "right", marginTop: "10px" }}>
                   <Button
                     variant="contained"
                     color="inherit"
@@ -326,7 +326,9 @@ const Discussion = () => {
                       fontSize: "0.675rem",
                     }}
                     onClick={() => {
-                      setSelectedValue(null), setInputValue("");
+                      setSelectedValue(null);
+                      setInputValue("");
+                      setShowButtons(false);
                     }}
                   >
                     Cancel
@@ -335,7 +337,7 @@ const Discussion = () => {
                   <Button
                     variant="contained"
                     color="inherit"
-                    disabled={!selectedValue && !inputValue}
+                    disabled={!selectedValue && !inputValue.trim()}
                     sx={{
                       textTransform: "none",
                       backgroundColor: "#62BD6B",
@@ -348,8 +350,10 @@ const Discussion = () => {
                       fontSize: "0.675rem",
                     }}
                     onClick={() => {
-                      if (!selectedValue && inputValue.trim() !== "") {
-                        handleAddSignatory(inputValue);
+                      if (selectedValue || inputValue.trim() !== "") {
+                        handleAddSignatory(
+                          selectedValue ? selectedValue?.email : inputValue
+                        );
                       }
                       setShowButtons(false);
                     }}
@@ -360,120 +364,119 @@ const Discussion = () => {
               </>
             )}
 
-            {!showButtons &&
-              collaborater?.map((colb: any, index: any) => {
-                // Check if the colb's email is in the userList
+            {collaborater?.map((colb: any, index: any) => {
+              // Check if the colb's email is in the userList
 
-                const isInternal = userList.some(
-                  (user) => user.email === colb?.email
-                );
+              const isInternal = userList.some(
+                (user) => user.email === colb?.email
+              );
 
-                return (
-                  <Box
-                    key={index}
-                    sx={{
+              return (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    mb: 1,
+                    mt: 1,
+                  }}
+                >
+                  <div
+                    style={{
                       display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      mb: 1,
-                      mt: 1,
+                      alignItems: "center",
                     }}
                   >
-                    <div
-                      style={{
+                    <Box
+                      sx={{
+                        width: 25,
+                        height: 25,
                         display: "flex",
                         alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        backgroundColor:
+                          bubbleColors[index % bubbleColors.length],
+                        color: "#FFFFFF",
+                        marginRight: 1,
                       }}
                     >
-                      <Box
-                        sx={{
-                          width: 25,
-                          height: 25,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            bubbleColors[index % bubbleColors.length],
-                          color: "#FFFFFF",
-                          marginRight: 1,
-                        }}
-                      >
-                        <Typography sx={{ fontSize: "14px" }}>
-                          {colb?.email?.charAt(0).toUpperCase()}
-                        </Typography>
-                      </Box>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          width: "160px",
-                          // overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {colb?.email}
+                      <Typography sx={{ fontSize: "14px" }}>
+                        {colb?.email?.charAt(0).toUpperCase()}
                       </Typography>
-                    </div>
-                    <Box sx={{ display: "flex", mt: 1 }}>
-                      <Button
-                        variant="contained"
-                        color="inherit"
-                        sx={{
-                          textTransform: "none",
-                          backgroundColor: "#DCDCDC",
-                          "&:hover": {
-                            backgroundColor: "#757575",
-                          },
-                          "&:first-of-type": {
-                            ml: 4.5, // Only applies margin-left to the first button
-                          },
-                          color: "black",
-                          padding: "2px 5px !important",
-                          height: "25px !important",
-                          fontSize: "0.675rem",
-                        }}
-                      >
-                        {isInternal ? "Internal" : "External"}
-                      </Button>
-                      <IconButton
-                        aria-label="delete" // Providing an accessible label is important for assistive technologies
-                        color="error"
-                        // size="small" // Makes the button smaller; options are "small", "medium" (default), and "large"
-                        onClick={() => handleRemoveSignatory(colb?.email)}
-                        sx={{
-                          mt: -1,
-                          ml: 1,
-                        }}
-                      >
-                        <DeleteIcon /> {/* Adjust the icon size if needed */}
-                      </IconButton>
                     </Box>
-                    <Box sx={{ display: "flex", mt: -0.5 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        width: "160px",
+                        // overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontSize: "15px",
+                      }}
+                    >
+                      {colb?.email}
+                    </Typography>
+                  </div>
+                  <Box sx={{ display: "flex", mt: 1 }}>
+                    <Button
+                      variant="contained"
+                      color="inherit"
+                      sx={{
+                        textTransform: "none",
+                        backgroundColor: "#DCDCDC",
+                        "&:hover": {
+                          backgroundColor: "#757575",
+                        },
+                        "&:first-of-type": {
+                          ml: 4.5, // Only applies margin-left to the first button
+                        },
+                        color: "black",
+                        padding: "2px 5px !important",
+                        height: "25px !important",
+                        fontSize: "0.675rem",
+                      }}
+                    >
+                      {isInternal ? "Internal" : "External"}
+                    </Button>
+                    <IconButton
+                      aria-label="delete" // Providing an accessible label is important for assistive technologies
+                      color="error"
+                      // size="small" // Makes the button smaller; options are "small", "medium" (default), and "large"
+                      onClick={() => handleRemoveSignatory(colb?.email)}
+                      sx={{
+                        mt: -1,
+                        ml: 1,
+                      }}
+                    >
+                      <DeleteIcon /> {/* Adjust the icon size if needed */}
+                    </IconButton>
+                  </Box>
+                  <Box sx={{ display: "flex", mt: -0.5 }}>
+                    <Button
+                      variant="text"
+                      color="primary"
+                      sx={{ textTransform: "none", whiteSpace: "nowrap" }}
+                      onClick={() => handleShareDilog(colb)}
+                    >
+                      {colb.permission ? "Document Shared" : "Share Document"}
+                    </Button>
+                    {colb.permission && (
                       <Button
                         variant="text"
-                        color="primary"
+                        color="error"
                         sx={{ textTransform: "none", whiteSpace: "nowrap" }}
-                        onClick={() => handleShareDilog(colb)}
+                        onClick={() => handleRemove(colb?.email)}
                       >
-                        {colb.permission ? "Document Shared" : "Share Document"}
+                        Remove Access
+                        {/* {colb.permission ? "Document Shared" : "Share Document"} */}
                       </Button>
-                      {colb.permission && (
-                        <Button
-                          variant="text"
-                          color="error"
-                          sx={{ textTransform: "none", whiteSpace: "nowrap" }}
-                          onClick={() => handleRemove(colb?.email)}
-                        >
-                          Remove Access
-                          {/* {colb.permission ? "Document Shared" : "Share Document"} */}
-                        </Button>
-                      )}
-                    </Box>
+                    )}
                   </Box>
-                );
-              })}
+                </Box>
+              );
+            })}
 
             <div />
           </>
@@ -587,6 +590,7 @@ const Discussion = () => {
                       onClick={() => {
                         setMessage("");
                         setIsInternal("");
+                        setShowButtons(false);
                       }}
                     >
                       Cancel
@@ -617,68 +621,67 @@ const Discussion = () => {
                 </Box>
               </>
             )}
-            {!showButtons && (
-              <div>
-                {comments.map((comment: any, index: any) => {
-                  // Render all comments if user.email exists, otherwise render only external comments
-                  if (user.email || (!user.email && !comment.isInternal)) {
-                    return (
-                      <Box key={index} sx={{ mt: 2 }}>
-                        <Typography
-                          variant="body2"
-                          color="primary"
-                          sx={{ fontWeight: "bold" }}
-                        >
-                          {comment.name}
-                        </Typography>
 
-                        <Box sx={{ display: "flex", mt: 0.5, mb: 1 }}>
-                          <Button
-                            variant="contained"
-                            color="inherit"
-                            sx={{
-                              textTransform: "none",
-                              backgroundColor: "#DCDCDC",
-                              "&:hover": {
-                                backgroundColor: "#757575",
-                              },
-                              color: "black",
-                              padding: "2px 5px !important",
-                              height: "20px !important",
-                              fontSize: "0.675rem",
-                            }}
-                          >
-                            {comment.isInternal ? "Internal" : "External"}
-                          </Button>
+            <div>
+              {comments.map((comment: any, index: any) => {
+                // Render all comments if user.email exists, otherwise render only external comments
+                if (user.email || (!user.email && !comment.isInternal)) {
+                  return (
+                    <Box key={index} sx={{ mt: 2 }}>
+                      <Typography
+                        variant="body2"
+                        color="primary"
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        {comment.name}
+                      </Typography>
 
-                          <div
-                            style={{
-                              color: "#BDBDBD",
-                              fontSize: "11px",
-                              marginLeft: "1rem",
-                              marginTop: "0.2rem",
-                            }}
-                          >
-                            {formatTimeAgo(comment.date)}
-                          </div>
-                        </Box>
-
-                        <Card
+                      <Box sx={{ display: "flex", mt: 0.5, mb: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="inherit"
                           sx={{
-                            color: "#BDBDBD",
-                            padding: 1,
-                            fontSize: "12px",
+                            textTransform: "none",
+                            backgroundColor: "#DCDCDC",
+                            "&:hover": {
+                              backgroundColor: "#757575",
+                            },
+                            color: "black",
+                            padding: "2px 5px !important",
+                            height: "20px !important",
+                            fontSize: "0.675rem",
                           }}
                         >
-                          {comment.message}
-                        </Card>
+                          {comment.isInternal ? "Internal" : "External"}
+                        </Button>
+
+                        <div
+                          style={{
+                            color: "#BDBDBD",
+                            fontSize: "11px",
+                            marginLeft: "1rem",
+                            marginTop: "0.2rem",
+                          }}
+                        >
+                          {formatTimeAgo(comment.date)}
+                        </div>
                       </Box>
-                    );
-                  }
-                  return null;
-                })}
-              </div>
-            )}
+
+                      <Card
+                        sx={{
+                          color: "#BDBDBD",
+                          padding: 1,
+                          fontSize: "12px",
+                        }}
+                      >
+                        {comment.message}
+                      </Card>
+                    </Box>
+                  );
+                }
+                return null;
+              })}
+            </div>
           </Box>
         )}
       </div>
