@@ -64,6 +64,7 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            borderBottom: "1px solid black",
           }}
         >
           <Typography
@@ -81,7 +82,7 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
           <IconButton
             onClick={onClose}
             aria-label="close"
-            sx={{ position: "absolute", top: 0, right: 0 }}
+            sx={{ position: "absolute", top: -4, right: 0 }}
           >
             <CloseIcon />
           </IconButton>
