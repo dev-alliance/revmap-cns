@@ -109,7 +109,9 @@ const Fields = () => {
     const documentEditor = editorRefContext;
 
     //Insert Checkbox form field
-    documentEditor.editor.insertFormField("CheckBox");
+    if (selectedEmails) {
+      documentEditor.editor.insertFormField("CheckBox");
+    }
 
     //Insert Drop down form field
   };
@@ -119,7 +121,9 @@ const Fields = () => {
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
-      documentEditor.editor.insertFormField("Text");
+      if (selectedEmails) {
+        documentEditor.editor.insertFormField("Text");
+      }
       console.log("lable : ", field?.label);
 
       const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
@@ -151,7 +155,9 @@ const Fields = () => {
     const handleDragStartCheckbox = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
-      documentEditor.editor.insertFormField("CheckBox");
+      if (selectedEmails) {
+        documentEditor.editor.insertFormField("CheckBox");
+      }
     };
     console.log("recipients :", recipients);
 
@@ -160,7 +166,7 @@ const Fields = () => {
         {field?.id !== "RadioButton" && (
           <div
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
-            draggable
+            draggable={selectedEmails ? true : false}
             onDragEnd={handleDragStart}
             style={{ cursor: "grab", backgroundColor }}
           >
@@ -171,7 +177,7 @@ const Fields = () => {
           <div
             onClick={radioDrag}
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
-            draggable
+            draggable={selectedEmails ? true : false}
             onDragEnd={handleDragStartCheckbox}
             style={{ cursor: "grab", backgroundColor }}
           >
@@ -355,9 +361,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                      options.findIndex(
-                        (opt: any) => opt?.email === option.email
-                      ) % colors?.length
+                    options.findIndex(
+                      (opt: any) => opt?.email === option.email
+                    ) % colors?.length
                     ],
                   color: selected ? "white" : "black",
                 }}
