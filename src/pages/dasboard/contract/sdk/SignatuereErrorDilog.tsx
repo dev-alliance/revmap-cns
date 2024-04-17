@@ -33,12 +33,14 @@ interface DetailDialogProps {
   open: boolean;
   onClose: () => void;
   title: any;
+  onConfirm: () => void;
 }
 
 const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
   open,
   onClose,
   title,
+  onConfirm,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
@@ -83,7 +85,11 @@ const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
               mt: "1rem",
             }}
           >
-            <Typography variant="body1" color="textSecondary">
+            <Typography
+              variant="body1"
+              color="textSecondary"
+              sx={{ fontSize: "15px" }}
+            >
               {title}
             </Typography>
           </DialogTitle>
@@ -105,8 +111,26 @@ const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
               }}
               onClick={onClose}
             >
-              Close
+              {title ==
+              "Please confirm that all custom fields have been removed from the document before removing the recipient."
+                ? "Cancel"
+                : "Close"}
             </Button>
+            {title ==
+              "Please confirm that all custom fields have been removed from the document before removing the recipient." && (
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  textTransform: "none",
+                  mt: "4",
+                  ml: 1,
+                }}
+                onClick={onConfirm}
+              >
+                Conform
+              </Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>

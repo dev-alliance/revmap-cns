@@ -101,7 +101,7 @@ const OpenDrawSignature: React.FC<DetailDialogProps> = ({
       const updated = pre.map((user: any) => {
         if (user.email === selectedEmails) {
           alert("ok");
-          return { ...user, signature: Drawsignature };
+          return { ...user, signature: Drawsignature, date: new Date() };
         }
         return user;
       });

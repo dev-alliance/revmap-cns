@@ -63,7 +63,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
     const { name, value, type, checked } = event.target;
     setRequestOption((prev) => ({
       ...prev, // Spread the previous state
-      [name]: type === "checkbox" ? checked : value, // Use checked for checkboxes, value for other inputs
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
   useEffect(() => {
@@ -73,10 +73,21 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
         ClickData?.email?.trim().toLowerCase()
     );
 
-    if (index !== -1) {
-      setRequestOption(recipients[index].requestOption || ""); // Assume each collaborator has a `permission` field
+    if (index !== -1 && recipients[index].requestOption) {
+      setRequestOption(recipients[index].requestOption);
+    } else {
+      // Maintain the current state or reset to a default state if necessary
+      setRequestOption({
+        message: "",
+        autoReminder: false,
+        daysFirstReminder: "",
+        daysBtwReminder: "",
+        daysBeforeExp: "",
+        daysFinalExp: "",
+        forwarding: false,
+      });
     }
-  }, [ClickData, recipients, open]);
+  }, [ClickData, recipients, open]); // Check dependencies to ensure they're needed
 
   const updateDocument = async () => {
     setRecipients((prev: any) => {
@@ -84,7 +95,6 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
         const matches =
           user.email.trim().toLowerCase() ===
           ClickData?.email.trim().toLowerCase();
-        console.log(user.email, ClickData?.email, matches); // Log the comparison result
         if (matches) {
           alert("ok");
           return { ...user, ReqOption: requestOption, signature: "" };

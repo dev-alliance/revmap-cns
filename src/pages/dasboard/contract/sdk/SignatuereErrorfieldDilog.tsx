@@ -104,17 +104,21 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             }}
           >
             <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-              {recipients?.map((dt: any, index: any) => (
-                <ListItem key={index} sx={{ pl: 0 }}>
-                  <ListItemIcon sx={{ minWidth: "auto", mr: 1, color: "gray" }}>
-                    <FiberManualRecordIcon sx={{ fontSize: "small" }} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={`${dt.email} `}
-                    sx={{ color: "black" }}
-                  />
-                </ListItem>
-              ))}
+              {recipients
+                ?.filter((dt: any) => dt.field === undefined)
+                .map((dt: any, index: any) => (
+                  <ListItem key={index} sx={{ pl: 0 }}>
+                    <ListItemIcon
+                      sx={{ minWidth: "auto", mr: 1, color: "gray" }}
+                    >
+                      <FiberManualRecordIcon sx={{ fontSize: "small" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={`${dt.email} `}
+                      sx={{ color: "black" }}
+                    />
+                  </ListItem>
+                ))}
             </List>
           </Typography>
 

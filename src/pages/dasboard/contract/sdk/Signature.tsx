@@ -75,6 +75,8 @@ const Signature = () => {
   const [emailToReplace, setEmailToReplace] = useState(null);
   const [openErrorDilog, setopenErrorDilog] = useState(false);
   const [openErrorFieldDilog, setopenErrorFieldDilog] = useState(false);
+  const [signatoryToRemove, setSignatoryToRemove] = useState<any>(null);
+
   const [ClickData, setClickData] = useState("");
   const [title, setTitle] = useState("");
   const handleCloseDialog = () => {
@@ -93,7 +95,11 @@ const Signature = () => {
   const handleShareDilog = (signatory: any) => {
     console.log(signatory, "signatory");
 
-    if (!signatory.field) {
+    if (
+      !recipients.every(
+        (signatoryItem: any) => signatoryItem.field !== undefined
+      )
+    ) {
       setopenErrorFieldDilog(true);
     } else {
       if (siningOrder) {
@@ -133,6 +139,11 @@ const Signature = () => {
       );
       setRecipients(updatedRecipients);
       setEmailToReplace(null); // Reset the replacement email
+
+      setopenErrorDilog(true);
+      setTitle(
+        `Please review the fields previously assigned to ${emailToReplace},as they are now assigned to ${newSignatoryEmail}.`
+      );
     } else {
       // Add new signatory logic remains the same
       const emailExists = recipients.some(
@@ -148,19 +159,30 @@ const Signature = () => {
   };
 
   // Function to remove a signatory from the list
-  const handleRemoveSignatory = (signatoryToRemove: any) => {
-    if (signatoryToRemove.field) {
+  const handleRemoveSignatory = (signatorytoremove: any) => {
+    if (signatorytoremove.field) {
+      setSignatoryToRemove(signatorytoremove);
       setTitle(
-        "Please remove custom fields from the document before removing the recipient."
+        "Please confirm that all custom fields have been removed from the document before removing the recipient."
       );
       setopenErrorDilog(true);
     } else {
       setRecipients(
         recipients.filter(
-          (signatory: any) => signatory.email !== signatoryToRemove.email
+          (signatory: any) => signatory.email !== signatorytoremove.email
         )
       );
     }
+  };
+
+  const handleConfirmDelete = () => {
+    // Implement the deletion logic here, once confirmed
+    if (signatoryToRemove) {
+      setRecipients(
+        recipients.filter((s: any) => s.email !== signatoryToRemove.email)
+      );
+    }
+    handleClosErrorDilog(); // Close the dialog after confirming
   };
 
   const handleInputChange = (event: any, newInputValue: any) => {
@@ -267,6 +289,7 @@ const Signature = () => {
               {(provided: any, snapshot: any) => (
                 <Box ref={provided.innerRef} {...provided.droppableProps}>
                   {recipients.map((colb: any, index: any) => {
+                    console.log(colb, "colb");
                     const isInternal = userList.some(
                       (user) => user.email === colb?.email
                     );
@@ -392,90 +415,111 @@ const Signature = () => {
                                   onClick={() => handleShareDilog(colb)}
                                 >
                                   <CheckCircleOutlineIcon fontSize="medium" />{" "}
-                                  Signed
+                                  Signed{" "}
                                 </Button>
                               )}
-                              <Tooltip
-                                title={
-                                  recipients.some(
-                                    (recipient: any) => recipient.signature
-                                  )
-                                    ? "To replace the recipient, cancel all signatures."
-                                    : recipients.some(
-                                        (recipient: any) => recipient.ReqOption
+
+                              {/* Debug output */}
+                              {recipients.some(
+                                (recipient: any) => recipient.date
+                              ) ? (
+                                <Button
+                                  variant="text"
+                                  color="success"
+                                  sx={{
+                                    textTransform: "none",
+                                    whiteSpace: "nowrap",
+                                    mt: -0.3,
+                                    ml: 4,
+                                  }}
+                                >
+                                  {colb.date
+                                    ? new Date(colb.date).toLocaleDateString()
+                                    : "Date unavailable"}
+                                </Button>
+                              ) : (
+                                <>
+                                  <Tooltip
+                                    title={
+                                      recipients.some(
+                                        (recipient: any) => recipient.signature
                                       )
-                                    ? "To replace the recipient, change document status to 'Review'."
-                                    : null
-                                }
-                              >
-                                <span>
-                                  <Button
-                                    variant="text"
-                                    color="warning"
-                                    disabled={recipients.some(
-                                      (recipient: any) => recipient.ReqOption
-                                    )}
-                                    sx={{
-                                      textTransform: "none",
-                                      whiteSpace: "nowrap",
-                                      mt: -0.8,
-                                      ml: 4,
-                                    }}
-                                    onClick={() => {
-                                      if (colb.field) {
-                                        setopenErrorDilog(true);
-                                        setTitle(
-                                          `Please review the fields previously assigned to ${colb.email},as they are now assigned to new replace email.`
-                                        );
-                                      }
-                                      setEmailToReplace(colb.email);
-                                      setActiveSection("collaborate");
-                                      setShowButtons(
-                                        (prevShowButtons: any) =>
-                                          !prevShowButtons
-                                      );
-                                      setSelectedValue(null);
-                                      setInputValue("");
-                                    }}
+                                        ? "To replace the recipient, cancel all signatures."
+                                        : recipients.some(
+                                            (recipient: any) =>
+                                              recipient.ReqOption
+                                          )
+                                        ? "To replace the recipient, change document status to 'Review'."
+                                        : null
+                                    }
                                   >
-                                    Replace recipient
-                                  </Button>
-                                </span>
-                              </Tooltip>
-                              <Tooltip
-                                title={
-                                  recipients.some(
-                                    (recipient: any) => recipient.signature
-                                  )
-                                    ? "To remove the recipient, cancel all signatures."
-                                    : recipients.some(
-                                        (recipient: any) => recipient.ReqOption
+                                    <span>
+                                      <Button
+                                        variant="text"
+                                        color="warning"
+                                        disabled={recipients.some(
+                                          (recipient: any) =>
+                                            recipient.ReqOption
+                                        )}
+                                        sx={{
+                                          textTransform: "none",
+                                          whiteSpace: "nowrap",
+                                          mt: -0.8,
+                                          ml: 4,
+                                        }}
+                                        onClick={() => {
+                                          setEmailToReplace(colb.email);
+                                          setActiveSection("collaborate");
+                                          setShowButtons(
+                                            (prevShowButtons: any) =>
+                                              !prevShowButtons
+                                          );
+                                          setSelectedValue(null);
+                                          setInputValue("");
+                                        }}
+                                      >
+                                        Replace recipient
+                                      </Button>
+                                    </span>
+                                  </Tooltip>
+                                  <Tooltip
+                                    title={
+                                      recipients.some(
+                                        (recipient: any) => recipient.signature
                                       )
-                                    ? "To remove the recipient, change document status to 'Review'."
-                                    : null
-                                }
-                              >
-                                <span>
-                                  <Button
-                                    variant="text"
-                                    color="error"
-                                    disabled={recipients.some(
-                                      (recipient: any) => recipient.ReqOption
-                                    )}
-                                    sx={{
-                                      textTransform: "none",
-                                      whiteSpace: "nowrap",
-                                      mt: -0.8,
-                                      ml: 4,
-                                    }}
-                                    onClick={() => {
-                                      handleRemoveSignatory(colb);
-                                    }}
+                                        ? "To remove the recipient, cancel all signatures."
+                                        : recipients.some(
+                                            (recipient: any) =>
+                                              recipient.ReqOption
+                                          )
+                                        ? "To remove the recipient, change document status to 'Review'."
+                                        : null
+                                    }
                                   >
-                                    Remove recipient
-                                  </Button>
-                                </span>
-                              </Tooltip>
+                                    <span>
+                                      <Button
+                                        variant="text"
+                                        color="error"
+                                        disabled={recipients.some(
+                                          (recipient: any) =>
+                                            recipient.ReqOption
+                                        )}
+                                        sx={{
+                                          textTransform: "none",
+                                          whiteSpace: "nowrap",
+                                          mt: -0.8,
+                                          ml: 4,
+                                        }}
+                                        onClick={() => {
+                                          handleRemoveSignatory(colb);
+                                        }}
+                                      >
+                                        Remove recipient
+                                      </Button>
+                                    </span>
+                                  </Tooltip>
+                                </>
+                              )}
                             </Box>
                           </Box>
                         )}
@@ -577,6 +621,9 @@ const Signature = () => {
             <Button
               variant="text"
               color="primary"
+              disabled={recipients.some(
+                (recipient: any) => recipient.signature
+              )}
               sx={{
                 fontSize: "11px",
                 textTransform: "none",
@@ -637,6 +684,7 @@ const Signature = () => {
         open={openErrorDilog}
         onClose={handleClosErrorDilog}
         title={title}
+        onConfirm={handleConfirmDelete}
       />
       <SignatuereErrorfieldDilog
         open={openErrorFieldDilog}

@@ -1217,7 +1217,7 @@ function SyncFesion() {
       const updated = prev.map((user: any) => {
         // Check if the user has a non-empty signature
         if (user.signature) {
-          return { ...user, signature: "" }; // Set signature to empty
+          return { ...user, signature: "", date: "" }; // Set signature to empty
         }
         return user;
       });
