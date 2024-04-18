@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 /* eslint-disable no-duplicate-case */
 /* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -1314,7 +1313,7 @@ function SyncFesion() {
     container.documentEditor.selection.selectCurrentWord();
 
     // To get the selected content as text
-    let selectedContent: string = container.documentEditor.selection.text;
+    const selectedContent: string = container.documentEditor.selection.text;
   };
 
   return (

@@ -84,7 +84,7 @@ const Fields = () => {
   const [selectionField, setSelectionField] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]); // State for the message input
   // State to track if the comment is internal or external
-  const [selectedEmails, setSelectedEmails] = useState<OptionType | null>(null);
+  const [selectedEmails, setSelectedEmails] = useState<any | null>(null);
 
   console.log("selected Emails : ", selectedEmails);
 
@@ -413,26 +413,25 @@ const Fields = () => {
             value={selectedEmails}
             onChange={handleOnChange}
             renderInput={(params) => (
-              <TextField {...params} label="Select Signer" variant="outlined" />
+              <TextField
+                {...params}
+                label="Select Signer"
+                variant="outlined"
+                style={{
+                  backgroundColor:
+                    colors[
+                      options.findIndex(
+                        (opt: any) => opt?.email === selectedEmails?.email
+                      ) % colors?.length
+                    ],
+                }}
+              />
             )}
             isOptionEqualToValue={(option, value) =>
               option.email === value.email
             }
             renderOption={(props, option, { selected }) => (
-              <li
-                {...props}
-                style={{
-                  backgroundColor:
-                    colors[
-                      options.findIndex(
-                        (opt: any) => opt?.email === option.email
-                      ) % colors?.length
-                    ],
-                  color: selected ? "white" : "black",
-                }}
-              >
-                {option.email}
-              </li>
+              <li {...props}>{option.email}</li>
             )}
           />
         </Box>
