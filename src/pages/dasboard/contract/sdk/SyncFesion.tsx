@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-duplicate-case */
 /* eslint-disable no-case-declarations */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -116,7 +117,7 @@ DocumentEditorComponent.Inject(
   Editor,
   EditorHistory,
   ContextMenu,
-  TableDialog,
+  TableDialog
 );
 
 DocumentEditorContainerComponent.Inject(Toolbar);
@@ -850,7 +851,10 @@ function SyncFesion() {
         // Check if the current selection is within a table
         const isInTable =
           documentEditor?.selection?.contextTypeInternal == "TableText";
-        console.log("current selection ", documentEditor?.selection?.bookmarks[0]);
+        console.log(
+          "current selection ",
+          documentEditor?.selection?.bookmarks[0]
+        );
         setIsTableSelected(isInTable);
       };
     }
@@ -1300,11 +1304,10 @@ function SyncFesion() {
     );
   };
 
-
   let container: DocumentEditorContainerComponent;
   const onCreated = () => {
     // To insert text in cursor position
-    container.documentEditor.editor.insertText('Document editor');
+    container.documentEditor.editor.insertText("Document editor");
     // Move selection to previous character
     container.documentEditor.selection.moveToPreviousCharacter();
     // To select the current word in document
@@ -1312,7 +1315,7 @@ function SyncFesion() {
 
     // To get the selected content as text
     let selectedContent: string = container.documentEditor.selection.text;
-  }
+  };
 
   return (
     <div>
@@ -1610,9 +1613,9 @@ function SyncFesion() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-              // onClick={() => {
-              //   triggerClick("container_toolbar_image_local");
-              // }}
+                // onClick={() => {
+                //   triggerClick("container_toolbar_image_local");
+                // }}
               >
                 <label
                   htmlFor="forimg"

@@ -10,6 +10,9 @@ import {
   MenuItem,
   TextField,
   Typography,
+  Checkbox,
+  FormControlLabel,
+  Button,
 } from "@mui/material";
 import {
   DocumentEditorComponent,
@@ -70,7 +73,7 @@ const Fields = () => {
   } = useContext(ContractContext);
 
   const [inputValue, setInputValue] = useState("");
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedCustomFeild, setSelectedCustomFeild] = useState<any>([]);
   const [isInternal, setIsInternal] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
@@ -78,14 +81,14 @@ const Fields = () => {
   const [checked, setChecked] = React.useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [ClickData, setClickData] = useState("");
-  const [message, setMessage] = useState("");
+  const [selectionField, setSelectionField] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]); // State for the message input
   // State to track if the comment is internal or external
   const [selectedEmails, setSelectedEmails] = useState<OptionType | null>(null);
 
   console.log("selected Emails : ", selectedEmails);
 
-  const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB"];
+  const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB", "#3F9748"];
   const [backgroundColor, setBackgroundColor] = useState("#d9d9d9");
 
   const handleOnChange = (
@@ -101,7 +104,7 @@ const Fields = () => {
       const selectedColor = colors[index];
       setBackgroundColor(selectedColor); // Set the color state to the selected option's color
     } else {
-      setBackgroundColor(""); // Reset or handle deselection
+      setBackgroundColor("#D9D9D9"); // Reset or handle deselection
     }
   };
 
@@ -129,7 +132,7 @@ const Fields = () => {
       const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
         "Text1"
       ) as TextFormFieldInfo;
-      textfieldInfo.defaultValue = field?.label + " * ";
+      textfieldInfo.defaultValue = field?.label + (requiredField ? " *" : "");
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
       textfieldInfo.name = field?.label;
@@ -300,7 +303,7 @@ const Fields = () => {
 
   const [OpenDrawSignatures, setOpenDrawSignatures] = useState(false);
 
-  const [siningOrder, setSiningOrder] = useState(false);
+  const [requiredField, setRequiredField] = useState(false);
   // const handleCloseDialog = () => {
   //   setOpenSignatureDialog(false);
   // };
@@ -308,11 +311,6 @@ const Fields = () => {
   const handleCloseDrawSigDialog = () => {
     setOpenDrawSignatures(false);
   };
-
-
-
-
-
 
   useEffect(() => {
     const documentEditor = editorRefContext;
@@ -323,8 +321,12 @@ const Fields = () => {
         // Check if the current selection is within a table
         const isInTable =
           documentEditor?.selection?.contextTypeInternal == "TableText";
-        console.log("current selection ", documentEditor?.selection?.bookmarks[0]);
 
+        console.log(
+          "current selection ",
+          documentEditor?.selection?.bookmarks[0]
+        );
+        setSelectionField(documentEditor?.selection?.bookmarks[0]);
       };
     }
 
@@ -335,9 +337,6 @@ const Fields = () => {
       }
     };
   }, []);
-
-
-
 
   // const setValueToField = (value: any) => {
   //   const documentEditor = editorRefContext;
@@ -364,7 +363,6 @@ const Fields = () => {
   //   }
   // };
 
-
   // const removeField = () => {
   //   const documentEditor = editorRefContext;
 
@@ -384,21 +382,13 @@ const Fields = () => {
           ClickData={ClickData}
         /> */}
 
-        <OpenDrawSignature
-          openDilog={OpenDrawSignatures}
-          onClose={handleCloseDrawSigDialog}
-          closeFirstOen={handleCloseDrawSigDialog}
-          selectedEmails={selectedEmails}
-        />
         <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
           Fields
         </Typography>
 
-
         {/* <button onClick={removeField}>Remove Field</button>
         <button onClick={toggleRequiredField}>Toggle Required</button>
         <button onClick={() => setValueToField("New Value")}>Set Value</button> */}
-
 
         <p className="text-[#8A8A8A] text-[10px] pt-1">
           Drag and drop to assign signature fields for the signer to sign or add
@@ -434,9 +424,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                    options.findIndex(
-                      (opt: any) => opt?.email === option.email
-                    ) % colors?.length
+                      options.findIndex(
+                        (opt: any) => opt?.email === option.email
+                      ) % colors?.length
                     ],
                   color: selected ? "white" : "black",
                 }}
@@ -446,51 +436,151 @@ const Fields = () => {
             )}
           />
         </Box>
+        {selectionField ? (
+          <>
+            <Typography variant="body2" sx={{ fontSize: "14px" }}>
+              {selectionField}
+            </Typography>
 
-        <p className="font-medium text-[14px] text-[#155be5] mt-10">
-          Signature Fields
-        </p>
-        <div style={{ padding: "10px" }}>
-          <div onClick={() => setOpenDrawSignatures(true)}>
-            <div
-              className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
-              style={{ cursor: "grab", backgroundColor }}
-            >
-              <img src={signIcon} alt="" className="h-4 w-4" /> Signature
+            <Divider style={{ margin: "10px 0" }} />
+            <FormControlLabel
+              sx={{
+                "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
+                // Apply any additional styling you need for the FormControlLabel here
+              }}
+              control={
+                <Checkbox
+                  checked={requiredField}
+                  onChange={(e) => setRequiredField(e.target.checked)}
+                  name="requiredField"
+                  color="primary"
+                  sx={{
+                    padding: "5px", // Adjusts padding around the checkbox
+                    "& .MuiSvgIcon-root": {
+                      // Targets the SVG icon representing the checkbox
+                      fontSize: "18px", // Adjust this value to scale the icon size
+                    },
+                  }}
+                />
+              }
+              label="Required Field"
+            />
+            <Divider style={{ margin: "10px 0" }} />
+            <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
+              <Button
+                variant="contained"
+                color="inherit"
+                sx={{
+                  mr: "20px",
+                  textTransform: "none",
+                  backgroundColor: "#DCDCDC",
+                  "&:hover": {
+                    backgroundColor: "#757575",
+                  },
+                  color: "white",
+                  padding: "2px 5px !important",
+                  height: "25px !important",
+                  fontSize: "0.675rem",
+                }}
+                onClick={() => {
+                  setSelectionField("");
+                  setShowButtons(false);
+                }}
+              >
+                Remove
+              </Button>
+
+              <Button
+                variant="contained"
+                color="success"
+                // disabled={!selectedCustomFeild && !inputValue.trim()}
+                sx={{
+                  textTransform: "none",
+                  backgroundColor: "#62BD6B",
+                  "&:hover": {
+                    backgroundColor: "#62BD6d",
+                  },
+                  color: "white",
+                  padding: "2px 5px !important",
+                  height: "25px !important",
+                  fontSize: "0.675rem",
+                }}
+                onClick={() => {
+                  setSelectionField("");
+
+                  // if (selectedCustomFeild) {
+                  //   handleAddSignatory(selectedCustomFeild.email);
+                  // } else if (inputValue.trim() !== "") {
+                  //   handleAddSignatory(inputValue.trim());
+                  // }
+                  setShowButtons(false);
+                }}
+              >
+                Save & Close
+              </Button>
             </div>
-          </div>
+          </>
+        ) : (
+          <>
+            <p className="font-medium text-[14px] text-[#155be5] mt-10">
+              Signature Fields
+            </p>
+            <div style={{ padding: "10px" }}>
+              <div onClick={() => setOpenDrawSignatures(true)}>
+                <div
+                  className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
+                  style={{ cursor: "grab", backgroundColor }}
+                >
+                  <img src={signIcon} alt="" className="h-4 w-4" /> Signature
+                </div>
+              </div>
 
-          {fields.map((field, index) => (
-            <React.Fragment key={field.id}>
-              <DraggableField field={field} />
-              {(index + 1) % 6 === 0 && <Divider sx={{ mt: 3, mb: 3 }} />}
-            </React.Fragment>
-          ))}
-        </div>
+              {fields.map((field, index) => (
+                <React.Fragment key={field.id}>
+                  <DraggableField field={field} />
+                  {(index + 1) % 6 === 0 && <Divider sx={{ mt: 3, mb: 3 }} />}
+                </React.Fragment>
+              ))}
+            </div>
 
-        <Divider sx={{ mt: 1, mb: 2 }} />
-        <p className="font-medium text-[14px] text-[#155be5] my-3">
-          Custom Fields
-        </p>
-        <Autocomplete
-          size="small"
-          fullWidth
-          options={feildList}
-          value={selectedValue}
-          onChange={(event, newValue) => {
-            setSelectedValue(newValue);
-          }}
-          getOptionLabel={(option) => option.name} // Display the option's name
-          isOptionEqualToValue={(option, value) => option._id === value._id}
-          renderOption={(props, option) => (
-            <MenuItem {...props} key={option._id} value={option._id}>
-              {option.name}
-            </MenuItem>
-          )}
-          renderInput={(params) => <TextField {...params} label="Search " />}
-          renderTags={() => null} // Optionally, prevent tags from rendering if `multiple` is enabled
-        />
+            <Divider sx={{ mt: 1, mb: 2 }} />
+            <p className="font-medium text-[14px] text-[#155be5] my-3">
+              Custom Fields
+            </p>
+            <Autocomplete
+              size="small"
+              fullWidth
+              multiple
+              options={feildList}
+              value={selectedCustomFeild}
+              onChange={(event, newValue) => {
+                setSelectedCustomFeild(newValue);
+              }}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              renderOption={(props, option) => (
+                <MenuItem {...props} key={option._id} value={option._id}>
+                  {option.name}
+                </MenuItem>
+              )}
+              renderInput={(params) => <TextField {...params} label="Search" />}
+              renderTags={() => null} // Optionally, prevent tags from rendering if `multiple` is enabled
+            />
+            <div style={{ marginTop: "10px" }}>
+              {selectedCustomFeild.map((field: any) => (
+                <p key={field._id}>{field.name}</p> // Ensure you return the name or the desired field
+              ))}
+            </div>
+          </>
+        )}
       </div>
+
+      <OpenDrawSignature
+        openDilog={OpenDrawSignatures}
+        onClose={handleCloseDrawSigDialog}
+        closeFirstOen={handleCloseDrawSigDialog}
+        selectedEmails={selectedEmails}
+      />
     </>
   );
 };
