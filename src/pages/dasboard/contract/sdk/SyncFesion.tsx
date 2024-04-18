@@ -116,7 +116,7 @@ DocumentEditorComponent.Inject(
   Editor,
   EditorHistory,
   ContextMenu,
-  TableDialog
+  TableDialog,
 );
 
 DocumentEditorContainerComponent.Inject(Toolbar);
@@ -850,7 +850,7 @@ function SyncFesion() {
         // Check if the current selection is within a table
         const isInTable =
           documentEditor?.selection?.contextTypeInternal == "TableText";
-        console.log("asfds", documentEditor?.selection?.contextTypeInternal);
+        console.log("current selection ", documentEditor?.selection?.bookmarks[0]);
         setIsTableSelected(isInTable);
       };
     }
@@ -1300,6 +1300,20 @@ function SyncFesion() {
     );
   };
 
+
+  let container: DocumentEditorContainerComponent;
+  const onCreated = () => {
+    // To insert text in cursor position
+    container.documentEditor.editor.insertText('Document editor');
+    // Move selection to previous character
+    container.documentEditor.selection.moveToPreviousCharacter();
+    // To select the current word in document
+    container.documentEditor.selection.selectCurrentWord();
+
+    // To get the selected content as text
+    let selectedContent: string = container.documentEditor.selection.text;
+  }
+
   return (
     <div>
       {/* <Sidebar /> */}
@@ -1596,9 +1610,9 @@ function SyncFesion() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-                // onClick={() => {
-                //   triggerClick("container_toolbar_image_local");
-                // }}
+              // onClick={() => {
+              //   triggerClick("container_toolbar_image_local");
+              // }}
               >
                 <label
                   htmlFor="forimg"
@@ -2176,6 +2190,7 @@ function SyncFesion() {
         documentEditorSettings={{
           searchHighlightColor: "red",
         }}
+        created={onCreated}
       />
     </div>
   );

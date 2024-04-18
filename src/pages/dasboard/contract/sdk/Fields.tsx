@@ -308,6 +308,73 @@ const Fields = () => {
   const handleCloseDrawSigDialog = () => {
     setOpenDrawSignatures(false);
   };
+
+
+
+
+
+
+  useEffect(() => {
+    const documentEditor = editorRefContext;
+
+    if (documentEditor) {
+      // Listen to selection changes
+      documentEditor.selectionChange = () => {
+        // Check if the current selection is within a table
+        const isInTable =
+          documentEditor?.selection?.contextTypeInternal == "TableText";
+        console.log("current selection ", documentEditor?.selection?.bookmarks[0]);
+
+      };
+    }
+
+    return () => {
+      if (documentEditor) {
+        // Cleanup the event listener when the component unmounts
+        documentEditor.selectionChange = undefined;
+      }
+    };
+  }, []);
+
+
+
+
+  // const setValueToField = (value: any) => {
+  //   const documentEditor = editorRefContext;
+  //   if (documentEditor) {
+  //     let selection = documentEditor.selection;
+  //     if (selection && selection.isFormField()) {
+  //       const formField = selection.getCurrentFormField();
+  //       const formFieldInfo = documentEditor.getFormFieldInfo(formField.name);
+  //       formFieldInfo.defaultValue = value; // Set the new value
+  //       documentEditor.setFormFieldInfo(formField.name, formFieldInfo);
+  //     }
+  //   }
+  // };
+  // const toggleRequiredField = () => {
+  //   const documentEditor = editorRefContext;
+  //   if (documentEditor) {
+  //     let selection = documentEditor.selection;
+  //     if (selection && selection.isFormField()) {
+  //       const formField = selection.getCurrentFormField();
+  //       const formFieldInfo = documentEditor.getFormFieldInfo(formField.name);
+  //       formFieldInfo.isRequired = !formFieldInfo.isRequired; // Toggle required status
+  //       documentEditor.setFormFieldInfo(formField.name, formFieldInfo);
+  //     }
+  //   }
+  // };
+
+
+  // const removeField = () => {
+  //   const documentEditor = editorRefContext;
+
+  //   let selection = documentEditor.selection;
+  //   if (selection && selection.isFormField()) {
+  //     documentEditor.editor.removeFormField(selection.getCurrentFormField());
+  //   }
+
+  // };
+
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
@@ -326,6 +393,12 @@ const Fields = () => {
         <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
           Fields
         </Typography>
+
+
+        {/* <button onClick={removeField}>Remove Field</button>
+        <button onClick={toggleRequiredField}>Toggle Required</button>
+        <button onClick={() => setValueToField("New Value")}>Set Value</button> */}
+
 
         <p className="text-[#8A8A8A] text-[10px] pt-1">
           Drag and drop to assign signature fields for the signer to sign or add
