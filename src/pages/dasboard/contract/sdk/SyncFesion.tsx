@@ -1316,6 +1316,7 @@ function SyncFesion() {
     const selectedContent: string = container.documentEditor.selection.text;
   };
 
+
   return (
     <div>
       {/* <Sidebar /> */}
@@ -1612,9 +1613,9 @@ function SyncFesion() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-                // onClick={() => {
-                //   triggerClick("container_toolbar_image_local");
-                // }}
+              // onClick={() => {
+              //   triggerClick("container_toolbar_image_local");
+              // }}
               >
                 <label
                   htmlFor="forimg"

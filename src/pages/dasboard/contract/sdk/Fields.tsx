@@ -78,6 +78,8 @@ const Fields = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
 
+  const [requiredField, setRequiredField] = useState(false);
+
   const [checked, setChecked] = React.useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [ClickData, setClickData] = useState("");
@@ -119,7 +121,40 @@ const Fields = () => {
     //Insert Drop down form field
   };
 
+
+  console.log('selection Field new', selectionField)
+
+  useEffect(() => {
+    // selectionField  
+
+    const documentEditor = editorRefContext;
+    if (selectionField) {
+
+      documentEditor.editor.insertFormField("Text");
+
+
+      const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
+        "Text1"
+      ) as TextFormFieldInfo;
+
+
+      console.log('add starikkkk :', textfieldInfo)
+
+      // textfieldInfo.defaultValue = 'updated with staric *';
+      textfieldInfo.defaultValue = selectionField + (requiredField ? " *" : "");
+
+      // textfieldInfo.format = "Lowercase";
+      textfieldInfo.type = "Text";
+      textfieldInfo.name = selectionField;
+      documentEditor.setFormFieldInfo("Text1", textfieldInfo);
+
+    }
+
+
+  }, [requiredField])
+
   const DraggableField = ({ field }: any) => {
+
     console.log("fields : ", field);
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
@@ -127,11 +162,16 @@ const Fields = () => {
       if (selectedEmails) {
         documentEditor.editor.insertFormField("Text");
       }
-      console.log("lable : ", field?.label);
+
 
       const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
         "Text1"
       ) as TextFormFieldInfo;
+
+
+      console.log('text fielf info :', textfieldInfo)
+
+
       textfieldInfo.defaultValue = field?.label + (requiredField ? " *" : "");
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
@@ -150,7 +190,7 @@ const Fields = () => {
           }
           return user;
         });
-        console.log("Updated recipients:", updated); // Log the full updated array
+        // console.log("Updated recipients:", updated); // Log the full updated array
         return updated;
       });
     };
@@ -162,7 +202,7 @@ const Fields = () => {
         documentEditor.editor.insertFormField("CheckBox");
       }
     };
-    console.log("recipients :", recipients);
+    // console.log("recipients :", recipients);
 
     return (
       <>
@@ -257,11 +297,11 @@ const Fields = () => {
     try {
       setIsLoading(true);
       const { data } = await getUserListNameID(user?._id);
-      console.log({ data });
+      // console.log({ data });
 
       setUserList(data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -273,9 +313,9 @@ const Fields = () => {
 
       setFeildList(data);
 
-      console.log("data", data);
+      // console.log("data", data);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -303,10 +343,11 @@ const Fields = () => {
 
   const [OpenDrawSignatures, setOpenDrawSignatures] = useState(false);
 
-  const [requiredField, setRequiredField] = useState(false);
   // const handleCloseDialog = () => {
   //   setOpenSignatureDialog(false);
   // };
+
+  console.log('requiredField : ', requiredField)
 
   const handleCloseDrawSigDialog = () => {
     setOpenDrawSignatures(false);
@@ -324,8 +365,7 @@ const Fields = () => {
 
         console.log(
           "current selection ",
-          documentEditor?.selection?.bookmarks[0]
-        );
+          documentEditor?.selection);
         setSelectionField(documentEditor?.selection?.bookmarks[0]);
       };
     }
@@ -420,9 +460,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                      options.findIndex(
-                        (opt: any) => opt?.email === selectedEmails?.email
-                      ) % colors?.length
+                    options.findIndex(
+                      (opt: any) => opt?.email === selectedEmails?.email
+                    ) % colors?.length
                     ],
                 }}
               />
