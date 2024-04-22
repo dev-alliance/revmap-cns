@@ -48,7 +48,10 @@ interface OptionType {
   email: string;
   name: string;
 }
-
+interface FormField {
+  fieldName?: string;
+  value?: string;
+}
 const Fields = () => {
   const {
     control,
@@ -81,8 +84,23 @@ const Fields = () => {
   const [requiredField, setRequiredField] = useState(false);
 
   const [checked, setChecked] = React.useState(false);
-  const [placeHolder, setPlaceHolder] = useState("");
   const [ClickData, setClickData] = useState("");
+
+
+
+
+
+
+
+  const [placeHolder, setPlaceHolder] = useState("");
+  const [placeHolderValue, setPlaceHolderValue] = useState("");
+
+
+  const handleGetValue = (e: any) => {
+    setPlaceHolder(e.target.value)
+    setPlaceHolderValue(e.target.value)
+  }
+
   const [selectionField, setSelectionField] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]); // State for the message input
   // State to track if the comment is internal or external
@@ -123,9 +141,28 @@ const Fields = () => {
 
   console.log("selection Field new", selectionField);
 
-  useEffect(() => {
-    // selectionField
 
+
+
+  useEffect(() => {
+    // Assuming editorRefContext is correctly initialized and has a method exportFormData()
+    const documentEditor = editorRefContext;
+
+    // Assuming exportFormData returns an array of FormField objects
+    const formFieldsNames: FormField[] = documentEditor.exportFormData();
+
+    // Find the field by name, handle potential undefined with optional chaining
+    const valis = formFieldsNames.find(val => val.fieldName === selectionField);
+
+    // Use optional chaining to handle cases where valis or valis.value might be undefined
+    setPlaceHolder(valis?.value ?? 'Default Placeholder');
+  }, [selectionField]);
+
+
+
+
+  // handle change required 
+  useEffect(() => {
     const documentEditor = editorRefContext;
     if (selectionField) {
       documentEditor.editor.insertFormField("Text");
@@ -137,7 +174,7 @@ const Fields = () => {
       console.log("add starikkkk :", textfieldInfo);
 
       // textfieldInfo.defaultValue = 'updated with staric *';
-      textfieldInfo.defaultValue = selectionField + (requiredField ? " *" : "");
+      textfieldInfo.defaultValue = `${placeHolder ? placeHolder : selectionField}${requiredField ? " *" : ""}`;
 
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
@@ -145,6 +182,40 @@ const Fields = () => {
       documentEditor.setFormFieldInfo("Text1", textfieldInfo);
     }
   }, [requiredField]);
+
+  // handle change value 
+
+  const handleSetValue = () => {
+    const documentEditor = editorRefContext;
+    if (selectionField) {
+      documentEditor.editor.insertFormField("Text");
+
+      const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
+        "Text1"
+      ) as TextFormFieldInfo;
+
+      console.log("add starikkkk :", textfieldInfo);
+
+      // textfieldInfo.defaultValue = 'updated with staric *';
+      textfieldInfo.defaultValue = placeHolderValue + (requiredField ? " *" : "");
+
+      // textfieldInfo.format = "Lowercase";
+      textfieldInfo.type = "Text";
+      textfieldInfo.name = selectionField;
+      documentEditor.setFormFieldInfo("Text1", textfieldInfo);
+    }
+
+    setTimeout(() => {
+      setPlaceHolderValue('')
+    }, 500);
+
+  }
+
+
+
+
+
+
 
   const DraggableField = ({ field }: any) => {
     console.log("fields : ", field);
@@ -447,9 +518,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                      options.findIndex(
-                        (opt: any) => opt?.email === selectedEmails?.email
-                      ) % colors?.length
+                    options.findIndex(
+                      (opt: any) => opt?.email === selectedEmails?.email
+                    ) % colors?.length
                     ],
                 }}
               />
@@ -496,9 +567,9 @@ const Fields = () => {
               size="small" // Sets the TextField to a smaller size
               variant="outlined" // Outlined style
               label="Enter Data" // Label text
-              // value={placeHolder} // Bind state value
-              value={selectionField} // Bind state value
-              onChange={(e: any) => setPlaceHolder(e.target.value)} // Handle input changes
+              value={placeHolder} // Bind state value
+              // value={selectionField} // Bind state value
+              onChange={(e: any) => handleGetValue(e)} // Handle input changes
             />
             <Divider style={{ margin: "10px 0" }} />
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
@@ -549,6 +620,7 @@ const Fields = () => {
                   //   handleAddSignatory(inputValue.trim());
                   // }
                   setShowButtons(false);
+                  handleSetValue()
                 }}
               >
                 Save & Close
