@@ -81,7 +81,7 @@ const Fields = () => {
   const [requiredField, setRequiredField] = useState(false);
 
   const [checked, setChecked] = React.useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [placeHolder, setPlaceHolder] = useState("");
   const [ClickData, setClickData] = useState("");
   const [selectionField, setSelectionField] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]); // State for the message input
@@ -121,24 +121,20 @@ const Fields = () => {
     //Insert Drop down form field
   };
 
-
-  console.log('selection Field new', selectionField)
+  console.log("selection Field new", selectionField);
 
   useEffect(() => {
-    // selectionField  
+    // selectionField
 
     const documentEditor = editorRefContext;
     if (selectionField) {
-
       documentEditor.editor.insertFormField("Text");
-
 
       const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
         "Text1"
       ) as TextFormFieldInfo;
 
-
-      console.log('add starikkkk :', textfieldInfo)
+      console.log("add starikkkk :", textfieldInfo);
 
       // textfieldInfo.defaultValue = 'updated with staric *';
       textfieldInfo.defaultValue = selectionField + (requiredField ? " *" : "");
@@ -147,14 +143,10 @@ const Fields = () => {
       textfieldInfo.type = "Text";
       textfieldInfo.name = selectionField;
       documentEditor.setFormFieldInfo("Text1", textfieldInfo);
-
     }
-
-
-  }, [requiredField])
+  }, [requiredField]);
 
   const DraggableField = ({ field }: any) => {
-
     console.log("fields : ", field);
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
@@ -163,14 +155,11 @@ const Fields = () => {
         documentEditor.editor.insertFormField("Text");
       }
 
-
       const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
         "Text1"
       ) as TextFormFieldInfo;
 
-
-      console.log('text fielf info :', textfieldInfo)
-
+      console.log("text fielf info :", textfieldInfo);
 
       textfieldInfo.defaultValue = field?.label + (requiredField ? " *" : "");
       // textfieldInfo.format = "Lowercase";
@@ -347,7 +336,7 @@ const Fields = () => {
   //   setOpenSignatureDialog(false);
   // };
 
-  console.log('requiredField : ', requiredField)
+  console.log("requiredField : ", requiredField);
 
   const handleCloseDrawSigDialog = () => {
     setOpenDrawSignatures(false);
@@ -363,9 +352,7 @@ const Fields = () => {
         const isInTable =
           documentEditor?.selection?.contextTypeInternal == "TableText";
 
-        console.log(
-          "current selection ",
-          documentEditor?.selection);
+        console.log("current selection ", documentEditor?.selection);
         setSelectionField(documentEditor?.selection?.bookmarks[0]);
       };
     }
@@ -460,9 +447,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                    options.findIndex(
-                      (opt: any) => opt?.email === selectedEmails?.email
-                    ) % colors?.length
+                      options.findIndex(
+                        (opt: any) => opt?.email === selectedEmails?.email
+                      ) % colors?.length
                     ],
                 }}
               />
@@ -503,6 +490,15 @@ const Fields = () => {
                 />
               }
               label="Required Field"
+            />
+            <Divider style={{ margin: "10px 0" }} />
+            <TextField
+              size="small" // Sets the TextField to a smaller size
+              variant="outlined" // Outlined style
+              label="Enter Data" // Label text
+              // value={placeHolder} // Bind state value
+              value={selectionField} // Bind state value
+              onChange={(e: any) => setPlaceHolder(e.target.value)} // Handle input changes
             />
             <Divider style={{ margin: "10px 0" }} />
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
