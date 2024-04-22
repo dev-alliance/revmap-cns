@@ -113,7 +113,7 @@ import SystemsRole from "@/pages/dasboard/role_permission/SystemsRole";
 import UserDetailSingleUser from "@/pages/dasboard/users/UserDetailSingleUser";
 import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
 import { useContract } from "@/hooks/useContract";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -137,18 +137,15 @@ export default function Dashboard() {
     configuration: false,
   });
 
-
   const location = useLocation();
 
   // Split the pathname by '/' and filter out empty strings
-  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const pathSegments = location.pathname.split("/").filter(Boolean);
 
   // Assuming 'editor-dahsbord' is always after 'dashboard',
   // and you want to get the segment after 'dashboard'
-  const editorDashboardSegment = pathSegments[pathSegments.indexOf('dashboard') + 1];
-
-
-
+  const editorDashboardSegment =
+    pathSegments[pathSegments.indexOf("dashboard") + 1];
 
   const [selectedModule, setSelectedModule] = useState(null);
 
@@ -437,8 +434,8 @@ export default function Dashboard() {
 
         <ListItemButton
           onClick={() => handleSectionClick("setting")}
-        // component={Link}
-        // to="/dashboard/contract-list"
+          // component={Link}
+          // to="/dashboard/contract-list"
         >
           <ListItemIcon>
             <img
@@ -543,8 +540,8 @@ export default function Dashboard() {
 
         <ListItemButton
           onClick={() => handleSectionClick("configuration")}
-        // component={Link}
-        // to="/dashboard/contract-list"
+          // component={Link}
+          // to="/dashboard/contract-list"
         >
           <ListItemIcon>
             <img
@@ -871,104 +868,103 @@ export default function Dashboard() {
           />
         </ListItemButton> */}
       </List>
-
     </div>
   );
 
   return (
     <div style={{ display: "flex" }}>
       <CssBaseline />
-      {editorDashboardSegment !== 'editor-dahsbord' && <AppBar
-        position="fixed"
-        sx={{
-          bgcolor: "#FFFFFF",
-          zIndex: (theme: any) => theme.zIndex.drawer + 1, // Ensure AppBar is above the Drawer
-          width: { sm: `calc(100% - ${drawerWidth}px)` }, // Adjust the width on larger screens
-          ml: { sm: `${drawerWidth}px` }, // Push the AppBar to the right on larger screens
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ marginRight: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            color={"#4B4B4B"}
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1 }}
-          >
-            Dashboard
-          </Typography>
-          <IconButton>
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton>
-            <div>
-              <IconButton
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircleIcon />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                id={menuId}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={isMenuOpen}
-                onClose={handleMenuClose}
-              >
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    navigate(`/dashboard/user-detail/${user?._id}`); // Use menuState.row._id
-                  }}
+      {editorDashboardSegment !== "editor-dahsbord" && (
+        <AppBar
+          position="fixed"
+          sx={{
+            bgcolor: "#FFFFFF",
+            zIndex: (theme: any) => theme.zIndex.drawer + 1, // Ensure AppBar is above the Drawer
+            width: { sm: `calc(100% - ${drawerWidth}px)` }, // Adjust the width on larger screens
+            ml: { sm: `${drawerWidth}px` }, // Push the AppBar to the right on larger screens
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ marginRight: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              color={"#4B4B4B"}
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ flexGrow: 1 }}
+            >
+              Dashboard
+            </Typography>
+            <IconButton>
+              <Badge badgeContent={4} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <IconButton>
+              <div>
+                <IconButton
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
                 >
-                  Profile
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    navigate(`/dashboard/profile-setting`); // Use menuState.row._id
+                  <AccountCircleIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
                   }}
-                >
-                  Settings
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleMenuClose();
-                    navigate(`/`);
-                    logout();
+                  id={menuId}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
                   }}
+                  open={isMenuOpen}
+                  onClose={handleMenuClose}
                 >
-                  Logout
-                </MenuItem>
-              </Menu>
-            </div>
-          </IconButton>
-        </Toolbar>
-
-      </AppBar>
-      }
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate(`/dashboard/user-detail/${user?._id}`); // Use menuState.row._id
+                    }}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate(`/dashboard/profile-setting`); // Use menuState.row._id
+                    }}
+                  >
+                    Settings
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      navigate(`/`);
+                      logout();
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </div>
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+      )}
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
@@ -1017,7 +1013,7 @@ export default function Dashboard() {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >
-        {editorDashboardSegment !== 'editor-dahsbord' && <Toolbar />}
+        {editorDashboardSegment !== "editor-dahsbord" && <Toolbar />}
         {/* routes  */}
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -1082,6 +1078,7 @@ export default function Dashboard() {
           <Route path="/crete-custom-role" element={<CreateCustomRole />} />
           <Route path="/system-role" element={<SystemsRole />} />
           <Route path="/editor" element={<CustomTextEditor />} />
+          <Route path="/test" element={<CustomTextEditor />} />
         </Routes>
       </Box>
     </div>

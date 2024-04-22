@@ -111,6 +111,10 @@ import {
 } from "@syncfusion/ej2-react-splitbuttons";
 import { ContractContext } from "@/context/ContractContext";
 
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import mammoth from "mammoth";
+
 DocumentEditorComponent.Inject(
   Selection,
   Editor,
@@ -122,9 +126,17 @@ DocumentEditorComponent.Inject(
 DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFesion() {
-  const { setEditorRefContext, dragFields, recipients, setRecipients } =
-    useContext(ContractContext);
-
+  const {
+    setEditorRefContext,
+    dragFields,
+    recipients,
+    setRecipients,
+    uplodTrackFile,
+    documentContent,
+  } = useContext(ContractContext);
+  const workerUrl =
+    "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
+  useEffect(() => {}, [documentContent, uplodTrackFile]);
   const editorContainerRef: any = useRef(null);
 
   const [openDropdowns, setOpenDropdowns] = useState({
@@ -516,7 +528,7 @@ function SyncFesion() {
   }
 
   useEffect(() => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef?.current?.documentEditor;
     setEditorRefContext(documentEditor);
   }, []);
   //Change the line spacing of selected or current paragraph
@@ -907,7 +919,7 @@ function SyncFesion() {
     const container = editorContainerRef.current;
     if (container) {
       const pdfdocument: PdfDocument = new PdfDocument();
-      const count: number = container.documentEditor.pageCount;
+      const count: any = container?.documentEditor?.pageCount;
       container.documentEditor.documentEditorSettings.printDevicePixelRatio = 2;
       let loadedPage = 0;
 
@@ -915,7 +927,7 @@ function SyncFesion() {
         setTimeout(() => {
           const format: any = "image/jpeg";
           // Getting pages as image
-          const image = container.documentEditor.exportAsImage(i, format);
+          const image = container?.documentEditor?.exportAsImage(i, format);
           image.onload = function () {
             const imageHeight = parseInt(image.style.height.replace("px", ""));
             const imageWidth = parseInt(image.style.width.replace("px", ""));
@@ -939,9 +951,9 @@ function SyncFesion() {
               );
               if (userFileName) {
                 pdfdocument.save(
-                  (container.documentEditor.documentName === ""
+                  (container?.documentEditor?.documentName === ""
                     ? userFileName
-                    : container.documentEditor.documentName) + ".pdf"
+                    : container?.documentEditor?.documentName) + ".pdf"
                 );
                 pdfdocument.destroy();
               }
@@ -1059,7 +1071,7 @@ function SyncFesion() {
 
   // Function to accept the first change
   const acceptFirstChange = () => {
-    const revisions = editorContainerRef.current.documentEditor.revisions;
+    const revisions = editorContainerRef.current.documentEditor?.revisions;
     console.log(revisions);
     if (revisions.length > 0) {
       revisions.get(0).accept();
@@ -1103,7 +1115,7 @@ function SyncFesion() {
   //           }]
   //         }]
   //       };
-  //       editorContainerRef.current.documentEditor.open(JSON.stringify(sfdt));
+  //       editorContainerRef.current.documentEditor?.open(JSON.stringify(sfdt));
   //     };
   //     reader.readAsText(file);
   //   }
@@ -1253,7 +1265,7 @@ function SyncFesion() {
 
     // Determine which step to highlight
     let highlightStep = "";
-    if (recipients.length > 0) {
+    if (recipients.hasReqOption) {
       highlightStep = "Review";
     }
     if (hasReqOption) {
@@ -1306,14 +1318,14 @@ function SyncFesion() {
   let container: DocumentEditorContainerComponent;
   const onCreated = () => {
     // To insert text in cursor position
-    container.documentEditor.editor.insertText("Document editor");
+    container?.documentEditor?.editor.insertText("Document editor");
     // Move selection to previous character
-    container.documentEditor.selection.moveToPreviousCharacter();
+    container?.documentEditor?.selection.moveToPreviousCharacter();
     // To select the current word in document
-    container.documentEditor.selection.selectCurrentWord();
+    container?.documentEditor?.selection.selectCurrentWord();
 
     // To get the selected content as text
-    const selectedContent: string = container.documentEditor.selection.text;
+    const selectedContent: string = container?.documentEditor?.selection.text;
   };
 
   return (
@@ -1894,9 +1906,40 @@ function SyncFesion() {
       </div>
       {/* <div id="xyz">show </div> */}
 
-      <div className="  ">
-        <div className="text styling flex items-center">
-          {/* <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
+      {documentContent ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            height: "65vh", // Takes full viewport height
+            border: "2px solid #ccc", // Adds a light gray border
+            margin: "auto",
+            width: "65%", // Adjust width as per requirement
+            padding: "15px", // Padding inside the div
+            boxSizing: "border-box",
+            marginTop: "2rem",
+            overflow: "auto",
+          }}
+        >
+          <>
+            {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
+              <>
+                <Worker workerUrl={workerUrl}>
+                  <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
+                </Worker>
+              </>
+            ) : (
+              <>
+                <div dangerouslySetInnerHTML={{ __html: documentContent }} />
+              </>
+            )}
+          </>
+        </div>
+      ) : (
+        <>
+          <div className="  ">
+            <div className="text styling flex items-center">
+              {/* <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
             <p
               onClick={() => {
                 triggerClick("container_toolbar_undo ");
@@ -1913,241 +1956,241 @@ function SyncFesion() {
             </p>
           </div> */}
 
-          <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
-            <ItemsDirective>
-              <ItemDirective
-                id="undo"
-                prefixIcon="e-icons e-undo"
-                tooltipText="Undo"
-              />
-              <ItemDirective
-                id="redo"
-                prefixIcon="e-icons e-redo"
-                tooltipText="Redo"
-              />
+              <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
+                <ItemsDirective>
+                  <ItemDirective
+                    id="undo"
+                    prefixIcon="e-icons e-undo"
+                    tooltipText="Undo"
+                  />
+                  <ItemDirective
+                    id="redo"
+                    prefixIcon="e-icons e-redo"
+                    tooltipText="Redo"
+                  />
 
-              <ItemDirective template={contentTemplate2} />
-              <ItemDirective template={contentTemplate3} />
-              {/* <ItemDirective id="customPageSetup" prefixIcon="e-icons e-page-setup" tooltipText="Page Setup" /> */}
-              <ItemDirective type="Separator" />
+                  <ItemDirective template={contentTemplate2} />
+                  <ItemDirective template={contentTemplate3} />
+                  {/* <ItemDirective id="customPageSetup" prefixIcon="e-icons e-page-setup" tooltipText="Page Setup" /> */}
+                  <ItemDirective type="Separator" />
 
-              <ItemDirective
-                id="delete"
-                prefixIcon="e-icons e-trash"
-                tooltipText="Delete"
-              />
-              <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="delete"
+                    prefixIcon="e-icons e-trash"
+                    tooltipText="Delete"
+                  />
+                  <ItemDirective type="Separator" />
 
-              <ItemDirective
-                id="bold"
-                prefixIcon="e-icons e-bold"
-                tooltipText="Bold"
-              />
-              <ItemDirective
-                id="italic"
-                prefixIcon="e-icons e-italic"
-                tooltipText="Italic"
-              />
-              <ItemDirective
-                id="underline"
-                prefixIcon="e-icons e-underline"
-                tooltipText="Underline"
-              />
-              {/* <ItemDirective
+                  <ItemDirective
+                    id="bold"
+                    prefixIcon="e-icons e-bold"
+                    tooltipText="Bold"
+                  />
+                  <ItemDirective
+                    id="italic"
+                    prefixIcon="e-icons e-italic"
+                    tooltipText="Italic"
+                  />
+                  <ItemDirective
+                    id="underline"
+                    prefixIcon="e-icons e-underline"
+                    tooltipText="Underline"
+                  />
+                  {/* <ItemDirective
                 id="highlight"
                 prefixIcon="e-icons e-highlight"
                 tooltipText="Highlight"
               /> */}
-              <ItemDirective
-                id="strikethrough"
-                prefixIcon="e-icons e-strikethrough"
-                tooltipText="Strikethrough"
-              />
-              <ItemDirective
-                id="subscript"
-                prefixIcon="e-icons e-subscript"
-                tooltipText="Subscript"
-              />
-              <ItemDirective
-                id="superscript"
-                prefixIcon="e-icons e-superscript"
-                tooltipText="Superscript"
-              />
+                  <ItemDirective
+                    id="strikethrough"
+                    prefixIcon="e-icons e-strikethrough"
+                    tooltipText="Strikethrough"
+                  />
+                  <ItemDirective
+                    id="subscript"
+                    prefixIcon="e-icons e-subscript"
+                    tooltipText="Subscript"
+                  />
+                  <ItemDirective
+                    id="superscript"
+                    prefixIcon="e-icons e-superscript"
+                    tooltipText="Superscript"
+                  />
 
-              <ItemDirective type="Separator" />
+                  <ItemDirective type="Separator" />
 
-              {/* Font Color Picker */}
-              <ItemDirective
-                tooltipText="Font Color"
-                template={fontColorPickerTemplate}
-              />
-              {/* Highlight Color Picker */}
-              <ItemDirective type="Separator" />
+                  {/* Font Color Picker */}
+                  <ItemDirective
+                    tooltipText="Font Color"
+                    template={fontColorPickerTemplate}
+                  />
+                  {/* Highlight Color Picker */}
+                  <ItemDirective type="Separator" />
 
-              <ItemDirective
-                tooltipText="Highlight Color"
-                template={highlightColorPickerTemplate}
-              />
+                  <ItemDirective
+                    tooltipText="Highlight Color"
+                    template={highlightColorPickerTemplate}
+                  />
 
-              <ItemDirective type="Separator" />
-              {/* uppercase lowercase */}
-              <ItemDirective
-                id="uppercase"
-                prefixIcon=" e-upper-case e-icons"
-                tooltipText="Uppercase"
-              />
-              <ItemDirective
-                id="lowercase"
-                prefixIcon="e-icons e-lower-case "
-                tooltipText="Lowercase"
-              />
-              <ItemDirective type="Separator" />
+                  <ItemDirective type="Separator" />
+                  {/* uppercase lowercase */}
+                  <ItemDirective
+                    id="uppercase"
+                    prefixIcon=" e-upper-case e-icons"
+                    tooltipText="Uppercase"
+                  />
+                  <ItemDirective
+                    id="lowercase"
+                    prefixIcon="e-icons e-lower-case "
+                    tooltipText="Lowercase"
+                  />
+                  <ItemDirective type="Separator" />
 
-              {/* <ItemDirective template={lineHeight1} /> */}
+                  {/* <ItemDirective template={lineHeight1} /> */}
 
-              {/* align text  */}
-              <ItemDirective
-                id="AlignLeft"
-                prefixIcon="e-de-ctnr-alignleft e-icons"
-                tooltipText="Align Left"
-              />
+                  {/* align text  */}
+                  <ItemDirective
+                    id="AlignLeft"
+                    prefixIcon="e-de-ctnr-alignleft e-icons"
+                    tooltipText="Align Left"
+                  />
 
-              <ItemDirective
-                id="AlignCenter"
-                prefixIcon="e-de-ctnr-aligncenter e-icons"
-                tooltipText="Align Center"
-              />
-              <ItemDirective
-                id="AlignRight"
-                prefixIcon="e-de-ctnr-alignright e-icons"
-                tooltipText="Align Right"
-              />
-              <ItemDirective
-                id="Justify"
-                prefixIcon="e-de-ctnr-justify e-icons"
-                tooltipText="Justify"
-              />
-              {/* lineheight  */}
-              <ItemDirective
-                template={lineHeight1}
-                prefixIcon="e-de-ctnr-aligncenter e-icons"
-                tooltipText="Line Height 1"
-              />
+                  <ItemDirective
+                    id="AlignCenter"
+                    prefixIcon="e-de-ctnr-aligncenter e-icons"
+                    tooltipText="Align Center"
+                  />
+                  <ItemDirective
+                    id="AlignRight"
+                    prefixIcon="e-de-ctnr-alignright e-icons"
+                    tooltipText="Align Right"
+                  />
+                  <ItemDirective
+                    id="Justify"
+                    prefixIcon="e-de-ctnr-justify e-icons"
+                    tooltipText="Justify"
+                  />
+                  {/* lineheight  */}
+                  <ItemDirective
+                    template={lineHeight1}
+                    prefixIcon="e-de-ctnr-aligncenter e-icons"
+                    tooltipText="Line Height 1"
+                  />
 
-              <ItemDirective
-                id="Numbering-Arabic"
-                prefixIcon="e-icons e-de-ctnr-numbering"
-                tooltipText="Arabic Numbering"
-              />
-              <ItemDirective
-                id="Numbering-Roman"
-                prefixIcon="e-de-ctnr-bullets e-icons"
-                tooltipText="Roman Numbering"
-              />
-              <ItemDirective
-                id="clearlist"
-                text="Clear"
-                tooltipText="Clear List"
-              />
-            </ItemsDirective>
-          </ToolbarComponent>
-          {/* <ColorPickerComponent
+                  <ItemDirective
+                    id="Numbering-Arabic"
+                    prefixIcon="e-icons e-de-ctnr-numbering"
+                    tooltipText="Arabic Numbering"
+                  />
+                  <ItemDirective
+                    id="Numbering-Roman"
+                    prefixIcon="e-de-ctnr-bullets e-icons"
+                    tooltipText="Roman Numbering"
+                  />
+                  <ItemDirective
+                    id="clearlist"
+                    text="Clear"
+                    tooltipText="Clear List"
+                  />
+                </ItemsDirective>
+              </ToolbarComponent>
+              {/* <ColorPickerComponent
             value={highlightColor}
             change={handleColorChange}
           /> */}
-        </div>
+            </div>
 
-        {/* ***************Table************************ */}
-        {isTableSelected && (
-          <div className="text styling flex items-center">
-            <ToolbarComponent clicked={toolbarButtonClick}>
-              <ItemsDirective>
-                <ItemDirective
-                  id="table"
-                  prefixIcon="e-de-ctnr-table e-icons"
-                />
-                <ItemDirective type="Separator" />
-                <ItemDirective
-                  id="insert_above"
-                  prefixIcon="e-de-ctnr-insertabove e-icons"
-                />
-                <ItemDirective
-                  id="insert_below"
-                  prefixIcon="e-de-ctnr-insertbelow e-icons"
-                />
-                <ItemDirective type="Separator" />
-                <ItemDirective
-                  id="insert_left"
-                  prefixIcon="e-de-ctnr-insertleft e-icons"
-                />
-                <ItemDirective
-                  id="insert_right"
-                  prefixIcon="e-de-ctnr-insertright e-icons"
-                />
-                <ItemDirective type="Separator" />
-                {/* <ItemDirective
+            {/* ***************Table************************ */}
+            {isTableSelected && (
+              <div className="text styling flex items-center">
+                <ToolbarComponent clicked={toolbarButtonClick}>
+                  <ItemsDirective>
+                    <ItemDirective
+                      id="table"
+                      prefixIcon="e-de-ctnr-table e-icons"
+                    />
+                    <ItemDirective type="Separator" />
+                    <ItemDirective
+                      id="insert_above"
+                      prefixIcon="e-de-ctnr-insertabove e-icons"
+                    />
+                    <ItemDirective
+                      id="insert_below"
+                      prefixIcon="e-de-ctnr-insertbelow e-icons"
+                    />
+                    <ItemDirective type="Separator" />
+                    <ItemDirective
+                      id="insert_left"
+                      prefixIcon="e-de-ctnr-insertleft e-icons"
+                    />
+                    <ItemDirective
+                      id="insert_right"
+                      prefixIcon="e-de-ctnr-insertright e-icons"
+                    />
+                    <ItemDirective type="Separator" />
+                    {/* <ItemDirective
                   id="delete_table"
                   tooltipText="Delete"
                   text="Delete"
                   prefixIcon="custom-delete-icon"
                 /> */}
-                <ItemDirective
-                  id="delete_rows"
-                  prefixIcon="e-de-ctnr-deleterows e-icons"
-                />
-                <ItemDirective
-                  id="delete_columns"
-                  prefixIcon="e-de-ctnr-deletecolumns e-icons"
-                />
-                <ItemDirective type="Separator" />
-                <ItemDirective
-                  id="merge_cell"
-                  text="Merge Cells"
-                  prefixIcon="e-merge-cells e-icons"
-                />
-                <ItemDirective type="Separator" />
+                    <ItemDirective
+                      id="delete_rows"
+                      prefixIcon="e-de-ctnr-deleterows e-icons"
+                    />
+                    <ItemDirective
+                      id="delete_columns"
+                      prefixIcon="e-de-ctnr-deletecolumns e-icons"
+                    />
+                    <ItemDirective type="Separator" />
+                    <ItemDirective
+                      id="merge_cell"
+                      text="Merge Cells"
+                      prefixIcon="e-merge-cells e-icons"
+                    />
+                    <ItemDirective type="Separator" />
 
-                <ItemDirective
-                  id="delete_table"
-                  prefixIcon="e-table-delete e-icons"
-                  text="Delete"
-                  tooltipText="Delete Table"
-                />
-                {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
+                    <ItemDirective
+                      id="delete_table"
+                      prefixIcon="e-table-delete e-icons"
+                      text="Delete"
+                      tooltipText="Delete Table"
+                    />
+                    {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
 
-                <DropDownListComponent
-                  id="borderWidthDropdown"
-                  dataSource={[1, 2, 3, 4, 5]}
-                  placeholder="Select border width"
-                  floatLabelType="Auto"
-                  change={onWrapTextChange}
-                />
-                {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
-                <ItemDirective type="Separator" />
+                    <DropDownListComponent
+                      id="borderWidthDropdown"
+                      dataSource={[1, 2, 3, 4, 5]}
+                      placeholder="Select border width"
+                      floatLabelType="Auto"
+                      change={onWrapTextChange}
+                    />
+                    {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
+                    <ItemDirective type="Separator" />
 
-                <ItemDirective
-                  id="set_border_width"
-                  text="Apply Border"
-                  prefixIcon="e-border-all-2"
-                />
+                    <ItemDirective
+                      id="set_border_width"
+                      text="Apply Border"
+                      prefixIcon="e-border-all-2"
+                    />
 
-                <ItemDirective type="Separator" />
+                    <ItemDirective type="Separator" />
 
-                <ItemDirective
-                  tooltipText="Cell Fill Color"
-                  template={cellFillColorPickerTemplate}
-                />
-              </ItemsDirective>
-            </ToolbarComponent>
+                    <ItemDirective
+                      tooltipText="Cell Fill Color"
+                      template={cellFillColorPickerTemplate}
+                    />
+                  </ItemsDirective>
+                </ToolbarComponent>
 
-            {/* <ColorPickerComponent
+                {/* <ColorPickerComponent
               id="cellFillColorPicker"
               mode="Palette"
               showButtons={false}
               change={handleFillColorChange}
             /> */}
 
-            {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
+                {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
             <NumericTextBoxComponent
               value={topMargin}
               placeholder="Top Margin"
@@ -2177,23 +2220,25 @@ function SyncFesion() {
               blur={applyMargins}
             />
           </div> */}
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      <DocumentEditorContainerComponent
-        ref={editorContainerRef}
-        id="container"
-        height="78vh"
-        toolbarItems={items}
-        toolbarClick={onToolbarClick}
-        enableToolbar={true}
-        // showPropertiesPane={false}
-        documentEditorSettings={{
-          searchHighlightColor: "red",
-        }}
-        created={onCreated}
-      />
+          <DocumentEditorContainerComponent
+            ref={editorContainerRef}
+            id="container"
+            height="78vh"
+            toolbarItems={items}
+            toolbarClick={onToolbarClick}
+            enableToolbar={true}
+            // showPropertiesPane={false}
+            documentEditorSettings={{
+              searchHighlightColor: "red",
+            }}
+            created={onCreated}
+          />
+        </>
+      )}
     </div>
   );
 }

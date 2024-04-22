@@ -139,11 +139,17 @@ const Signature = () => {
       );
       setRecipients(updatedRecipients);
       setEmailToReplace(null); // Reset the replacement email
-
-      setopenErrorDilog(true);
-      setTitle(
-        `Please review the fields previously assigned to ${emailToReplace},as they are now assigned to ${newSignatoryEmail}.`
+      const isEmailPresent = recipients.some(
+        (recipient: any) =>
+          recipient.email === emailToReplace && recipient.field
       );
+
+      if (isEmailPresent) {
+        setopenErrorDilog(true);
+        setTitle(
+          `Please review the fields previously assigned to ${emailToReplace},as they are now assigned to ${newSignatoryEmail}.`
+        );
+      }
     } else {
       // Add new signatory logic remains the same
       const emailExists = recipients.some(

@@ -20,6 +20,8 @@
     "@mui/material": "^5.15.12",
     "@mui/x-data-grid": "^6.18.3",
     "@mui/x-date-pickers": "^6.18.2",
+    "@pdftron/webviewer": "^10.8.0",
+    "@react-pdf-viewer/core": "^3.12.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@syncfusion/ej2-base": "~24.2.7",
     "@syncfusion/ej2-navigations": "24.2.8",
@@ -41,8 +43,10 @@
     "dayjs": "^1.11.10",
     "jquery": "^3.7.1",
     "lodash": "^4.17.21",
+    "mammoth": "^1.7.1",
     "moment-timezone": "^0.5.43",
     "mui-one-time-password-input": "^2.0.1",
+    "pdfjs-dist": "^2.16.105",
     "postcss-import": "^15.1.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
@@ -59,6 +63,7 @@
     "@ckeditor/ckeditor5-comments": "^40.2.0",
     "@types/jquery": "^3.5.29",
     "@types/node": "^20.8.9",
+    "@types/pdfjs-dist": "^2.10.378",
     "@types/react": "^18.2.15",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^18.2.7",
@@ -70,7 +75,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "postcss-nesting": "^12.0.2",
-    "typescript": "^5.4.2",
+    "typescript": "^5.4.5",
     "vite": "^4.4.5"
   }
 }

@@ -101,6 +101,12 @@ interface ContractContextProps {
 
   Drawsignature: any | null;
   setDrawSignature: Dispatch<SetStateAction<any>>;
+
+  uplodTrackFile: any | null;
+  setUplodTrackFile: Dispatch<SetStateAction<any>>;
+
+  documentContent: any | null;
+  setDocumentContent: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -161,12 +167,17 @@ export const ContractContext = createContext<ContractContextProps>({
   setEditorRefContext: () => {},
   Drawsignature: {},
   setDrawSignature: () => {},
+  uplodTrackFile: {},
+  setUplodTrackFile: () => {},
+  documentContent: {},
+  setDocumentContent: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
+  const [documentContent, setDocumentContent] = useState<any>(null);
   const [Drawsignature, setDrawSignature] = useState(null);
   const [recipients, setRecipients] = useState<string[]>([]);
   const [signatories, setSignatories] = useState<string[]>([]);
@@ -190,7 +201,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [viewUser, setViewUser] = useState(false);
   const [dragFields, setDragFields] = useState("");
   const [editorRefContext, setEditorRefContext] = useState("");
-
+  const [uplodTrackFile, setUplodTrackFile] = useState<any | null>(null);
   const [conditions, setConditions] = useState([
     {
       comparisonOperator: "",
@@ -348,6 +359,14 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (Drawsignature) {
       setDrawSignature(JSON.parse(Drawsignature));
     }
+    const uplodTrackFile = localStorage.getItem("uplodTrackFile");
+    if (uplodTrackFile) {
+      setUplodTrackFile(JSON.parse(uplodTrackFile));
+    }
+    const documentContent = localStorage.getItem("documentContent");
+    if (documentContent) {
+      setDocumentContent(JSON.parse(documentContent));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -425,6 +444,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setEditorRefContext,
         Drawsignature,
         setDrawSignature,
+        uplodTrackFile,
+        setUplodTrackFile,
+        documentContent,
+        setDocumentContent,
       }}
     >
       {children}
