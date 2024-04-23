@@ -73,13 +73,14 @@ import { Close, PushPin } from "@mui/icons-material";
 import Fields from "@/pages/dasboard/contract/sdk/Fields";
 
 interface Module {
+  getIcon: (isSelected: boolean) => JSX.Element;
   icon: ReactNode;
   content?: ReactNode;
 }
 
 const MyComponent: React.FC = () => {
   const location = useLocation();
-  const { setOpenDocoment, sidebarExpanded, setSidebarExpanded } =
+  const { setOpenDocoment, sidebarExpanded, setSidebarExpanded, showBlock } =
     useContext(ContractContext);
   // const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
   const { signatories, setSignatories, selectedModule, setSelectedModule } =
@@ -134,9 +135,9 @@ const MyComponent: React.FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const modules: Record<string, Module> = {
+  const modules: Record<string, any> = {
     overview: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Overview">
           <svg
             width="24"
@@ -150,25 +151,25 @@ const MyComponent: React.FC = () => {
               y="0.5"
               width="23"
               height="22.9202"
-              fill="white"
-              stroke="#575757"
+              fill={isSelected ? "#0000FF" : "white"}
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <g clip-path="url(#clip0_4158_11401)">
               <path
                 d="M12.0007 18.6044C15.6825 18.6044 18.6673 15.6296 18.6673 11.9599C18.6673 8.29027 15.6825 5.31543 12.0007 5.31543C8.31875 5.31543 5.33398 8.29027 5.33398 11.9599C5.33398 15.6296 8.31875 18.6044 12.0007 18.6044Z"
-                stroke="#575757"
+                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
               <path
                 d="M12 9.30176V11.9596"
-                stroke="#575757"
+                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
               <path
                 d="M12 14.6172H12.0067"
-                stroke="#575757"
+                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
@@ -187,9 +188,10 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <OverView />,
+      isDisabled: showBlock === "uploadTrack",
     },
     signature: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Signature">
           {/* <img src={writingIcon} alt="Logo" style={{ width: '5%' }} /> */}
           <svg
@@ -205,17 +207,17 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <path
               d="M9.89648 20.7344H20.0001"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M5.4277 10.8544C4.52774 9.99543 4.13272 9.47044 4.01552 8.20962C3.90444 7.01468 4.40081 5.78259 5.14707 5.1532C6.18486 4.27795 7.41719 5.10143 8.10631 6.26239C8.85308 7.52048 9.49883 11.1574 9.54823 12.7172C9.60433 14.4881 9.34637 16.0971 8.68262 17.6364C8.22737 18.6921 7.5547 19.9367 6.65939 20.3582C5.84802 20.7403 4.96631 20.5979 4.80301 19.3054C4.60286 17.7212 5.15436 16.1778 5.75727 14.8686C6.55665 13.1328 7.56614 11.6957 8.9642 10.8544C14.3553 7.61052 11.1718 18.0559 12.9598 18.0559C14.7477 18.0559 14.8632 12.9245 16.1166 13.7448C17.3701 14.565 14.9737 19.6593 19.4591 16.44"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -223,9 +225,10 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <Signature />,
+      isDisabled: showBlock === "uploadTrack",
     },
     share: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Collaborate ">
           {/* <img src={commentIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -241,65 +244,65 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <path
               d="M15.7071 4.58691H6.12857C5.56404 4.58691 5.02263 4.81093 4.62344 5.20967C4.22426 5.60842 4 6.14924 4 6.71315V19.4706C4 19.7525 4.11213 20.0229 4.31172 20.2223C4.51131 20.4217 4.78202 20.5337 5.06429 20.5337H6.0789"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M6.12891 7.95312H11.273"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M6.12891 10.7881H9.57719"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M14.1113 10.9656V6.18159C14.1113 5.75866 14.2795 5.35304 14.5789 5.05398C14.8783 4.75492 15.2844 4.58691 15.7078 4.58691C16.1312 4.58691 16.5372 4.75492 16.8366 5.05398C17.136 5.35304 17.3042 5.75866 17.3042 6.18159V7.95346H14.1113"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M18.9006 17.9541L15.502 18.6346"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M15.84 14.7861L14.2365 15.4594C14.111 15.5136 13.9758 15.5416 13.8391 15.5416C13.7025 15.5416 13.5672 15.5136 13.4418 15.4594C13.2567 15.3756 13.099 15.2412 12.9871 15.0718C12.8751 14.9023 12.8133 14.7048 12.8089 14.5018C12.8044 14.2988 12.8575 14.0987 12.9619 13.9245C13.0664 13.7504 13.218 13.6093 13.3992 13.5174L15.0027 12.7165C15.2005 12.6153 15.4192 12.5619 15.6413 12.5606C15.809 12.5589 15.9753 12.5902 16.1309 12.6527L19.4089 13.9781"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M9.2832 18.6628H10.4113L12.5754 20.3071C12.6261 20.3645 12.6876 20.4113 12.7565 20.4448C12.8253 20.4784 12.9001 20.4981 12.9766 20.5027C13.0531 20.5073 13.1297 20.4967 13.2021 20.4717C13.2745 20.4466 13.3412 20.4076 13.3984 20.3567L16.421 17.8619C16.5416 17.7646 16.619 17.6237 16.6363 17.4698C16.6535 17.3158 16.6093 17.1613 16.5133 17.0398L14.8175 15.2041"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M13.2152 13.6316L13.0378 13.4827C12.8149 13.3364 12.5523 13.2621 12.2857 13.2701C12.1235 13.2701 11.9625 13.2989 11.8103 13.3552L9.27734 14.4041"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M8.25586 19.1947H8.46872C8.57497 19.2005 8.68131 19.1852 8.78165 19.1498C8.88199 19.1144 8.97435 19.0596 9.05344 18.9885C9.13254 18.9174 9.19681 18.8314 9.24257 18.7354C9.28834 18.6395 9.3147 18.5354 9.32015 18.4293V14.6375C9.30734 14.4244 9.21059 14.2249 9.05105 14.0828C8.89151 13.9407 8.68215 13.8675 8.46872 13.8791H8.25586"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M19.9644 19.1947H19.787C19.6807 19.2005 19.5744 19.1852 19.474 19.1498C19.3737 19.1144 19.2813 19.0596 19.2022 18.9885C19.1232 18.9174 19.0589 18.8314 19.0131 18.7354C18.9674 18.6395 18.941 18.5354 18.9355 18.4293V14.6375C18.9484 14.4244 19.0451 14.2249 19.2046 14.0828C19.3642 13.9407 19.5735 13.8675 19.787 13.8791H19.9998"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -307,9 +310,10 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <Collaburater />,
+      isDisabled: showBlock === "uploadTrack",
     },
     approval: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Approvals">
           {/* <img src={userIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -325,23 +329,23 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <path
               d="M14.666 18.3412V17.0123C14.666 16.3074 14.3851 15.6314 13.885 15.1329C13.3849 14.6345 12.7066 14.3545 11.9993 14.3545H7.33268C6.62544 14.3545 5.94716 14.6345 5.44706 15.1329C4.94697 15.6314 4.66602 16.3074 4.66602 17.0123V18.3412"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M9.66667 11.6965C11.1394 11.6965 12.3333 10.5065 12.3333 9.03866C12.3333 7.5708 11.1394 6.38086 9.66667 6.38086C8.19391 6.38086 7 7.5708 7 9.03866C7 10.5065 8.19391 11.6965 9.66667 11.6965Z"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M15.334 11.6971L16.6673 13.026L19.334 10.3682"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -349,9 +353,10 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <ApprovalsComp />,
+      isDisabled: showBlock === "uploadTrack",
     },
     clause: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Clauses">
           {/* <img src={clipboardIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -367,11 +372,11 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <path
               d="M10.0118 18.8066H7.83268C7.39065 18.8066 6.96673 18.6316 6.65417 18.32C6.34161 18.0085 6.16602 17.586 6.16602 17.1454V7.1787C6.16602 6.73814 6.34161 6.31563 6.65417 6.00411C6.96673 5.69259 7.39065 5.51758 7.83268 5.51758H14.4993C14.9414 5.51758 15.3653 5.69259 15.6779 6.00411C15.9904 6.31563 16.166 6.73814 16.166 7.1787V13.8232M13.666 17.976L15.3327 19.6371L18.666 16.3149M9.49935 8.83982H12.8327M9.49935 12.1621H11.166"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -379,9 +384,10 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <ClauseComp />,
+      isDisabled: showBlock === "uploadTrack",
     },
     attachement: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Attachement">
           {/* <img src={attachIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -397,17 +403,17 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <path
               d="M15.955 17.2663V13.4491C15.955 13.1825 16.0616 12.9268 16.2512 12.7383C16.4408 12.5498 16.698 12.4439 16.9662 12.4439C17.2344 12.4439 17.4916 12.5498 17.6812 12.7383C17.8708 12.9268 17.9773 13.1825 17.9773 13.4491V17.8869C17.9824 18.1541 17.9338 18.4197 17.8344 18.668C17.735 18.9164 17.5868 19.1425 17.3985 19.3333C17.2102 19.524 16.9855 19.6756 16.7376 19.779C16.4897 19.8824 16.2235 19.9357 15.9547 19.9357C15.6858 19.9357 15.4196 19.8824 15.1717 19.779C14.9238 19.6756 14.6991 19.524 14.5108 19.3333C14.3225 19.1425 14.1743 18.9164 14.0749 18.668C13.9755 18.4197 13.927 18.1541 13.932 17.8869V13.0143C13.932 12.2144 14.2517 11.4472 14.8207 10.8815C15.3897 10.3158 16.1615 9.99805 16.9662 9.99805C17.7709 9.99805 18.5427 10.3158 19.1117 10.8815C19.6807 11.4472 20.0004 12.2144 20.0004 13.0143V17.2663"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M11.6441 17.7726H5.06662C4.78374 17.7726 4.51244 17.6609 4.31241 17.462C4.11238 17.2632 4 16.9935 4 16.7123V5.04861C4 4.7674 4.11238 4.4977 4.31241 4.29885C4.51244 4.09999 4.78374 3.98828 5.06662 3.98828H12.6247C12.9074 3.98834 13.1785 4.09996 13.3785 4.29861L15.4207 6.32879C15.6205 6.52756 15.7328 6.79707 15.7329 7.07809V7.92635"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -415,9 +421,10 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <Attachement />,
+      isDisabled: showBlock === "",
     },
     timeLine: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Audit Trail">
           {/* <img src={timelineIcon} alt="Logo" style={{ width: "5%" }} /> */}
           <svg
@@ -433,41 +440,41 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <path
               d="M7.67969 10.4004H8.74635"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M7.67969 13.5996H8.74635"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M10.8789 8.7998H16.9234"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M10.8789 11.7998H16.9234"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M10.8789 14.7998H16.9234"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M5.06667 4H18.9333C18.9333 4 20 4 20 5.2V18.8C20 18.8 20 20 18.9333 20H5.06667C5.06667 20 4 20 4 18.8V5.2C4 5.2 4 4 5.06667 4Z"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -475,9 +482,10 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <TimelineComp />,
+      isDisabled: showBlock === "",
     },
     lifeSycle: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Lifecycle">
           {/* <img src={lifecycleIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -493,35 +501,35 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
             />
             <path
               d="M10.334 11.9997C10.334 12.4417 10.5096 12.8656 10.8221 13.1782C11.1347 13.4907 11.5586 13.6663 12.0007 13.6663C12.4427 13.6663 12.8666 13.4907 13.1792 13.1782C13.4917 12.8656 13.6673 12.4417 13.6673 11.9997C13.6673 11.5576 13.4917 11.1337 13.1792 10.8212C12.8666 10.5086 12.4427 10.333 12.0007 10.333C11.5586 10.333 11.1347 10.5086 10.8221 10.8212C10.5096 11.1337 10.334 11.5576 10.334 11.9997Z"
-              stroke="#575757"
+              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M16.4713 7.99911C15.6611 7.09364 14.5951 6.45549 13.4143 6.16908C12.2335 5.88267 10.9936 5.9615 9.85861 6.39514C8.7236 6.82878 7.74699 7.5968 7.05799 8.59758C6.36898 9.59836 6.00005 10.7847 6 11.9998V12.5018"
-              stroke="#575757"
+              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M7.5293 16.0013C8.33946 16.9068 9.40541 17.5449 10.5861 17.8313C11.7668 18.1178 13.0067 18.039 14.1417 17.6054C15.2767 17.1718 16.2533 16.404 16.9424 15.4032C17.6314 14.4026 18.0004 13.2163 18.0006 12.0013V11.502"
-              stroke="#575757"
+              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M16.5 13L18 11.5L19.5 13"
-              stroke="#575757"
+              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M7.5 11L6 12.5L4.5 11"
-              stroke="#575757"
+              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -529,15 +537,15 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <LifeSycle />,
+      isDisabled: showBlock === "",
     },
     // shere: {
     //   icon: <ShareIcon />,
     //   content: <ShareComp />,
     // },
     fields: {
-      icon: (
+      getIcon: (isSelected: any) => (
         <Tooltip title="Fields">
-          {/* <img src={commentIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
             width="24"
             height="24"
@@ -551,9 +559,10 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke="#575757"
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
             />
             <path
+              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
               d="M4 3.98633V19.9331H20V3.98633H4ZM4.8 4.983H19.2V18.9364H4.8V4.983ZM7.63636 7.97302V8.9697H10.4H13.4545V7.97302H10.4H7.63636ZM7.63636 11.4614V12.4581H12H16.3636V11.4614H12H7.63636ZM7.63636 14.9497V15.9464H9.6H12V14.9497H9.6H7.63636Z"
               fill="#575757"
             />
@@ -561,6 +570,7 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <Fields />,
+      isDisabled: showBlock === "uploadTrack",
     },
 
     // Add more modules as needed
@@ -583,7 +593,7 @@ const MyComponent: React.FC = () => {
         >
           <Box
             sx={{
-              py: 2,
+              py: 1,
               pr: 3,
               width: "100%",
               display: "flex",
@@ -651,7 +661,9 @@ const MyComponent: React.FC = () => {
                   >
                     <path
                       d="M8.69884 3.625H15.2222C16.2041 3.625 17 4.4085 17 5.375V13.25C17 14.2165 16.2041 15 15.2222 15H2.77778C1.79594 15 1 14.2165 1 13.25V3.625M8.69884 3.625C8.26621 3.625 7.84843 3.46971 7.52378 3.18822L5.50376 1.43678C5.17911 1.15529 4.76132 1 4.3287 1H2.77778C1.79594 1 1 1.7835 1 2.75V3.625M8.69884 3.625H1"
-                      stroke="#575757"
+                      stroke={
+                        showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"
+                      }
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     />
@@ -724,15 +736,15 @@ const MyComponent: React.FC = () => {
                   </Button>
                 </span>
               </Tooltip> */}
-              <Button
+              {/* <Button
                 sx={{ ml: 2, textTransform: "none" }}
                 variant="outlined"
                 color="success"
                 onClick={handleClick}
               >
                 <AddIcon /> Share
-              </Button>
-              <Menu
+              </Button> */}
+              {/* <Menu
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
@@ -746,36 +758,36 @@ const MyComponent: React.FC = () => {
                     >
                       <DrawIcon sx={{ color: "blue" }} />
                       {/* Replace with your logo path */}
-                      <Box sx={{ ml: 2 }}>
+              {/* <Box sx={{ ml: 2 }}>
                         <Typography variant="subtitle1">
                           Add signatory
                         </Typography>
                         <Typography variant="body2">
                           Can sign and receive a copy of the document
                         </Typography>
-                      </Box>
-                    </Box>
-                  </MenuItem>
+                      </Box> */}
+              {/* </Box>
+                  </MenuItem> */}
 
-                  <MenuItem onClick={handleClose}>
+              {/* <MenuItem onClick={handleClose}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <PersonAddAltIcon sx={{ color: "blue" }} />
                       {/* Replace with your logo path */}
-                      <Box sx={{ ml: 2 }}>
+              {/* <Box sx={{ ml: 2 }}>
                         <Typography variant="subtitle1">
                           Add collaborator
                         </Typography>
                         <Typography variant="body2">
                           Collaborator can view, edit and comment.
                         </Typography>
-                      </Box>
-                    </Box>
-                  </MenuItem>
-                </Card>
-              </Menu>
+                      </Box> */}
+              {/* </Box> */}
+              {/* </MenuItem>  */}
+              {/* </Card> */}
+              {/* </Menu> */}
             </div>
           </Box>
-          <Divider />
+
           <SyncFesion></SyncFesion>
 
           {/* <DocumentEditorContainerComponent
@@ -823,6 +835,9 @@ const MyComponent: React.FC = () => {
                     key={key}
                     selected={selectedModule === key}
                     onClick={() => {
+                      // Ignore click if the module is disabled
+                      if (modules[key].isDisabled) return;
+
                       if (key === "toggle") {
                         toggleSidebar();
                       } else {
@@ -832,8 +847,21 @@ const MyComponent: React.FC = () => {
                         }
                       }
                     }}
+                    style={{
+                      cursor: modules[key].isDisabled
+                        ? "not-allowed"
+                        : "pointer",
+                      color: modules[key]?.isDisabled ? "#D3D3D3" : "inherit",
+                      marginBottom: "20px",
+                    }}
                   >
-                    <ListItemIcon>{modules[key].icon}</ListItemIcon>
+                    <ListItemIcon>
+                      {modules[key]?.getIcon ? (
+                        modules[key].getIcon(selectedModule === key)
+                      ) : (
+                        <span>No icon defined</span>
+                      )}
+                    </ListItemIcon>
                   </ListItemButton>
                 ))}
               </List>

@@ -133,10 +133,13 @@ function SyncFesion() {
     setRecipients,
     uplodTrackFile,
     documentContent,
+    showBlock,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
+
   useEffect(() => {}, [documentContent, uplodTrackFile]);
+
   const editorContainerRef: any = useRef(null);
 
   const [openDropdowns, setOpenDropdowns] = useState({
@@ -162,7 +165,7 @@ function SyncFesion() {
 
   // To change the font style of selected content
   function changeFontFamily(args: any) {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor && documentEditor.selection) {
       documentEditor.selection.characterFormat.fontFamily = args.value;
       documentEditor.focusIn();
@@ -171,7 +174,7 @@ function SyncFesion() {
 
   // To change the font size of selected content
   function changeFontSize(args: any) {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor && documentEditor.selection) {
       documentEditor.selection.characterFormat.fontSize = args.value;
       documentEditor.focusIn();
@@ -179,7 +182,7 @@ function SyncFesion() {
   }
 
   const onToolbarClick = (args: any) => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     console.log("args text:", args.item.id);
     // if (!documentEditor) {
     //   console.error("Document Editor is not initialized yet.");
@@ -360,23 +363,23 @@ function SyncFesion() {
   };
 
   function ShowPageSetupDialog() {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     documentEditor.showDialog("PageSetup");
   }
 
   // const toggleTrackChanges = () => {
-  //   const documentEditor = editorContainerRef.current.documentEditor;
+  //   const documentEditor = editorContainerRef.current?.documentEditor;
   //   documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
   // };
 
   const clearAndCloseFooter = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
 
     documentEditor.selection.closeHeaderFooter();
   };
 
   const setupHeader = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor && documentEditor.selection) {
       // Move to the header region
       documentEditor.selection.goToHeader();
@@ -389,7 +392,7 @@ function SyncFesion() {
   };
 
   const setupFooter = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor && documentEditor.selection) {
       // Move to the footer region
       documentEditor.selection.goToFooter();
@@ -402,7 +405,7 @@ function SyncFesion() {
   };
 
   // const addComment = (commentText: any, author: any) => {
-  //   const documentEditor = editorContainerRef.current.documentEditor;
+  //   const documentEditor = editorContainerRef.current?.documentEditor;
   //   if (!documentEditor || !documentEditor.editor) {
   //     console.error("Document Editor is not initialized yet.");
   //     return;
@@ -424,7 +427,7 @@ function SyncFesion() {
   const changeFontColor = (args: any) => {
     const color = args.currentValue.hex;
     setFontColor(color);
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor && documentEditor.selection) {
       documentEditor.selection.characterFormat.fontColor = color;
     }
@@ -436,7 +439,7 @@ function SyncFesion() {
     console.log("args color hightlight: ", args);
     const color = args.currentValue.hex;
     setHighlightColor(color);
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor && documentEditor.selection) {
       documentEditor.selection.characterFormat.highlightColor = color;
     }
@@ -533,7 +536,7 @@ function SyncFesion() {
   }, []);
   //Change the line spacing of selected or current paragraph
   function lineSpacingAction(args: any) {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     const text: string = args.item.text;
     switch (text) {
       case "Single":
@@ -599,7 +602,7 @@ function SyncFesion() {
   };
   function toolbarButtonClick(arg: any) {
     console.log("arg table", arg);
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     switch (arg.item.id) {
       case "table":
         //Insert table API to add table
@@ -831,7 +834,7 @@ function SyncFesion() {
 
   function onWrapTextChange(args: any) {
     if (editorContainerRef.current) {
-      const documentEditor = editorContainerRef.current.documentEditor;
+      const documentEditor = editorContainerRef.current?.documentEditor;
       // Assuming we have the border width value in 'args.value'
       const borderWidth = args.value;
       if (borderWidth >= 1 && borderWidth <= 5) {
@@ -854,7 +857,7 @@ function SyncFesion() {
   const [isTableSelected, setIsTableSelected] = useState(false);
 
   useEffect(() => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
 
     if (documentEditor) {
       // Listen to selection changes
@@ -878,12 +881,12 @@ function SyncFesion() {
     };
   }, []);
   const exportPdf = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     const userFileName = prompt("Enter a file name for your PDF", "My PDF");
     documentEditor.save(userFileName, "Pdf");
   };
   const save = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     const userFileName = prompt("Enter a file name for your docs", "My File");
     if (userFileName) {
       documentEditor.save(userFileName, "Docx");
@@ -1005,7 +1008,7 @@ function SyncFesion() {
   // };
 
   const convertToBase64 = (file: any, callback: any) => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     const reader = new FileReader();
     reader.onloadend = () => {
       callback(reader.result);
@@ -1015,28 +1018,28 @@ function SyncFesion() {
 
   const insertImage = (imageSrc: any) => {
     console.log("image");
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
 
     documentEditor.editor.insertImage(imageSrc);
   };
 
   const showHyperlinkDialog = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     documentEditor.showDialog("Hyperlink");
   };
 
   const addpagenumber = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     documentEditor.editor.insertPageNumber();
   };
 
   const ShowHideOptionsPane = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     documentEditor.showOptionsPane();
   };
 
   const addComment = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
 
     // Ensure there's a selection
     if (documentEditor.selection && !documentEditor.selection.isEmpty) {
@@ -1049,7 +1052,7 @@ function SyncFesion() {
   };
 
   const toggleTrackChanges = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     // Toggle the track changes state
     if (documentEditor) {
       const trackChangesEnabled = documentEditor.enableTrackChanges;
@@ -1060,7 +1063,7 @@ function SyncFesion() {
   // Function to reject the second change
   // Function to reject all changes
   const rejectAllChanges = () => {
-    const documentEditor = editorContainerRef.current.documentEditor;
+    const documentEditor = editorContainerRef.current?.documentEditor;
     const revisions = documentEditor.revisions;
 
     // While there are revisions, keep rejecting the first one
@@ -1161,7 +1164,7 @@ function SyncFesion() {
 
   // useEffect(() => {
   //   const editorContainer = document.getElementById('container');
-  //   const documentEditor = editorContainerRef.current.documentEditor;
+  //   const documentEditor = editorContainerRef.current?.documentEditor;
 
   //   const handleDragOver = (e: any) => {
   //     e.preventDefault(); // Necessary to allow dropping
@@ -1222,8 +1225,8 @@ function SyncFesion() {
   const [fieldFreshData, setFieldFreshData] = useState(0); // Default font color
 
   useEffect(() => {
-    const documentEditor = editorContainerRef.current.documentEditor;
-    const formFieldsNames: string[] = documentEditor.exportFormData();
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    const formFieldsNames: string[] = documentEditor?.exportFormData();
     console.log("formFieldsNames : ", formFieldsNames);
   }, [dragFields]);
 
@@ -1328,69 +1331,83 @@ function SyncFesion() {
     const selectedContent: string = container?.documentEditor?.selection.text;
   };
 
-
   return (
     <div>
-      {/* <Sidebar /> */}
-      {/* <ul className="mt-2" id="breadcrumb">
-        
-        <li>
-          <a href="#">
-            <span className="icon icon-beaker"> </span> Draft
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            style={{ color: recipients.length > 0 ? "#155BE5" : "inherit" }}
+      {showBlock == "uploadTrack" && (
+        <Typography
+          variant="body2"
+          component="span"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            whiteSpace: "nowrap",
+            marginBottom: "1rem",
+          }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ display: "block", marginRight: "7px" }}
           >
-            <span
-              className="icon icon-double-angle-right"
-              style={{ background: "red" }}
-            ></span>{" "}
-            Review
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span className="icon icon-rocket"> </span> Signing
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span className="icon icon-arrow-down"> </span> Signed
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span className="icon icon-arrow-down"> </span> Active
-          </a>
-        </li>
-      </ul> */}
-      <Breadcrumb recipients={recipients} />
+            <g clipPath="url(#clip0_4225_12326)">
+              <path
+                d="M8.00065 14.6181C11.6825 14.6181 14.6673 11.6432 14.6673 7.9736C14.6673 4.30394 11.6825 1.3291 8.00065 1.3291C4.31875 1.3291 1.33398 4.30394 1.33398 7.9736C1.33398 11.6432 4.31875 14.6181 8.00065 14.6181Z"
+                stroke="#EF3E36"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M8 5.31543V7.97323"
+                stroke="#EF3E36"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M8 10.6309H8.00667"
+                stroke="#EF3E36"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </g>
+            <defs>
+              <clipPath id="clip0_4225_12326">
+                <rect width="16" height="15.9468" fill="white" />
+              </clipPath>
+            </defs>
+          </svg>
+          Externally Executed Document
+        </Typography>
+      )}
+      {showBlock === "" && (
+        <>
+          <Breadcrumb recipients={recipients} />
 
-      <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 ">
-        <p className="text-[12px] font-regular ">
-          Approvals: 0/0{" "}
-          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
-        </p>
+          <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 ">
+            <p className="text-[12px] font-regular ">
+              Approvals: 0/0{" "}
+              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+            </p>
 
-        <p className="text-[12px] font-regular ">
-          Signatures: 0/0{" "}
-          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
-        </p>
+            <p className="text-[12px] font-regular ">
+              Signatures: 0/0{" "}
+              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+            </p>
 
-        <p className="text-[12px] font-regular ">
-          Collaborators: 0/0{" "}
-          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
-        </p>
+            <p className="text-[12px] font-regular ">
+              Collaborators: 0/0{" "}
+              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+            </p>
 
-        <p className="text-[12px] font-regular ">
-          Custom Fields: 0/0{" "}
-          <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
-        </p>
-      </div>
-
+            <p className="text-[12px] font-regular ">
+              Custom Fields: 0/0{" "}
+              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+            </p>
+          </div>
+        </>
+      )}
       {/* <input
         type="file"
         id="file_upload"
@@ -1404,7 +1421,12 @@ function SyncFesion() {
 
         <div className="relative ">
           <button
-            className="text-black text-[14px] font-semibold p-2 rounded focus:outline-none mr-6 hover:bg-blue-00 hover:text-gray-700"
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300 hover:text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
+            disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("file")}
           >
             File
@@ -1493,7 +1515,12 @@ function SyncFesion() {
         {/* View Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
+            disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("view")}
           >
             View
@@ -1600,7 +1627,12 @@ function SyncFesion() {
         {/* insert and Dropdown */}
         <div className="relative">
           <button
-            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
+            disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("insert")}
           >
             Insert
@@ -1625,9 +1657,9 @@ function SyncFesion() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-              // onClick={() => {
-              //   triggerClick("container_toolbar_image_local");
-              // }}
+                // onClick={() => {
+                //   triggerClick("container_toolbar_image_local");
+                // }}
               >
                 <label
                   htmlFor="forimg"
@@ -1721,7 +1753,12 @@ function SyncFesion() {
         {/* Signature Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
+            disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("signature")}
           >
             Signature
@@ -1817,7 +1854,7 @@ function SyncFesion() {
         {/* Export Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            className="text-black text-[16px] p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("export")}
           >
             Export
@@ -1857,14 +1894,14 @@ function SyncFesion() {
 
         <div className="relative">
           <button
-            className="text-black text-[14px] font-bold p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            className="text-black text-[16px]  p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("attach")}
           >
             Attach
           </button>
           {openDropdowns.attach && (
             <ul
-              className="absolute space-y-2 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
+              className="absolute space-y-2 text-[16px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
               style={{
                 backgroundColor: "#F0F2F5",
                 border: "1px solid #C1C1C1",
@@ -1883,44 +1920,66 @@ function SyncFesion() {
         </div>
         <Box sx={{ width: "100%", px: 2.6 }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            {/* <Button variant="outlined" sx={{ textTransform: "none" }}>
-              Cancel
-            </Button>
-            <Button
-              sx={{ ml: 2, textTransform: "none" }}
-              type="submit"
-              variant="contained"
-              color="success"
-            >
-              Save
-            </Button> */}
-            <Button
-              sx={{ ml: 2, textTransform: "none" }}
-              type="submit"
-              variant="outlined"
-              color="success"
-            >
-              Edit
-            </Button>
+            {showBlock == "uploadTrack" && (
+              <>
+                <Button variant="outlined" sx={{ textTransform: "none" }}>
+                  Cancel
+                </Button>
+                <Button
+                  sx={{ ml: 2, textTransform: "none" }}
+                  type="submit"
+                  variant="outlined"
+                  color="success"
+                >
+                  Save
+                </Button>
+              </>
+            )}
+            {showBlock == "" && (
+              <Button
+                sx={{ ml: 2, textTransform: "none" }}
+                type="submit"
+                variant="outlined"
+                color="success"
+              >
+                Edit
+              </Button>
+            )}
           </div>
         </Box>
       </div>
       {/* <div id="xyz">show </div> */}
-
-      {documentContent ? (
+      {showBlock == "uploadTrack" && (
         <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "65vh", // Takes full viewport height
-            border: "2px solid #ccc", // Adds a light gray border
-            margin: "auto",
-            width: "65%", // Adjust width as per requirement
-            padding: "15px", // Padding inside the div
-            boxSizing: "border-box",
-            marginTop: "2rem",
-            overflow: "auto",
-          }}
+          style={
+            documentContent
+              ? {
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "794px", // Standard A4 width in pixels
+                  height: "610px", // Custom height in pixels
+                  border: "2px solid #ccc", // Adds a light gray border
+                  margin: "auto",
+                  padding: "4rem", // Padding inside the div
+                  boxSizing: "border-box",
+                  marginTop: "2rem",
+                  overflow: "auto",
+                  backgroundColor: "#fff", // Set background color to white
+                  boxShadow: "0 0 10px rgba(0,0,0,0.1)", // Add shadow for better A4 paper effect
+                }
+              : {
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "700px", // Slightly narrower width
+                  height: "610px", // Same custom height as other condition
+                  margin: "auto",
+                  padding: "0", // No padding
+                  boxSizing: "border-box",
+                  marginTop: "2rem",
+                  marginBottom: "1rem",
+                  overflow: "auto",
+                }
+          }
         >
           <>
             {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
@@ -1936,7 +1995,8 @@ function SyncFesion() {
             )}
           </>
         </div>
-      ) : (
+      )}
+      {showBlock === "" && (
         <>
           <div className="  ">
             <div className="text styling flex items-center">

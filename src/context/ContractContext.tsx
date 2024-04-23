@@ -107,6 +107,9 @@ interface ContractContextProps {
 
   documentContent: any | null;
   setDocumentContent: Dispatch<SetStateAction<any>>;
+
+  showBlock: any | null;
+  setShowBlock: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -171,6 +174,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setUplodTrackFile: () => {},
   documentContent: {},
   setDocumentContent: () => {},
+  showBlock: {},
+  setShowBlock: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -178,6 +183,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
   const [documentContent, setDocumentContent] = useState<any>(null);
+  const [showBlock, setShowBlock] = useState<string>("");
   const [Drawsignature, setDrawSignature] = useState(null);
   const [recipients, setRecipients] = useState<string[]>([]);
   const [signatories, setSignatories] = useState<string[]>([]);
@@ -367,6 +373,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (documentContent) {
       setDocumentContent(JSON.parse(documentContent));
     }
+    const showBlock = localStorage.getItem("showBlock");
+    if (showBlock) {
+      setShowBlock(JSON.parse(showBlock));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -448,6 +458,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setUplodTrackFile,
         documentContent,
         setDocumentContent,
+        showBlock,
+        setShowBlock,
       }}
     >
       {children}

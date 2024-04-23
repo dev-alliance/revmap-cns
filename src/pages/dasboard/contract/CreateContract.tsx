@@ -33,11 +33,11 @@ import { ContractContext } from "@/context/ContractContext";
 
 const CreateContract = () => {
   const navigate = useNavigate();
-  const { uplodTrackFile, setUplodTrackFile, setDocumentContent } =
+  const { setShowBlock, setUplodTrackFile, setDocumentContent } =
     useContext(ContractContext);
 
-  const workerUrl =
-    "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
+  // const workerUrl =
+  //   "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectDocoment, setSelectDocoment] = useState("");
@@ -48,6 +48,7 @@ const CreateContract = () => {
     const file = acceptedFiles[0];
     if (file.type === "application/pdf") {
       setUplodTrackFile(file);
+      setShowBlock("uploadTrack");
       navigate("/dashboard/editor-dahsbord");
     } else if (
       file.type ===
@@ -61,6 +62,7 @@ const CreateContract = () => {
         setDocumentContent(result.value);
       };
       reader.readAsArrayBuffer(file);
+      setShowBlock("uploadTrack");
       navigate("/dashboard/editor-dahsbord");
     } else if (file.type === "application/msword") {
       // Handle DOC files here (you may need a server-side conversion)
@@ -95,6 +97,8 @@ const CreateContract = () => {
 
   useEffect(() => {
     listFeildData();
+    setDocumentContent(null);
+    setUplodTrackFile(null);
   }, []);
 
   const handleBack = () => {
@@ -201,7 +205,8 @@ const CreateContract = () => {
                 <Button
                   variant="outlined"
                   component={Link}
-                  to="/dashboard/editor-dashboard"
+                  to="/dashboard/editor-dahsbord"
+                  onClick={() => setShowBlock("")}
                   sx={{
                     display: "table-cell",
                     padding: "15px",
