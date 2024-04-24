@@ -941,7 +941,7 @@ function SyncFesion() {
       }
     };
 
-    const loadDefaultDocument = (editorInstance) => {
+    const loadDefaultDocument = (editorInstance: any) => {
       const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":"Hello, Syncfusion Document Editor!"}]}]}]}`;
       try {
         editorInstance.open(defaultDocument, "Sfdt");
@@ -952,59 +952,6 @@ function SyncFesion() {
 
     initializeEditor();
   }, []);
-  function updateTextFormatting(documentEditor) {
-    if (
-      documentEditor &&
-      documentEditor.selection &&
-      documentEditor.selection.bodyWidgets
-    ) {
-      try {
-        const firstWidget = documentEditor.selection.bodyWidgets[0];
-        if (firstWidget) {
-          // Perform operations on the widget
-          console.log("First widget is available for manipulation.");
-        }
-      } catch (error) {
-        console.error("Failed to manipulate the selection's widget:", error);
-      }
-    } else {
-      console.log("Document editor or required properties are not ready.");
-    }
-  }
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const arrayBuffer = e.target.result;
-        const documentEditor = editorContainerRef.current?.documentEditor;
-        if (documentEditor) {
-          // Register the documentLoaded event before opening the document
-          documentEditor.documentLoaded = () => {
-            console.log("Document is now loaded, ready to manipulate.");
-            // Here you can call any function that manipulates the document
-            // For example, update formatting or access bodyWidgets
-            updateTextFormatting(documentEditor);
-          };
-          try {
-            documentEditor.open(arrayBuffer, "Docx");
-          } catch (error) {
-            console.error("Error loading document:", error);
-          }
-        }
-      };
-      reader.onerror = (error) => {
-        console.error("Error reading file:", error);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  };
-
-  // This button triggers the file input
-  const triggerFileInput = () => {
-    document.getElementById("docFileInput").click();
-  };
 
   const onClick = () => {
     const container = editorContainerRef.current;
@@ -2372,13 +2319,6 @@ function SyncFesion() {
               </div>
             )}
           </div>
-          <input
-            type="file"
-            id="docFileInput"
-            style={{ display: "none" }}
-            accept=".docx"
-            onChange={handleFileChange}
-          />
 
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
