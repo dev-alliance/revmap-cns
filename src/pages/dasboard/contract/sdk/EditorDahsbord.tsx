@@ -188,7 +188,7 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <OverView />,
-      isDisabled: showBlock === "uploadTrack",
+      // isDisabled: showBlock === "uploadTrack",
     },
     signature: {
       getIcon: (isSelected: any) => (
@@ -421,7 +421,7 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <Attachement />,
-      isDisabled: showBlock === "",
+      // isDisabled: showBlock === "",
     },
     timeLine: {
       getIcon: (isSelected: any) => (
@@ -482,7 +482,7 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <TimelineComp />,
-      isDisabled: showBlock === "",
+      // isDisabled: showBlock === "",
     },
     lifeSycle: {
       getIcon: (isSelected: any) => (
@@ -537,7 +537,7 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <LifeSycle />,
-      isDisabled: showBlock === "",
+      // isDisabled: showBlock === "",
     },
     // shere: {
     //   icon: <ShareIcon />,
