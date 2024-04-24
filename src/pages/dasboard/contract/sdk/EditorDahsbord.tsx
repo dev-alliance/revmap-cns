@@ -152,24 +152,24 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill={isSelected ? "#0000FF" : "white"}
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
             />
             <g clip-path="url(#clip0_4158_11401)">
               <path
                 d="M12.0007 18.6044C15.6825 18.6044 18.6673 15.6296 18.6673 11.9599C18.6673 8.29027 15.6825 5.31543 12.0007 5.31543C8.31875 5.31543 5.33398 8.29027 5.33398 11.9599C5.33398 15.6296 8.31875 18.6044 12.0007 18.6044Z"
-                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+                stroke="#575757"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
               <path
                 d="M12 9.30176V11.9596"
-                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+                stroke="#575757"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
               <path
                 d="M12 14.6172H12.0067"
-                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+                stroke="#575757"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
@@ -403,17 +403,17 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
             />
             <path
               d="M15.955 17.2663V13.4491C15.955 13.1825 16.0616 12.9268 16.2512 12.7383C16.4408 12.5498 16.698 12.4439 16.9662 12.4439C17.2344 12.4439 17.4916 12.5498 17.6812 12.7383C17.8708 12.9268 17.9773 13.1825 17.9773 13.4491V17.8869C17.9824 18.1541 17.9338 18.4197 17.8344 18.668C17.735 18.9164 17.5868 19.1425 17.3985 19.3333C17.2102 19.524 16.9855 19.6756 16.7376 19.779C16.4897 19.8824 16.2235 19.9357 15.9547 19.9357C15.6858 19.9357 15.4196 19.8824 15.1717 19.779C14.9238 19.6756 14.6991 19.524 14.5108 19.3333C14.3225 19.1425 14.1743 18.9164 14.0749 18.668C13.9755 18.4197 13.927 18.1541 13.932 17.8869V13.0143C13.932 12.2144 14.2517 11.4472 14.8207 10.8815C15.3897 10.3158 16.1615 9.99805 16.9662 9.99805C17.7709 9.99805 18.5427 10.3158 19.1117 10.8815C19.6807 11.4472 20.0004 12.2144 20.0004 13.0143V17.2663"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M11.6441 17.7726H5.06662C4.78374 17.7726 4.51244 17.6609 4.31241 17.462C4.11238 17.2632 4 16.9935 4 16.7123V5.04861C4 4.7674 4.11238 4.4977 4.31241 4.29885C4.51244 4.09999 4.78374 3.98828 5.06662 3.98828H12.6247C12.9074 3.98834 13.1785 4.09996 13.3785 4.29861L15.4207 6.32879C15.6205 6.52756 15.7328 6.79707 15.7329 7.07809V7.92635"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -440,41 +440,41 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
             />
             <path
               d="M7.67969 10.4004H8.74635"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M7.67969 13.5996H8.74635"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M10.8789 8.7998H16.9234"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M10.8789 11.7998H16.9234"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M10.8789 14.7998H16.9234"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M5.06667 4H18.9333C18.9333 4 20 4 20 5.2V18.8C20 18.8 20 20 18.9333 20H5.06667C5.06667 20 4 20 4 18.8V5.2C4 5.2 4 4 5.06667 4Z"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -501,35 +501,35 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
             />
             <path
               d="M10.334 11.9997C10.334 12.4417 10.5096 12.8656 10.8221 13.1782C11.1347 13.4907 11.5586 13.6663 12.0007 13.6663C12.4427 13.6663 12.8666 13.4907 13.1792 13.1782C13.4917 12.8656 13.6673 12.4417 13.6673 11.9997C13.6673 11.5576 13.4917 11.1337 13.1792 10.8212C12.8666 10.5086 12.4427 10.333 12.0007 10.333C11.5586 10.333 11.1347 10.5086 10.8221 10.8212C10.5096 11.1337 10.334 11.5576 10.334 11.9997Z"
-              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M16.4713 7.99911C15.6611 7.09364 14.5951 6.45549 13.4143 6.16908C12.2335 5.88267 10.9936 5.9615 9.85861 6.39514C8.7236 6.82878 7.74699 7.5968 7.05799 8.59758C6.36898 9.59836 6.00005 10.7847 6 11.9998V12.5018"
-              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M7.5293 16.0013C8.33946 16.9068 9.40541 17.5449 10.5861 17.8313C11.7668 18.1178 13.0067 18.039 14.1417 17.6054C15.2767 17.1718 16.2533 16.404 16.9424 15.4032C17.6314 14.4026 18.0004 13.2163 18.0006 12.0013V11.502"
-              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M16.5 13L18 11.5L19.5 13"
-              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M7.5 11L6 12.5L4.5 11"
-              stroke={showBlock === "" ? "#D3D3D3" : "#575757"}
+              stroke="#575757"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
