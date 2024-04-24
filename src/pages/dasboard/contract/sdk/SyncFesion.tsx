@@ -722,13 +722,6 @@ function SyncFesion() {
     }
   };
 
-  const customItem = {
-    prefixIcon: "e-de-ctnr-lock",
-    tooltipText: "Disable Image",
-    text: "Disable Image",
-    id: "Custom",
-  };
-
   // Full list of toolbar items
   const items: any = [
     // customItem,
@@ -756,16 +749,6 @@ function SyncFesion() {
     // "LocalClipboard",
     // "RestrictEditing",
   ];
-
-  // const triggerClick = (id: any) => {
-  //   const element = document.getElementById(id);
-  //   if (element) {
-  //     element.click();
-  //   }
-  // };
-
-  // $(".e-toolbar-item").css("display", "none");
-  // $(".e-btn-icon").css("display", "none");
 
   const triggerClick = (id: any) => {
     const element = document.getElementById(id);
@@ -884,11 +867,7 @@ function SyncFesion() {
       }
     };
   }, []);
-  const exportPdf = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    const userFileName = prompt("Enter a file name for your PDF", "My PDF");
-    documentEditor.save(userFileName, "Pdf");
-  };
+
   const save = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     const userFileName = prompt("Enter a file name for your docs", "My File");
@@ -896,33 +875,6 @@ function SyncFesion() {
       documentEditor.save(userFileName, "Docx");
     }
   };
-
-  // const onImportClick = () => {
-  //   const fileInput = document.createElement('input');
-  //   fileInput.type = 'file';
-  //   fileInput.accept = '.docx'; // Accept only DOCX files for direct opening
-  //   fileInput.onchange = async (e) => {
-  //     const file = e.target.files ? e.target.files[0] : null;
-  //     if (file && file.name && file.name.endsWith('.docx')) {
-  //       const reader = new FileReader();
-  //       reader.onload = async (e) => {
-  //         if (e.target.result) {
-  //           const arrayBuffer = e.target.result;
-  //           const documentEditor = editorContainerRef.current?.documentEditor;
-  //           if (documentEditor && arrayBuffer) {
-  //             documentEditor.open(arrayBuffer, 'Docx');
-  //           }
-  //         };
-  //       }
-  //       reader.readAsArrayBuffer(file); // Read the file as an array buffer for DOCX format
-  //     } else {
-  //       alert('Only DOCX files are supported.');
-  //     }
-  //   };
-  //   fileInput.click(); // Programmatically click the file input to open the file dialog
-  // };
-
-  // Function to trigger file input
 
   useEffect(() => {
     const initializeEditor = () => {
@@ -942,7 +894,7 @@ function SyncFesion() {
     };
 
     const loadDefaultDocument = (editorInstance: any) => {
-      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":"Hello, Syncfusion Document Editor!"}]}]}]}`;
+      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":"welcom to CNS"}]}]}]}`;
       try {
         editorInstance.open(defaultDocument, "Sfdt");
       } catch (error) {
