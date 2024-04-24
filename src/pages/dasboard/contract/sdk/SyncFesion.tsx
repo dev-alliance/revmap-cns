@@ -767,10 +767,17 @@ function SyncFesion() {
   // $(".e-toolbar-item").css("display", "none");
   // $(".e-btn-icon").css("display", "none");
 
-  const triggerClick = (id: string) => {
-    $(`#${id}`).trigger("click");
-    // $("#container_toolbar_open").parent().css("display", "block");
+  const triggerClick = (id: any) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.click();
+      // Optionally modify the parent element's style if needed:
+      // element.parentNode.style.display = "block";
+    } else {
+      console.error("Element not found:", id);
+    }
   };
+
   const fontStyle: string[] = [
     "Algerian",
     "Arial",
@@ -917,6 +924,61 @@ function SyncFesion() {
   //   };
   //   fileInput.click(); // Programmatically click the file input to open the file dialog
   // };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const arrayBuffer = e.target.result;
+        const documentEditor = editorContainerRef.current?.documentEditor;
+        if (documentEditor && documentEditor.isDocumentLoaded) {
+          try {
+            documentEditor.open(arrayBuffer, "Docx");
+          } catch (error) {
+            console.error("Error loading document:", error);
+          }
+        } else {
+          console.error(
+            "Document editor is not fully initialized or the document is not loaded."
+          );
+        }
+      };
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
+  // Function to trigger file input
+  const triggerFileInput = () => {
+    document.getElementById("docFileInput").click();
+  };
+
+  useEffect(() => {
+    const editorInstance = editorContainerRef.current?.documentEditor;
+    if (editorInstance) {
+      editorInstance.documentEditorSettings = {
+        searchHighlightColor: "red",
+      };
+      editorInstance.serviceUrl =
+        "https://ej2services.syncfusion.com/production/web-services/api/documenteditor/";
+      console.log("Editor instance is ready:", editorInstance.isDocumentLoaded);
+      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":"Hello, Syncfusion Document Editor!"}]}]}]}`;
+      editorInstance.open(defaultDocument, "Sfdt");
+    } else {
+      console.log("Editor instance is not available.");
+    }
+  }, []);
+
+  // Default document to load on component mount
+  useEffect(() => {
+    const defaultDocument = `{"sections":[{"sectionFormat":{"pageWidth":612,"pageHeight":792,"leftMargin":72,"rightMargin":72,"topMargin":72,"bottomMargin":72,"differentFirstPage":false,"differentOddAndEvenPages":false,"headerDistance":36,"footerDistance":36,"bidi":false},"blocks":[{"paragraphFormat":{"afterSpacing":30,"styleName":"Heading 1","listFormat":{}},"characterFormat":{},"inlines":[{"characterFormat":{},"text":"Adventure Works Cycles"}]}],"headersFooters":{"header":{"blocks":[{"paragraphFormat":{"listFormat":{}},"characterFormat":{},"inlines":[]}]},"footer":{"blocks":[{"paragraphFormat":{"listFormat":{}},"characterFormat":{},"inlines":[]}]}}}],"characterFormat":{"bold":false,"italic":false,"fontSize":11,"fontFamily":"Calibri","underline":"None","strikethrough":"None","baselineAlignment":"Normal","highlightColor":"NoColor","fontColor":"empty","fontSizeBidi":11,"fontFamilyBidi":"Calibri","allCaps":false},"paragraphFormat":{"leftIndent":0,"rightIndent":0,"firstLineIndent":0,"textAlignment":"Left","beforeSpacing":0,"afterSpacing":0,"lineSpacing":1.0791666507720947,"lineSpacingType":"Multiple","listFormat":{}},"defaultTabWidth":36,"trackChanges":false,"enforcement":false,"hashValue":"","saltValue":"","formatting":false,"protectionType":"NoProtection","dontUseHTMLParagraphAutoSpacing":false,"formFieldShading":true,"styles":[{"name":"Normal","type":"Paragraph","paragraphFormat":{"lineSpacing":1.149999976158142,"lineSpacingType":"Multiple","listFormat":{}},"characterFormat":{"fontFamily":"Calibri"},"next":"Normal"}]}`;
+    if (editorContainerRef.current) {
+      editorContainerRef.current.documentEditor.open(defaultDocument, "Sfdt");
+    }
+  }, []);
 
   const onClick = () => {
     const container = editorContainerRef.current;
@@ -2284,7 +2346,14 @@ function SyncFesion() {
               </div>
             )}
           </div>
-
+          <input
+            type="file"
+            id="docFileInput"
+            style={{ display: "none" }}
+            accept=".docx"
+            onChange={handleFileChange}
+          />
+          <button onClick={triggerFileInput}>Import Document</button>
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
             id="container"
@@ -2292,6 +2361,7 @@ function SyncFesion() {
             toolbarItems={items}
             toolbarClick={onToolbarClick}
             enableToolbar={true}
+            serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
             // showPropertiesPane={false}
             documentEditorSettings={{
               searchHighlightColor: "red",
