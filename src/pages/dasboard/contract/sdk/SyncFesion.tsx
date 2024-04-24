@@ -872,10 +872,7 @@ function SyncFesion() {
         // Check if the current selection is within a table
         const isInTable =
           documentEditor?.selection?.contextTypeInternal == "TableText";
-        console.log(
-          "current selection ",
-          documentEditor?.selection?.bookmarks[0]
-        );
+
         setIsTableSelected(isInTable);
       };
     }
@@ -925,6 +922,56 @@ function SyncFesion() {
   //   fileInput.click(); // Programmatically click the file input to open the file dialog
   // };
 
+  // Function to trigger file input
+
+  useEffect(() => {
+    const initializeEditor = () => {
+      const editorInstance = editorContainerRef.current?.documentEditor;
+      if (editorInstance && !editorInstance.isDocumentLoaded) {
+        editorInstance.documentLoaded = () => {
+          console.log(
+            "Document is now loaded, ready to open default document."
+          );
+          loadDefaultDocument(editorInstance);
+        };
+      } else if (editorInstance) {
+        loadDefaultDocument(editorInstance);
+      } else {
+        console.log("Editor instance is not available.");
+      }
+    };
+
+    const loadDefaultDocument = (editorInstance) => {
+      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":"Hello, Syncfusion Document Editor!"}]}]}]}`;
+      try {
+        editorInstance.open(defaultDocument, "Sfdt");
+      } catch (error) {
+        console.error("Failed to load default document:", error);
+      }
+    };
+
+    initializeEditor();
+  }, []);
+  function updateTextFormatting(documentEditor) {
+    if (
+      documentEditor &&
+      documentEditor.selection &&
+      documentEditor.selection.bodyWidgets
+    ) {
+      try {
+        const firstWidget = documentEditor.selection.bodyWidgets[0];
+        if (firstWidget) {
+          // Perform operations on the widget
+          console.log("First widget is available for manipulation.");
+        }
+      } catch (error) {
+        console.error("Failed to manipulate the selection's widget:", error);
+      }
+    } else {
+      console.log("Document editor or required properties are not ready.");
+    }
+  }
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -932,16 +979,19 @@ function SyncFesion() {
       reader.onload = function (e) {
         const arrayBuffer = e.target.result;
         const documentEditor = editorContainerRef.current?.documentEditor;
-        if (documentEditor && documentEditor.isDocumentLoaded) {
+        if (documentEditor) {
+          // Register the documentLoaded event before opening the document
+          documentEditor.documentLoaded = () => {
+            console.log("Document is now loaded, ready to manipulate.");
+            // Here you can call any function that manipulates the document
+            // For example, update formatting or access bodyWidgets
+            updateTextFormatting(documentEditor);
+          };
           try {
             documentEditor.open(arrayBuffer, "Docx");
           } catch (error) {
             console.error("Error loading document:", error);
           }
-        } else {
-          console.error(
-            "Document editor is not fully initialized or the document is not loaded."
-          );
         }
       };
       reader.onerror = (error) => {
@@ -951,34 +1001,10 @@ function SyncFesion() {
     }
   };
 
-  // Function to trigger file input
+  // This button triggers the file input
   const triggerFileInput = () => {
     document.getElementById("docFileInput").click();
   };
-
-  useEffect(() => {
-    const editorInstance = editorContainerRef.current?.documentEditor;
-    if (editorInstance) {
-      editorInstance.documentEditorSettings = {
-        searchHighlightColor: "red",
-      };
-      editorInstance.serviceUrl =
-        "https://ej2services.syncfusion.com/production/web-services/api/documenteditor/";
-      console.log("Editor instance is ready:", editorInstance.isDocumentLoaded);
-      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":"Hello, Syncfusion Document Editor!"}]}]}]}`;
-      editorInstance.open(defaultDocument, "Sfdt");
-    } else {
-      console.log("Editor instance is not available.");
-    }
-  }, []);
-
-  // Default document to load on component mount
-  useEffect(() => {
-    const defaultDocument = `{"sections":[{"sectionFormat":{"pageWidth":612,"pageHeight":792,"leftMargin":72,"rightMargin":72,"topMargin":72,"bottomMargin":72,"differentFirstPage":false,"differentOddAndEvenPages":false,"headerDistance":36,"footerDistance":36,"bidi":false},"blocks":[{"paragraphFormat":{"afterSpacing":30,"styleName":"Heading 1","listFormat":{}},"characterFormat":{},"inlines":[{"characterFormat":{},"text":"Adventure Works Cycles"}]}],"headersFooters":{"header":{"blocks":[{"paragraphFormat":{"listFormat":{}},"characterFormat":{},"inlines":[]}]},"footer":{"blocks":[{"paragraphFormat":{"listFormat":{}},"characterFormat":{},"inlines":[]}]}}}],"characterFormat":{"bold":false,"italic":false,"fontSize":11,"fontFamily":"Calibri","underline":"None","strikethrough":"None","baselineAlignment":"Normal","highlightColor":"NoColor","fontColor":"empty","fontSizeBidi":11,"fontFamilyBidi":"Calibri","allCaps":false},"paragraphFormat":{"leftIndent":0,"rightIndent":0,"firstLineIndent":0,"textAlignment":"Left","beforeSpacing":0,"afterSpacing":0,"lineSpacing":1.0791666507720947,"lineSpacingType":"Multiple","listFormat":{}},"defaultTabWidth":36,"trackChanges":false,"enforcement":false,"hashValue":"","saltValue":"","formatting":false,"protectionType":"NoProtection","dontUseHTMLParagraphAutoSpacing":false,"formFieldShading":true,"styles":[{"name":"Normal","type":"Paragraph","paragraphFormat":{"lineSpacing":1.149999976158142,"lineSpacingType":"Multiple","listFormat":{}},"characterFormat":{"fontFamily":"Calibri"},"next":"Normal"}]}`;
-    if (editorContainerRef.current) {
-      editorContainerRef.current.documentEditor.open(defaultDocument, "Sfdt");
-    }
-  }, []);
 
   const onClick = () => {
     const container = editorContainerRef.current;
@@ -2353,7 +2379,7 @@ function SyncFesion() {
             accept=".docx"
             onChange={handleFileChange}
           />
-          <button onClick={triggerFileInput}>Import Document</button>
+
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
             id="container"
