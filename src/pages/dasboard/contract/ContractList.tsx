@@ -34,6 +34,7 @@ import {
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 // import MenuButton from "@/components/MenuButton";
 
 interface CellType {
@@ -463,6 +464,7 @@ const ContractList = () => {
                 >
                   Set as a default
                 </Button>
+
                 {/* <MenuButton /> */}
               </div>
             </Box>
