@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import {
   TextField,
   Typography,
-  Paper,
+  Button,
   Box,
   Divider,
   Checkbox,
@@ -560,6 +560,60 @@ const LifeCycle = () => {
         }
         label="Send automatic reminders"
       />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          width: "100%",
+          marginBottom: "0.5rem",
+        }}
+      >
+        <Button
+          variant="contained"
+          color="inherit"
+          sx={{
+            mr: "20px",
+            textTransform: "none",
+            backgroundColor: "#DCDCDC",
+            "&:hover": {
+              backgroundColor: "#757575",
+            },
+            color: "white",
+            padding: "2px 5px !important",
+            height: "25px !important",
+            fontSize: "0.675rem",
+          }}
+          // onClick={() => {
+          //   setSignatories([]),
+          //     setSelectedApprovalId(""),
+          //     setShowSignatories(""),
+          //     setApprovers([]);
+          //   setShowCompanySelect(false);
+          //   setShowConditionalSelect(false);
+          // }}
+        >
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          color="inherit"
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#62BD6B",
+            "&:hover": {
+              backgroundColor: "#62BD6d",
+            },
+            color: "white",
+            padding: "2px 5px !important",
+            height: "25px !important",
+            fontSize: "0.675rem",
+          }}
+          // onClick={() => setShowSignatories("topbar")}
+        >
+          Save
+        </Button>
+      </div>
     </div>
   );
 };
