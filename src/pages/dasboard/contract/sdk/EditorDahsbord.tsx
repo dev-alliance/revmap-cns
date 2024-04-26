@@ -83,8 +83,13 @@ const MyComponent: React.FC = () => {
   const { setOpenDocoment, sidebarExpanded, setSidebarExpanded, showBlock } =
     useContext(ContractContext);
   // const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
-  const { signatories, setSignatories, selectedModule, setSelectedModule } =
-    useContext(ContractContext);
+  const {
+    signatories,
+    setSignatories,
+    selectedModule,
+    setSelectedModule,
+    editMode,
+  } = useContext(ContractContext);
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -151,7 +156,7 @@ const MyComponent: React.FC = () => {
               y="0.5"
               width="23"
               height="22.9202"
-              fill={isSelected ? "#0000FF" : "white"}
+              fill={isSelected ? "white" : "white"}
               stroke="#575757"
             />
             <g clip-path="url(#clip0_4158_11401)">
@@ -559,10 +564,18 @@ const MyComponent: React.FC = () => {
               width="23"
               height="22.9202"
               fill="white"
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke={
+                showBlock === "uploadTrack" || editMode === false
+                  ? "#D3D3D3"
+                  : "#575757"
+              }
             />
             <path
-              stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+              stroke={
+                showBlock === "uploadTrack" || editMode === false
+                  ? "#D3D3D3"
+                  : "#575757"
+              }
               d="M4 3.98633V19.9331H20V3.98633H4ZM4.8 4.983H19.2V18.9364H4.8V4.983ZM7.63636 7.97302V8.9697H10.4H13.4545V7.97302H10.4H7.63636ZM7.63636 11.4614V12.4581H12H16.3636V11.4614H12H7.63636ZM7.63636 14.9497V15.9464H9.6H12V14.9497H9.6H7.63636Z"
               fill="#575757"
             />
@@ -570,7 +583,7 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <Fields />,
-      isDisabled: showBlock === "uploadTrack",
+      isDisabled: showBlock === "uploadTrack" || editMode === false,
     },
 
     // Add more modules as needed

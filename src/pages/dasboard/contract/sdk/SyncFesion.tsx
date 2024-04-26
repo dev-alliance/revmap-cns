@@ -119,6 +119,7 @@ import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import mammoth from "mammoth";
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
+import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
 
 DocumentEditorComponent.Inject(
   Selection,
@@ -139,6 +140,11 @@ function SyncFesion() {
     uplodTrackFile,
     documentContent,
     showBlock,
+    setShowBlock,
+    setSelectedModule,
+    setSidebarExpanded,
+    setEditMode,
+    editMode,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
@@ -1263,7 +1269,7 @@ function SyncFesion() {
     if (recipients.hasReqOption) {
       highlightStep = "Review";
     }
-    if (hasReqOption) {
+    if (recipients.signature) {
       highlightStep = "Signing";
     }
     if (hasSignature) {
@@ -1273,7 +1279,10 @@ function SyncFesion() {
     return (
       <ul className="mt-2" id="breadcrumb">
         <li>
-          <a href="#">
+          <a
+            href="#"
+            style={{ color: highlightStep === "" ? "blue" : "white" }}
+          >
             <span className="icon icon-beaker"> </span> Draft
           </a>
         </li>
@@ -1319,6 +1328,7 @@ function SyncFesion() {
     // To select the current word in document
     container?.documentEditor?.selection.selectCurrentWord();
 
+    // documentEditor?.restrictEditing = true;
     // To get the selected content as text
     const selectedContent: string = container?.documentEditor?.selection.text;
   };
@@ -1337,7 +1347,8 @@ function SyncFesion() {
         setDocumentPath(base64String);
       };
       reader.readAsDataURL(file);
-      toggleDropdown("file");
+      toggleDropdown("");
+      setShowBlock("pdf");
     } else {
       alert("Please upload a valid PDF file.");
     }
@@ -1510,6 +1521,7 @@ function SyncFesion() {
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
                   setShowPopup((current: any) => !current);
+                  toggleDropdown("file");
                 }}
               >
                 <img
@@ -1524,262 +1536,6 @@ function SyncFesion() {
                 // onClick={() => toggleDropdown("file")}
                 className="w-full h-full  fixed inset-0 z-[-9]"
               ></div>
-              <Dialog
-                open={showPopup}
-                onClose={() => {
-                  setShowPopup(false); // Ensures the popup closes
-                }}
-                maxWidth="sm"
-                fullWidth
-              >
-                <DialogTitle
-                  sx={{
-                    position: "relative",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    borderBottom: "1px solid black",
-                  }}
-                >
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      position: "absolute",
-                      left: 16,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                    }}
-                  >
-                    Select the type of document you are importing:
-                  </Typography>
-                  <IconButton
-                    onClick={() => {
-                      toggleDropdown("file");
-                      setShowPopup(false); // This should trigger the popup to open
-                    }}
-                    aria-label="close"
-                    sx={{ position: "absolute", top: -4, right: 0 }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </DialogTitle>
-                <DialogContent>
-                  <Typography gutterBottom align="center" sx={{ mt: 2 }}>
-                    Please select whether you are importing a Word file or a PDF
-                    file.
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center", // Center-align items horizontally in the box
-                      justifyContent: "center", // Center-align items vertically in the box
-                      width: "100%", // Take full width of the container
-                      my: 4, // Margin top and bottom for spacing
-                    }}
-                  >
-                    <input
-                      type="file"
-                      style={{ display: "none" }}
-                      ref={fileInputRef}
-                      onChange={handleFileUpload}
-                      accept=".pdf"
-                    />
-                    <Button
-                      onClick={() => {
-                        fileInputRef.current && fileInputRef.current.click();
-                      }}
-                      variant="outlined"
-                      sx={{
-                        display: "table-cell",
-                        padding: "15px",
-                        pt: 2,
-                        height: "90px",
-                        width: "200px", // Uncomment if fixed width is required
-                        color: "gray",
-                        justifyContent: "center",
-                        textTransform: "none",
-                        borderColor: "#D9D9D9 !important", // Using !important to ensure the border color is applied
-                        borderWidth: 1,
-                        borderStyle: "solid",
-                        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                        borderRadius: "4px", // Adds rounded corners
-                        backgroundColor: "#fff",
-                        marginRight: 2, // Sets the background color to white
-                      }}
-                    >
-                      <div style={{ display: "flex" }}>
-                        <div style={{ marginLeft: "-7px" }}>
-                          <svg
-                            width="40"
-                            height="40"
-                            viewBox="0 0 48 55"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M27.7319 5.12988H12.2901C11.2663 5.12988 10.2844 5.601 9.56038 6.43958C8.83641 7.27817 8.42969 8.41554 8.42969 9.60148V45.3742C8.42969 46.5602 8.83641 47.6975 9.56038 48.5361C10.2844 49.3747 11.2663 49.8458 12.2901 49.8458H35.4528C36.4766 49.8458 37.4585 49.3747 38.1825 48.5361C38.9065 47.6975 39.3132 46.5602 39.3132 45.3742V18.5447L27.7319 5.12988Z"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M27.7324 5.12988V18.5447H39.3137"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M31.5921 29.7236H16.1504"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M31.5921 38.667H16.1504"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M20.0108 20.7803H18.0806H16.1504"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-                        </div>
-
-                        <div style={{ display: "table", margin: "0 auto" }}>
-                          <div style={{ display: "table-row" }}>
-                            <div
-                              style={{
-                                display: "table-cell",
-                                textAlign: "start",
-                              }}
-                            >
-                              <Typography variant="body1">Pdf</Typography>
-                            </div>
-                          </div>
-                          <div style={{ display: "table-row" }}>
-                            <div
-                              style={{
-                                display: "table-cell",
-                                textAlign: "start",
-                              }}
-                            >
-                              <Typography sx={{ fontSize: "10px" }}>
-                                Use PDf for signature ,life sycle and much more
-                              </Typography>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        toggleDropdown("file"), setDocumentPath("");
-                        triggerClick("container_toolbar_open");
-                      }}
-                      variant="outlined"
-                      sx={{
-                        display: "table-cell",
-                        padding: "15px",
-                        pt: 2,
-                        height: "90px",
-                        width: "200px", // Uncomment if fixed width is required
-                        color: "gray",
-                        justifyContent: "center",
-                        textTransform: "none",
-                        borderColor: "#D9D9D9 !important", // Using !important to ensure the border color is applied
-                        borderWidth: 1,
-                        borderStyle: "solid",
-                        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                        borderRadius: "4px", // Adds rounded corners
-                        backgroundColor: "#fff", // Sets the background color to white
-                      }}
-                    >
-                      <div style={{ display: "flex" }}>
-                        <div style={{ marginLeft: "-7px" }}>
-                          <svg
-                            width="40"
-                            height="40"
-                            viewBox="0 0 48 55"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M27.7319 5.12988H12.2901C11.2663 5.12988 10.2844 5.601 9.56038 6.43958C8.83641 7.27817 8.42969 8.41554 8.42969 9.60148V45.3742C8.42969 46.5602 8.83641 47.6975 9.56038 48.5361C10.2844 49.3747 11.2663 49.8458 12.2901 49.8458H35.4528C36.4766 49.8458 37.4585 49.3747 38.1825 48.5361C38.9065 47.6975 39.3132 46.5602 39.3132 45.3742V18.5447L27.7319 5.12988Z"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M27.7324 5.12988V18.5447H39.3137"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M31.5921 29.7236H16.1504"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M31.5921 38.667H16.1504"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              d="M20.0108 20.7803H18.0806H16.1504"
-                              stroke="#7B7B7B"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-                        </div>
-
-                        <div style={{ display: "table", margin: "0 auto" }}>
-                          <div style={{ display: "table-row" }}>
-                            <div
-                              style={{
-                                display: "table-cell",
-                                textAlign: "start",
-                              }}
-                            >
-                              <Typography variant="body1">Word</Typography>
-                            </div>
-                          </div>
-                          <div style={{ display: "table-row" }}>
-                            <div
-                              style={{
-                                display: "table-cell",
-                                textAlign: "start",
-                              }}
-                            >
-                              <Typography sx={{ fontSize: "10px" }}>
-                                Import word ,txt, rtf, doc, docx file to create
-                                document
-                              </Typography>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </Button>
-                  </Box>
-                </DialogContent>
-              </Dialog>
             </ul>
           )}
         </div>
@@ -2192,27 +1948,51 @@ function SyncFesion() {
         </div>
         <Box sx={{ width: "100%", px: 2.6 }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            {showBlock == "uploadTrack" && (
-              <>
-                <Button variant="outlined" sx={{ textTransform: "none" }}>
-                  Cancel
-                </Button>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  type="submit"
-                  variant="outlined"
-                  color="success"
-                >
-                  Save
-                </Button>
-              </>
-            )}
-            {showBlock == "" && (
+            {showBlock == "uploadTrack" ||
+              (editMode && (
+                <>
+                  <Button
+                    variant="outlined"
+                    sx={{ textTransform: "none" }}
+                    onClick={() => setEditMode(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    sx={{ ml: 2, textTransform: "none" }}
+                    type="submit"
+                    variant="outlined"
+                    color="success"
+                  >
+                    Save
+                  </Button>
+                </>
+              ))}
+
+            {showBlock == "pdf" && (
               <Button
                 sx={{ ml: 2, textTransform: "none" }}
                 type="submit"
                 variant="outlined"
                 color="success"
+                onClick={() => {
+                  setSidebarExpanded(true), setSelectedModule("fields");
+                }}
+              >
+                Add Field
+              </Button>
+            )}
+            {showBlock == "" && !editMode && (
+              <Button
+                sx={{ ml: 2, textTransform: "none" }}
+                type="submit"
+                variant="outlined"
+                color="success"
+                onClick={() => {
+                  // setSidebarExpanded(true),
+                  setEditMode(true);
+                  // setSelectedModule("fields");
+                }}
               >
                 Edit
               </Button>
@@ -2575,6 +2355,13 @@ function SyncFesion() {
           />
         </>
       )}
+      <SyncFesionFileDilog
+        open={showPopup}
+        onClose={() => setShowPopup(false)}
+        setDocumentPath={setDocumentPath}
+        documentPath={documentPath}
+        triggerClick={() => triggerClick("container_toolbar_open")}
+      />
     </div>
   );
 }

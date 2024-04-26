@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AnyAaaaRecord } from "dns";
+
 import React, {
   createContext,
   useState,
@@ -110,6 +110,9 @@ interface ContractContextProps {
 
   showBlock: any | null;
   setShowBlock: Dispatch<SetStateAction<any>>;
+
+  editMode: any | null;
+  setEditMode: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -176,12 +179,15 @@ export const ContractContext = createContext<ContractContextProps>({
   setDocumentContent: () => {},
   showBlock: {},
   setShowBlock: () => {},
+  editMode: {},
+  setEditMode: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
+  const [editMode, setEditMode] = useState<boolean>(false);
   const [documentContent, setDocumentContent] = useState<any>(null);
   const [showBlock, setShowBlock] = useState<string>("");
   const [Drawsignature, setDrawSignature] = useState(null);
@@ -377,6 +383,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (showBlock) {
       setShowBlock(JSON.parse(showBlock));
     }
+    const editMode = localStorage.getItem("editMode");
+    if (editMode) {
+      setEditMode(JSON.parse(editMode));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -460,6 +470,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setDocumentContent,
         showBlock,
         setShowBlock,
+        editMode,
+        setEditMode,
       }}
     >
       {children}
