@@ -276,29 +276,12 @@ const Fields = () => {
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
           </div>
         )}
-        {field?.id == "RadioButton" && (
-          <div
-            onClick={radioDrag}
-            className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
-            draggable={selectedEmails ? true : false}
-            onDragEnd={handleDragStartCheckbox}
-            style={{ cursor: "grab", backgroundColor }}
-          >
-            <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
-          </div>
-        )}
+
       </>
     );
   };
 
   const fields = [
-    // {
-    //   id: "Signature",
-    //   icon: signIcon,
-    //   label: "Signature",
-    //   placeholder: "[ Signature ]",
-    // },
-
     { id: "Initial", icon: ps, label: "Initial", placeholder: "[Initial]" },
 
     {
@@ -324,12 +307,18 @@ const Fields = () => {
       placeholder: "[ Company ]",
     },
 
-    {
-      id: "ShortAnswer",
-      icon: shortIcon,
-      label: "Short Answer",
-      placeholder: "[ Short Answer ]",
-    },
+    // {
+    //   id: "ShortAnswer",
+    //   icon: shortIcon,
+    //   label: "Short Answer",
+    //   placeholder: "[ Short Answer ]",
+    // },
+
+  ];
+
+
+  const buttonFields = [
+
 
     {
       id: "Text",
@@ -352,6 +341,113 @@ const Fields = () => {
       placeholder: "[ Radio Button ]", // Command to insert a radio button form field
     },
   ];
+
+  // button dragable fields 
+
+  const ButtonDraggableField = ({ field }: any) => {
+    console.log("fields : ", field);
+    const handleDragStart = (e: any) => {
+      e.dataTransfer.setData("text/plain", field.placeholder);
+      const documentEditor = editorRefContext;
+      if (selectedEmails) {
+        documentEditor.editor.insertFormField("Text");
+      }
+
+      const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
+        "Text1"
+      ) as TextFormFieldInfo;
+
+      console.log("text fielf info :", textfieldInfo);
+
+      textfieldInfo.defaultValue = field?.label + (requiredField ? " *" : "");
+      // textfieldInfo.format = "Lowercase";
+      textfieldInfo.type = "Text";
+      textfieldInfo.name = field?.label;
+      documentEditor.setFormFieldInfo("Text1", textfieldInfo);
+      setDragFields(dragFields + 1);
+
+      setRecipients((prev: any) => {
+        const updated = prev.map((user: any) => {
+          const matches =
+            user.email.trim().toLowerCase() ===
+            selectedEmails?.email.trim().toLowerCase();
+
+          if (matches) {
+            return { ...user, field: dragFields + 1 };
+          }
+          return user;
+        });
+        // console.log("Updated recipients:", updated); // Log the full updated array
+        return updated;
+      });
+    };
+
+    const handleDragStartCheckbox = (e: any) => {
+
+      e.dataTransfer.setData("text/plain", field.placeholder);
+      const documentEditor = editorRefContext;
+      if (selectedEmails) {
+        console.log('run')
+        // Insert the checkbox first
+        documentEditor.editor.insertFormField("CheckBox");
+
+
+        // Retrieve and update checkbox details as before
+        let checkboxFieldInfo = documentEditor.getFormFieldInfo('Check1') as CheckBoxFormFieldInfo;
+        // Insert text label next to the checkbox
+        // You need to adjust the 'x' and 'y' coordinates based on the position of the checkbox
+        documentEditor.editor.insertText("Accept Terms", { x: 50, y: 50 }); // Example coordinates
+
+        documentEditor.setFormFieldInfo('Check1', checkboxFieldInfo);
+
+
+
+
+        //         let checkboxfieldInfo: CheckBoxFormFieldInfo = documentEditor.getFormFieldInfo('Check1') as CheckBoxFormFieldInfo;
+        // checkboxfieldInfo.defaultValue = true;
+        // checkboxfieldInfo.name = "Check2";
+        // documentEditor.setFormFieldInfo('Check1', checkboxfieldInfo);
+
+      }
+    };
+    // console.log("recipients :", recipients);
+
+
+
+
+    return (
+      <>
+        {field?.id !== "RadioButton" && (
+          <div
+            className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
+            draggable={selectedEmails ? true : false}
+            onDragEnd={handleDragStart}
+            style={{ cursor: "grab", backgroundColor }}
+          >
+            <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
+          </div>
+        )}
+        {field?.id == "RadioButton" && (
+          <div
+            onClick={radioDrag}
+            className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
+            draggable={selectedEmails ? true : false}
+            onDragEnd={handleDragStartCheckbox}
+            style={{ cursor: "grab", backgroundColor }}
+          >
+            <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
+          </div>
+        )}
+      </>
+    );
+  };
+
+
+
+
+
+
+
 
   const listData = async () => {
     try {
@@ -424,6 +520,29 @@ const Fields = () => {
           documentEditor?.selection?.contextTypeInternal == "TableText";
 
         console.log("current selection ", documentEditor?.selection);
+
+        // Get the start text position of the selection
+        let startPosition = documentEditor.selection.start;
+
+        // Get the page number of the start position
+        let page = startPosition.pageIndex;
+
+        // Get the location (x, y) of the start position in points; assuming 'viewer' is defined
+        // You might need to convert these coordinates to suit where you want the text box to appear
+        let x = startPosition.location.x;
+        let y = startPosition.location.y;
+
+        console.log('x :', x, 'and y :', y)
+
+
+        // Get the start and end positions of the selection
+        // const startOffset = documentEditor.selection.startOffset;
+        // const endOffset = documentEditor.selection.endOffset;
+
+        // console.log(`Start Offset: ${startOffset}, End Offset: ${endOffset}`);
+
+
+
         setSelectionField(documentEditor?.selection?.bookmarks[0]);
       };
     }
@@ -563,14 +682,70 @@ const Fields = () => {
               label="Required Field"
             />
             <Divider style={{ margin: "10px 0" }} />
-            <TextField
+            {/* <TextField
               size="small" // Sets the TextField to a smaller size
               variant="outlined" // Outlined style
               label="Enter Data" // Label text
               value={placeHolder} // Bind state value
               // value={selectionField} // Bind state value
               onChange={(e: any) => handleGetValue(e)} // Handle input changes
+            /> */}
+
+
+
+
+
+            <TextField
+              label="Placeholder" // Label text
+              value={placeHolder}
+              onChange={(e: any) => handleGetValue(e)} // Handle input changes
+              fullWidth
+              size="small"
+              variant="standard"
+              InputProps={{
+                disableUnderline: true, // Disables the underline by default
+                sx: {
+                  "::after": {
+                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                  },
+                  "::before": {
+                    borderBottom: "none !important", // Hides the underline
+                  },
+                  ":hover:not(.Mui-disabled)::before": {
+                    borderBottom: "none !important", // Ensures underline stays hidden on hover
+                  },
+                  "input:focus + fieldset": {
+                    border: "none", // Optional: for outlined variant if ever used
+                  },
+                  "::placeholder": {
+                    fontSize: "0.55rem",
+                  },
+                  input: {
+                    fontSize: "0.875rem",
+                    "&:focus": {
+                      // Shows the underline when the input is focused
+                      borderBottom: "2px solid", // Adjust color as needed
+                    },
+                  },
+                },
+              }}
             />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             <Divider style={{ margin: "10px 0" }} />
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
               <Button
@@ -645,10 +820,33 @@ const Fields = () => {
               {fields.map((field, index) => (
                 <React.Fragment key={field.id}>
                   <DraggableField field={field} />
-                  {(index + 1) % 6 === 0 && <Divider sx={{ mt: 3, mb: 3 }} />}
                 </React.Fragment>
               ))}
             </div>
+
+
+            <Divider sx={{ mt: 1, mb: 3 }} />
+
+            {/* buttonFields */}
+
+
+            {buttonFields.map((field, index) => (
+              <React.Fragment key={field.id}>
+                <ButtonDraggableField field={field} />
+              </React.Fragment>
+            ))}
+
+
+
+
+
+
+
+
+
+
+
+
 
             <Divider sx={{ mt: 1, mb: 2 }} />
             <p className="font-medium text-[14px] text-[#155be5] my-3">

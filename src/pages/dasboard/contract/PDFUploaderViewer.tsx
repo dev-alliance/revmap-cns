@@ -32,7 +32,7 @@ const PDFUploaderViewer = ({ documentPath }: any) => {
 
       viewer.formDesignerModule.addFormField("Textbox", {
         name: "First Name",
-        bounds: { X: 146, Y: 229, Width: 150, Height: 24 },
+        bounds: { X: 336, Y: 230, Width: 150, Height: 24 },
       });
       //   viewer.formDesignerModule.addFormField("Textbox", {
       //     name: "Middle Name",
