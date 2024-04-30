@@ -2015,22 +2015,7 @@ function SyncFesion() {
       {/* <div id="xyz">show </div> */}
       {showBlock == "uploadTrack" && (
         <div
-          style={
-            documentContent
-              ? {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "start", // Align to the top
-                minHeight: "100vh", // Full height of the viewport
-                padding: "2rem 4rem", // Padding around
-                boxSizing: "border-box",
-                overflow: "auto", // Allows scrolling
-                backgroundColor: "#f0f0f0", // Background color
-              }
-              : {
 
-              }
-          }
         >
           {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
             <div className="  w-full h-[70vh] bg-white overflow-auto"  >
@@ -2042,10 +2027,16 @@ function SyncFesion() {
               </div>
             </div>
           ) : (
-            <div
-              className="child-div"
-              dangerouslySetInnerHTML={{ __html: documentContent }}
-            />
+            <div className="  w-full h-[70vh] bg-white overflow-auto"  >
+              <div className="max-w-[950px] w-full mx-auto">
+
+
+                <div
+                  className="w-full border-2 px-4"
+                  dangerouslySetInnerHTML={{ __html: documentContent }}
+                />
+              </div>
+            </div>
           )}
         </div>
       )}
