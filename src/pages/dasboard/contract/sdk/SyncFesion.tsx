@@ -149,7 +149,7 @@ function SyncFesion() {
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
-  useEffect(() => {}, [documentContent, uplodTrackFile]);
+  useEffect(() => { }, [documentContent, uplodTrackFile]);
 
   const editorContainerRef: any = useRef(null);
 
@@ -1445,11 +1445,10 @@ function SyncFesion() {
 
         <div className="relative ">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300 hover:text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${showBlock == "uploadTrack"
+              ? "text-gray-300 hover:text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("file")}
           >
@@ -1544,11 +1543,10 @@ function SyncFesion() {
         {/* View Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${showBlock == "uploadTrack"
+              ? "text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("view")}
           >
@@ -1656,11 +1654,10 @@ function SyncFesion() {
         {/* insert and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${showBlock == "uploadTrack"
+              ? "text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("insert")}
           >
@@ -1686,9 +1683,9 @@ function SyncFesion() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-                // onClick={() => {
-                //   triggerClick("container_toolbar_image_local");
-                // }}
+              // onClick={() => {
+              //   triggerClick("container_toolbar_image_local");
+              // }}
               >
                 <label
                   htmlFor="forimg"
@@ -1782,11 +1779,10 @@ function SyncFesion() {
         {/* Signature Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${showBlock == "uploadTrack"
+              ? "text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("signature")}
           >
@@ -2022,36 +2018,28 @@ function SyncFesion() {
           style={
             documentContent
               ? {
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "start", // Align to the top
-                  minHeight: "100vh", // Full height of the viewport
-                  padding: "2rem 4rem", // Padding around
-                  boxSizing: "border-box",
-                  overflow: "auto", // Allows scrolling
-                  backgroundColor: "#f0f0f0", // Background color
-                }
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "start", // Align to the top
+                minHeight: "100vh", // Full height of the viewport
+                padding: "2rem 4rem", // Padding around
+                boxSizing: "border-box",
+                overflow: "auto", // Allows scrolling
+                backgroundColor: "#f0f0f0", // Background color
+              }
               : {
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100vh",
-                }
+
+              }
           }
         >
           {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
-            <div
-              className="no-scrollbar"
-              style={{
-                width: "59%", // This can be adjusted to '800px' if a fixed width is preferred
-                height: "100vh", // This should probably match the viewport height
-                backgroundColor: "#fff",
-                overflow: "hidden",
-              }}
-            >
-              <Worker workerUrl={workerUrl}>
-                <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
-              </Worker>
+            <div className="  w-full h-[70vh] bg-white overflow-auto"  >
+              <div className="max-w-[600px] w-full mx-auto">
+
+                <Worker workerUrl={workerUrl}>
+                  <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
+                </Worker>
+              </div>
             </div>
           ) : (
             <div

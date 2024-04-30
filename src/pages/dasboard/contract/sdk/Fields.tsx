@@ -401,8 +401,6 @@ const Fields = () => {
         documentEditor.setFormFieldInfo('Check1', checkboxFieldInfo);
 
 
-
-
         //         let checkboxfieldInfo: CheckBoxFormFieldInfo = documentEditor.getFormFieldInfo('Check1') as CheckBoxFormFieldInfo;
         // checkboxfieldInfo.defaultValue = true;
         // checkboxfieldInfo.name = "Check2";
