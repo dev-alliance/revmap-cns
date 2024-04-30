@@ -2034,7 +2034,7 @@ function SyncFesion() {
         >
           {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
             <div className="  w-full h-[70vh] bg-white overflow-auto"  >
-              <div className="max-w-[600px] w-full mx-auto">
+              <div className="max-w-[1000px] w-full mx-auto">
 
                 <Worker workerUrl={workerUrl}>
                   <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
