@@ -905,7 +905,7 @@ function SyncFesion() {
     };
 
     const loadDefaultDocument = (editorInstance: any) => {
-      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":"welcom to CNS"}]}]}]}`;
+      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":""}]}]}]}`;
       try {
         editorInstance.open(defaultDocument, "Sfdt");
       } catch (error) {
@@ -1353,6 +1353,7 @@ function SyncFesion() {
       alert("Please upload a valid PDF file.");
     }
   };
+  console.log("showBlock", showBlock);
 
   return (
     <div>
@@ -1404,7 +1405,7 @@ function SyncFesion() {
           Externally Executed Document
         </Typography>
       )}
-      {showBlock === "" && (
+      {(showBlock === "" || showBlock === "pdf") && (
         <>
           <Breadcrumb recipients={recipients} />
 
@@ -1982,6 +1983,20 @@ function SyncFesion() {
                 Add Field
               </Button>
             )}
+            {showBlock == "uploadTrack" && (
+              <Button
+                sx={{ ml: 2, textTransform: "none" }}
+                type="submit"
+                variant="outlined"
+                color="success"
+                onClick={() => {
+                  setSidebarExpanded(true), setSelectedModule("fields");
+                }}
+              >
+                Manage lifecycle and set renewal reminders
+              </Button>
+            )}
+
             {showBlock == "" && !editMode && (
               <Button
                 sx={{ ml: 2, textTransform: "none" }}
@@ -2009,46 +2024,44 @@ function SyncFesion() {
               ? {
                   display: "flex",
                   justifyContent: "center",
-                  width: "794px", // Standard A4 width in pixels
-                  height: "610px", // Custom height in pixels
-                  border: "2px solid #ccc", // Adds a light gray border
-                  margin: "auto",
-                  padding: "4rem", // Padding inside the div
+                  alignItems: "start", // Align to the top
+                  minHeight: "100vh", // Full height of the viewport
+                  padding: "2rem 4rem", // Padding around
                   boxSizing: "border-box",
-                  marginTop: "2rem",
-                  overflow: "auto",
-                  backgroundColor: "#fff", // Set background color to white
-                  boxShadow: "0 0 10px rgba(0,0,0,0.1)", // Add shadow for better A4 paper effect
+                  overflow: "auto", // Allows scrolling
+                  backgroundColor: "#f0f0f0", // Background color
                 }
               : {
                   display: "flex",
                   justifyContent: "center",
-                  width: "700px", // Slightly narrower width
-                  height: "610px", // Same custom height as other condition
-                  margin: "auto",
-                  padding: "0", // No padding
-                  boxSizing: "border-box",
-                  marginTop: "2rem",
-                  marginBottom: "1rem",
-                  overflow: "auto",
+                  alignItems: "center",
+                  height: "100vh",
                 }
           }
         >
-          <>
-            {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
-              <>
-                <Worker workerUrl={workerUrl}>
-                  <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
-                </Worker>
-              </>
-            ) : (
-              <>
-                <div dangerouslySetInnerHTML={{ __html: documentContent }} />
-              </>
-            )}
-          </>
+          {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
+            <div
+              className="no-scrollbar"
+              style={{
+                width: "59%", // This can be adjusted to '800px' if a fixed width is preferred
+                height: "100vh", // This should probably match the viewport height
+                backgroundColor: "#fff",
+                overflow: "hidden",
+              }}
+            >
+              <Worker workerUrl={workerUrl}>
+                <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
+              </Worker>
+            </div>
+          ) : (
+            <div
+              className="child-div"
+              dangerouslySetInnerHTML={{ __html: documentContent }}
+            />
+          )}
         </div>
       )}
+
       {documentPath && <PDFUploaderViewer documentPath={documentPath} />}
       {showBlock === "" && (
         <>

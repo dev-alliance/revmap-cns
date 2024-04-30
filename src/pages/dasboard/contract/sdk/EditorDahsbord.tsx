@@ -822,7 +822,7 @@ const MyComponent: React.FC = () => {
             display: "flex",
             flexDirection: "column", // Typically, card content is laid out vertically
             height: "100vh",
-            // overflowY: "auto",
+            overflowY: "auto",
             backgroundColor: "#fff", // Cards usually have a solid background color
             boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.05)", // Adds a subtle shadow similar to Material-UI cards
             borderRadius: "4px", // Card-like elements often have rounded corners
@@ -891,6 +891,7 @@ const MyComponent: React.FC = () => {
                       display: "flex",
                       alignItems: "center",
                       gap: "4px",
+                      overflow: "auto",
                     }}
                   >
                     {/* Always show the pin icon, change color when pinned */}

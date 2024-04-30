@@ -24,6 +24,32 @@
   transition: opacity 0.2s ease;
   /* Smooth transition for opacity change */
 }
+.parent-div {
+  display: flex;
+  justify-content: center;
+  align-items: start; /* Align to the top */
+  min-height: 100vh; /* Full height of the viewport */
+  padding: 2rem 4rem; /* Padding around */
+  box-sizing: border-box;
+  overflow: auto; /* Allows scrolling */
+  background-color: #f0f0f0; /* Background color */
+}
+
+.child-div {
+  width: 810px; /* Fixed width for the page-like appearance */
+  min-height: 610px; /* Minimum height */
+  max-height: 610px; /* Set a max-height if you want a fixed size with internal scrolling */
+  padding: 1rem; /* Padding inside the container */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  background-color: #fff; /* White background */
+  box-sizing: border-box;
+  overflow-y: auto; /* Vertical scrolling */
+  margin-bottom: 1rem; /* Bottom margin */
+}
+
+.no-scrollbar {
+  overflow: hidden !important;
+}
 
 .condition-item:hover .remove-btn {
   opacity: 1;
@@ -127,23 +153,11 @@
   display: none !important;
 }
 
-
-
-
-
-
 /* breadcrumbs for editor page  */
 :root {
-  --gray-color: #D9D9D9;
-  --blue-color: #155BE5;
-
-
+  --gray-color: #d9d9d9;
+  --blue-color: #155be5;
 }
-
-
-
-
-
 
 #breadcrumb {
   list-style: none;
@@ -159,7 +173,7 @@
 }
 
 #breadcrumb li a {
-  color: #FFF;
+  color: #fff;
   display: block;
   background: var(--gray-color);
   text-decoration: none;
@@ -212,7 +226,6 @@
   border-width: 11px 10px;
   width: 0;
   height: 0;
-
 }
 
 #breadcrumb li a:before {
@@ -252,9 +265,6 @@
 #breadcrumb li a:active:after {
   border-left-color: var(--gray-color);
 }
-
-
-
 
 .e-tab {
   display: block;

@@ -213,7 +213,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [viewUser, setViewUser] = useState(false);
   const [dragFields, setDragFields] = useState("");
   const [editorRefContext, setEditorRefContext] = useState("");
-  const [uplodTrackFile, setUplodTrackFile] = useState<any | null>(null);
+  const [uplodTrackFile, setUplodTrackFile] = useState<any | null>("");
   const [conditions, setConditions] = useState([
     {
       comparisonOperator: "",
