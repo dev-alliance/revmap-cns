@@ -36,7 +36,7 @@
 }
 
 .child-div {
-  width: 810px; /* Fixed width for the page-like appearance */
+  width: 843px; /* Fixed width for the page-like appearance */
   min-height: 610px; /* Minimum height */
   max-height: 610px; /* Set a max-height if you want a fixed size with internal scrolling */
   padding: 1rem; /* Padding inside the container */

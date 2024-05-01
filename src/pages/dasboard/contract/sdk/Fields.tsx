@@ -13,6 +13,7 @@ import {
   Checkbox,
   FormControlLabel,
   Button,
+  IconButton,
 } from "@mui/material";
 import {
   DocumentEditorComponent,
@@ -77,7 +78,7 @@ const Fields = () => {
 
   const [inputValue, setInputValue] = useState("");
   const [selectedCustomFeild, setSelectedCustomFeild] = useState<any>([]);
-  const [isInternal, setIsInternal] = useState<any>("");
+  const [show, setShow] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
 
@@ -86,20 +87,13 @@ const Fields = () => {
   const [checked, setChecked] = React.useState(false);
   const [ClickData, setClickData] = useState("");
 
-
-
-
-
-
-
   const [placeHolder, setPlaceHolder] = useState("");
   const [placeHolderValue, setPlaceHolderValue] = useState("");
-
-
+  const [newDragedField, setNewDragedField] = useState("");
   const handleGetValue = (e: any) => {
-    setPlaceHolder(e.target.value)
-    setPlaceHolderValue(e.target.value)
-  }
+    setPlaceHolder(e.target.value);
+    setPlaceHolderValue(e.target.value);
+  };
 
   const [selectionField, setSelectionField] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]); // State for the message input
@@ -111,6 +105,39 @@ const Fields = () => {
   const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB", "#3F9748"];
   const [backgroundColor, setBackgroundColor] = useState("#d9d9d9");
 
+  const [items, setItems] = useState<any[]>([
+    { label: "Option 1", checked: false },
+  ]);
+  const [nextOptionNumber, setNextOptionNumber] = useState<number>(2);
+
+  const handleAdd = () => {
+    // Add a new item with incremental label numbering
+    setItems([
+      ...items,
+      { label: `Option ${nextOptionNumber}`, checked: false },
+    ]);
+    setNextOptionNumber(nextOptionNumber + 1); // Increment the label number for the next option
+  };
+
+  const handleCheckboxChange = (index: number): void => {
+    const newItems = items.map((item, idx) => {
+      if (idx === index) {
+        return { ...item, checked: !item.checked };
+      }
+      return item;
+    });
+    setItems(newItems);
+  };
+
+  const handleLabelChange = (index: number, newLabel: string): void => {
+    const newItems = items.map((item, idx) => {
+      if (idx === index) {
+        item.label = newLabel;
+      }
+      return item;
+    });
+    setItems(newItems);
+  };
   const handleOnChange = (
     event: React.SyntheticEvent<Element, Event>,
     newValue: OptionType | null
@@ -141,9 +168,6 @@ const Fields = () => {
 
   console.log("selection Field new", selectionField);
 
-
-
-
   useEffect(() => {
     // Assuming editorRefContext is correctly initialized and has a method exportFormData()
     const documentEditor = editorRefContext;
@@ -152,16 +176,15 @@ const Fields = () => {
     const formFieldsNames: FormField[] = documentEditor.exportFormData();
 
     // Find the field by name, handle potential undefined with optional chaining
-    const valis = formFieldsNames.find(val => val.fieldName === selectionField);
+    const valis = formFieldsNames.find(
+      (val) => val.fieldName === selectionField
+    );
 
     // Use optional chaining to handle cases where valis or valis.value might be undefined
-    setPlaceHolder(valis?.value ?? 'Default Placeholder');
+    setPlaceHolder(valis?.value ?? "Default Placeholder");
   }, [selectionField]);
 
-
-
-
-  // handle change required 
+  // handle change required
   useEffect(() => {
     const documentEditor = editorRefContext;
     if (selectionField) {
@@ -174,7 +197,9 @@ const Fields = () => {
       console.log("add starikkkk :", textfieldInfo);
 
       // textfieldInfo.defaultValue = 'updated with staric *';
-      textfieldInfo.defaultValue = `${placeHolder ? placeHolder : selectionField}${requiredField ? " *" : ""}`;
+      textfieldInfo.defaultValue = `${
+        placeHolder ? placeHolder : selectionField
+      }${requiredField ? " *" : ""}`;
 
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
@@ -183,7 +208,7 @@ const Fields = () => {
     }
   }, [requiredField]);
 
-  // handle change value 
+  // handle change value
 
   const handleSetValue = () => {
     const documentEditor = editorRefContext;
@@ -197,7 +222,8 @@ const Fields = () => {
       console.log("add starikkkk :", textfieldInfo);
 
       // textfieldInfo.defaultValue = 'updated with staric *';
-      textfieldInfo.defaultValue = placeHolderValue + (requiredField ? " *" : "");
+      textfieldInfo.defaultValue =
+        placeHolderValue + (requiredField ? " *" : "");
 
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
@@ -206,22 +232,17 @@ const Fields = () => {
     }
 
     setTimeout(() => {
-      setPlaceHolderValue('')
+      setPlaceHolderValue("");
     }, 500);
-
-  }
-
-
-
-
-
-
+  };
 
   const DraggableField = ({ field }: any) => {
     console.log("fields : ", field);
+
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
+
       if (selectedEmails) {
         documentEditor.editor.insertFormField("Text");
       }
@@ -276,7 +297,6 @@ const Fields = () => {
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
           </div>
         )}
-
       </>
     );
   };
@@ -313,13 +333,9 @@ const Fields = () => {
     //   label: "Short Answer",
     //   placeholder: "[ Short Answer ]",
     // },
-
   ];
 
-
   const buttonFields = [
-
-
     {
       id: "Text",
       icon: textIcon,
@@ -342,7 +358,7 @@ const Fields = () => {
     },
   ];
 
-  // button dragable fields 
+  // button dragable fields
 
   const ButtonDraggableField = ({ field }: any) => {
     console.log("fields : ", field);
@@ -383,35 +399,30 @@ const Fields = () => {
     };
 
     const handleDragStartCheckbox = (e: any) => {
-
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
       if (selectedEmails) {
-        console.log('run')
+        console.log("run");
         // Insert the checkbox first
         documentEditor.editor.insertFormField("CheckBox");
 
-
         // Retrieve and update checkbox details as before
-        let checkboxFieldInfo = documentEditor.getFormFieldInfo('Check1') as CheckBoxFormFieldInfo;
+        let checkboxFieldInfo = documentEditor.getFormFieldInfo(
+          "Check1"
+        ) as CheckBoxFormFieldInfo;
         // Insert text label next to the checkbox
         // You need to adjust the 'x' and 'y' coordinates based on the position of the checkbox
         documentEditor.editor.insertText("Accept Terms", { x: 50, y: 50 }); // Example coordinates
 
-        documentEditor.setFormFieldInfo('Check1', checkboxFieldInfo);
-
+        documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
 
         //         let checkboxfieldInfo: CheckBoxFormFieldInfo = documentEditor.getFormFieldInfo('Check1') as CheckBoxFormFieldInfo;
         // checkboxfieldInfo.defaultValue = true;
         // checkboxfieldInfo.name = "Check2";
         // documentEditor.setFormFieldInfo('Check1', checkboxfieldInfo);
-
       }
     };
     // console.log("recipients :", recipients);
-
-
-
 
     return (
       <>
@@ -439,13 +450,6 @@ const Fields = () => {
       </>
     );
   };
-
-
-
-
-
-
-
 
   const listData = async () => {
     try {
@@ -530,16 +534,13 @@ const Fields = () => {
         let x = startPosition.location.x;
         let y = startPosition.location.y;
 
-        console.log('x :', x, 'and y :', y)
-
+        console.log("x :", x, "and y :", y);
 
         // Get the start and end positions of the selection
         // const startOffset = documentEditor.selection.startOffset;
         // const endOffset = documentEditor.selection.endOffset;
 
         // console.log(`Start Offset: ${startOffset}, End Offset: ${endOffset}`);
-
-
 
         setSelectionField(documentEditor?.selection?.bookmarks[0]);
       };
@@ -588,6 +589,8 @@ const Fields = () => {
 
   // };
 
+  console.log(dragFields, "dragFields");
+
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
@@ -635,9 +638,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                    options.findIndex(
-                      (opt: any) => opt?.email === selectedEmails?.email
-                    ) % colors?.length
+                      options.findIndex(
+                        (opt: any) => opt?.email === selectedEmails?.email
+                      ) % colors?.length
                     ],
                 }}
               />
@@ -680,70 +683,127 @@ const Fields = () => {
               label="Required Field"
             />
             <Divider style={{ margin: "10px 0" }} />
-            {/* <TextField
-              size="small" // Sets the TextField to a smaller size
-              variant="outlined" // Outlined style
-              label="Enter Data" // Label text
-              value={placeHolder} // Bind state value
-              // value={selectionField} // Bind state value
-              onChange={(e: any) => handleGetValue(e)} // Handle input changes
-            /> */}
-
-
-
-
-
-            <TextField
-              label="Placeholder" // Label text
-              value={placeHolder}
-              onChange={(e: any) => handleGetValue(e)} // Handle input changes
-              fullWidth
-              size="small"
-              variant="standard"
-              InputProps={{
-                disableUnderline: true, // Disables the underline by default
-                sx: {
-                  "::after": {
-                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
-                  },
-                  "::before": {
-                    borderBottom: "none !important", // Hides the underline
-                  },
-                  ":hover:not(.Mui-disabled)::before": {
-                    borderBottom: "none !important", // Ensures underline stays hidden on hover
-                  },
-                  "input:focus + fieldset": {
-                    border: "none", // Optional: for outlined variant if ever used
-                  },
-                  "::placeholder": {
-                    fontSize: "0.55rem",
-                  },
-                  input: {
-                    fontSize: "0.875rem",
-                    "&:focus": {
-                      // Shows the underline when the input is focused
-                      borderBottom: "2px solid", // Adjust color as needed
+            {/* for short abswer */}
+            {show == "shortAnswe" && (
+              <TextField
+                label="Placeholder" // Label text
+                value={placeHolder}
+                onChange={(e: any) => handleGetValue(e)} // Handle input changes
+                fullWidth
+                size="small"
+                variant="standard"
+                InputProps={{
+                  sx: {
+                    "::after": {
+                      borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                    },
+                    "::before": {
+                      borderBottom: "none !important", // Hides the underline
+                    },
+                    ":hover:not(.Mui-disabled)::before": {
+                      borderBottom: "none !important", // Ensures underline stays hidden on hover
+                    },
+                    "input:focus + fieldset": {
+                      border: "none", // Optional: for outlined variant if ever used
+                    },
+                    "::placeholder": {
+                      fontSize: "0.55rem",
+                    },
+                    input: {
+                      fontSize: "0.875rem",
+                      "&:focus": {
+                        // Shows the underline when the input is focused
+                        borderBottom: "2px solid", // Adjust color as needed
+                      },
                     },
                   },
-                },
-              }}
-            />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                }}
+              />
+            )}
+            <div style={{ display: "flex" }}>
+              <IconButton color="secondary" sx={{ ml: -1.3 }}>
+                <img src={checkIcon} alt="Check Icon" />
+              </IconButton>{" "}
+              <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
+                CheckBox
+              </Typography>
+            </div>
+            <div>
+              {items.map((item, index) => (
+                <div key={index}>
+                  <FormControlLabel
+                    control={
+                      <IconButton
+                        onClick={() => handleCheckboxChange(index)}
+                        color={item.checked ? "primary" : "default"}
+                      >
+                        <img src={checkIcon} alt="Check Icon" />
+                      </IconButton>
+                    }
+                    label={
+                      <TextField
+                        value={item.label}
+                        onChange={(e) =>
+                          handleLabelChange(index, e.target.value)
+                        }
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                        InputProps={{
+                          disableUnderline: true, // Disables the underline by default
+                          sx: {
+                            "::after": {
+                              borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                            },
+                            "::before": {
+                              borderBottom: "none !important", // Hides the underline
+                            },
+                            ":hover:not(.Mui-disabled)::before": {
+                              borderBottom: "none !important", // Ensures underline stays hidden on hover
+                            },
+                            "input:focus + fieldset": {
+                              border: "none", // Optional: for outlined variant if ever used
+                            },
+                            "::placeholder": {
+                              fontSize: "0.55rem",
+                            },
+                            input: {
+                              fontSize: "0.875rem",
+                              "&:focus": {
+                                // Shows the underline when the input is focused
+                                borderBottom: "2px solid", // Adjust color as needed
+                              },
+                            },
+                          },
+                        }}
+                      />
+                    }
+                  />
+                </div>
+              ))}
+              <Button
+                onClick={handleAdd}
+                sx={{
+                  fontSize: "12px",
+                  textTransform: "none !important",
+                  borderRadius: 0,
+                  color:
+                    activeSection === "collaborate" ? "primary.main" : "black",
+                  fontWeight: "bold",
+                  "&:hover": {
+                    borderBottom: 2,
+                    borderColor: "primary.main",
+                    backgroundColor: "transparent",
+                  },
+                  borderColor:
+                    activeSection === "collaborate"
+                      ? "primary.main"
+                      : "transparent",
+                }}
+              >
+                + Add option
+              </Button>
+            </div>
             <Divider style={{ margin: "10px 0" }} />
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
               <Button
@@ -793,7 +853,7 @@ const Fields = () => {
                   //   handleAddSignatory(inputValue.trim());
                   // }
                   setShowButtons(false);
-                  handleSetValue()
+                  handleSetValue();
                 }}
               >
                 Save & Close
@@ -822,29 +882,15 @@ const Fields = () => {
               ))}
             </div>
 
-
             <Divider sx={{ mt: 1, mb: 3 }} />
 
             {/* buttonFields */}
-
 
             {buttonFields.map((field, index) => (
               <React.Fragment key={field.id}>
                 <ButtonDraggableField field={field} />
               </React.Fragment>
             ))}
-
-
-
-
-
-
-
-
-
-
-
-
 
             <Divider sx={{ mt: 1, mb: 2 }} />
             <p className="font-medium text-[14px] text-[#155be5] my-3">
