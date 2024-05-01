@@ -729,61 +729,25 @@ const Fields = () => {
               </Typography>
             </div>
             <div>
+              <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
+                Value
+              </Typography>
               {items.map((item, index) => (
                 <div key={index}>
-                  <FormControlLabel
-                    control={
-                      <IconButton
-                        onClick={() => handleCheckboxChange(index)}
-                        color={item.checked ? "primary" : "default"}
-                      >
-                        <img src={checkIcon} alt="Check Icon" />
-                      </IconButton>
-                    }
-                    label={
-                      <TextField
-                        value={item.label}
-                        onChange={(e) =>
-                          handleLabelChange(index, e.target.value)
-                        }
-                        fullWidth
-                        size="small"
-                        variant="standard"
-                        InputProps={{
-                          disableUnderline: true, // Disables the underline by default
-                          sx: {
-                            "::after": {
-                              borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
-                            },
-                            "::before": {
-                              borderBottom: "none !important", // Hides the underline
-                            },
-                            ":hover:not(.Mui-disabled)::before": {
-                              borderBottom: "none !important", // Ensures underline stays hidden on hover
-                            },
-                            "input:focus + fieldset": {
-                              border: "none", // Optional: for outlined variant if ever used
-                            },
-                            "::placeholder": {
-                              fontSize: "0.55rem",
-                            },
-                            input: {
-                              fontSize: "0.875rem",
-                              "&:focus": {
-                                // Shows the underline when the input is focused
-                                borderBottom: "2px solid", // Adjust color as needed
-                              },
-                            },
-                          },
-                        }}
-                      />
-                    }
+                  <TextField
+                    value={item.label}
+                    onChange={(e) => handleLabelChange(index, e.target.value)}
+                    fullWidth
+                    size="small"
+                    variant="standard"
                   />
                 </div>
               ))}
               <Button
                 onClick={handleAdd}
                 sx={{
+                  mt: 0.5,
+                  ml: -1,
                   fontSize: "12px",
                   textTransform: "none !important",
                   borderRadius: 0,
@@ -801,7 +765,7 @@ const Fields = () => {
                       : "transparent",
                 }}
               >
-                + Add option
+                + Add value
               </Button>
             </div>
             <Divider style={{ margin: "10px 0" }} />
