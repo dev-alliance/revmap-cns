@@ -119,16 +119,6 @@ const Fields = () => {
     setNextOptionNumber(nextOptionNumber + 1); // Increment the label number for the next option
   };
 
-  const handleCheckboxChange = (index: number): void => {
-    const newItems = items.map((item, idx) => {
-      if (idx === index) {
-        return { ...item, checked: !item.checked };
-      }
-      return item;
-    });
-    setItems(newItems);
-  };
-
   const handleLabelChange = (index: number, newLabel: string): void => {
     const newItems = items.map((item, idx) => {
       if (idx === index) {
@@ -407,7 +397,7 @@ const Fields = () => {
         documentEditor.editor.insertFormField("CheckBox");
 
         // Retrieve and update checkbox details as before
-        let checkboxFieldInfo = documentEditor.getFormFieldInfo(
+        const checkboxFieldInfo = documentEditor.getFormFieldInfo(
           "Check1"
         ) as CheckBoxFormFieldInfo;
         // Insert text label next to the checkbox
@@ -524,15 +514,15 @@ const Fields = () => {
         console.log("current selection ", documentEditor?.selection);
 
         // Get the start text position of the selection
-        let startPosition = documentEditor.selection.start;
+        const startPosition = documentEditor.selection.start;
 
         // Get the page number of the start position
-        let page = startPosition.pageIndex;
+        const page = startPosition.pageIndex;
 
         // Get the location (x, y) of the start position in points; assuming 'viewer' is defined
         // You might need to convert these coordinates to suit where you want the text box to appear
-        let x = startPosition.location.x;
-        let y = startPosition.location.y;
+        const x = startPosition.location.x;
+        const y = startPosition.location.y;
 
         console.log("x :", x, "and y :", y);
 
