@@ -609,19 +609,21 @@ const CreateContract = () => {
                     fullWidth
                     options={feildList}
                     value={selectedTemplate}
-                    onChange={(event, newValue) => {
+                    onChange={(event: any, newValue: any) => {
                       setSelectedTemplate(newValue);
                     }}
-                    getOptionLabel={(option) => (option ? option.name : "")}
-                    isOptionEqualToValue={(option, value) =>
+                    getOptionLabel={(option: any) =>
+                      option ? option.name : ""
+                    }
+                    isOptionEqualToValue={(option: any, value: any) =>
                       option._id === value._id
                     }
-                    renderOption={(props, option) => (
+                    renderOption={(props: any, option: any) => (
                       <MenuItem {...props} key={option._id} value={option._id}>
                         {option.name}
                       </MenuItem>
                     )}
-                    renderInput={(params) => (
+                    renderInput={(params: any) => (
                       <TextField {...params} label="Search Templates" />
                     )}
                     renderTags={() => null} // Optionally, prevent tags from rendering if `multiple` is enabled

@@ -1949,26 +1949,25 @@ function SyncFesion() {
         </div>
         <Box sx={{ width: "100%", px: 2.6 }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            {showBlock == "uploadTrack" ||
-              (editMode && (
-                <>
-                  <Button
-                    variant="outlined"
-                    sx={{ textTransform: "none" }}
-                    onClick={() => setEditMode(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    sx={{ ml: 2, textTransform: "none" }}
-                    type="submit"
-                    variant="outlined"
-                    color="success"
-                  >
-                    Save
-                  </Button>
-                </>
-              ))}
+            {(showBlock == "uploadTrack" || editMode) && (
+              <>
+                <Button
+                  variant="outlined"
+                  sx={{ textTransform: "none" }}
+                  onClick={() => setEditMode(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  sx={{ ml: 2, textTransform: "none" }}
+                  type="submit"
+                  variant="outlined"
+                  color="success"
+                >
+                  Save
+                </Button>
+              </>
+            )}
 
             {showBlock == "pdf" && (
               <Button
@@ -1981,19 +1980,6 @@ function SyncFesion() {
                 }}
               >
                 Add Field
-              </Button>
-            )}
-            {showBlock == "uploadTrack" && (
-              <Button
-                sx={{ ml: 2, textTransform: "none" }}
-                type="submit"
-                variant="outlined"
-                color="success"
-                onClick={() => {
-                  setSidebarExpanded(true), setSelectedModule("fields");
-                }}
-              >
-                Manage lifecycle and set renewal reminders
               </Button>
             )}
 

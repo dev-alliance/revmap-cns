@@ -5,6 +5,22 @@
 /* for now  */
 
 /* for now end  */
+
+h1.class-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+h2.class-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+blockquote.fancy {
+  font-style: italic;
+  border-left: 2px solid #ccc;
+  margin: 20px;
+  padding-left: 15px;
+}
+
 .condition-item {
   display: flex;
   flex-direction: column;

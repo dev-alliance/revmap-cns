@@ -156,7 +156,7 @@ const MyComponent: React.FC = () => {
               y="0.5"
               width="23"
               height="22.9202"
-              fill={isSelected ? "white" : "white"}
+              fill={isSelected ? "blue" : "white"}
               stroke="#575757"
             />
             <g clip-path="url(#clip0_4158_11401)">
