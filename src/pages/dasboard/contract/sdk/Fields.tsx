@@ -197,9 +197,8 @@ const Fields = () => {
       console.log("add starikkkk :", textfieldInfo);
 
       // textfieldInfo.defaultValue = 'updated with staric *';
-      textfieldInfo.defaultValue = `${
-        placeHolder ? placeHolder : selectionField
-      }${requiredField ? " *" : ""}`;
+      textfieldInfo.defaultValue = `${placeHolder ? placeHolder : selectionField
+        }${requiredField ? " *" : ""}`;
 
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
@@ -412,7 +411,7 @@ const Fields = () => {
         ) as CheckBoxFormFieldInfo;
         // Insert text label next to the checkbox
         // You need to adjust the 'x' and 'y' coordinates based on the position of the checkbox
-        documentEditor.editor.insertText("Accept Terms", { x: 50, y: 50 }); // Example coordinates
+        documentEditor.editor.insertText("Option 1", { x: 50, y: 50 }); // Example coordinates
 
         documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
 
@@ -638,9 +637,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                      options.findIndex(
-                        (opt: any) => opt?.email === selectedEmails?.email
-                      ) % colors?.length
+                    options.findIndex(
+                      (opt: any) => opt?.email === selectedEmails?.email
+                    ) % colors?.length
                     ],
                 }}
               />
