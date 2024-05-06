@@ -149,7 +149,7 @@ function SyncFesion() {
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
-  useEffect(() => {}, [documentContent, uplodTrackFile]);
+  useEffect(() => { }, [documentContent, uplodTrackFile]);
 
   const editorContainerRef: any = useRef(null);
 
@@ -161,6 +161,8 @@ function SyncFesion() {
     attach: false,
     insert: false,
   });
+
+  const [enabelEditing, setEnabelEditing] = useState(true);
 
   const toggleDropdown = (dropdown: any) => {
     setOpenDropdowns((prevState: any) => ({
@@ -1353,7 +1355,21 @@ function SyncFesion() {
       alert("Please upload a valid PDF file.");
     }
   };
-  console.log("showBlock", showBlock);
+
+
+  // const documentEditor = editorContainerRef.current?.documentEditor;
+
+
+  useEffect(() => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    if (documentEditor) {
+      console.log('chala a')
+      documentEditor.isReadOnly = enabelEditing; // This will disable editing
+    }
+
+  }, [enabelEditing])
+
+  console.log('editing : ', enabelEditing)
 
   return (
     <div>
@@ -1445,11 +1461,10 @@ function SyncFesion() {
 
         <div className="relative ">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300 hover:text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${showBlock == "uploadTrack"
+              ? "text-gray-300 hover:text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("file")}
           >
@@ -1544,11 +1559,10 @@ function SyncFesion() {
         {/* View Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${showBlock == "uploadTrack"
+              ? "text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("view")}
           >
@@ -1656,11 +1670,10 @@ function SyncFesion() {
         {/* insert and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${showBlock == "uploadTrack"
+              ? "text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("insert")}
           >
@@ -1686,9 +1699,9 @@ function SyncFesion() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-                // onClick={() => {
-                //   triggerClick("container_toolbar_image_local");
-                // }}
+              // onClick={() => {
+              //   triggerClick("container_toolbar_image_local");
+              // }}
               >
                 <label
                   htmlFor="forimg"
@@ -1782,11 +1795,10 @@ function SyncFesion() {
         {/* Signature Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
+            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${showBlock == "uploadTrack"
+              ? "text-gray-300"
+              : "text-black hover:text-gray-700"
+              }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("signature")}
           >
@@ -1954,7 +1966,7 @@ function SyncFesion() {
                 <Button
                   variant="outlined"
                   sx={{ textTransform: "none" }}
-                  onClick={() => setEditMode(false)}
+                  onClick={() => { setEditMode(false); setEnabelEditing(true) }}
                 >
                   Cancel
                 </Button>
@@ -1992,6 +2004,7 @@ function SyncFesion() {
                 onClick={() => {
                   // setSidebarExpanded(true),
                   setEditMode(true);
+                  setEnabelEditing(false)
                   // setSelectedModule("fields");
                 }}
               >
@@ -2322,7 +2335,7 @@ function SyncFesion() {
             height="78vh"
             toolbarItems={items}
             toolbarClick={onToolbarClick}
-            enableToolbar={true}
+            enableToolbar={false}
             serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
             // showPropertiesPane={false}
 
