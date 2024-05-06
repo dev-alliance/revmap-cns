@@ -31,14 +31,31 @@ const LifeCycle = () => {
   const { user } = useAuth();
   const {
     activeSection,
-    setActiveSection,
     showButtons,
     setShowButtons,
     recipients,
     setRecipients,
-    setOpenMultiDialog,
-    openMultiDialog,
+    lifecycleData,
+    setLifecycleData,
   } = useContext(ContractContext);
+
+  const handleFieldChange = (path: any, value: any) => {
+    console.log(path, value);
+
+    setLifecycleData((prev: any) => {
+      const keys = path.split(".");
+      const lastKey = keys.pop();
+      const lastObj = keys.reduce(
+        (obj: any, key: any) => {
+          if (!obj[key]) obj[key] = {};
+          return obj[key];
+        },
+        { ...prev }
+      );
+      lastObj[lastKey] = value;
+      return { ...prev };
+    });
+  };
 
   const [checkboxStates, setCheckboxStates] = useState({
     isEvergreen: false,
@@ -46,6 +63,8 @@ const LifeCycle = () => {
     isNotificationEmailEnabled: false,
     isRemindersEnabled: false,
   });
+  console.log(lifecycleData, "lifeSycle");
+
   const [inputValue, setInputValue] = useState("");
   const [selectedValue, setSelectedValue] = useState<any>(null);
   const [userList, setUserList] = useState<Array<any>>([]);
@@ -59,7 +78,7 @@ const LifeCycle = () => {
   // Handle checkbox change
   const [checkedRecipients, setCheckedRecipients] = useState(new Set());
 
-  const handleCheckboxChangeEmail = (colb) => (event) => {
+  const handleCheckboxChangeEmail = (colb: any) => (event: any) => {
     const newChecked = new Set(checkedRecipients);
     if (event.target.checked) {
       newChecked.add(colb.email);
@@ -69,21 +88,30 @@ const LifeCycle = () => {
     setCheckedRecipients(newChecked);
   };
 
-  // Handle removing a recipient based on email
-  const handleRemoveSignatory = (colb) => {
-    setRecipients(
-      recipients.filter((recipient) => recipient.email !== colb.email)
-    );
+  // Handler to remove a recipient
+  const handleRemoveSignatory = (colb: any) => {
+    setLifecycleData((prev: any) => ({
+      ...prev,
+      recipients: prev.recipients.filter(
+        (recipient: any) => recipient.email !== colb.email
+      ),
+    }));
   };
-
   const endDate = watch("endDate");
   console.log(endDate, "endDate");
 
   const handleCheckboxChange = (event: any) => {
     const { name, checked } = event.target;
-    setCheckboxStates((prevState) => ({
-      ...prevState,
-      [name]: checked,
+    // Update the nested checkbox state
+    setLifecycleData((prev: any) => ({
+      ...prev,
+      formData: {
+        ...prev.formData,
+        checkboxStates: {
+          ...prev.formData.checkboxStates,
+          [name]: checked,
+        },
+      },
     }));
   };
 
@@ -111,13 +139,15 @@ const LifeCycle = () => {
     if (user?._id) listData();
   }, [user?._id]);
 
-  const handleAddSignatory = (newSignatoryEmail: string) => {
-    // Add new signatory logic remains the same
-    const emailExists = recipients.some(
+  const handleAddSignatory = (newSignatoryEmail: any) => {
+    const emailExists = lifecycleData.recipients.some(
       (collaborator: any) => collaborator.email === newSignatoryEmail
     );
     if (newSignatoryEmail && !emailExists) {
-      setRecipients((prev: any) => [...prev, { email: newSignatoryEmail }]);
+      setLifecycleData((prev: any) => ({
+        ...prev,
+        recipients: [...prev.recipients, { email: newSignatoryEmail }],
+      }));
     }
 
     setInputValue(""); // Clearing the input value
@@ -180,7 +210,14 @@ const LifeCycle = () => {
           rules={{ required: "This field is required" }}
           render={({ field }) => (
             <TextField
-              {...field}
+              name="signedOn"
+              value={lifecycleData.formData.dateFields.signedOn}
+              onChange={(e) =>
+                handleFieldChange(
+                  "formData.dateFields.signedOn",
+                  e.target.value
+                )
+              }
               placeholder="Signed on"
               fullWidth
               size="small"
@@ -237,10 +274,15 @@ const LifeCycle = () => {
           rules={{ required: "This field is required" }}
           render={({ field }) => (
             <TextField
-              {...field}
-              // placeholder="Signed on"
-
+              name="startDate"
               type="date"
+              value={lifecycleData.formData.dateFields.startDate}
+              onChange={(e) =>
+                handleFieldChange(
+                  "formData.dateFields.startDate",
+                  e.target.value
+                )
+              }
               size="small"
               variant="standard"
               InputProps={{
@@ -276,7 +318,7 @@ const LifeCycle = () => {
       </Box>
 
       {/* End Date Field */}
-      {!checkboxStates.isEvergreen && (
+      {!lifecycleData.formData.checkboxStates.isEvergreen && (
         <Box sx={{ mb: 0 }}>
           <Typography
             variant="body2"
@@ -297,10 +339,15 @@ const LifeCycle = () => {
             // rules={{ required: "This field is required" }}
             render={({ field }) => (
               <TextField
-                {...field}
-                // placeholder="Signed on"
-                disabled={checkboxStates.isEvergreen}
+                name="endDate"
                 type="date"
+                value={lifecycleData.formData.dateFields.endDate}
+                onChange={(e) =>
+                  handleFieldChange(
+                    "formData.dateFields.endDate",
+                    e.target.value
+                  )
+                }
                 size="small"
                 variant="standard"
                 InputProps={{
@@ -349,8 +396,8 @@ const LifeCycle = () => {
           }}
           control={
             <Checkbox
-              disabled={!!endDate} // Disabled if endDate is set
-              checked={checkboxStates.isEvergreen}
+              disabled={!!lifecycleData.formData.dateFields.endDate} // Disabled if endDate is set
+              checked={lifecycleData.formData.checkboxStates.isEvergreen}
               onChange={handleCheckboxChange}
               name="isEvergreen"
               sx={{
@@ -479,7 +526,7 @@ const LifeCycle = () => {
         </div>
       </Box>
       {/* Conditional Evergreen Duration Field */}
-      {!checkboxStates.isEvergreen && (
+      {!lifecycleData.formData.checkboxStates.isEvergreen && (
         <>
           <Box sx={{ mb: 0 }}>
             <Typography
@@ -501,10 +548,15 @@ const LifeCycle = () => {
               // rules={{ required: "This field is required" }}
               render={({ field }) => (
                 <TextField
-                  {...field}
-                  // placeholder="Signed on"
-                  disabled={checkboxStates.isEvergreen}
+                  name="noticePeriodDate"
                   type="date"
+                  value={lifecycleData.formData.dateFields.noticePeriodDate}
+                  onChange={(e) =>
+                    handleFieldChange(
+                      "formData.dateFields.noticePeriodDate",
+                      e.target.value
+                    )
+                  }
                   size="small"
                   variant="standard"
                   InputProps={{
@@ -552,7 +604,7 @@ const LifeCycle = () => {
             }}
             control={
               <Checkbox
-                checked={checkboxStates.isRenewalsActive}
+                checked={lifecycleData.formData.checkboxStates.isRenewalsActive}
                 onChange={handleCheckboxChange}
                 name="isRenewalsActive"
                 sx={{
@@ -566,7 +618,7 @@ const LifeCycle = () => {
             }
             label="Not set"
           />
-          {!checkboxStates.isRenewalsActive && (
+          {!lifecycleData.formData.checkboxStates.isRenewalsActive && (
             <Box sx={{ mb: 0 }}>
               <Typography
                 variant="body2"
@@ -588,9 +640,18 @@ const LifeCycle = () => {
                   // rules={{ required: "This field is required" }}
                   render={({ field }) => (
                     <TextField
-                      {...field}
-                      placeholder="Renewal Date"
+                      name="renewalPeriod"
+                      value={
+                        lifecycleData.formData.renewalDetails.renewalPeriod
+                      }
+                      onChange={(e) =>
+                        handleFieldChange(
+                          "formData.renewalDetails.renewalPeriod",
+                          e.target.value
+                        )
+                      }
                       type="number"
+                      placeholder="Renewal Date"
                       size="small"
                       variant="standard"
                       InputProps={{
@@ -633,11 +694,19 @@ const LifeCycle = () => {
                     <FormControl
                       size="small"
                       variant="standard"
-                      sx={{ ml: 2, width: "50%" }}
+                      sx={{ ml: 2, width: "60%" }}
                     >
                       <Select
-                        {...field}
-                        // sx={{ width: "80%" }}
+                        name="renewalType"
+                        value={
+                          lifecycleData.formData.renewalDetails.renewalType
+                        }
+                        onChange={(e) =>
+                          handleFieldChange(
+                            "formData.renewalDetails.renewalType",
+                            e.target.value
+                          )
+                        }
                         labelId="renewal-type-label"
                         label="Type"
                         displayEmpty
@@ -683,7 +752,10 @@ const LifeCycle = () => {
             }}
             control={
               <Checkbox
-                checked={checkboxStates.isNotificationEmailEnabled}
+                checked={
+                  lifecycleData.formData.checkboxStates
+                    .isNotificationEmailEnabled
+                }
                 onChange={handleCheckboxChange}
                 name="isNotificationEmailEnabled"
                 sx={{
@@ -697,7 +769,7 @@ const LifeCycle = () => {
             }
             label="Notify document owner"
           />
-          {recipients.map((colb: any) => (
+          {lifecycleData.recipients.map((colb: any) => (
             <div
               key={colb.email} // Use email as the key if it's unique
               style={{ display: "flex", alignItems: "center" }}
@@ -733,7 +805,7 @@ const LifeCycle = () => {
             </div>
           ))}
 
-          {checkboxStates.isNotificationEmailEnabled && (
+          {lifecycleData.formData.checkboxStates.isNotificationEmailEnabled && (
             <>
               <Box sx={{ mb: 0 }}>
                 <Button
@@ -874,7 +946,9 @@ const LifeCycle = () => {
             }}
             control={
               <Checkbox
-                checked={checkboxStates.isRemindersEnabled}
+                checked={
+                  lifecycleData.formData.checkboxStates.isRemindersEnabled
+                }
                 onChange={handleCheckboxChange}
                 name="isRemindersEnabled"
                 sx={{
@@ -888,7 +962,7 @@ const LifeCycle = () => {
             }
             label="Send automatic reminders"
           />
-          {checkboxStates.isRemindersEnabled && (
+          {lifecycleData.formData.checkboxStates.isRemindersEnabled && (
             <>
               <div
                 style={{
@@ -907,12 +981,21 @@ const LifeCycle = () => {
                   First reminder
                 </Typography>
                 <Controller
-                  name="firstReminder"
+                  name="firstRennnminder"
                   control={control}
-                  rules={{ required: "This field is required" }}
+                  // rules={{ required: "This field is required" }}
                   render={({ field }) => (
                     <TextField
-                      {...field}
+                      name="firstReminder"
+                      value={
+                        lifecycleData.formData.reminderSettings.firstReminder
+                      }
+                      onChange={(e) =>
+                        handleFieldChange(
+                          "formData.reminderSettings.firstReminder",
+                          e.target.value
+                        )
+                      }
                       type="number"
                       size="small"
                       InputProps={{
@@ -963,7 +1046,17 @@ const LifeCycle = () => {
                   rules={{ required: "This field is required" }}
                   render={({ field }) => (
                     <TextField
-                      {...field}
+                      name="daysBetweenReminders"
+                      value={
+                        lifecycleData.formData.reminderSettings
+                          .daysBetweenReminders
+                      }
+                      onChange={(e) =>
+                        handleFieldChange(
+                          "formData.reminderSettings.daysBetweenReminders",
+                          e.target.value
+                        )
+                      }
                       type="number"
                       size="small"
                       InputProps={{
@@ -1004,7 +1097,17 @@ const LifeCycle = () => {
                   rules={{ required: "This field is required" }}
                   render={({ field }) => (
                     <TextField
-                      {...field}
+                      name="daysBeforeFinalExpiration"
+                      value={
+                        lifecycleData.formData.reminderSettings
+                          .daysBeforeFinalExpiration
+                      }
+                      onChange={(e) =>
+                        handleFieldChange(
+                          "formData.reminderSettings.daysBeforeFinalExpiration",
+                          e.target.value
+                        )
+                      }
                       type="number"
                       size="small"
                       InputProps={{
@@ -1016,7 +1119,6 @@ const LifeCycle = () => {
                           marginRight: "5px",
                         },
                       }}
-                      name="daysBeforeExp"
                       placeholder="0"
                     />
                   )}

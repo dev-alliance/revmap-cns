@@ -113,6 +113,8 @@ interface ContractContextProps {
 
   editMode: any | null;
   setEditMode: Dispatch<SetStateAction<any>>;
+  lifecycleData: any | null;
+  setLifecycleData: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -181,6 +183,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setShowBlock: () => {},
   editMode: {},
   setEditMode: () => {},
+  lifecycleData: {},
+  setLifecycleData: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -194,6 +198,38 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [recipients, setRecipients] = useState<string[]>([]);
   const [signatories, setSignatories] = useState<string[]>([]);
   const [comments, setComments] = useState<Array<any>>([]);
+  const [lifecycleData, setLifecycleData] = useState({
+    activeSection: "",
+    showButtons: false,
+    recipients: [],
+    formData: {
+      checkboxStates: {
+        isEvergreen: false,
+        isRenewalsActive: false,
+        isNotificationEmailEnabled: false,
+        isRemindersEnabled: false,
+      },
+      dateFields: {
+        signedOn: "",
+        startDate: "",
+        endDate: "",
+        noticePeriodDate: "",
+      },
+      renewalDetails: {
+        renewalType: "days",
+        renewalPeriod: 0,
+      },
+      notificationDetails: {
+        notifyOwner: false,
+        additionalRecipients: [],
+      },
+      reminderSettings: {
+        firstReminder: 0,
+        daysBetweenReminders: 0,
+        daysBeforeFinalExpiration: 0,
+      },
+    },
+  });
   const [collaborater, setCollaborater] = useState<string[]>([]);
   const [activeSection, setActiveSection] = useState("");
   const [openMultiDialog, setOpenMultiDialog] = useState(false);
@@ -387,6 +423,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (editMode) {
       setEditMode(JSON.parse(editMode));
     }
+    const lifecycleData = localStorage.getItem("lifecycleData");
+    if (lifecycleData) {
+      setLifecycleData(JSON.parse(lifecycleData));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -401,6 +441,9 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     }
     if (recipients) {
       localStorage.setItem("recipients", JSON.stringify(recipients));
+    }
+    if (lifecycleData) {
+      localStorage.setItem("lifecycleData", JSON.stringify(lifecycleData));
     }
   }, [contract, comments, collaborater]);
 
@@ -472,6 +515,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setShowBlock,
         editMode,
         setEditMode,
+        lifecycleData,
+        setLifecycleData,
       }}
     >
       {children}
