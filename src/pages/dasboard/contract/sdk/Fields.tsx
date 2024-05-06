@@ -53,6 +53,12 @@ interface FormField {
   fieldName?: string;
   value?: string;
 }
+
+interface Checkbox {
+  id: string;
+  label: string;
+}
+
 const Fields = () => {
   const {
     control,
@@ -265,13 +271,13 @@ const Fields = () => {
       });
     };
 
-    const handleDragStartCheckbox = (e: any) => {
-      e.dataTransfer.setData("text/plain", field.placeholder);
-      const documentEditor = editorRefContext;
-      if (selectedEmails) {
-        documentEditor.editor.insertFormField("CheckBox");
-      }
-    };
+    // const handleDragStartCheckbox = (e: any) => {
+    //   e.dataTransfer.setData("text/plain", field.placeholder);
+    //   const documentEditor = editorRefContext;
+    //   if (selectedEmails) {
+    //     documentEditor.editor.insertFormField("CheckBox");
+    //   }
+    // };
     // console.log("recipients :", recipients);
 
     return (
@@ -391,27 +397,21 @@ const Fields = () => {
       e.dataTransfer.setData("text/plain", field.placeholder);
       const documentEditor = editorRefContext;
       if (selectedEmails) {
-        console.log("run");
-        // Insert the checkbox first
         documentEditor.editor.insertFormField("CheckBox");
-
-        // Retrieve and update checkbox details as before
         const checkboxFieldInfo = documentEditor.getFormFieldInfo(
           "Check1"
         ) as CheckBoxFormFieldInfo;
-        // Insert text label next to the checkbox
-        // You need to adjust the 'x' and 'y' coordinates based on the position of the checkbox
-        documentEditor.editor.insertText("Option 1", { x: 50, y: 50 }); // Example coordinates
-
+        documentEditor.editor.insertText("Option 1", { x: 50, y: 50 });
         documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
-
-        //         let checkboxfieldInfo: CheckBoxFormFieldInfo = documentEditor.getFormFieldInfo('Check1') as CheckBoxFormFieldInfo;
-        // checkboxfieldInfo.defaultValue = true;
-        // checkboxfieldInfo.name = "Check2";
-        // documentEditor.setFormFieldInfo('Check1', checkboxfieldInfo);
       }
     };
     // console.log("recipients :", recipients);
+
+
+
+
+
+
 
     return (
       <>
@@ -580,6 +580,50 @@ const Fields = () => {
 
   console.log(dragFields, "dragFields");
 
+
+  const [checkboxes, setCheckboxes] = useState<Checkbox[]>([]);
+
+  const addCheckbox = () => {
+    const newCheckbox: Checkbox = {
+      id: `Checkbox ${checkboxes.length + 1}`,
+      label: ""  // Default label is empty
+    };
+    setCheckboxes(checkboxes => [...checkboxes, newCheckbox]);
+  };
+
+  const handleSaveCheckboxes = () => {
+    const documentEditor = editorRefContext;
+    console.log('Document Editor:', documentEditor);
+    console.log('Checkboxes:', checkboxes);
+
+    if (documentEditor && checkboxes.length) {
+      checkboxes.forEach((checkbox, index) => {
+        documentEditor.editor.insertFormField("CheckBox");
+        const checkboxFieldInfo = documentEditor.getFormFieldInfo(
+          "Check1"
+        ) as CheckBoxFormFieldInfo;
+        documentEditor.editor.insertText(checkbox.label, { x: 50, y: 50 });
+        documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
+
+        documentEditor.editor.insertText("\n");
+
+      });
+    }
+  };
+
+
+  const handleLabelChange2 = (e: any, index: any) => {
+    const newLabel = e.target.value;
+    setCheckboxes(checkboxes => checkboxes.map((checkbox, idx) => {
+      if (idx === index) {
+        return { ...checkbox, label: newLabel };
+      }
+      return checkbox;
+    }));
+  };
+
+
+
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
@@ -601,6 +645,21 @@ const Fields = () => {
           Drag and drop to assign signature fields for the signer to sign or add
           custom fields to get additional information.
         </p>
+
+        <div>
+          <button onClick={addCheckbox}>Add Checkbox</button> <br /> <br />
+          <button onClick={handleSaveCheckboxes}>Save Checkboxes</button> <br /> <br />
+          {checkboxes.map((checkbox, index) => (
+            <div key={checkbox.id}>
+              <input
+                type="text"
+                placeholder="Enter label"
+                value={checkbox.label}
+                onChange={(e) => handleLabelChange2(e, index)}
+              />
+            </div>
+          ))}
+        </div>
         <Divider sx={{ mt: 1, mb: 0.5 }} />
         <Box
           sx={{
