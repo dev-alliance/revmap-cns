@@ -16,14 +16,6 @@ import {
   IconButton,
 } from "@mui/material";
 import {
-  DocumentEditorComponent,
-  Selection,
-  Editor,
-  EditorHistory,
-  ContextMenu,
-  TableDialog,
-  BorderSettings,
-  PageSetupDialog,
   CheckBoxFormFieldInfo,
   TextFormFieldInfo,
 } from "@syncfusion/ej2-react-documenteditor";
@@ -85,6 +77,7 @@ const Fields = () => {
   const [inputValue, setInputValue] = useState("");
   const [selectedCustomFeild, setSelectedCustomFeild] = useState<any>([]);
   const [show, setShow] = useState<any>("");
+  const [showSidebar, setShowSidebar] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
 
@@ -152,6 +145,17 @@ const Fields = () => {
   };
 
   const radioDrag = () => {
+    alert("ok");
+    const documentEditor = editorRefContext;
+
+    //Insert Checkbox form field
+    if (selectedEmails) {
+      documentEditor.editor.insertFormField("RadioButton");
+    }
+
+    //Insert Drop down form field
+  };
+  const checkBoxDrag = () => {
     const documentEditor = editorRefContext;
 
     //Insert Checkbox form field
@@ -193,8 +197,9 @@ const Fields = () => {
       console.log("add starikkkk :", textfieldInfo);
 
       // textfieldInfo.defaultValue = 'updated with staric *';
-      textfieldInfo.defaultValue = `${placeHolder ? placeHolder : selectionField
-        }${requiredField ? " *" : ""}`;
+      textfieldInfo.defaultValue = `${
+        placeHolder ? placeHolder : selectionField
+      }${requiredField ? " *" : ""}`;
 
       // textfieldInfo.format = "Lowercase";
       textfieldInfo.type = "Text";
@@ -232,10 +237,10 @@ const Fields = () => {
   };
 
   const DraggableField = ({ field }: any) => {
-    console.log("fields : ", field);
-
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
+      console.log("fieldstestTop : ", field.placeholder);
+      setShowSidebar(field.placeholder);
       const documentEditor = editorRefContext;
 
       if (selectedEmails) {
@@ -321,6 +326,12 @@ const Fields = () => {
       label: "Company",
       placeholder: "[ Company ]",
     },
+    {
+      id: "Text",
+      icon: textIcon,
+      label: "Text",
+      placeholder: "[ Text ]",
+    },
 
     // {
     //   id: "ShortAnswer",
@@ -330,14 +341,9 @@ const Fields = () => {
     // },
   ];
 
-  const buttonFields = [
-    {
-      id: "Text",
-      icon: textIcon,
-      label: "Text",
-      placeholder: "[ Text ]",
-    },
+  console.log(showSidebar, "fieldstest");
 
+  const buttonFields = [
     {
       id: "Checkbox",
       icon: checkIcon,
@@ -357,8 +363,11 @@ const Fields = () => {
 
   const ButtonDraggableField = ({ field }: any) => {
     console.log("fields : ", field);
+
     const handleDragStart = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
+
+      setShowSidebar(field.placeholder);
       const documentEditor = editorRefContext;
       if (selectedEmails) {
         documentEditor.editor.insertFormField("Text");
@@ -395,6 +404,8 @@ const Fields = () => {
 
     const handleDragStartCheckbox = (e: any) => {
       e.dataTransfer.setData("text/plain", field.placeholder);
+      console.log("fieldstestTop : ", field.placeholder);
+      setShowSidebar(field.placeholder);
       const documentEditor = editorRefContext;
       if (selectedEmails) {
         documentEditor.editor.insertFormField("CheckBox");
@@ -407,19 +418,22 @@ const Fields = () => {
     };
     // console.log("recipients :", recipients);
 
-
-
-
-
-
-
     return (
       <>
-        {field?.id !== "RadioButton" && (
+        {field?.id == "Checkbox" && (
+          // <div
+          //   className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
+          //   draggable={selectedEmails ? true : false}
+          //   onDragEnd={handleDragStart}
+          //   style={{ cursor: "grab", backgroundColor }}
+          // >
+          //   <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
+          // </div>
           <div
+            onClick={checkBoxDrag}
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
             draggable={selectedEmails ? true : false}
-            onDragEnd={handleDragStart}
+            onDragEnd={handleDragStartCheckbox}
             style={{ cursor: "grab", backgroundColor }}
           >
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
@@ -530,6 +544,7 @@ const Fields = () => {
         // const endOffset = documentEditor.selection.endOffset;
 
         // console.log(`Start Offset: ${startOffset}, End Offset: ${endOffset}`);
+        console.log(documentEditor?.selection?.bookmarks[0], "shahbaz1");
 
         setSelectionField(documentEditor?.selection?.bookmarks[0]);
       };
@@ -580,21 +595,28 @@ const Fields = () => {
 
   console.log(dragFields, "dragFields");
 
-
-  const [checkboxes, setCheckboxes] = useState<Checkbox[]>([]);
+  const [checkboxes, setCheckboxes] = useState<Checkbox[]>([
+    { id: "Checkbox1", label: "Checkbox1" },
+  ]);
 
   const addCheckbox = () => {
-    const newCheckbox: Checkbox = {
-      id: `Checkbox ${checkboxes.length + 1}`,
-      label: ""  // Default label is empty
+    const newIndex = checkboxes.length + 1;
+    const newCheckbox = {
+      id: `Checkbox ${newIndex}`,
+      label: `Checkbox${newIndex}`,
     };
-    setCheckboxes(checkboxes => [...checkboxes, newCheckbox]);
+
+    // Debug: Check what's currently in the checkboxes array
+    console.log("Current Checkboxes:", checkboxes);
+    console.log("Adding new Checkbox:", newCheckbox);
+
+    setCheckboxes([...checkboxes, newCheckbox]);
   };
 
   const handleSaveCheckboxes = () => {
     const documentEditor = editorRefContext;
-    console.log('Document Editor:', documentEditor);
-    console.log('Checkboxes:', checkboxes);
+    console.log("Document Editor:", documentEditor);
+    console.log("Checkboxes:", checkboxes);
 
     if (documentEditor && checkboxes.length) {
       checkboxes.forEach((checkbox, index) => {
@@ -606,23 +628,21 @@ const Fields = () => {
         documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
 
         documentEditor.editor.insertText("\n");
-
       });
     }
   };
 
-
   const handleLabelChange2 = (e: any, index: any) => {
     const newLabel = e.target.value;
-    setCheckboxes(checkboxes => checkboxes.map((checkbox, idx) => {
-      if (idx === index) {
-        return { ...checkbox, label: newLabel };
-      }
-      return checkbox;
-    }));
+    setCheckboxes((checkboxes) =>
+      checkboxes.map((checkbox, idx) => {
+        if (idx === index) {
+          return { ...checkbox, label: newLabel };
+        }
+        return checkbox;
+      })
+    );
   };
-
-
 
   return (
     <>
@@ -632,23 +652,21 @@ const Fields = () => {
           onClose={handleClosMultieDialog}
           ClickData={ClickData}
         /> */}
-
         <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
           Fields
         </Typography>
-
         {/* <button onClick={removeField}>Remove Field</button>
         <button onClick={toggleRequiredField}>Toggle Required</button>
         <button onClick={() => setValueToField("New Value")}>Set Value</button> */}
-
         <p className="text-[#8A8A8A] text-[10px] pt-1">
           Drag and drop to assign signature fields for the signer to sign or add
           custom fields to get additional information.
         </p>
-
-        <div>
+        {/* <div>
           <button onClick={addCheckbox}>Add Checkbox</button> <br /> <br />
-          <button onClick={handleSaveCheckboxes}>Save Checkboxes</button> <br /> <br />
+          <button onClick={handleSaveCheckboxes}>
+            Save Checkboxes
+          </button> <br /> <br />
           {checkboxes.map((checkbox, index) => (
             <div key={checkbox.id}>
               <input
@@ -659,7 +677,7 @@ const Fields = () => {
               />
             </div>
           ))}
-        </div>
+        </div> */}
         <Divider sx={{ mt: 1, mb: 0.5 }} />
         <Box
           sx={{
@@ -686,9 +704,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                    options.findIndex(
-                      (opt: any) => opt?.email === selectedEmails?.email
-                    ) % colors?.length
+                      options.findIndex(
+                        (opt: any) => opt?.email === selectedEmails?.email
+                      ) % colors?.length
                     ],
                 }}
               />
@@ -701,7 +719,8 @@ const Fields = () => {
             )}
           />
         </Box>
-        {selectionField ? (
+
+        {selectionField || showSidebar ? (
           <>
             <Typography variant="body2" sx={{ fontSize: "14px" }}>
               {selectionField}
@@ -732,7 +751,7 @@ const Fields = () => {
             />
             <Divider style={{ margin: "10px 0" }} />
             {/* for short abswer */}
-            {show == "shortAnswe" && (
+            {showSidebar == "[ Text ]" && (
               <TextField
                 label="Placeholder" // Label text
                 value={placeHolder}
@@ -768,54 +787,63 @@ const Fields = () => {
                 }}
               />
             )}
-            <div style={{ display: "flex" }}>
-              <IconButton color="secondary" sx={{ ml: -1.3 }}>
-                <img src={checkIcon} alt="Check Icon" />
-              </IconButton>{" "}
-              <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
-                CheckBox
-              </Typography>
-            </div>
-            <div>
-              <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
-                Value
-              </Typography>
-              {items.map((item, index) => (
-                <div key={index}>
-                  <TextField
-                    value={item.label}
-                    onChange={(e) => handleLabelChange(index, e.target.value)}
-                    fullWidth
-                    size="small"
-                    variant="standard"
-                  />
+            {(showSidebar == "[ Radio Button ]" ||
+              showSidebar == "[ Checkbox ]") && (
+              <>
+                <div style={{ display: "flex" }}>
+                  <IconButton color="secondary" sx={{ ml: -1.3 }}>
+                    <img src={checkIcon} alt="Check Icon" />
+                  </IconButton>{" "}
+                  <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
+                    CheckBox
+                  </Typography>
                 </div>
-              ))}
-              <Button
-                onClick={handleAdd}
-                sx={{
-                  mt: 0.5,
-                  ml: -1,
-                  fontSize: "12px",
-                  textTransform: "none !important",
-                  borderRadius: 0,
-                  color:
-                    activeSection === "collaborate" ? "primary.main" : "black",
-                  fontWeight: "bold",
-                  "&:hover": {
-                    borderBottom: 2,
-                    borderColor: "primary.main",
-                    backgroundColor: "transparent",
-                  },
-                  borderColor:
-                    activeSection === "collaborate"
-                      ? "primary.main"
-                      : "transparent",
-                }}
-              >
-                + Add value
-              </Button>
-            </div>
+                <div>
+                  <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
+                    Value
+                  </Typography>
+                  {checkboxes.map((checkbox, index) => (
+                    <div key={checkbox.id}>
+                      <TextField
+                        value={checkbox.label}
+                        onChange={(e) => handleLabelChange2(e, index)}
+                        // value={item.label}
+                        // onChange={(e) => handleLabelChange(index, e.target.value)}
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                      />
+                    </div>
+                  ))}
+                  <Button
+                    onClick={addCheckbox}
+                    sx={{
+                      mt: 0.5,
+                      ml: -1,
+                      fontSize: "12px",
+                      textTransform: "none !important",
+                      borderRadius: 0,
+                      color:
+                        activeSection === "collaborate"
+                          ? "primary.main"
+                          : "black",
+                      fontWeight: "bold",
+                      "&:hover": {
+                        borderBottom: 2,
+                        borderColor: "primary.main",
+                        backgroundColor: "transparent",
+                      },
+                      borderColor:
+                        activeSection === "collaborate"
+                          ? "primary.main"
+                          : "transparent",
+                    }}
+                  >
+                    + Add value
+                  </Button>
+                </div>
+              </>
+            )}
             <Divider style={{ margin: "10px 0" }} />
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
               <Button
@@ -835,7 +863,8 @@ const Fields = () => {
                 }}
                 onClick={() => {
                   setSelectionField("");
-                  setShowButtons(false);
+                  setCheckboxes([]);
+                  setShowSidebar("");
                 }}
               >
                 Remove
@@ -864,8 +893,14 @@ const Fields = () => {
                   // } else if (inputValue.trim() !== "") {
                   //   handleAddSignatory(inputValue.trim());
                   // }
-                  setShowButtons(false);
+                  {
+                    (showSidebar == "[ Radio Button ]" ||
+                      showSidebar == "[ Checkbox ]") &&
+                      handleSaveCheckboxes();
+                  }
+                  // setShowButtons(false);
                   handleSetValue();
+                  setShowSidebar("");
                 }}
               >
                 Save & Close
@@ -877,7 +912,7 @@ const Fields = () => {
             <p className="font-medium text-[14px] text-[#155be5] mt-10">
               Signature Fields
             </p>
-            <div style={{ padding: "10px" }}>
+            <div style={{ padding: "1px" }}>
               <div onClick={() => setOpenDrawSignatures(true)}>
                 <div
                   className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
@@ -890,11 +925,11 @@ const Fields = () => {
               {fields.map((field, index) => (
                 <React.Fragment key={field.id}>
                   <DraggableField field={field} />
+                  {/* Add a Divider after the 4th index */}
+                  {index === 4 && <Divider sx={{ mt: 0, mb: 3 }} />}
                 </React.Fragment>
               ))}
             </div>
-
-            <Divider sx={{ mt: 1, mb: 3 }} />
 
             {/* buttonFields */}
 

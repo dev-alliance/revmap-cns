@@ -35,6 +35,7 @@ import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircul
 import { useAuth } from "@/hooks/useAuth";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
+import { ContractContext } from "@/context/ContractContext";
 // import MenuButton from "@/components/MenuButton";
 
 interface CellType {
@@ -207,7 +208,7 @@ const ContractList = () => {
   const navigate = useNavigate();
   // ** State
   const { contractStatus, setContractStatus } = useContract();
-
+  const { setContract, setLifecycleData } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
@@ -414,6 +415,41 @@ const ContractList = () => {
                 variant="contained"
                 component={Link}
                 to="/dashboard/create-contract"
+                onClick={() => {
+                  setContract(null),
+                    setLifecycleData({
+                      activeSection: "",
+                      showButtons: false,
+                      recipients: [],
+                      formData: {
+                        checkboxStates: {
+                          isEvergreen: false,
+                          isRenewalsActive: false,
+                          isNotificationEmailEnabled: false,
+                          isRemindersEnabled: false,
+                        },
+                        dateFields: {
+                          signedOn: "",
+                          startDate: "",
+                          endDate: "",
+                          noticePeriodDate: "",
+                        },
+                        renewalDetails: {
+                          renewalType: "days",
+                          renewalPeriod: 0,
+                        },
+                        notificationDetails: {
+                          notifyOwner: false,
+                          additionalRecipients: [],
+                        },
+                        reminderSettings: {
+                          firstReminder: 0,
+                          daysBetweenReminders: 0,
+                          daysBeforeFinalExpiration: 0,
+                        },
+                      },
+                    });
+                }}
               >
                 <AddIcon /> Create Contract
               </Button>
