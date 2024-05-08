@@ -44,7 +44,7 @@ interface ContractContextProps {
   setContract: Dispatch<SetStateAction<Contract | null>>;
   contractStatus: ContractStatus;
   setContractStatus: Dispatch<SetStateAction<any>>;
-  updateContractOverview: (overview: Overview) => void;
+  updateContractOverview: (overview: any) => void;
   signatories: any | null;
   setSignatories: Dispatch<SetStateAction<any>>;
   openDocoment: any | null;
@@ -270,12 +270,14 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const updateContractOverview = (overview: any) => {
     if (contract !== null) {
+      console.log(overview, "over1");
       // Check if 'contract' is not null
       setContract({
         ...contract,
         overview,
       });
     } else {
+      console.log(overview, "over");
       setContract(
         // Initialize with default or empty values for other properties
         overview
@@ -433,6 +435,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (contract) {
       localStorage.setItem("contract", JSON.stringify(contract));
     }
+
     if (comments) {
       localStorage.setItem("comments", JSON.stringify(comments));
     }

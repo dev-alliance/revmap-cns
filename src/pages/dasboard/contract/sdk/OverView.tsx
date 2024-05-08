@@ -28,6 +28,7 @@ import { getCategoryList } from "@/service/api/category";
 import { getList } from "@/service/api/tags";
 import AddIcon from "@mui/icons-material/Add";
 import { ContractContext } from "@/context/ContractContext";
+import { log } from "console";
 
 type FormValues = {
   name: string;
@@ -57,7 +58,8 @@ const OverView = () => {
     getValues,
   } = useForm<FormValues>();
   const navigate = useNavigate();
-  const { updateContractOverview, contract } = useContext(ContractContext);
+  const { updateContractOverview, contract, setContract } =
+    useContext(ContractContext);
   const { user } = useAuth();
   const [teamData, setTeamData] = useState<Array<any>>([]);
   const [branchData, setBranchData] = useState<Array<any>>([]);
@@ -67,45 +69,41 @@ const OverView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subCategories, setSubCategories] = useState([]);
-  const [fields, setFields] = useState<Field[]>([
-    { name: "", value: "", isEditing: true },
-  ]);
+  const [fields, setFields] = useState<any>([]);
+  const [newField, setNewField] = useState<any>({ name: "", value: "" });
 
   const handleAddField = () => {
-    // Set all existing fields to non-editing state and add a new editing field
-    const updatedFields = fields.map((field) => ({
-      ...field,
-      isEditing: false,
-    }));
-    setFields([...updatedFields, { name: "", value: "", isEditing: true }]);
+    setFields([...fields, { ...newField, isEditing: false }]);
+    setNewField({ name: "", value: "" });
   };
 
-  const handleFieldChange = (
-    index: number,
-    key: keyof Field,
-    newValue: string
-  ) => {
-    const updatedFields = fields.map((field, i) =>
-      i === index ? { ...field, [key]: newValue } : field
-    );
+  const handleFieldChange = (index: any, key: any, value: any) => {
+    const updatedFields = [...fields];
+    updatedFields[index][key] = value;
     setFields(updatedFields);
   };
 
-  const handleDeleteField = (index: number) => {
-    setFields(fields.filter((_, i) => i !== index));
-  };
-
-  const handleEditField = (index: number) => {
-    const updatedFields = fields.map((field, i) =>
-      i === index ? { ...field, isEditing: true } : field
-    );
+  const handleDeleteField = (index: any) => {
+    const updatedFields = fields.filter((_: any, i: any) => i !== index);
     setFields(updatedFields);
   };
+
+  const handleEditField = (index: any) => {
+    const updatedFields = [...fields];
+    updatedFields[index].isEditing = !updatedFields[index].isEditing;
+    setFields(updatedFields);
+  };
+
+  const handleNewFieldChange = (key: any, value: any) => {
+    setNewField({ ...newField, [key]: value });
+  };
+
+  const canAddField =
+    newField.name.trim() !== "" && newField.value.trim() !== "";
 
   const onSubmit = async (data: FormValues) => {
     try {
       // Assuming data contains the updated overview fields
-
       const updatedOverview: any = {
         name: data?.name,
         with_name: data?.with_name,
@@ -122,13 +120,17 @@ const OverView = () => {
         // Add other fields as necessary
       };
       console.log(updatedOverview, "dataupdat");
-      updateContractOverview(updatedOverview);
+      setContract(updatedOverview);
+
+      // updateContractOverview(updatedOverview);
 
       // toast.success("Contract overview updated successfully");
     } catch (error) {
       // toast.error("Failed to update contract overview");
     }
   };
+  console.log(contract, "contract");
+
   useEffect(() => {
     if (contract) {
       setValue("name", contract?.name);
@@ -788,6 +790,7 @@ const OverView = () => {
         <Button
           onClick={handleAddField}
           variant="text"
+          disabled={!canAddField}
           sx={{
             fontSize: "12px",
             marginLeft: "-0.6rem",
@@ -801,12 +804,13 @@ const OverView = () => {
             "&:active": {
               boxShadow: "none",
             },
-            textTransform: "none", // Optional: prevents uppercase transformation
+            textTransform: "none",
           }}
         >
           <AddIcon sx={{ color: "black", fontSize: "14px" }} /> Add Field
         </Button>
-        {fields.map((field, index) => (
+
+        {fields.map((field: any, index: any) => (
           <Box key={index} sx={{ mb: 0 }}>
             {field.isEditing ? (
               <>
@@ -819,33 +823,6 @@ const OverView = () => {
                   size="small"
                   sx={{ mr: 2 }}
                   variant="standard"
-                  InputProps={{
-                    disableUnderline: true, // Disables the underline by default
-                    sx: {
-                      "::after": {
-                        borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
-                      },
-                      "::before": {
-                        borderBottom: "none !important", // Hides the underline
-                      },
-                      ":hover:not(.Mui-disabled)::before": {
-                        borderBottom: "none !important", // Ensures underline stays hidden on hover
-                      },
-                      "input:focus + fieldset": {
-                        border: "none", // Optional: for outlined variant if ever used
-                      },
-                      "::placeholder": {
-                        fontSize: "0.55rem",
-                      },
-                      input: {
-                        fontSize: "0.875rem",
-                        "&:focus": {
-                          // Shows the underline when the input is focused
-                          borderBottom: "2px solid", // Adjust color as needed
-                        },
-                      },
-                    },
-                  }}
                 />
                 <Box sx={{ mt: 1 }}>
                   <TextField
@@ -856,33 +833,6 @@ const OverView = () => {
                     placeholder="Enter value"
                     size="small"
                     variant="standard"
-                    InputProps={{
-                      disableUnderline: true, // Disables the underline by default
-                      sx: {
-                        "::after": {
-                          borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
-                        },
-                        "::before": {
-                          borderBottom: "none !important", // Hides the underline
-                        },
-                        ":hover:not(.Mui-disabled)::before": {
-                          borderBottom: "none !important", // Ensures underline stays hidden on hover
-                        },
-                        "input:focus + fieldset": {
-                          border: "none", // Optional: for outlined variant if ever used
-                        },
-                        "::placeholder": {
-                          fontSize: "0.55rem",
-                        },
-                        input: {
-                          fontSize: "0.875rem",
-                          "&:focus": {
-                            // Shows the underline when the input is focused
-                            borderBottom: "2px solid", // Adjust color as needed
-                          },
-                        },
-                      },
-                    }}
                   />
                 </Box>
               </>
@@ -901,6 +851,21 @@ const OverView = () => {
             )}
           </Box>
         ))}
+        <TextField
+          value={newField.name}
+          onChange={(e) => handleNewFieldChange("name", e.target.value)}
+          placeholder="Enter name"
+          size="small"
+          sx={{ mr: 2 }}
+          variant="standard"
+        />
+        <TextField
+          value={newField.value}
+          onChange={(e) => handleNewFieldChange("value", e.target.value)}
+          placeholder="Enter value"
+          size="small"
+          variant="standard"
+        />
       </Box>
     </form>
   );
