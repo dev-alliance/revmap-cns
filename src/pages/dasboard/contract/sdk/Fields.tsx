@@ -36,7 +36,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import SignatureMultiSendReq from "./SignatureMultiSendReq";
 import OpenDrawSignature from "./OpenDrawSignature";
-
+import ClearIcon from "@mui/icons-material/Clear";
 interface OptionType {
   email: string;
   name: string;
@@ -104,29 +104,9 @@ const Fields = () => {
   const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB", "#3F9748"];
   const [backgroundColor, setBackgroundColor] = useState("#d9d9d9");
 
-  const [items, setItems] = useState<any[]>([
-    { label: "Option 1", checked: false },
-  ]);
+  const [items, setItems] = useState<any[]>([]);
   const [nextOptionNumber, setNextOptionNumber] = useState<number>(2);
 
-  const handleAdd = () => {
-    // Add a new item with incremental label numbering
-    setItems([
-      ...items,
-      { label: `Option ${nextOptionNumber}`, checked: false },
-    ]);
-    setNextOptionNumber(nextOptionNumber + 1); // Increment the label number for the next option
-  };
-
-  const handleLabelChange = (index: number, newLabel: string): void => {
-    const newItems = items.map((item, idx) => {
-      if (idx === index) {
-        item.label = newLabel;
-      }
-      return item;
-    });
-    setItems(newItems);
-  };
   const handleOnChange = (
     event: React.SyntheticEvent<Element, Event>,
     newValue: OptionType | null
@@ -145,7 +125,6 @@ const Fields = () => {
   };
 
   const radioDrag = () => {
-    alert("ok");
     const documentEditor = editorRefContext;
 
     //Insert Checkbox form field
@@ -230,7 +209,7 @@ const Fields = () => {
       textfieldInfo.name = selectionField;
       documentEditor.setFormFieldInfo("Text1", textfieldInfo);
     }
-
+    setCheckboxes([]);
     setTimeout(() => {
       setPlaceHolderValue("");
     }, 500);
@@ -416,6 +395,20 @@ const Fields = () => {
         documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
       }
     };
+    const handleDragStartRadioButton = (e: any) => {
+      e.dataTransfer.setData("text/plain", field.placeholder);
+      console.log("fieldstestTop : ", field.placeholder);
+      // setShowSidebar(field.placeholder);
+      const documentEditor = editorRefContext;
+      if (selectedEmails) {
+        documentEditor.editor.insertFormField("RadioButton");
+        const checkboxFieldInfo = documentEditor.getFormFieldInfo(
+          "Check1"
+        ) as CheckBoxFormFieldInfo;
+        documentEditor.editor.insertText("Option 1", { x: 50, y: 50 });
+        documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
+      }
+    };
     // console.log("recipients :", recipients);
 
     return (
@@ -444,7 +437,7 @@ const Fields = () => {
             onClick={radioDrag}
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
             draggable={selectedEmails ? true : false}
-            onDragEnd={handleDragStartCheckbox}
+            onDragEnd={handleDragStartRadioButton}
             style={{ cursor: "grab", backgroundColor }}
           >
             <img src={field?.icon} alt="" className="h-4 w-4" /> {field.label}
@@ -595,9 +588,7 @@ const Fields = () => {
 
   console.log(dragFields, "dragFields");
 
-  const [checkboxes, setCheckboxes] = useState<Checkbox[]>([
-    { id: "Checkbox1", label: "Checkbox1" },
-  ]);
+  const [checkboxes, setCheckboxes] = useState<Checkbox[]>([]);
 
   const addCheckbox = () => {
     const newIndex = checkboxes.length + 1;
@@ -641,6 +632,11 @@ const Fields = () => {
         }
         return checkbox;
       })
+    );
+  };
+  const deleteCheckbox = (index: number) => {
+    setCheckboxes((prevCheckboxes) =>
+      prevCheckboxes.filter((_, idx) => idx !== index)
     );
   };
 
@@ -803,7 +799,14 @@ const Fields = () => {
                     Value
                   </Typography>
                   {checkboxes.map((checkbox, index) => (
-                    <div key={checkbox.id}>
+                    <div
+                      key={checkbox.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "8px",
+                      }}
+                    >
                       <TextField
                         value={checkbox.label}
                         onChange={(e) => handleLabelChange2(e, index)}
@@ -813,6 +816,12 @@ const Fields = () => {
                         size="small"
                         variant="standard"
                       />
+                      <IconButton
+                        onClick={() => deleteCheckbox(index)}
+                        aria-label="delete"
+                      >
+                        <ClearIcon />
+                      </IconButton>
                     </div>
                   ))}
                   <Button
