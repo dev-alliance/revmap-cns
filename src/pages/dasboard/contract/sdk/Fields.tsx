@@ -598,6 +598,7 @@ const Fields = () => {
 
     if (documentEditor && checkboxes.length) {
       checkboxes.forEach((checkbox, index) => {
+        documentEditor.editor.insertText("\n");
         documentEditor.editor.insertFormField("CheckBox");
         const checkboxFieldInfo = documentEditor.getFormFieldInfo(
           "Check1"
@@ -605,7 +606,7 @@ const Fields = () => {
         documentEditor.editor.insertText(checkbox.label, { x: 50, y: 50 });
         documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
 
-        documentEditor.editor.insertText("\n");
+
 
       });
     }
