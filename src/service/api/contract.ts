@@ -2,7 +2,7 @@
 import baseURL from "./axiosInstance";
 
 export const getList = async (id: any) => {
-  return await baseURL.get(`/api/v1/contracts/list-compony/${id}`);
+  return await baseURL.get(`/api/v1/contracts/list-contract/${id}`);
 };
 
 export const create = async (data: any) => {

@@ -30,24 +30,38 @@ import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import mammoth from "mammoth";
 import { ContractContext } from "@/context/ContractContext";
+import UplodTrackFileDilog from "@/pages/dasboard/contract/UplodTrackFileDilog";
 
 const CreateContract = () => {
   const navigate = useNavigate();
-  const { setShowBlock, setUplodTrackFile, setDocumentContent } =
-    useContext(ContractContext);
+  const {
+    setDucomentName,
+    setShowBlock,
+    setUplodTrackFile,
+    setDocumentContent,
+  } = useContext(ContractContext);
 
   // const workerUrl =
   //   "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
-
+  const [showPopup, setShowPopup] = useState<any>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectDocoment, setSelectDocoment] = useState("");
   const [selectionField, setSelectionField] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<any>("");
+  const triggerClick = async () => {
+    navigate("/dashboard/editor-dahsbord", {
+      state: { openFileChooser: true },
+    });
+    setShowBlock("uploadTrack");
+    setDocumentContent("word");
+  };
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file.type === "application/pdf") {
-      setUplodTrackFile(file);
+      const fileName = file.name;
+      console.log("Uploaded file name:", fileName);
+      setDucomentName(fileName);
       setShowBlock("uploadTrack");
       navigate("/dashboard/editor-dahsbord");
     } else if (
@@ -62,8 +76,10 @@ const CreateContract = () => {
         setDocumentContent(result.value);
       };
       reader.readAsArrayBuffer(file);
+      navigate("/dashboard/editor-dahsbord", {
+        state: { openFileChooser: true },
+      });
       setShowBlock("uploadTrack");
-      navigate("/dashboard/editor-dahsbord");
     } else if (file.type === "application/msword") {
       // Handle DOC files here (you may need a server-side conversion)
       toast.error("DOC file support is limited. Please convert to DOCX.");
@@ -574,11 +590,12 @@ const CreateContract = () => {
                         >
                           <Button
                             size="small"
-                            {...getRootProps()}
+                            // {...getRootProps()}
                             variant="contained"
                             style={{
                               textTransform: "none",
                             }}
+                            onClick={() => setShowPopup(true)}
                           >
                             Browse Files
                           </Button>
@@ -660,6 +677,12 @@ const CreateContract = () => {
           </Grid>
         </Paper>
       )}
+      <UplodTrackFileDilog
+        open={showPopup}
+        onClose={() => setShowPopup(false)}
+        setDocumentPath={setUplodTrackFile}
+        triggerClick={() => triggerClick()}
+      />
     </>
   );
 };

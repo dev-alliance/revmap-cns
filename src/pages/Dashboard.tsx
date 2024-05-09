@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -114,11 +114,13 @@ import UserDetailSingleUser from "@/pages/dasboard/users/UserDetailSingleUser";
 import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
 import { useContract } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
+import { ContractContext } from "@/context/ContractContext";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
 
 const drawerWidth = 240;
+// const drawerWidth = 55;
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const { contractStatus, setContractStatus } = useContract();
@@ -136,9 +138,9 @@ export default function Dashboard() {
     setting: false,
     configuration: false,
   });
-
+  const { sidebarExpanded, setSidebarExpanded } = useContext(ContractContext);
   const location = useLocation();
-
+  const drawerWidth = sidebarExpanded ? 55 : 240;
   // Split the pathname by '/' and filter out empty strings
   const pathSegments = location.pathname.split("/").filter(Boolean);
 
@@ -211,19 +213,23 @@ export default function Dashboard() {
   };
   const drawer = (
     <div>
-      <Toolbar sx={{ justifyContent: "center", height: "64px" }}>
-        <img
-          src={logo}
-          alt="Logo"
-          style={{
-            maxWidth: isMobile ? "100px" : "220px",
-            marginTop: "16px",
-          }}
-        />
-      </Toolbar>
+      <img
+        src={logo}
+        alt="Logo"
+        style={{
+          maxWidth: isMobile ? "100px" : "220px",
+          marginTop: "18px",
+          alignItems: "left",
+          marginLeft: "-0.5rem",
+        }}
+      />
 
       <Divider />
-      <List onClick={handleDrawerToggle}>
+      <List
+        onClick={() => {
+          handleDrawerToggle(), setSidebarExpanded(false);
+        }}
+      >
         <ListItemButton
           component={Link}
           to="/dashboard"

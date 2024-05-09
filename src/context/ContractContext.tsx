@@ -113,8 +113,12 @@ interface ContractContextProps {
 
   editMode: any | null;
   setEditMode: Dispatch<SetStateAction<any>>;
+
   lifecycleData: any | null;
   setLifecycleData: Dispatch<SetStateAction<any>>;
+
+  documentName: any | null;
+  setDucomentName: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -185,12 +189,15 @@ export const ContractContext = createContext<ContractContextProps>({
   setEditMode: () => {},
   lifecycleData: {},
   setLifecycleData: () => {},
+  documentName: {},
+  setDucomentName: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
+  const [documentName, setDucomentName] = useState("");
   const [editMode, setEditMode] = useState<boolean>(false);
   const [documentContent, setDocumentContent] = useState<any>(null);
   const [showBlock, setShowBlock] = useState<string>("");
@@ -429,6 +436,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (lifecycleData) {
       setLifecycleData(JSON.parse(lifecycleData));
     }
+    const documentName = localStorage.getItem("documentName");
+    if (documentName) {
+      setDucomentName(JSON.parse(documentName));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -520,6 +531,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setEditMode,
         lifecycleData,
         setLifecycleData,
+        documentName,
+        setDucomentName,
       }}
     >
       {children}

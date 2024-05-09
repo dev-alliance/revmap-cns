@@ -120,6 +120,11 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import mammoth from "mammoth";
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
+import { create } from "@/service/api/contract";
+import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation } from "react-router-dom";
+import { ok } from "assert";
 
 DocumentEditorComponent.Inject(
   Selection,
@@ -132,6 +137,9 @@ DocumentEditorComponent.Inject(
 DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFesion() {
+  const location = useLocation();
+  const open = location?.state?.open;
+  const { user } = useAuth();
   const {
     setEditorRefContext,
     dragFields,
@@ -145,6 +153,11 @@ function SyncFesion() {
     setSidebarExpanded,
     setEditMode,
     editMode,
+    contract,
+    lifecycleData,
+    collaborater,
+    approvers,
+    documentName,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
@@ -152,7 +165,45 @@ function SyncFesion() {
   useEffect(() => {}, [documentContent, uplodTrackFile]);
 
   const editorContainerRef: any = useRef(null);
+  const handleSubmit = async (data: any) => {
+    try {
+      if (!documentName) {
+        toast.error("Please enter the name of the document");
+        return;
+      }
+      const payload = {
+        userId: user._id,
+        overview: contract,
+        lifecycle: lifecycleData,
+        collaburater: collaborater,
+        approval: approvers,
+        signature: recipients,
+      };
+      const response = await create(payload);
+      if (response.ok === true) {
+        toast.success(response.message);
+        // navigate("/dashboard/branchlist");
+      } else {
+        const errorMessage = response.message || "An error occurred";
+        toast.error(errorMessage);
+      }
+    } catch (error: any) {
+      console.log(error);
 
+      let errorMessage = "Failed to create clause.";
+      if (error.response && error.response.data) {
+        errorMessage =
+          error.response.data.message ||
+          error.response.data ||
+          "An error occurred";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
   const [openDropdowns, setOpenDropdowns] = useState({
     file: false,
     view: false,
@@ -764,6 +815,8 @@ function SyncFesion() {
   ];
 
   const triggerClick = (id: any) => {
+    console.log(id, "id");
+
     const element = document.getElementById(id);
     if (element) {
       element.click();
@@ -1243,6 +1296,20 @@ function SyncFesion() {
       return updated;
     });
   };
+
+  const [readyForUserTrigger, setReadyForUserTrigger] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.openFileChooser) {
+      setReadyForUserTrigger(true);
+    }
+  }, [location.state]);
+
+  if (readyForUserTrigger) {
+    triggerClick("container_toolbar_open"); // Your existing function to open the file chooser
+    setReadyForUserTrigger(false); // Reset the state
+  }
+
   const reverToReview = () => {
     setRecipients((prev: any) => {
       const updated = prev.map((user: any) => {
@@ -1369,7 +1436,7 @@ function SyncFesion() {
   console.log("editing : ", enabelEditing);
 
   return (
-    <div>
+    <div style={{ width: "100%", height: "100vh" }}>
       {showBlock == "uploadTrack" && (
         <Typography
           variant="body2"
@@ -1960,7 +2027,8 @@ function SyncFesion() {
             </ul>
           )}
         </div>
-        <Box sx={{ width: "100%", px: 2.6 }}>
+
+        <div style={{ width: "80%" }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             {(showBlock == "uploadTrack" || editMode) && (
               <>
@@ -1976,7 +2044,7 @@ function SyncFesion() {
                 </Button>
                 <Button
                   sx={{ ml: 2, textTransform: "none" }}
-                  type="submit"
+                  onClick={handleSubmit}
                   variant="outlined"
                   color="success"
                 >
@@ -2016,34 +2084,38 @@ function SyncFesion() {
               </Button>
             )}
           </div>
-        </Box>
+        </div>
       </div>
 
       {/* <div id="xyz">show </div> */}
-      {showBlock == "uploadTrack" && (
+      {showBlock == "uploadTrack" && uplodTrackFile && (
         <div>
-          {uplodTrackFile && uplodTrackFile.type === "application/pdf" ? (
-            <div className="  w-full h-[70vh] bg-white overflow-auto  px-4 py-3">
-              <div className="max-w-[930px] w-full mx-auto">
-                <Worker workerUrl={workerUrl}>
-                  <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
-                </Worker>
+          {
+            uplodTrackFile && uplodTrackFile.type === "application/pdf" && (
+              <div className="  w-full h-[75vh] bg-white overflow-auto  px-4 py-3">
+                <div className="max-w-[930px] w-full mx-auto">
+                  <Worker workerUrl={workerUrl}>
+                    <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
+                  </Worker>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="w-full h-[70vh] bg-white overflow-auto ">
-              <div className="max-w-[835px] w-full mx-auto px-4 py-4 ">
-                <div
-                  className="w-full border-2 min-h-[600px]  px-28 py-28"
-                  dangerouslySetInnerHTML={{ __html: documentContent }}
-                />
-              </div>
-            </div>
-          )}
+            )
+            // : (
+            //   <div className="w-full h-[70vh] bg-white overflow-auto ">
+            //     <div className="max-w-[835px] w-full mx-auto px-4 py-4 ">
+            //       <div
+            //         className="w-full border-2 min-h-[600px]  px-28 py-28"
+            //         dangerouslySetInnerHTML={{ __html: documentContent }}
+            //       />
+            //     </div>
+            //   </div>
+            // )
+          }
         </div>
       )}
 
       {documentPath && <PDFUploaderViewer documentPath={documentPath} />}
+
       {showBlock === "" && (
         <>
           <div className="  ">
@@ -2332,14 +2404,18 @@ function SyncFesion() {
               </div>
             )}
           </div>
+        </>
+      )}
 
+      {(showBlock === "" || documentContent == "word") && (
+        <div style={{ display: "flex", width: "100%", height: "100vh" }}>
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
             id="container"
-            height="78vh"
+            height="79vh"
             toolbarItems={items}
             toolbarClick={onToolbarClick}
-            enableToolbar={false}
+            enableToolbar={true}
             serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
             // showPropertiesPane={false}
 
@@ -2348,8 +2424,9 @@ function SyncFesion() {
             }}
             created={onCreated}
           />
-        </>
+        </div>
       )}
+
       <SyncFesionFileDilog
         open={showPopup}
         onClose={() => setShowPopup(false)}

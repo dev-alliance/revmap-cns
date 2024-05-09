@@ -784,76 +784,75 @@ const Fields = () => {
                 }}
               />
             )}
-            {(showSidebar == "[ Radio Button ]" ||
-              showSidebar == "[ Checkbox ]") && (
-              <>
-                <div style={{ display: "flex" }}>
-                  <IconButton color="secondary" sx={{ ml: -1.3 }}>
-                    <img src={checkIcon} alt="Check Icon" />
-                  </IconButton>{" "}
-                  <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
-                    CheckBox
-                  </Typography>
-                </div>
-                <div>
-                  <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
-                    Value
-                  </Typography>
-                  {checkboxes.map((checkbox, index) => (
-                    <div
-                      key={checkbox.id}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      <TextField
-                        value={checkbox.label}
-                        onChange={(e) => handleLabelChange2(e, index)}
-                        // value={item.label}
-                        // onChange={(e) => handleLabelChange(index, e.target.value)}
-                        fullWidth
-                        size="small"
-                        variant="standard"
-                      />
-                      <IconButton
-                        onClick={() => deleteCheckbox(index)}
-                        aria-label="delete"
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </div>
-                  ))}
-                  <Button
-                    onClick={addCheckbox}
-                    sx={{
-                      mt: 0.5,
-                      ml: -1,
-                      fontSize: "12px",
-                      textTransform: "none !important",
-                      borderRadius: 0,
-                      color:
-                        activeSection === "collaborate"
-                          ? "primary.main"
-                          : "black",
-                      fontWeight: "bold",
-                      "&:hover": {
-                        borderBottom: 2,
-                        borderColor: "primary.main",
-                        backgroundColor: "transparent",
-                      },
-                      borderColor:
-                        activeSection === "collaborate"
-                          ? "primary.main"
-                          : "transparent",
+
+            <>
+              <div style={{ display: "flex" }}>
+                <IconButton color="secondary" sx={{ ml: -1.3 }}>
+                  <img src={checkIcon} alt="Check Icon" />
+                </IconButton>{" "}
+                <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
+                  CheckBox
+                </Typography>
+              </div>
+              <div>
+                <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
+                  Value
+                </Typography>
+                {checkboxes.map((checkbox, index) => (
+                  <div
+                    key={checkbox.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "8px",
                     }}
                   >
-                    + Add value
-                  </Button>
-                </div>
-              </>
-            )}
+                    <TextField
+                      value={checkbox.label}
+                      onChange={(e) => handleLabelChange2(e, index)}
+                      // value={item.label}
+                      // onChange={(e) => handleLabelChange(index, e.target.value)}
+                      fullWidth
+                      size="small"
+                      variant="standard"
+                    />
+                    <IconButton
+                      onClick={() => deleteCheckbox(index)}
+                      aria-label="delete"
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </div>
+                ))}
+                <Button
+                  onClick={addCheckbox}
+                  sx={{
+                    mt: 0.5,
+                    ml: -1,
+                    fontSize: "12px",
+                    textTransform: "none !important",
+                    borderRadius: 0,
+                    color:
+                      activeSection === "collaborate"
+                        ? "primary.main"
+                        : "black",
+                    fontWeight: "bold",
+                    "&:hover": {
+                      borderBottom: 2,
+                      borderColor: "primary.main",
+                      backgroundColor: "transparent",
+                    },
+                    borderColor:
+                      activeSection === "collaborate"
+                        ? "primary.main"
+                        : "transparent",
+                  }}
+                >
+                  + Add value
+                </Button>
+              </div>
+            </>
+
             <Divider style={{ margin: "10px 0" }} />
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
               <Button

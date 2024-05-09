@@ -1168,14 +1168,40 @@ const LifeCycle = () => {
             height: "25px !important",
             fontSize: "0.675rem",
           }}
-          // onClick={() => {
-          //   setSignatories([]),
-          //     setSelectedApprovalId(""),
-          //     setShowSignatories(""),
-          //     setApprovers([]);
-          //   setShowCompanySelect(false);
-          //   setShowConditionalSelect(false);
-          // }}
+          onClick={() => {
+            setLifecycleData({
+              activeSection: "",
+              showButtons: false,
+              recipients: [],
+              formData: {
+                checkboxStates: {
+                  isEvergreen: false,
+                  isRenewalsActive: false,
+                  isNotificationEmailEnabled: false,
+                  isRemindersEnabled: false,
+                },
+                dateFields: {
+                  signedOn: "",
+                  startDate: "",
+                  endDate: "",
+                  noticePeriodDate: "",
+                },
+                renewalDetails: {
+                  renewalType: "days",
+                  renewalPeriod: 0,
+                },
+                notificationDetails: {
+                  notifyOwner: false,
+                  additionalRecipients: [],
+                },
+                reminderSettings: {
+                  firstReminder: 0,
+                  daysBetweenReminders: 0,
+                  daysBeforeFinalExpiration: 0,
+                },
+              },
+            });
+          }}
         >
           Cancel
         </Button>

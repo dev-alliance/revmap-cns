@@ -17,22 +17,23 @@ import CloseIcon from "@mui/icons-material/Close";
 import logo from "@/assets/collaburater_icon.png";
 
 import { ContractContext } from "@/context/ContractContext";
+import { useNavigate } from "react-router-dom";
 
 interface DetailDialogProps {
   open: boolean;
   onClose: () => void;
-  documentPath: any;
+
   setDocumentPath: (path: string) => void;
   triggerClick: () => void;
 }
 
-const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
+const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
   open,
   onClose,
-  documentPath,
   setDocumentPath,
   triggerClick,
 }) => {
+  const navigate = useNavigate();
   const fileInputRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
@@ -44,28 +45,14 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
       const fileName = file.name;
       console.log("Uploaded file name:", fileName);
       setDucomentName(fileName);
-      const reader: any = new FileReader();
-      reader.onloadend = function () {
-        const base64String: any = reader.result.replace(
-          "data:application/pdf;base64,",
-          ""
-        );
-        setDocumentPath(base64String);
-      };
-      reader.readAsDataURL(file);
-      setShowBlock("pdf");
-      onClose();
+      setDocumentPath(file);
+      setShowBlock("uploadTrack");
+      navigate("/dashboard/editor-dahsbord");
     } else {
       alert("Please upload a valid PDF file.");
     }
   };
-  useEffect(() => {
-    // This can be used to trigger actions that depend on states updated by file upload
-    if (documentPath) {
-      // Assuming documentPath should trigger something
-      triggerClick();
-    }
-  }, [documentPath]);
+
   return (
     <>
       <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -87,7 +74,7 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
               transform: "translateY(-50%)",
             }}
           >
-            Select the type of document you are importing:
+            Select the type of document you are Uploading:
           </Typography>
           <IconButton
             onClick={() => {
@@ -101,7 +88,7 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
         </DialogTitle>
         <DialogContent>
           <Typography gutterBottom align="center" sx={{ mt: 2 }}>
-            Please select whether you are importing a Word file or a PDF file.
+            Please select whether you are Upload a Word file or a PDF file.
           </Typography>
           <Box
             sx={{
@@ -208,7 +195,7 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
                       }}
                     >
                       <Typography sx={{ fontSize: "10px" }}>
-                        Use PDf for signature ,life sycle and much more
+                        Upload PDF to Manage Lifesycle
                       </Typography>
                     </div>
                   </div>
@@ -305,7 +292,7 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
                       }}
                     >
                       <Typography sx={{ fontSize: "10px" }}>
-                        Import word ,txt, rtf, doc, docx file to create document
+                        Upload word docx file to Manage Lifesycle
                       </Typography>
                     </div>
                   </div>
@@ -318,4 +305,4 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
     </>
   );
 };
-export default SyncFesionFileDilog;
+export default UplodTrackFileDilog;

@@ -58,7 +58,7 @@ const OverView = () => {
     getValues,
   } = useForm<FormValues>();
   const navigate = useNavigate();
-  const { updateContractOverview, contract, setContract } =
+  const { documentName, setDucomentName, contract, setContract } =
     useContext(ContractContext);
   const { user } = useAuth();
   const [teamData, setTeamData] = useState<Array<any>>([]);
@@ -99,13 +99,15 @@ const OverView = () => {
   };
 
   const canAddField =
-    newField.name.trim() !== "" && newField.value.trim() !== "";
+    newField?.name?.trim() !== "" && newField?.value?.trim() !== "";
 
   const onSubmit = async (data: FormValues) => {
     try {
+      console.log(newField, "newField data");
+
       // Assuming data contains the updated overview fields
       const updatedOverview: any = {
-        name: data?.name,
+        name: documentName,
         with_name: data?.with_name,
         vendor: "Vendor Name", // Modify as needed
         currency: data?.currency,
@@ -116,7 +118,8 @@ const OverView = () => {
         branch: data?.branch,
         team: data?.team,
         contractType: "Type1", // Modify as needed
-        status: "Active", // Modify as needed
+        status: "Active",
+        feild: newField, // Modify as needed
         // Add other fields as necessary
       };
       console.log(updatedOverview, "dataupdat");
@@ -132,6 +135,8 @@ const OverView = () => {
   console.log(contract, "contract");
 
   useEffect(() => {
+    console.log(newField, "newField");
+
     if (contract) {
       setValue("name", contract?.name);
       setValue("with_name", contract?.with_name || "");
@@ -143,6 +148,9 @@ const OverView = () => {
       setValue("branch", contract?.branch);
       setValue("team", contract?.team);
       setValue("contractType", contract?.contractType);
+      if (contract.newField) {
+        setNewField(contract.newField);
+      }
     }
   }, [contract, setValue]);
 
@@ -258,6 +266,11 @@ const OverView = () => {
               helperText={errors.name?.message}
               size="small"
               variant="standard"
+              value={documentName}
+              onChange={(e) => {
+                field.onChange(e); // Ensure the form state is updated
+                setDucomentName(e.target.value); // Update the global state
+              }}
               InputProps={{
                 disableUnderline: true, // Disables the underline by default
                 sx: {
@@ -810,7 +823,7 @@ const OverView = () => {
           <AddIcon sx={{ color: "black", fontSize: "14px" }} /> Add Field
         </Button>
 
-        {fields.map((field: any, index: any) => (
+        {fields?.map((field: any, index: any) => (
           <Box key={index} sx={{ mb: 0 }}>
             {field.isEditing ? (
               <>
@@ -852,7 +865,7 @@ const OverView = () => {
           </Box>
         ))}
         <TextField
-          value={newField.name}
+          value={newField?.name}
           onChange={(e) => handleNewFieldChange("name", e.target.value)}
           placeholder="Enter name"
           size="small"
@@ -860,7 +873,7 @@ const OverView = () => {
           variant="standard"
         />
         <TextField
-          value={newField.value}
+          value={newField?.value}
           onChange={(e) => handleNewFieldChange("value", e.target.value)}
           placeholder="Enter value"
           size="small"

@@ -89,12 +89,14 @@ const MyComponent: React.FC = () => {
     selectedModule,
     setSelectedModule,
     editMode,
+    documentName,
+    setDucomentName,
   } = useContext(ContractContext);
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+
   const [isPinned, setIsPinned] = useState(false);
 
   const handlePinClick = () => {
@@ -110,11 +112,13 @@ const MyComponent: React.FC = () => {
   };
 
   const inputWidth =
-    inputValue.length > 0 ? `${Math.max(100, inputValue.length * 8)}px` : "70%";
+    documentName.length > 0
+      ? `${Math.max(100, documentName.length * 8)}px`
+      : "70%";
 
   const handleInputChange = useCallback(
     debounce((value: any) => {
-      setInputValue(value);
+      setDucomentName(value);
     }, 100),
     []
   );
@@ -595,7 +599,7 @@ const MyComponent: React.FC = () => {
 
   return (
     <>
-      <Box sx={{ display: "flex", width: "100%", height: "87vh" }}>
+      <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
         <Box
           sx={{
             flexGrow: 1,
@@ -654,7 +658,7 @@ const MyComponent: React.FC = () => {
                       },
                     },
                   }}
-                  value={inputValue}
+                  value={documentName}
                   onChange={(e) => handleInputChange(e.target.value)}
                 />
 
@@ -712,8 +716,8 @@ const MyComponent: React.FC = () => {
                 </div>
               </div> */}
             </div>
-            <div>
-              {/* <Box
+            {/* <div> */}
+            {/* <Box
                 sx={{
                   width: 30,
                   height: 30,
@@ -749,7 +753,7 @@ const MyComponent: React.FC = () => {
                   </Button>
                 </span>
               </Tooltip> */}
-              {/* <Button
+            {/* <Button
                 sx={{ ml: 2, textTransform: "none" }}
                 variant="outlined"
                 color="success"
@@ -757,7 +761,7 @@ const MyComponent: React.FC = () => {
               >
                 <AddIcon /> Share
               </Button> */}
-              {/* <Menu
+            {/* <Menu
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
@@ -771,7 +775,7 @@ const MyComponent: React.FC = () => {
                     >
                       <DrawIcon sx={{ color: "blue" }} />
                       {/* Replace with your logo path */}
-              {/* <Box sx={{ ml: 2 }}>
+            {/* <Box sx={{ ml: 2 }}>
                         <Typography variant="subtitle1">
                           Add signatory
                         </Typography>
@@ -779,14 +783,14 @@ const MyComponent: React.FC = () => {
                           Can sign and receive a copy of the document
                         </Typography>
                       </Box> */}
-              {/* </Box>
+            {/* </Box>
                   </MenuItem> */}
 
-              {/* <MenuItem onClick={handleClose}>
+            {/* <MenuItem onClick={handleClose}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <PersonAddAltIcon sx={{ color: "blue" }} />
                       {/* Replace with your logo path */}
-              {/* <Box sx={{ ml: 2 }}>
+            {/* <Box sx={{ ml: 2 }}>
                         <Typography variant="subtitle1">
                           Add collaborator
                         </Typography>
@@ -794,25 +798,14 @@ const MyComponent: React.FC = () => {
                           Collaborator can view, edit and comment.
                         </Typography>
                       </Box> */}
-              {/* </Box> */}
-              {/* </MenuItem>  */}
-              {/* </Card> */}
-              {/* </Menu> */}
-            </div>
+            {/* </Box> */}
+            {/* </MenuItem>  */}
+            {/* </Card> */}
+            {/* </Menu> */}
+            {/* </div> */}
           </Box>
 
           <SyncFesion></SyncFesion>
-
-          {/* <DocumentEditorContainerComponent
-          height="720"
-          enableToolbar={true}
-          serviceUrl={
-            "https://services.syncfusion.com/js/production/api/documenteditor/"
-          }
-        >
-          {" "}
-          <Inject services={[Toolbar]}></Inject>
-        </DocumentEditorContainerComponent> */}
         </Box>
 
         <Box
@@ -837,7 +830,7 @@ const MyComponent: React.FC = () => {
               item
               xs={2}
               sx={{
-                height: "85vh",
+                height: sidebarExpanded ? "100vh" : "80vh",
                 borderRight: sidebarExpanded ? "1px solid #E0E0E0" : "none", // Adjusted border color for a more subtle look
               }}
             >
@@ -846,7 +839,7 @@ const MyComponent: React.FC = () => {
                   <ListItemButton
                     sx={{ mb: 2.5, mt: 1, width: "100%" }}
                     key={key}
-                    selected={selectedModule === key}
+                    // selected={selectedModule === key}
                     onClick={() => {
                       // Ignore click if the module is disabled
                       if (modules[key].isDisabled) return;

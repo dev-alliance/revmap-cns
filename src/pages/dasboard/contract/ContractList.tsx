@@ -36,7 +36,9 @@ import { useAuth } from "@/hooks/useAuth";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import { ContractContext } from "@/context/ContractContext";
+import { getList } from "@/service/api/contract";
 // import MenuButton from "@/components/MenuButton";
+import { format, utcToZonedTime } from "date-fns-tz";
 
 interface CellType {
   row: any;
@@ -66,37 +68,6 @@ interface RowType {
 // ** Styled components
 
 const defaultColumns: GridColDef[] = [
-  {
-    flex: 0.2,
-    field: "branchName",
-    minWidth: 220,
-    headerName: "Branch Name",
-    renderCell: ({ row }: any) => {
-      const { branchName } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {branchName}
-            </Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 170,
-    field: "state",
-    headerName: "Region/State",
-
-    renderCell: ({ row }: { row: any }) => {
-      const { state } = row;
-      return <Typography sx={{ color: "text.secondary" }}>{state}</Typography>;
-    },
-  },
   {
     flex: 0.2,
     minWidth: 125,
@@ -149,46 +120,180 @@ const defaultColumns: GridColDef[] = [
       </>
     ),
   },
+  {
+    flex: 0.3,
+    minWidth: 170,
+    field: "state",
+    headerName: "Contract with",
 
-  // {
-  //   flex: 0.3,
-  //   minWidth: 125,
-  //   field: "branchId",
-  //   headerName: "Branch ID",
-  //   renderCell: ({ row }: { row: any }) => {
-  //     const { branchId } = row;
-  //     return (
-  //       <Typography sx={{ color: "text.secondary" }}>{`${
-  //         branchId || ""
-  //       }`}</Typography>
-  //     );
-  //   },
-  // },
+    renderCell: ({ row }: { row: any }) => {
+      const { state } = row;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>
+          {row?.overview?.with_name}
+        </Typography>
+      );
+    },
+  },
+  {
+    flex: 0.2,
+    field: "branchName",
+    minWidth: 220,
+    headerName: "Contract name",
+    renderCell: ({ row }: any) => {
+      const { branchName } = row;
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {row?.overview?.name}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+
   {
     flex: 0.3,
     minWidth: 125,
-    field: "manager",
-    headerName: "Manager ",
+    field: "Team",
+    headerName: "Team ",
     renderCell: ({ row }: { row: any }) => {
       const { manager } = row;
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          manager?.firstName || "-"
+          row?.overview?.team || "-"
         }`}</Typography>
       );
     },
   },
   {
-    flex: 0.3,
-    minWidth: 105,
-    field: "Active Contracts",
-    headerName: "Active Contracts",
+    flex: 0.2,
+    field: "createdAt",
+    minWidth: 140,
+    headerName: "Created Date",
+    renderCell: ({ row }: any) => {
+      // Extract the date from the row
+      const { lifecycle } = row || {};
+      const { startDate } = lifecycle?.formData?.dateFields || {};
 
-    renderCell: ({ row }: { row: RowType }) => {
-      return <Typography sx={{ color: "text.secondary" }}>{"10"}</Typography>;
+      // If the date is empty, return a default value
+      if (!startDate) {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>-</Typography>
+            </Box>
+          </Box>
+        );
+      }
+
+      // Specify the desired time zone, e.g., 'America/New_York'
+      const timeZone = "America/New_York";
+
+      // Convert UTC date to the specified time zone
+      const zonedDate = utcToZonedTime(new Date(startDate), timeZone);
+
+      // Format the zoned date to the desired output format
+      const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {formattedDate}
+            </Typography>
+          </Box>
+        </Box>
+      );
     },
   },
 
+  {
+    flex: 0.2,
+    field: "Expiration date",
+    minWidth: 140,
+    headerName: "Expiration date",
+    renderCell: ({ row }: any) => {
+      // Extract the date from the row
+      const { lifecycle } = row || {};
+      const { endDate } = lifecycle?.formData?.dateFields || {};
+
+      // If the date is empty, return a default value
+      if (!endDate) {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>-</Typography>
+            </Box>
+          </Box>
+        );
+      }
+
+      // Specify the desired time zone, e.g., 'America/New_York'
+      const timeZone = "America/New_York";
+
+      // Convert UTC date to the specified time zone
+      const zonedDate = utcToZonedTime(new Date(endDate), timeZone);
+
+      // Format the zoned date to the desired output format
+      const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {formattedDate}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
+  {
+    flex: 0.2,
+    field: "Notice period",
+    minWidth: 140,
+    headerName: "Notice period",
+    renderCell: ({ row }: any) => {
+      // Extract the date from the row
+      const { lifecycle } = row || {};
+      const { noticePeriodDate } = lifecycle?.formData?.dateFields || {};
+
+      // If the date is empty, return a default value
+      if (!noticePeriodDate) {
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>-</Typography>
+            </Box>
+          </Box>
+        );
+      }
+
+      // Specify the desired time zone, e.g., 'America/New_York'
+      const timeZone = "America/New_York";
+
+      // Convert UTC date to the specified time zone
+      const zonedDate = utcToZonedTime(new Date(noticePeriodDate), timeZone);
+
+      // Format the zoned date to the desired output format
+      const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+
+      return (
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ color: "text.secondary" }}>
+              {formattedDate}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    },
+  },
   {
     flex: 0.3,
     minWidth: 125,
@@ -208,7 +313,8 @@ const ContractList = () => {
   const navigate = useNavigate();
   // ** State
   const { contractStatus, setContractStatus } = useContract();
-  const { setContract, setLifecycleData } = useContext(ContractContext);
+  const { setContract, setLifecycleData, setSidebarExpanded } =
+    useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
@@ -216,7 +322,7 @@ const ContractList = () => {
     pageSize: 7,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [catategorylist, setCategorylist] = useState<Array<any>>([]);
+  const [cntractlist, setContractlist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
   const [data, setData] = useState([]);
 
@@ -242,9 +348,9 @@ const ContractList = () => {
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getBranchList(user?._id);
-      setCategorylist(data);
-      console.log("branc", data);
+      const { data } = await getList(user?._id);
+      setContractlist(data);
+      console.log("contract", data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -303,14 +409,14 @@ const ContractList = () => {
   }, [user?._id]);
 
   const filteredList = useMemo(() => {
-    let result = catategorylist;
+    let result = cntractlist;
     if (search?.trim().length) {
       result = result.filter((item) =>
         item.branchName?.toLowerCase().includes(search.trim().toLowerCase())
       );
     }
     return result;
-  }, [search, catategorylist]);
+  }, [search, cntractlist]);
 
   const handleApplyFilters = async (filters: CheckedState) => {
     console.log(filters, "filters");
@@ -417,6 +523,7 @@ const ContractList = () => {
                 to="/dashboard/create-contract"
                 onClick={() => {
                   setContract(null),
+                    setSidebarExpanded(true),
                     setLifecycleData({
                       activeSection: "",
                       showButtons: false,
