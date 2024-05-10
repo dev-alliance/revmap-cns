@@ -158,11 +158,15 @@ function SyncFesion() {
     collaborater,
     approvers,
     documentName,
+    setLeftSidebarExpanded,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
   useEffect(() => {}, [documentContent, uplodTrackFile]);
+  useEffect(() => {
+    setLeftSidebarExpanded(true);
+  }, []);
 
   const editorContainerRef: any = useRef(null);
   const handleSubmit = async (data: any) => {
@@ -178,6 +182,7 @@ function SyncFesion() {
         collaburater: collaborater,
         approval: approvers,
         signature: recipients,
+        status: "Active",
       };
       const response = await create(payload);
       if (response.ok === true) {

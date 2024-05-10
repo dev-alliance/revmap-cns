@@ -103,9 +103,9 @@ const OverView = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      console.log(newField, "newField data");
-
+      console.log(documentName, "documentName");
       // Assuming data contains the updated overview fields
+
       const updatedOverview: any = {
         name: documentName,
         with_name: data?.with_name,

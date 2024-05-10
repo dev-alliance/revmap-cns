@@ -523,7 +523,6 @@ const ContractList = () => {
                 to="/dashboard/create-contract"
                 onClick={() => {
                   setContract(null),
-                    setSidebarExpanded(true),
                     setLifecycleData({
                       activeSection: "",
                       showButtons: false,

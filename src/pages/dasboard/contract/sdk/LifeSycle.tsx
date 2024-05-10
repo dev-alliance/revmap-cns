@@ -1027,7 +1027,7 @@ const LifeCycle = () => {
                   fontSize: "14px",
                 }}
               >
-                date of the document.
+                renewal date.
               </Typography>
 
               <div

@@ -119,6 +119,9 @@ interface ContractContextProps {
 
   documentName: any | null;
   setDucomentName: Dispatch<SetStateAction<any>>;
+
+  leftsidebarExpanded: any | null;
+  setLeftSidebarExpanded: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -191,6 +194,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setLifecycleData: () => {},
   documentName: {},
   setDucomentName: () => {},
+  leftsidebarExpanded: {},
+  setLeftSidebarExpanded: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -198,6 +203,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [contract, setContract] = useState<Contract | null>(null);
   const [documentName, setDucomentName] = useState("");
+  const [leftsidebarExpanded, setLeftSidebarExpanded] = useState(false);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [documentContent, setDocumentContent] = useState<any>(null);
   const [showBlock, setShowBlock] = useState<string>("");
@@ -440,6 +446,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (documentName) {
       setDucomentName(JSON.parse(documentName));
     }
+    const leftsidebarExpanded = localStorage.getItem("leftsidebarExpanded");
+    if (leftsidebarExpanded) {
+      setLeftSidebarExpanded(JSON.parse(leftsidebarExpanded));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -533,6 +543,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setLifecycleData,
         documentName,
         setDucomentName,
+        leftsidebarExpanded,
+        setLeftSidebarExpanded,
       }}
     >
       {children}
