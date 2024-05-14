@@ -33,6 +33,9 @@ const theme = createTheme({
     text: {
       secondary: " #555,", // Replace this with your desired color value
     },
+    background: {
+      default: "#f4f6f8", // Your preferred background color
+    },
   },
   // shadows: [
   //   "none",
@@ -51,7 +54,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: "#fff",
+          backgroundColor: "#F8FAFD",
           // wordSpacing: "3px",
           // letterSpacing: "0.5px",
         },

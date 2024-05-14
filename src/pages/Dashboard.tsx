@@ -184,7 +184,12 @@ export default function Dashboard() {
   // Properly type the section parameter
   const handleSectionClick = (section: keyof any) => {
     setOpenSections((prevSections: any) => ({
-      ...prevSections,
+      // Set all sections to false initially
+      ...Object.keys(prevSections).reduce(
+        (acc, key) => ({ ...acc, [key]: false }),
+        {}
+      ),
+      // Then set only the clicked section to true
       [section]: !prevSections[section],
     }));
   };
@@ -248,7 +253,8 @@ export default function Dashboard() {
           component={Link}
           to="/dashboard"
           sx={{
-            height: "5vh",
+            height: "4vh",
+            mb: "12px",
             backgroundColor:
               selectedModule === "home" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -320,7 +326,8 @@ export default function Dashboard() {
 
         <ListItemButton
           sx={{
-            height: "5vh",
+            height: "4vh",
+            mb: "12px",
             backgroundColor:
               selectedModule === "contract" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -402,24 +409,27 @@ export default function Dashboard() {
             {statuses?.map((statusItem) => (
               <ListItemButton
                 key={statusItem}
-                sx={{ pl: 7, fontSize: "10px" }}
+                sx={{
+                  pl: leftsidebarExpanded ? 0.4 : 7,
+                  fontSize: leftsidebarExpanded ? "3px" : "10px",
+                }}
                 onClick={() => handleStatusClick(statusItem)}
               >
                 <div
                   style={{
-                    height: "10px",
-                    width: "10px",
+                    height: leftsidebarExpanded ? "6px" : "10px",
+                    width: leftsidebarExpanded ? "6px" : "10px",
 
                     backgroundColor: statusColors[statusItem],
-                    borderRadius: "50%",
-                    marginRight: "10px",
+                    borderRadius: leftsidebarExpanded ? "100%" : "50%",
+                    marginRight: leftsidebarExpanded ? "4px" : "10px",
                     alignSelf: "center",
                   }}
                 />
                 <ListItemText
                   primary={statusItem}
                   sx={{
-                    fontSize: "10px",
+                    fontSize: leftsidebarExpanded ? "5px" : "10px",
                     color:
                       statusItem === contractStatus.status
                         ? "#1976d2"
@@ -427,7 +437,8 @@ export default function Dashboard() {
                   }}
                   primaryTypographyProps={{
                     variant: "subtitle2",
-                    fontSize: "14px",
+                    fontSize: leftsidebarExpanded ? "12px" : "14px",
+                    color: "white",
                   }}
                 />
               </ListItemButton>
@@ -494,7 +505,8 @@ export default function Dashboard() {
           component={Link}
           to="/dashboard/template-list"
           sx={{
-            height: "5vh",
+            height: "4vh",
+            mb: "12px",
             backgroundColor:
               selectedModule === "template" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -537,7 +549,8 @@ export default function Dashboard() {
           component={Link}
           to="/dashboard/folder-list"
           sx={{
-            height: "5vh",
+            height: "4vh",
+            mb: "12px",
             backgroundColor:
               selectedModule === "folder" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -581,7 +594,8 @@ export default function Dashboard() {
           component={Link}
           to="/dashboard/folder-list"
           sx={{
-            height: "5vh",
+            height: "4vh",
+            mb: "12px",
             backgroundColor:
               selectedModule === "reports" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -624,6 +638,19 @@ export default function Dashboard() {
         </ListItemButton>
 
         <ListItemButton
+          sx={{
+            height: "4vh",
+            mb: "12px",
+            "&:hover": {
+              backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+              "& .MuiListItemText-root": {
+                color: "#174B8B", // Color change on hover for text
+              },
+              "& svg path": {
+                fill: "#174B8B", // Color change on hover for SVG
+              },
+            },
+          }}
           onClick={() => handleSectionClick("setting")}
           // component={Link}
           // to="/dashboard/contract-list"
@@ -663,18 +690,19 @@ export default function Dashboard() {
           <List component="div" disablePadding>
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "billing" ? "#E4EDF8" : "transparent",
                 "&:hover": {
-                  backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                  backgroundColor: "#FFFFFF",
                   "& .MuiListItemText-root": {
-                    color: "#174B8B", // Color change on hover for text
+                    color: "#174B8B",
                   },
                   "& svg path": {
-                    fill: "#174B8B", // Color change on hover for SVG
+                    fill: "#174B8B",
                   },
                 },
               }}
@@ -682,18 +710,22 @@ export default function Dashboard() {
               component={Link}
               to="/dashboard/billing"
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M18.96 21.6C18.48 23.04 17.16 24 15.6 24H3.6C1.56 24 0 22.44 0 20.4V19.2H3.6H14.64C15.12 20.64 16.44 21.6 18 21.6H18.96ZM20.4 0C22.44 0 24 1.56 24 3.6V4.8H21.6V3.6C21.6 2.88 21.12 2.4 20.4 2.4C19.68 2.4 19.2 2.88 19.2 3.6V19.2H18C17.28 19.2 16.8 18.72 16.8 18V16.8H3.6V3.6C3.6 1.56 5.16 0 7.2 0H20.4ZM7.2 4.8V7.2H15.6V4.8H7.2ZM7.2 9.6V12H14.4V9.6H7.2Z"
-                  fill={selectedModule === "billing" ? "#174B8B" : "white"}
-                />
-              </svg>
+              <div style={{ width: "24px", height: "24px" }}>
+                {" "}
+                {/* Wrapper with fixed size */}
+                <svg
+                  width="24" // Fixed width
+                  height="24" // Fixed height
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M18.96 21.6C18.48 23.04 17.16 24 15.6 24H3.6C1.56 24 0 22.44 0 20.4V19.2H3.6H14.64C15.12 20.64 16.44 21.6 18 21.6H18.96ZM20.4 0C22.44 0 24 1.56 24 3.6V4.8H21.6V3.6C21.6 2.88 21.12 2.4 20.4 2.4C19.68 2.4 19.2 2.88 19.2 3.6V19.2H18C17.28 19.2 16.8 18.72 16.8 18V16.8H3.6V3.6C3.6 1.56 5.16 0 7.2 0H20.4ZM7.2 4.8V7.2H15.6V4.8H7.2ZM7.2 9.6V12H14.4V9.6H7.2Z"
+                    fill={selectedModule === "billing" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
 
               <ListItemText
                 primary={"Billing"}
@@ -708,11 +740,13 @@ export default function Dashboard() {
                 }}
               />
             </ListItemButton>
+
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "company-profile"
                     ? "#E4EDF8"
@@ -731,21 +765,22 @@ export default function Dashboard() {
               component={Link}
               to="/dashboard/update-compony"
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0 0V24H10.2857V19.3333H13.7143V24H24V0H0ZM3.42857 2.66667H6.85714V5.33333H3.42857V2.66667ZM10.2857 2.66667H13.7143V5.33333H10.2857V2.66667ZM17.1429 2.66667H20.5714V5.33333H17.1429V2.66667ZM3.42857 8H6.85714V10.6667H3.42857V8ZM10.2857 8H13.7143V10.6667H10.2857V8ZM17.1429 8H20.5714V10.6667H17.1429V8ZM3.42857 13.3333H6.85714V16H3.42857V13.3333ZM10.2857 13.3333H13.7143V16H10.2857V13.3333ZM17.1429 13.3333H20.5714V16H17.1429V13.3333ZM3.42857 18.6667H6.85714V21.3333H3.42857V18.6667ZM17.1429 18.6667H20.5714V21.3333H17.1429V18.6667Z"
-                  fill={
-                    selectedModule === "company-profile" ? "#174B8B" : "white"
-                  }
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0 0V24H10.2857V19.3333H13.7143V24H24V0H0ZM3.42857 2.66667H6.85714V5.33333H3.42857V2.66667ZM10.2857 2.66667H13.7143V5.33333H10.2857V2.66667ZM17.1429 2.66667H20.5714V5.33333H17.1429V2.66667ZM3.42857 8H6.85714V10.6667H3.42857V8ZM10.2857 8H13.7143V10.6667H10.2857V8ZM17.1429 8H20.5714V10.6667H17.1429V8ZM3.42857 13.3333H6.85714V16H3.42857V13.3333ZM10.2857 13.3333H13.7143V16H10.2857V13.3333ZM17.1429 13.3333H20.5714V16H17.1429V13.3333ZM3.42857 18.6667H6.85714V21.3333H3.42857V18.6667ZM17.1429 18.6667H20.5714V21.3333H17.1429V18.6667Z"
+                    fill={
+                      selectedModule === "company-profile" ? "#174B8B" : "white"
+                    }
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Company Profile"}
                 sx={{
@@ -762,9 +797,10 @@ export default function Dashboard() {
             </ListItemButton>
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "user" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -781,19 +817,20 @@ export default function Dashboard() {
               component={Link}
               to="/dashboard/user-list"
             >
-              <svg
-                width="24"
-                height="22"
-                viewBox="0 0 24 22"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12.9913 11.9998C14.6482 11.9998 15.9913 13.3429 15.9913 14.9997L15.9897 16.4964C16.1954 20.1695 13.3664 22.0012 8.12024 22.0012C2.89098 22.0012 0 20.1934 0 16.5488V14.9997C0 13.3429 1.34312 11.9998 2.99994 11.9998H12.9913ZM20.9924 11.9998C22.6492 11.9998 23.9923 13.3429 23.9923 14.9997L23.9908 16.0528C24.1717 19.3477 21.6719 20.9996 17.1029 20.9996C16.4826 20.9996 15.8996 20.9694 15.355 20.9089C16.4284 19.9177 17.0026 18.5726 17.0007 16.8728L16.9881 16.4405L16.9913 14.9997C16.9913 13.8046 16.4671 12.7319 15.6362 11.999L20.9924 11.9998ZM7.99985 0C10.7617 0 13.0006 2.2389 13.0006 5.00072C13.0006 7.76254 10.7617 10.0014 7.99985 10.0014C5.23803 10.0014 2.99913 7.76254 2.99913 5.00072C2.99913 2.2389 5.23803 0 7.99985 0ZM17.9997 1.99996C20.2088 1.99996 21.9996 3.79079 21.9996 5.99989C21.9996 8.20899 20.2088 9.99981 17.9997 9.99981C15.7906 9.99981 13.9997 8.20899 13.9997 5.99989C13.9997 3.79079 15.7906 1.99996 17.9997 1.99996Z"
-                  fill={selectedModule === "user" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="22"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12.9913 11.9998C14.6482 11.9998 15.9913 13.3429 15.9913 14.9997L15.9897 16.4964C16.1954 20.1695 13.3664 22.0012 8.12024 22.0012C2.89098 22.0012 0 20.1934 0 16.5488V14.9997C0 13.3429 1.34312 11.9998 2.99994 11.9998H12.9913ZM20.9924 11.9998C22.6492 11.9998 23.9923 13.3429 23.9923 14.9997L23.9908 16.0528C24.1717 19.3477 21.6719 20.9996 17.1029 20.9996C16.4826 20.9996 15.8996 20.9694 15.355 20.9089C16.4284 19.9177 17.0026 18.5726 17.0007 16.8728L16.9881 16.4405L16.9913 14.9997C16.9913 13.8046 16.4671 12.7319 15.6362 11.999L20.9924 11.9998ZM7.99985 0C10.7617 0 13.0006 2.2389 13.0006 5.00072C13.0006 7.76254 10.7617 10.0014 7.99985 10.0014C5.23803 10.0014 2.99913 7.76254 2.99913 5.00072C2.99913 2.2389 5.23803 0 7.99985 0ZM17.9997 1.99996C20.2088 1.99996 21.9996 3.79079 21.9996 5.99989C21.9996 8.20899 20.2088 9.99981 17.9997 9.99981C15.7906 9.99981 13.9997 8.20899 13.9997 5.99989C13.9997 3.79079 15.7906 1.99996 17.9997 1.99996Z"
+                    fill={selectedModule === "user" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Users"}
                 sx={{
@@ -811,6 +848,20 @@ export default function Dashboard() {
         </Collapse>
 
         <ListItemButton
+          sx={{
+            height: "4vh",
+            mb: "12px",
+
+            "&:hover": {
+              backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+              "& .MuiListItemText-root": {
+                color: "#174B8B", // Color change on hover for text
+              },
+              "& svg path": {
+                fill: "#174B8B", // Color change on hover for SVG
+              },
+            },
+          }}
           onClick={() => handleSectionClick("configuration")}
           // component={Link}
           // to="/dashboard/contract-list"
@@ -848,9 +899,10 @@ export default function Dashboard() {
           <List component="div" disablePadding>
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "approval" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -867,19 +919,20 @@ export default function Dashboard() {
               component={Link}
               to="/dashboard/approval-list"
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M22.2769 12.3636L24 14.4145L15.9631 24L11.6923 18.9091L13.4154 16.8582L15.9631 19.8836L22.2769 12.3636ZM8.61539 18.9091L12.3077 23.2727H0V20.3636C0 17.1491 4.40615 14.5455 9.84615 14.5455L12.1723 14.7055L8.61539 18.9091ZM9.84615 0C11.1518 0 12.404 0.612985 13.3273 1.70411C14.2506 2.79523 14.7692 4.2751 14.7692 5.81818C14.7692 7.36126 14.2506 8.84114 13.3273 9.93226C12.404 11.0234 11.1518 11.6364 9.84615 11.6364C8.54047 11.6364 7.28827 11.0234 6.36501 9.93226C5.44176 8.84114 4.92308 7.36126 4.92308 5.81818C4.92308 4.2751 5.44176 2.79523 6.36501 1.70411C7.28827 0.612985 8.54047 0 9.84615 0Z"
-                  fill={selectedModule === "approval" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "30px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M22.2769 12.3636L24 14.4145L15.9631 24L11.6923 18.9091L13.4154 16.8582L15.9631 19.8836L22.2769 12.3636ZM8.61539 18.9091L12.3077 23.2727H0V20.3636C0 17.1491 4.40615 14.5455 9.84615 14.5455L12.1723 14.7055L8.61539 18.9091ZM9.84615 0C11.1518 0 12.404 0.612985 13.3273 1.70411C14.2506 2.79523 14.7692 4.2751 14.7692 5.81818C14.7692 7.36126 14.2506 8.84114 13.3273 9.93226C12.404 11.0234 11.1518 11.6364 9.84615 11.6364C8.54047 11.6364 7.28827 11.0234 6.36501 9.93226C5.44176 8.84114 4.92308 7.36126 4.92308 5.81818C4.92308 4.2751 5.44176 2.79523 6.36501 1.70411C7.28827 0.612985 8.54047 0 9.84615 0Z"
+                    fill={selectedModule === "approval" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Approvals"}
                 sx={{
@@ -895,9 +948,10 @@ export default function Dashboard() {
             </ListItemButton>
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "categories" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -914,19 +968,20 @@ export default function Dashboard() {
               to="/dashboard/category-list"
               onClick={() => handleModuleClick("categories")}
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0 0H10.8V10.8H0V0ZM18.6 0C21.6 0 24 2.4 24 5.4C24 8.4 21.6 10.8 18.6 10.8C15.6 10.8 13.2 8.4 13.2 5.4C13.2 2.4 15.6 0 18.6 0ZM5.4 14.4L10.8 24H0L5.4 14.4ZM20.4 18H24V20.4H20.4V24H18V20.4H14.4V18H18V14.4H20.4V18Z"
-                  fill={selectedModule === "categories" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0 0H10.8V10.8H0V0ZM18.6 0C21.6 0 24 2.4 24 5.4C24 8.4 21.6 10.8 18.6 10.8C15.6 10.8 13.2 8.4 13.2 5.4C13.2 2.4 15.6 0 18.6 0ZM5.4 14.4L10.8 24H0L5.4 14.4ZM20.4 18H24V20.4H20.4V24H18V20.4H14.4V18H18V14.4H20.4V18Z"
+                    fill={selectedModule === "categories" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Categories"}
                 sx={{
@@ -943,9 +998,10 @@ export default function Dashboard() {
 
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "clauses" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -962,19 +1018,20 @@ export default function Dashboard() {
               to="/dashboard/clauses-list"
               onClick={() => handleModuleClick("clauses")}
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M19.6923 12.6316C20.5538 12.6316 21.3785 12.7958 22.1538 13.0737V7.57895L14.7692 0H2.46154C1.09538 0 0 1.12421 0 2.52632V20.2105C0 21.6126 1.10769 22.7368 2.46154 22.7368H12.7385C12.4677 21.9411 12.3077 21.0947 12.3077 20.2105C12.3077 16.0295 15.6185 12.6316 19.6923 12.6316ZM13.5385 1.89474L20.3077 8.8421H13.5385V1.89474ZM24 18L18.1538 24L14.7692 20.2105L16.1969 18.7453L18.1538 20.7537L22.5723 16.2189L24 18Z"
-                  fill={selectedModule === "clauses" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M19.6923 12.6316C20.5538 12.6316 21.3785 12.7958 22.1538 13.0737V7.57895L14.7692 0H2.46154C1.09538 0 0 1.12421 0 2.52632V20.2105C0 21.6126 1.10769 22.7368 2.46154 22.7368H12.7385C12.4677 21.9411 12.3077 21.0947 12.3077 20.2105C12.3077 16.0295 15.6185 12.6316 19.6923 12.6316ZM13.5385 1.89474L20.3077 8.8421H13.5385V1.89474ZM24 18L18.1538 24L14.7692 20.2105L16.1969 18.7453L18.1538 20.7537L22.5723 16.2189L24 18Z"
+                    fill={selectedModule === "clauses" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Clauses"}
                 sx={{
@@ -990,9 +1047,10 @@ export default function Dashboard() {
             </ListItemButton>
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "custom-feild" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1009,19 +1067,22 @@ export default function Dashboard() {
               to="/dashboard/feild-list"
               onClick={() => handleModuleClick("custom-feild")}
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M18 6H24V18H18V20.4C18 20.7183 18.1264 21.0235 18.3515 21.2485C18.5765 21.4736 18.8817 21.6 19.2 21.6H21.6V24H18.6C17.94 24 16.8 23.46 16.8 22.8C16.8 23.46 15.66 24 15 24H12V21.6H14.4C14.7183 21.6 15.0235 21.4736 15.2485 21.2485C15.4736 21.0235 15.6 20.7183 15.6 20.4V3.6C15.6 3.28174 15.4736 2.97652 15.2485 2.75147C15.0235 2.52643 14.7183 2.4 14.4 2.4H12V0H15C15.66 0 16.8 0.54 16.8 1.2C16.8 0.54 17.94 0 18.6 0H21.6V2.4H19.2C18.8817 2.4 18.5765 2.52643 18.3515 2.75147C18.1264 2.97652 18 3.28174 18 3.6V6ZM0 6H13.2V8.4H2.4V15.6H13.2V18H0V6ZM21.6 15.6V8.4H18V15.6H21.6Z"
-                  fill={selectedModule === "custom-feild" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M18 6H24V18H18V20.4C18 20.7183 18.1264 21.0235 18.3515 21.2485C18.5765 21.4736 18.8817 21.6 19.2 21.6H21.6V24H18.6C17.94 24 16.8 23.46 16.8 22.8C16.8 23.46 15.66 24 15 24H12V21.6H14.4C14.7183 21.6 15.0235 21.4736 15.2485 21.2485C15.4736 21.0235 15.6 20.7183 15.6 20.4V3.6C15.6 3.28174 15.4736 2.97652 15.2485 2.75147C15.0235 2.52643 14.7183 2.4 14.4 2.4H12V0H15C15.66 0 16.8 0.54 16.8 1.2C16.8 0.54 17.94 0 18.6 0H21.6V2.4H19.2C18.8817 2.4 18.5765 2.52643 18.3515 2.75147C18.1264 2.97652 18 3.28174 18 3.6V6ZM0 6H13.2V8.4H2.4V15.6H13.2V18H0V6ZM21.6 15.6V8.4H18V15.6H21.6Z"
+                    fill={
+                      selectedModule === "custom-feild" ? "#174B8B" : "white"
+                    }
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Custom Fields"}
                 sx={{
@@ -1038,9 +1099,10 @@ export default function Dashboard() {
             </ListItemButton>
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "roles" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1057,19 +1119,21 @@ export default function Dashboard() {
               to="/dashboard/role-list"
               onClick={() => handleModuleClick("roles")}
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M11 9V12H9V15H7V12H5.8C5.4 13.8 4.3 15 3 15C1.3 15 0 13.05 0 10.5C0 7.95 1.3 6 3 6C4.3 6 5.4 7.2 5.8 9H11ZM3 9C2.4 9 2 9.6 2 10.5C2 11.4 2.4 12 3 12C3.6 12 4 11.4 4 10.5C4 9.6 3.6 9 3 9ZM16 15C18.7 15 24 16.95 24 21V24H8V21C8 16.95 13.3 15 16 15ZM16 12C13.8 12 12 9.3 12 6C12 2.7 13.8 0 16 0C18.2 0 20 2.7 20 6C20 9.3 18.2 12 16 12Z"
-                  fill={selectedModule === "roles" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              {" "}
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M11 9V12H9V15H7V12H5.8C5.4 13.8 4.3 15 3 15C1.3 15 0 13.05 0 10.5C0 7.95 1.3 6 3 6C4.3 6 5.4 7.2 5.8 9H11ZM3 9C2.4 9 2 9.6 2 10.5C2 11.4 2.4 12 3 12C3.6 12 4 11.4 4 10.5C4 9.6 3.6 9 3 9ZM16 15C18.7 15 24 16.95 24 21V24H8V21C8 16.95 13.3 15 16 15ZM16 12C13.8 12 12 9.3 12 6C12 2.7 13.8 0 16 0C18.2 0 20 2.7 20 6C20 9.3 18.2 12 16 12Z"
+                    fill={selectedModule === "roles" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Roles"}
                 sx={{
@@ -1085,9 +1149,10 @@ export default function Dashboard() {
             </ListItemButton>
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "teams" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1104,39 +1169,40 @@ export default function Dashboard() {
               component={Link}
               to="/dashboard/teamlist"
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3.42874 3.42852C3.42874 1.535 4.96374 0 6.85726 0C8.75077 0 10.2858 1.535 10.2858 3.42852C10.2858 4.5338 9.76275 5.51693 8.95071 6.1439C8.92628 6.16192 8.90201 6.18016 8.8779 6.19859C8.31127 6.61263 7.6128 6.85703 6.85726 6.85703C4.96374 6.85703 3.42874 5.32203 3.42874 3.42852Z"
-                  fill="white"
-                />
-                <path
-                  d="M15.049 6.1439C15.0734 6.16192 15.0977 6.18016 15.1218 6.1986C15.6884 6.61265 16.3869 6.85703 17.1424 6.85703C19.036 6.85703 20.5709 5.32203 20.5709 3.42852C20.5709 1.535 19.036 0 17.1424 0C15.2489 0 13.7139 1.535 13.7139 3.42852C13.7139 4.5338 14.2369 5.51693 15.049 6.1439Z"
-                  fill="white"
-                />
-                <path
-                  d="M9.02971 8.57128C9.62252 7.5465 10.7305 6.85703 11.9996 6.85703C13.2686 6.85703 14.3766 7.5465 14.9694 8.57128C15.2611 9.07557 15.4281 9.66105 15.4281 10.2855C15.4281 12.1791 13.8931 13.7141 11.9996 13.7141C10.106 13.7141 8.57104 12.1791 8.57104 10.2855C8.57104 9.66105 8.738 9.07557 9.02971 8.57128Z"
-                  fill="white"
-                />
-                <path
-                  d="M2.57135 8.57126H7.14967C6.96014 9.10744 6.85703 9.68443 6.85703 10.2855C6.85703 11.6027 7.35219 12.8042 8.16654 13.714H7.71413C5.85392 13.714 4.27056 14.8993 3.67789 16.5556C3.09511 16.3185 2.55592 16.0087 2.07794 15.6251C0.786793 14.5888 0 13.0559 0 11.1426C0 9.72257 1.15123 8.57126 2.57135 8.57126Z"
-                  fill="white"
-                />
-                <path
-                  d="M16.2858 13.714C18.1459 13.714 19.7294 14.8992 20.322 16.5556C20.9048 16.3185 21.444 16.0087 21.9221 15.6251C23.2131 14.5888 23.9999 13.0559 23.9999 11.1426C23.9999 9.7225 22.8486 8.57126 21.4285 8.57126H16.8503C17.0397 9.10744 17.1429 9.68443 17.1429 10.2855C17.1429 11.6027 16.6476 12.8042 15.8334 13.714H16.2858Z"
-                  fill="white"
-                />
-                <path
-                  d="M18.6628 17.0192C18.7875 17.3214 18.8564 17.6526 18.8564 17.9997C18.8564 19.913 18.0695 21.4459 16.7785 22.4822C15.5077 23.5022 13.8046 23.9996 11.9993 23.9996C10.1941 23.9996 8.49097 23.5022 7.22024 22.4822C5.9291 21.4459 5.1423 19.913 5.1423 17.9997C5.1423 17.6526 5.21113 17.3214 5.33588 17.0192C5.72135 16.0854 6.64075 15.4283 7.71366 15.4283H16.285C17.3579 15.4283 18.2773 16.0854 18.6628 17.0192Z"
-                  fill={selectedModule === "teams" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3.42874 3.42852C3.42874 1.535 4.96374 0 6.85726 0C8.75077 0 10.2858 1.535 10.2858 3.42852C10.2858 4.5338 9.76275 5.51693 8.95071 6.1439C8.92628 6.16192 8.90201 6.18016 8.8779 6.19859C8.31127 6.61263 7.6128 6.85703 6.85726 6.85703C4.96374 6.85703 3.42874 5.32203 3.42874 3.42852Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M15.049 6.1439C15.0734 6.16192 15.0977 6.18016 15.1218 6.1986C15.6884 6.61265 16.3869 6.85703 17.1424 6.85703C19.036 6.85703 20.5709 5.32203 20.5709 3.42852C20.5709 1.535 19.036 0 17.1424 0C15.2489 0 13.7139 1.535 13.7139 3.42852C13.7139 4.5338 14.2369 5.51693 15.049 6.1439Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M9.02971 8.57128C9.62252 7.5465 10.7305 6.85703 11.9996 6.85703C13.2686 6.85703 14.3766 7.5465 14.9694 8.57128C15.2611 9.07557 15.4281 9.66105 15.4281 10.2855C15.4281 12.1791 13.8931 13.7141 11.9996 13.7141C10.106 13.7141 8.57104 12.1791 8.57104 10.2855C8.57104 9.66105 8.738 9.07557 9.02971 8.57128Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M2.57135 8.57126H7.14967C6.96014 9.10744 6.85703 9.68443 6.85703 10.2855C6.85703 11.6027 7.35219 12.8042 8.16654 13.714H7.71413C5.85392 13.714 4.27056 14.8993 3.67789 16.5556C3.09511 16.3185 2.55592 16.0087 2.07794 15.6251C0.786793 14.5888 0 13.0559 0 11.1426C0 9.72257 1.15123 8.57126 2.57135 8.57126Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M16.2858 13.714C18.1459 13.714 19.7294 14.8992 20.322 16.5556C20.9048 16.3185 21.444 16.0087 21.9221 15.6251C23.2131 14.5888 23.9999 13.0559 23.9999 11.1426C23.9999 9.7225 22.8486 8.57126 21.4285 8.57126H16.8503C17.0397 9.10744 17.1429 9.68443 17.1429 10.2855C17.1429 11.6027 16.6476 12.8042 15.8334 13.714H16.2858Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M18.6628 17.0192C18.7875 17.3214 18.8564 17.6526 18.8564 17.9997C18.8564 19.913 18.0695 21.4459 16.7785 22.4822C15.5077 23.5022 13.8046 23.9996 11.9993 23.9996C10.1941 23.9996 8.49097 23.5022 7.22024 22.4822C5.9291 21.4459 5.1423 19.913 5.1423 17.9997C5.1423 17.6526 5.21113 17.3214 5.33588 17.0192C5.72135 16.0854 6.64075 15.4283 7.71366 15.4283H16.285C17.3579 15.4283 18.2773 16.0854 18.6628 17.0192Z"
+                    fill={selectedModule === "teams" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Teams"}
                 sx={{
@@ -1153,9 +1219,10 @@ export default function Dashboard() {
 
             <ListItemButton
               sx={{
-                pl: 7,
+                pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
-                height: "5vh",
+                height: "4vh",
+                mb: "12px",
                 backgroundColor:
                   selectedModule === "tags" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1172,19 +1239,20 @@ export default function Dashboard() {
               component={Link}
               to="/dashboard/tags-list"
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4.2 7.5C4.67739 7.5 5.13523 7.26295 5.47279 6.84099C5.81036 6.41903 6 5.84674 6 5.25C6 4.65326 5.81036 4.08097 5.47279 3.65901C5.13523 3.23705 4.67739 3 4.2 3C3.72261 3 3.26477 3.23705 2.92721 3.65901C2.58964 4.08097 2.4 4.65326 2.4 5.25C2.4 5.84674 2.58964 6.41903 2.92721 6.84099C3.26477 7.26295 3.72261 7.5 4.2 7.5ZM18.492 11.37C18.924 11.91 19.2 12.66 19.2 13.5C19.2 14.325 18.936 15.075 18.492 15.615L12.492 23.115C12.06 23.655 11.46 24 10.8 24C10.14 24 9.54 23.67 9.096 23.115L0.708 12.63C0.264 12.075 0 11.325 0 10.5V3C0 1.335 1.068 0 2.4 0H8.4C9.06 0 9.66 0.33 10.092 0.87L18.492 11.37ZM13.848 2.565L15.048 1.065L23.292 11.37C23.736 11.91 24 12.675 24 13.5C24 14.325 23.736 15.075 23.304 15.615L16.848 23.685L15.648 22.185L22.5 13.5L13.848 2.565Z"
-                  fill={selectedModule === "tags" ? "#174B8B" : "white"}
-                />
-              </svg>
-
+              <div style={{ width: "24px", height: "24px" }}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.2 7.5C4.67739 7.5 5.13523 7.26295 5.47279 6.84099C5.81036 6.41903 6 5.84674 6 5.25C6 4.65326 5.81036 4.08097 5.47279 3.65901C5.13523 3.23705 4.67739 3 4.2 3C3.72261 3 3.26477 3.23705 2.92721 3.65901C2.58964 4.08097 2.4 4.65326 2.4 5.25C2.4 5.84674 2.58964 6.41903 2.92721 6.84099C3.26477 7.26295 3.72261 7.5 4.2 7.5ZM18.492 11.37C18.924 11.91 19.2 12.66 19.2 13.5C19.2 14.325 18.936 15.075 18.492 15.615L12.492 23.115C12.06 23.655 11.46 24 10.8 24C10.14 24 9.54 23.67 9.096 23.115L0.708 12.63C0.264 12.075 0 11.325 0 10.5V3C0 1.335 1.068 0 2.4 0H8.4C9.06 0 9.66 0.33 10.092 0.87L18.492 11.37ZM13.848 2.565L15.048 1.065L23.292 11.37C23.736 11.91 24 12.675 24 13.5C24 14.325 23.736 15.075 23.304 15.615L16.848 23.685L15.648 22.185L22.5 13.5L13.848 2.565Z"
+                    fill={selectedModule === "tags" ? "#174B8B" : "white"}
+                  />
+                </svg>
+              </div>
               <ListItemText
                 primary={"Tags"}
                 sx={{
@@ -1203,26 +1271,28 @@ export default function Dashboard() {
 
         <ListItemButton>
           <ListItemIcon>
-            <svg
-              width="24"
-              height="23"
-              viewBox="0 0 24 23"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.8 0.800006C12.8 0.566726 12.6982 0.345078 12.5211 0.193094C12.3442 0.0411103 12.1098 -0.0260579 11.879 0.00919006L0.67912 1.72119C0.288512 1.7809 0 2.11685 0 2.51201V19.888C0 20.283 0.288448 20.619 0.679008 20.6789L11.879 22.3925C12.1096 22.4277 12.3442 22.3606 12.5211 22.2086C12.6981 22.0566 12.8 21.8349 12.8 21.6016V11.2H21.0755L19.4805 12.5979C19.1486 12.889 19.1149 13.3942 19.4054 13.7269C19.6958 14.0594 20.2005 14.093 20.5325 13.8021L23.7272 11.0021C23.9006 10.8502 24 10.6307 24 10.4C24 10.1693 23.9006 9.94986 23.7272 9.79796L20.5325 6.99796C20.2005 6.70701 19.6958 6.74071 19.4054 7.07321C19.1149 7.40572 19.1486 7.91113 19.4805 8.20209L21.0757 9.60002H12.8V0.800006ZM8.8 13.2C8.13726 13.2 7.6 12.6627 7.6 12C7.6 11.3373 8.13726 10.8 8.8 10.8C9.46274 10.8 10 11.3373 10 12C10 12.6627 9.46274 13.2 8.8 13.2Z"
-                fill="white"
-              />
-              <path
-                d="M15.1999 20.8H14.3999V12.8H15.9999V20C15.9999 20.4418 15.6417 20.8 15.1999 20.8Z"
-                fill="white"
-              />
-              <path
-                d="M14.3999 7.99998V1.59998H15.1999C15.6417 1.59998 15.9999 1.95815 15.9999 2.39998V7.99998H14.3999Z"
-                fill="white"
-              />
-            </svg>
+            <div style={{ width: "24px", height: "24px" }}>
+              <svg
+                width="24"
+                height="23"
+                viewBox="0 0 24 23"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12.8 0.800006C12.8 0.566726 12.6982 0.345078 12.5211 0.193094C12.3442 0.0411103 12.1098 -0.0260579 11.879 0.00919006L0.67912 1.72119C0.288512 1.7809 0 2.11685 0 2.51201V19.888C0 20.283 0.288448 20.619 0.679008 20.6789L11.879 22.3925C12.1096 22.4277 12.3442 22.3606 12.5211 22.2086C12.6981 22.0566 12.8 21.8349 12.8 21.6016V11.2H21.0755L19.4805 12.5979C19.1486 12.889 19.1149 13.3942 19.4054 13.7269C19.6958 14.0594 20.2005 14.093 20.5325 13.8021L23.7272 11.0021C23.9006 10.8502 24 10.6307 24 10.4C24 10.1693 23.9006 9.94986 23.7272 9.79796L20.5325 6.99796C20.2005 6.70701 19.6958 6.74071 19.4054 7.07321C19.1149 7.40572 19.1486 7.91113 19.4805 8.20209L21.0757 9.60002H12.8V0.800006ZM8.8 13.2C8.13726 13.2 7.6 12.6627 7.6 12C7.6 11.3373 8.13726 10.8 8.8 10.8C9.46274 10.8 10 11.3373 10 12C10 12.6627 9.46274 13.2 8.8 13.2Z"
+                  fill="white"
+                />
+                <path
+                  d="M15.1999 20.8H14.3999V12.8H15.9999V20C15.9999 20.4418 15.6417 20.8 15.1999 20.8Z"
+                  fill="white"
+                />
+                <path
+                  d="M14.3999 7.99998V1.59998H15.1999C15.6417 1.59998 15.9999 1.95815 15.9999 2.39998V7.99998H14.3999Z"
+                  fill="white"
+                />
+              </svg>
+            </div>
           </ListItemIcon>
           <ListItemText
             sx={{
@@ -1383,7 +1453,7 @@ export default function Dashboard() {
       <Box
         component="main"
         sx={{
-          background: "#E4EDF8",
+          background: "#F8FAFD",
           flexGrow: 1,
           pl: 1,
           width: { sm: `calc(100% - ${drawerWidth}px)` },

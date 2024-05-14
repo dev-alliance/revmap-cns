@@ -196,14 +196,18 @@ const CreateContract = () => {
       </Box>
 
       {selectDocoment == "" ? (
-        <Paper sx={{ display: "table", width: "100%", minHeight: "550px" }}>
-          <Box sx={{ background: "#F0F0F0", p: 2 }}>Select to Start</Box>
-
+        <>
+          <Paper sx={{ display: "table", width: "100%", pb: 1 }}>
+            <Box sx={{ background: "#FFFFFF", p: 2, mb: 1 }}>
+              Select to Start
+            </Box>
+          </Paper>
           <Grid
             container
             spacing={2}
             justifyContent="center"
             alignItems="center"
+            sx={{ background: "#F8FAFD" }}
           >
             <Grid
               item
@@ -228,11 +232,11 @@ const CreateContract = () => {
                     padding: "15px",
                     pt: 4,
                     height: "110px",
-                    width: "280px",
+                    width: "440px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
-                    borderColor: "#D9D9D9 !important", // Using !important to ensure the border color is applied
+                    borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
                     borderWidth: 1,
                     borderStyle: "solid",
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
@@ -241,39 +245,35 @@ const CreateContract = () => {
                   }}
                 >
                   <div style={{ display: "flex" }}>
-                    <div style={{ marginLeft: "-7px" }}>
+                    <div style={{ marginLeft: "-7px", marginRight: "2rem" }}>
                       <svg
-                        width="41"
-                        height="40"
-                        viewBox="0 0 51 56"
+                        width="70"
+                        height="50"
+                        viewBox="0 0 82 79"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          d="M29.1827 5.27539H12.5069C11.4012 5.27539 10.3408 5.75828 9.55895 6.61783C8.77712 7.47738 8.33789 8.64319 8.33789 9.85878V46.5259C8.33789 47.7414 8.77712 48.9072 9.55895 49.7668C10.3408 50.6263 11.4012 51.1092 12.5069 51.1092H37.5206C38.6263 51.1092 39.6867 50.6263 40.4685 49.7668C41.2503 48.9072 41.6896 47.7414 41.6896 46.5259V19.0255L29.1827 5.27539Z"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M47.8327 7.10156H20.4993C18.687 7.10156 16.949 7.78228 15.6675 8.99396C14.386 10.2056 13.666 11.849 13.666 13.5626V65.2511C13.666 66.9647 14.386 68.6081 15.6675 69.8198C16.949 71.0315 18.687 71.7122 20.4993 71.7122H61.4994C63.3117 71.7122 65.0497 71.0315 66.3312 69.8198C67.6127 68.6081 68.3327 66.9647 68.3327 65.2511V26.4848L47.8327 7.10156Z"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M29.1836 5.27539V19.0255H41.6905"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M47.834 7.10156V26.4848H68.334"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M25.0137 41.9425V28.1924"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M41 58.7904V39.4072"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M18.7598 35.0674H31.2666"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M30.75 49.0986H51.25"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
@@ -328,11 +328,11 @@ const CreateContract = () => {
                     padding: "15px",
                     pt: 4,
                     height: "110px",
-                    width: "280px",
+                    width: "440px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
-                    borderColor: "#D9D9D9 !important", // Using !important to ensure the border color is applied
+                    borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
                     borderWidth: 1,
                     borderStyle: "solid",
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
@@ -343,30 +343,34 @@ const CreateContract = () => {
                   <div style={{ display: "flex" }}>
                     <div style={{ marginLeft: "-7px" }}>
                       <svg
-                        width="40"
-                        height="40"
-                        viewBox="0 0 45 55"
+                        width="82"
+                        height="50"
+                        viewBox="0 0 82 79"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
+                        <rect
+                          x="0.5"
+                          y="1.33887"
+                          width="81"
+                          height="76.5328"
+                          stroke="white"
+                        />
                         <path
-                          d="M39.237 34.1758V43.119C39.237 44.3049 38.8433 45.4423 38.1425 46.2809C37.4417 47.1195 36.4912 47.5906 35.5002 47.5906H9.34231C8.35124 47.5906 7.40076 47.1195 6.69996 46.2809C5.99917 45.4423 5.60547 44.3049 5.60547 43.119V34.1758"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M71.75 49.2969V62.219C71.75 63.9326 71.0301 65.576 69.7486 66.7877C68.4671 67.9994 66.729 68.6801 64.9167 68.6801H17.0833C15.271 68.6801 13.5329 67.9994 12.2514 66.7877C10.9699 65.576 10.25 63.9326 10.25 62.219V49.2969"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M31.7623 18.5247L22.4202 7.3457L13.0781 18.5247"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M58.0827 26.6829L40.9993 10.5303L23.916 26.6829"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M22.4219 7.3457V34.1753"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M41 10.5303V49.2967"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
@@ -420,11 +424,11 @@ const CreateContract = () => {
                     padding: "15px",
                     pt: 4,
                     height: "110px",
-                    width: "280px", // Uncomment if fixed width is required
+                    width: "440px", // Uncomment if fixed width is required
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
-                    borderColor: "#D9D9D9 !important", // Using !important to ensure the border color is applied
+                    borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
                     borderWidth: 1,
                     borderStyle: "solid",
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
@@ -433,53 +437,55 @@ const CreateContract = () => {
                   }}
                 >
                   <div style={{ display: "flex" }}>
-                    <div style={{ marginLeft: "-7px" }}>
+                    <div style={{ marginLeft: "-7px", marginRight: "2rem" }}>
                       <svg
-                        width="40"
-                        height="40"
-                        viewBox="0 0 48 55"
+                        width="70"
+                        height="50"
+                        viewBox="0 0 82 79"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
+                        <rect
+                          x="0.5"
+                          y="1.02637"
+                          width="81"
+                          height="76.5328"
+                          stroke="white"
+                        />
                         <path
-                          d="M27.7319 5.12988H12.2901C11.2663 5.12988 10.2844 5.601 9.56038 6.43958C8.83641 7.27817 8.42969 8.41554 8.42969 9.60148V45.3742C8.42969 46.5602 8.83641 47.6975 9.56038 48.5361C10.2844 49.3747 11.2663 49.8458 12.2901 49.8458H35.4528C36.4766 49.8458 37.4585 49.3747 38.1825 48.5361C38.9065 47.6975 39.3132 46.5602 39.3132 45.3742V18.5447L27.7319 5.12988Z"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M47.8327 6.9873H20.4993C18.687 6.9873 16.949 7.66802 15.6675 8.87971C14.386 10.0914 13.666 11.7348 13.666 13.4484V65.1369C13.666 66.8505 14.386 68.4939 15.6675 69.7055C16.949 70.9172 18.687 71.5979 20.4993 71.5979H61.4993C63.3117 71.5979 65.0497 70.9172 66.3312 69.7055C67.6127 68.4939 68.3327 66.8505 68.3327 65.1369V26.3705L47.8327 6.9873Z"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M27.7324 5.12988V18.5447H39.3137"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M47.834 6.9873V26.3705H68.334"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M31.5921 29.7236H16.1504"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M54.6673 42.5234H27.334"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M31.5921 38.667H16.1504"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M54.6673 55.4453H27.334"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                         <path
-                          d="M20.0108 20.7803H18.0806H16.1504"
-                          stroke="#7B7B7B"
-                          stroke-width="2"
+                          d="M34.1673 29.6016H30.7507H27.334"
+                          stroke="#174B8B"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         />
                       </svg>
                     </div>
 
-                    <div style={{ display: "table", margin: "0 auto" }}>
+                    <div style={{ display: "table" }}>
                       <div style={{ display: "table-row" }}>
                         <div
                           style={{
@@ -510,7 +516,7 @@ const CreateContract = () => {
               </Box>
             </Grid>
           </Grid>
-        </Paper>
+        </>
       ) : (
         <Paper sx={{ display: "table", width: "100%", minHeight: "550px" }}>
           <Box sx={{ background: "#F0F0F0", p: 2 }}>

@@ -6,6 +6,29 @@
 
 /* for now end  */
 
+/* them css  */
+.css-bhp9pd-MuiPaper-root-MuiCard-root {
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  -webkit-transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  border-radius: 4px;
+  box-shadow: none !important;
+  overflow: hidden;
+  border: 1px solid #d3dbf1;
+}
+
+.css-1igyfd2-MuiPaper-root-MuiAppBar-root {
+  box-shadow: none !important;
+}
+.css-vxcyy8-MuiDataGrid-root .MuiDataGrid-withBorderColor {
+  border-color: #d3dbf1 !important;
+  border: 0, 5px solid #d3dbf1 !important;
+}
+.css-vxcyy8-MuiDataGrid-root {
+  border-color: #fff !important;
+}
+/* end */
 h1.class-name {
   font-size: 24px;
   font-weight: bold;

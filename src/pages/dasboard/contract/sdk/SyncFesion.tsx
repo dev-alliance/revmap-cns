@@ -4,7 +4,13 @@
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable */
 
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import {
   DocumentEditorContainerComponent,
   Toolbar,
@@ -84,6 +90,7 @@ import requestIcon from "../../../../assets/icons/request.png";
 import websiteIcon from "../../../../assets/icons/website.png";
 import signatureIcon from "../../../../assets/icons/signature.png";
 // attach
+import { debounce } from "lodash";
 import attachIcon from "../../../../assets/icons/attach.png";
 
 import {
@@ -158,6 +165,7 @@ function SyncFesion() {
     collaborater,
     approvers,
     documentName,
+    setDucomentName,
     setLeftSidebarExpanded,
   } = useContext(ContractContext);
   const workerUrl =
@@ -1439,9 +1447,104 @@ function SyncFesion() {
   }, [enabelEditing]);
 
   console.log("editing : ", enabelEditing);
+  const inputWidth =
+    documentName.length > 0
+      ? `${Math.max(100, documentName.length * 8)}px`
+      : "70%";
+
+  const handleInputChange = useCallback(
+    debounce((value: any) => {
+      setDucomentName(value);
+    }, 100),
+    []
+  );
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
+      <div
+        style={{
+          display: "flex",
+          background: "white",
+          paddingTop: "0.8rem",
+          paddingBottom: "0.8rem",
+          marginTop: "-1rem",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            mr: "1rem",
+          }}
+        >
+          <TextField
+            placeholder="Untitled document"
+            variant="standard"
+            InputProps={{
+              disableUnderline: true,
+              sx: {
+                width: inputWidth, // Apply dynamic width
+                "::after": {
+                  borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                },
+                "::before": {
+                  borderBottom: "none !important", // Hides the underline
+                },
+                ":hover:not(.Mui-disabled)::before": {
+                  borderBottom: "none !important", // Ensures underline stays hidden on hover
+                },
+                "input:focus + fieldset": {
+                  border: "none", // Optional: for outlined variant if ever used
+                },
+                "::placeholder": {
+                  fontSize: "0.55rem",
+                },
+                input: {
+                  fontSize: "0.875rem",
+                  "&:focus": {
+                    // Shows the underline when the input is focused
+                    borderBottom: "2px solid", // Adjust color as needed
+                  },
+                },
+              },
+            }}
+            value={documentName}
+            onChange={(e) => handleInputChange(e.target.value)}
+          />
+
+          {/* <Button
+                  sx={{ ml: 2, textTransform: "none" }}
+                  variant="outlined"
+                >
+                  Draft
+                </Button> */}
+          <div className="px-3 flex justify-center items-end space-x-1.5 cursor-pointer">
+            <svg
+              width="18"
+              height="16"
+              viewBox="0 0 18 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8.69884 3.625H15.2222C16.2041 3.625 17 4.4085 17 5.375V13.25C17 14.2165 16.2041 15 15.2222 15H2.77778C1.79594 15 1 14.2165 1 13.25V3.625M8.69884 3.625C8.26621 3.625 7.84843 3.46971 7.52378 3.18822L5.50376 1.43678C5.17911 1.15529 4.76132 1 4.3287 1H2.77778C1.79594 1 1 1.7835 1 2.75V3.625M8.69884 3.625H1"
+                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <p className="text-[#155be5] text-[10px] leading-[8px] ">
+              Manage Folder
+            </p>
+          </div>
+        </Box>
+        {(showBlock === "" || showBlock === "pdf") && (
+          <>
+            <Breadcrumb recipients={recipients} />
+          </>
+        )}
+      </div>
       {showBlock == "uploadTrack" && (
         <Typography
           variant="body2"
@@ -1492,9 +1595,7 @@ function SyncFesion() {
       )}
       {(showBlock === "" || showBlock === "pdf") && (
         <>
-          <Breadcrumb recipients={recipients} />
-
-          <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 ">
+          <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 my-4 ">
             <p className="text-[12px] font-regular ">
               Approvals: 0/0{" "}
               <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
@@ -1525,7 +1626,7 @@ function SyncFesion() {
         onChange={onFileChange}
       />
       <button onClick={onImportClick}>Import</button> */}
-      <div className="flex border py-1 px-4 gap-4">
+      <div className="flex  py-1 px-4 gap-4">
         {/* File Button and Dropdown */}
 
         <div className="relative ">
@@ -2123,7 +2224,7 @@ function SyncFesion() {
 
       {showBlock === "" && (
         <>
-          <div className="  ">
+          <div className="flex border" style={{ backgroundColor: "#F8FAFD" }}>
             <div className="text styling flex items-center">
               {/* <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
             <p
