@@ -1455,7 +1455,7 @@ export default function Dashboard() {
         sx={{
           background: "#F8FAFD",
           flexGrow: 1,
-          pl: 1,
+
           width: { sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >

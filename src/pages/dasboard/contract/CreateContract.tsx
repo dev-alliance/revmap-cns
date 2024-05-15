@@ -123,7 +123,7 @@ const CreateContract = () => {
 
   return (
     <>
-      {isLoading && (
+      {/* {isLoading && (
         <Box
           sx={{
             display: "flex",
@@ -138,7 +138,7 @@ const CreateContract = () => {
         >
           <ProgressCircularCustomization />
         </Box>
-      )}
+      )} */}
 
       <Box
         sx={{
@@ -197,10 +197,18 @@ const CreateContract = () => {
 
       {selectDocoment == "" ? (
         <>
-          <Paper sx={{ display: "table", width: "100%", pb: 1 }}>
-            <Box sx={{ background: "#FFFFFF", p: 2, mb: 1 }}>
-              Select to Start
-            </Box>
+          <Paper
+            sx={{
+              display: "table",
+              width: "100%",
+
+              pl: "-1rem",
+              borderTop: "0.5px solid #174B8B", // Add a top border
+              borderBottom: "0.5px solid #174B8B",
+              marginBottom: "1rem",
+            }}
+          >
+            <Box sx={{ background: "#FFFFFF", p: 2 }}>Select to Start</Box>
           </Paper>
           <Grid
             container
@@ -232,52 +240,55 @@ const CreateContract = () => {
                     padding: "15px",
                     pt: 4,
                     height: "110px",
-                    width: "440px",
+
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
-                    borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
+                    width: "490px",
                     borderWidth: 1,
                     borderStyle: "solid",
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                    borderRadius: "4px", // Adds rounded corners
+                    border: "1.5px dashed #174B8B", // Customizing the border to dashed
+                    borderRadius: "16px",
                     backgroundColor: "#fff", // Sets the background color to white
                   }}
                 >
                   <div style={{ display: "flex" }}>
                     <div style={{ marginLeft: "-7px", marginRight: "2rem" }}>
-                      <svg
-                        width="70"
-                        height="50"
-                        viewBox="0 0 82 79"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M47.8327 7.10156H20.4993C18.687 7.10156 16.949 7.78228 15.6675 8.99396C14.386 10.2056 13.666 11.849 13.666 13.5626V65.2511C13.666 66.9647 14.386 68.6081 15.6675 69.8198C16.949 71.0315 18.687 71.7122 20.4993 71.7122H61.4994C63.3117 71.7122 65.0497 71.0315 66.3312 69.8198C67.6127 68.6081 68.3327 66.9647 68.3327 65.2511V26.4848L47.8327 7.10156Z"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M47.834 7.10156V26.4848H68.334"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M41 58.7904V39.4072"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M30.75 49.0986H51.25"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
+                      <div style={{ marginTop: "-1rem" }}>
+                        <svg
+                          width="82"
+                          height="68"
+                          viewBox="0 0 82 79"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M47.8327 7.10156H20.4993C18.687 7.10156 16.949 7.78228 15.6675 8.99396C14.386 10.2056 13.666 11.849 13.666 13.5626V65.2511C13.666 66.9647 14.386 68.6081 15.6675 69.8198C16.949 71.0315 18.687 71.7122 20.4993 71.7122H61.4994C63.3117 71.7122 65.0497 71.0315 66.3312 69.8198C67.6127 68.6081 68.3327 66.9647 68.3327 65.2511V26.4848L47.8327 7.10156Z"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M47.834 7.10156V26.4848H68.334"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M41 58.7904V39.4072"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M30.75 49.0986H51.25"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
                     </div>
 
                     <div style={{ display: "table" }}>
@@ -288,8 +299,26 @@ const CreateContract = () => {
                             textAlign: "start",
                           }}
                         >
-                          <Typography variant="body1" component="span">
+                          <Typography
+                            variant="body1"
+                            component="span"
+                            sx={{
+                              color: "black",
+                              fontSize: "18px",
+                              marginLeft: "-1.8rem",
+                            }}
+                          >
                             New Document
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              color: "black",
+                              whiteSpace: "nowrap",
+                              marginLeft: "-1.8rem",
+                            }}
+                          >
+                            Draft, collaborate, negotiate, review and sign
                           </Typography>
                         </div>
                       </div>
@@ -299,13 +328,7 @@ const CreateContract = () => {
                             display: "table-cell",
                             textAlign: "start",
                           }}
-                        >
-                          <Typography
-                            sx={{ fontSize: "10px", whiteSpace: "nowrap" }}
-                          >
-                            Draft, collaborate, negotiate, review and sign
-                          </Typography>
-                        </div>
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -328,53 +351,48 @@ const CreateContract = () => {
                     padding: "15px",
                     pt: 4,
                     height: "110px",
-                    width: "440px",
+                    width: "490px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
-                    borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
                     borderWidth: 1,
                     borderStyle: "solid",
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                    borderRadius: "4px", // Adds rounded corners
+                    border: "1.5px dashed #174B8B", // Customizing the border to dashed
+                    borderRadius: "16px",
                     backgroundColor: "#fff", // Sets the background color to white
                   }}
                 >
                   <div style={{ display: "flex" }}>
                     <div style={{ marginLeft: "-7px" }}>
-                      <svg
-                        width="82"
-                        height="50"
-                        viewBox="0 0 82 79"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          x="0.5"
-                          y="1.33887"
-                          width="81"
-                          height="76.5328"
-                          stroke="white"
-                        />
-                        <path
-                          d="M71.75 49.2969V62.219C71.75 63.9326 71.0301 65.576 69.7486 66.7877C68.4671 67.9994 66.729 68.6801 64.9167 68.6801H17.0833C15.271 68.6801 13.5329 67.9994 12.2514 66.7877C10.9699 65.576 10.25 63.9326 10.25 62.219V49.2969"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M58.0827 26.6829L40.9993 10.5303L23.916 26.6829"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M41 10.5303V49.2967"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
+                      <div style={{ marginTop: "-0.8rem" }}>
+                        <svg
+                          width="82"
+                          height="66"
+                          viewBox="0 0 82 78"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M71.75 48.458V61.3801C71.75 63.0937 71.0301 64.7371 69.7486 65.9488C68.4671 67.1605 66.729 67.8412 64.9167 67.8412H17.0833C15.271 67.8412 13.5329 67.1605 12.2514 65.9488C10.9699 64.7371 10.25 63.0937 10.25 61.3801V48.458"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M58.0827 25.8441L40.9993 9.69141L23.916 25.8441"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M41 9.69141V48.4578"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
                     </div>
 
                     <div style={{ display: "table", margin: "0 auto" }}>
@@ -385,8 +403,16 @@ const CreateContract = () => {
                             textAlign: "start",
                           }}
                         >
-                          <Typography variant="body1" component="span">
+                          <Typography
+                            variant="body1"
+                            component="span"
+                            sx={{ color: "black", fontSize: "18px" }}
+                          >
                             Upload, Store & Track
+                          </Typography>
+                          <Typography sx={{ fontSize: "13px", color: "black" }}>
+                            Manage lifecycle for agreements executed outside
+                            ContractnSign
                           </Typography>
                         </div>
                       </div>
@@ -396,12 +422,7 @@ const CreateContract = () => {
                             display: "table-cell",
                             textAlign: "start",
                           }}
-                        >
-                          <Typography sx={{ fontSize: "10px" }}>
-                            Manage lifecycle for agreements executed outside
-                            ContractnSign
-                          </Typography>
-                        </div>
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -424,65 +445,62 @@ const CreateContract = () => {
                     padding: "15px",
                     pt: 4,
                     height: "110px",
-                    width: "440px", // Uncomment if fixed width is required
+                    width: "490px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
-                    borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
+
                     borderWidth: 1,
                     borderStyle: "solid",
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                    borderRadius: "4px", // Adds rounded corners
+                    border: "1.5px dashed #174B8B", // Customizing the border to dashed
+                    borderRadius: "16px",
                     backgroundColor: "#fff", // Sets the background color to white
                   }}
                 >
                   <div style={{ display: "flex" }}>
                     <div style={{ marginLeft: "-7px", marginRight: "2rem" }}>
-                      <svg
-                        width="70"
-                        height="50"
-                        viewBox="0 0 82 79"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          x="0.5"
-                          y="1.02637"
-                          width="81"
-                          height="76.5328"
-                          stroke="white"
-                        />
-                        <path
-                          d="M47.8327 6.9873H20.4993C18.687 6.9873 16.949 7.66802 15.6675 8.87971C14.386 10.0914 13.666 11.7348 13.666 13.4484V65.1369C13.666 66.8505 14.386 68.4939 15.6675 69.7055C16.949 70.9172 18.687 71.5979 20.4993 71.5979H61.4993C63.3117 71.5979 65.0497 70.9172 66.3312 69.7055C67.6127 68.4939 68.3327 66.8505 68.3327 65.1369V26.3705L47.8327 6.9873Z"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M47.834 6.9873V26.3705H68.334"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M54.6673 42.5234H27.334"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M54.6673 55.4453H27.334"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M34.1673 29.6016H30.7507H27.334"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
+                      <div style={{ marginTop: "-1rem" }}>
+                        {" "}
+                        <svg
+                          width="82"
+                          height="68"
+                          viewBox="0 0 82 79"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M47.8327 6.9873H20.4993C18.687 6.9873 16.949 7.66802 15.6675 8.87971C14.386 10.0914 13.666 11.7348 13.666 13.4484V65.1369C13.666 66.8505 14.386 68.4939 15.6675 69.7055C16.949 70.9172 18.687 71.5979 20.4993 71.5979H61.4993C63.3117 71.5979 65.0497 70.9172 66.3312 69.7055C67.6127 68.4939 68.3327 66.8505 68.3327 65.1369V26.3705L47.8327 6.9873Z"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M47.834 6.9873V26.3705H68.334"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M54.6673 42.5234H27.334"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M54.6673 55.4453H27.334"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M34.1673 29.6016H30.7507H27.334"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
                     </div>
 
                     <div style={{ display: "table" }}>
@@ -493,19 +511,24 @@ const CreateContract = () => {
                             textAlign: "start",
                           }}
                         >
-                          <Typography variant="body1" component="span">
+                          <Typography
+                            variant="body1"
+                            component="span"
+                            sx={{
+                              color: "black",
+                              fontSize: "18px",
+                              marginLeft: "-1.8rem",
+                            }}
+                          >
                             Use Template
                           </Typography>
-                        </div>
-                      </div>
-                      <div style={{ display: "table-row" }}>
-                        <div
-                          style={{
-                            display: "table-cell",
-                            textAlign: "start",
-                          }}
-                        >
-                          <Typography sx={{ fontSize: "10px" }}>
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              color: "black",
+                              marginLeft: "-1.8rem",
+                            }}
+                          >
                             Use template to create a document and save time
                           </Typography>
                         </div>
