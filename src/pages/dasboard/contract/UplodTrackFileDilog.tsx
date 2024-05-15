@@ -22,8 +22,8 @@ import { useNavigate } from "react-router-dom";
 interface DetailDialogProps {
   open: boolean;
   onClose: () => void;
-
   setDocumentPath: (path: string) => void;
+  setSelectDocoment: (path: string) => void;
   triggerClick: () => void;
 }
 
@@ -31,6 +31,7 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
   open,
   onClose,
   setDocumentPath,
+  setSelectDocoment,
   triggerClick,
 }) => {
   const navigate = useNavigate();
@@ -79,11 +80,12 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
           <IconButton
             onClick={() => {
               onClose();
+              setSelectDocoment("");
             }}
             aria-label="close"
             sx={{ position: "absolute", top: -4, right: 0 }}
           >
-            <CloseIcon />
+            <CloseIcon fontSize="small" />
           </IconButton>
         </DialogTitle>
         <DialogContent sx={{ maxHeight: "30vh" }}>
@@ -184,9 +186,9 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
                 color: "black",
                 justifyContent: "center",
                 textTransform: "none",
-                borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
+                border: "1.5px dashed #174B8B", // Using !important to ensure the border color is applied
                 borderWidth: 1,
-                borderStyle: "solid",
+
                 boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
                 borderRadius: "10px", // Adds rounded corners
                 backgroundColor: "#fff",
@@ -203,7 +205,7 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
                       }}
                     >
                       <Typography sx={{ fontSize: "10px" }}>
-                        Upload word docx file to Manage Lifesycle
+                        Upload Word document to manage lifecycle
                       </Typography>
                     </div>
                   </div>
@@ -305,9 +307,8 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
                 color: "black",
                 justifyContent: "center",
                 textTransform: "none",
-                borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
                 borderWidth: 1,
-                borderStyle: "solid",
+                border: "1.5px dashed #174B8B",
                 boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
                 borderRadius: "10px", // Adds rounded corners
                 backgroundColor: "#fff",
@@ -324,7 +325,7 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
                       }}
                     >
                       <Typography sx={{ fontSize: "10px" }}>
-                        Upload PDF to Manage Lifesycle
+                        Upload PDF document to manage lifecycle
                       </Typography>
                     </div>
                   </div>

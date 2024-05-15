@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
@@ -136,6 +136,7 @@ export default function Dashboard() {
     contract: false,
     setting: false,
     configuration: false,
+    button: "true",
   });
   const { leftsidebarExpanded, setLeftSidebarExpanded } =
     useContext(ContractContext);
@@ -151,7 +152,11 @@ export default function Dashboard() {
     pathSegments[pathSegments.indexOf("dashboard") + 1];
 
   const [selectedModule, setSelectedModule] = useState(null);
-
+  useEffect(() => {
+    if (leftsidebarExpanded) {
+      setOpenSections({ button: "true" });
+    }
+  }, [leftsidebarExpanded]);
   const handleModuleClick = (moduleName: any) => {
     setSelectedModule(moduleName);
   };
@@ -240,8 +245,12 @@ export default function Dashboard() {
           marginTop: "0rem",
         }}
       >
-        <IconButton onClick={handleDrawerToggle}>
-          <MenuIcon />
+        <IconButton
+          onClick={() => {
+            handleDrawerToggle(), setOpenSections({ button: "true" });
+          }}
+        >
+          <MenuIcon sx={{ color: "white" }} />
         </IconButton>
       </div>
       <List
@@ -1269,9 +1278,9 @@ export default function Dashboard() {
           </List>
         </Collapse>
 
-        <ListItemButton>
+        <ListItemButton sx={{ mt: -1.5 }}>
           <ListItemIcon>
-            <div style={{ width: "24px", height: "24px" }}>
+            <div style={{ width: "24px", height: "20px" }}>
               <svg
                 width="24"
                 height="23"
@@ -1332,7 +1341,7 @@ export default function Dashboard() {
               onClick={handleDrawerToggle}
               sx={{ marginRight: 2, display: { sm: "none" } }}
             >
-              <MenuIcon />
+              <MenuIcon sx={{ color: "white" }} />
             </IconButton>
             <Typography
               color={"#4B4B4B"}

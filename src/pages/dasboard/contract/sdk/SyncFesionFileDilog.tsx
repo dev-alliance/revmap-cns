@@ -324,9 +324,8 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
                 color: "black",
                 justifyContent: "center",
                 textTransform: "none",
-                borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
+                border: "1.5px dashed #174B8B",
                 borderWidth: 1,
-                borderStyle: "solid",
                 boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
                 borderRadius: "10px", // Adds rounded corners
                 backgroundColor: "#fff",

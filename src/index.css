@@ -21,12 +21,22 @@
 .css-1igyfd2-MuiPaper-root-MuiAppBar-root {
   box-shadow: none !important;
 }
+
 .css-vxcyy8-MuiDataGrid-root .MuiDataGrid-withBorderColor {
   border-color: #d3dbf1 !important;
   border: 0, 5px solid #d3dbf1 !important;
 }
 .css-vxcyy8-MuiDataGrid-root {
   border-color: #fff !important;
+}
+.e-toolbar.e-control[class*="e-toolbar"] {
+  box-sizing: content-box;
+  border: 1px solid #174b8b !important;
+  background-color: white !important;
+  width: 100% !important;
+}
+.e-toolbar .e-toolbar-items {
+  background: white !important;
 }
 /* end */
 h1.class-name {

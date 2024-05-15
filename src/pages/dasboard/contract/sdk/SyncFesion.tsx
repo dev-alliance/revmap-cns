@@ -58,6 +58,7 @@ import {
   Dialog,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
 import linepng from "../../../../assets/line.png";
 import bucket from "../../../../assets/bucket.png";
 import deleteIcon from "../../../../assets/icons/delete.png";
@@ -1359,43 +1360,50 @@ function SyncFesion() {
     }
 
     return (
-      <ul className="mt-2" id="breadcrumb">
-        <li>
-          <a
-            href="#"
-            style={{ color: highlightStep === "" ? "blue" : "white" }}
+      <ul className="flex mt-2">
+        <li style={{ color: highlightStep === "" ? "#155BE5" : "black" }}>
+          Draft
+        </li>
+        <li
+          style={{ color: highlightStep === "Review" ? "#155BE5" : "black" }}
+        ></li>
+        <li
+          style={{ color: highlightStep === "Signing" ? "#155BE5" : "black" }}
+        >
+          <span
+            style={{
+              marginRight: "1rem",
+              marginLeft: "1rem",
+              color: "#155BE5",
+            }}
           >
-            <span className="icon icon-beaker"> </span> Draft
-          </a>
+            »»
+          </span>{" "}
+          Signing
+        </li>
+        <li style={{ color: highlightStep === "Signed" ? "#155BE5" : "black" }}>
+          <span
+            style={{
+              marginRight: "1rem",
+              marginLeft: "1rem",
+              color: "#155BE5",
+            }}
+          >
+            »»
+          </span>{" "}
+          Signed
         </li>
         <li>
-          <a
-            href="#"
-            style={{ color: highlightStep === "Review" ? "blue" : "white" }}
+          <span
+            style={{
+              marginRight: "1rem",
+              marginLeft: "1rem",
+              color: "#155BE5",
+            }}
           >
-            <span className="icon icon-double-angle-right"></span> Review
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            style={{ color: highlightStep === "Signing" ? "blue" : "white" }}
-          >
-            <span className="icon icon-rocket"> </span> Signing
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            style={{ color: highlightStep === "Signed" ? "blue" : "white" }}
-          >
-            <span className="icon icon-arrow-down"> </span> Signed
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span className="icon icon-arrow-down"> </span> Active
-          </a>
+            »»
+          </span>{" "}
+          Active
         </li>
       </ul>
     );
@@ -1449,8 +1457,8 @@ function SyncFesion() {
   console.log("editing : ", enabelEditing);
   const inputWidth =
     documentName.length > 0
-      ? `${Math.max(100, documentName.length * 8)}px`
-      : "70%";
+      ? `${Math.max(100, documentName.length * 14)}px`
+      : "200px";
 
   const handleInputChange = useCallback(
     debounce((value: any) => {
@@ -1465,9 +1473,10 @@ function SyncFesion() {
         style={{
           display: "flex",
           background: "white",
-          paddingTop: "0.8rem",
-          paddingBottom: "0.8rem",
+          paddingTop: "0.5rem",
+          paddingBottom: "0.5rem",
           marginTop: "-1rem",
+          paddingLeft: "1rem",
         }}
       >
         <Box
@@ -1479,8 +1488,9 @@ function SyncFesion() {
           }}
         >
           <TextField
-            placeholder="Untitled document"
+            placeholder="Untitled Document"
             variant="standard"
+            sx={{ width: inputWidth }}
             InputProps={{
               disableUnderline: true,
               sx: {
@@ -1497,14 +1507,17 @@ function SyncFesion() {
                 "input:focus + fieldset": {
                   border: "none", // Optional: for outlined variant if ever used
                 },
-                "::placeholder": {
-                  fontSize: "0.55rem",
-                },
                 input: {
-                  fontSize: "0.875rem",
+                  fontSize: "1.3rem",
+                  color: "#155BE5", // Set the text color
+                  borderBottom: "1px solid #174B8B",
                   "&:focus": {
-                    // Shows the underline when the input is focused
-                    borderBottom: "2px solid", // Adjust color as needed
+                    borderBottom: "1px solid #174B8B", // Adjust color as needed
+                  },
+                  "::placeholder": {
+                    fontSize: "1.3rem", // Placeholder font size
+                    color: "#155BE5", // Adjust placeholder text color here
+                    opacity: 1, // Set opacity to 1 for full color intensity
                   },
                 },
               },
@@ -1513,16 +1526,16 @@ function SyncFesion() {
             onChange={(e) => handleInputChange(e.target.value)}
           />
 
-          {/* <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  variant="outlined"
-                >
-                  Draft
-                </Button> */}
-          <div className="px-3 flex justify-center items-end space-x-1.5 cursor-pointer">
+          <div
+            className="px-1 border- flex justify-center items-end space-x-1.5 cursor-pointer mx-2 mt-1"
+            style={{
+              border: "1px solid #174B8B",
+              borderRadius: "4px",
+            }}
+          >
             <svg
-              width="18"
-              height="16"
+              width="30"
+              height="30"
               viewBox="0 0 18 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -1534,14 +1547,16 @@ function SyncFesion() {
                 stroke-linejoin="round"
               />
             </svg>
-            <p className="text-[#155be5] text-[10px] leading-[8px] ">
+            <p className="text-[#155be5] text-[15px] leading-[28px] ">
               Manage Folder
             </p>
           </div>
         </Box>
         {(showBlock === "" || showBlock === "pdf") && (
           <>
-            <Breadcrumb recipients={recipients} />
+            <div style={{ marginTop: "0.3rem" }}>
+              <Breadcrumb recipients={recipients} />
+            </div>
           </>
         )}
       </div>
@@ -1554,6 +1569,7 @@ function SyncFesion() {
             alignItems: "center",
             whiteSpace: "nowrap",
             marginBottom: "1rem",
+            paddingLeft: "1rem",
           }}
         >
           <svg
@@ -1595,25 +1611,33 @@ function SyncFesion() {
       )}
       {(showBlock === "" || showBlock === "pdf") && (
         <>
-          <div className="flex justify-between items-center gap-x-9 max-w-[720px] pb-2 my-4 ">
-            <p className="text-[12px] font-regular ">
+          <div className="flex justify-between items-center gap-x-9 max-w-[820px] pb-0 my-4 pl-4 ">
+            <p className="text-[14px] font-regular ">
               Approvals: 0/0{" "}
-              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                Manage{" "}
+              </span>{" "}
             </p>
 
-            <p className="text-[12px] font-regular ">
+            <p className="text-[14px] font-regular ">
               Signatures: 0/0{" "}
-              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                Manage{" "}
+              </span>{" "}
             </p>
 
-            <p className="text-[12px] font-regular ">
+            <p className="text-[14px] font-regular ">
               Collaborators: 0/0{" "}
-              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                Manage{" "}
+              </span>{" "}
             </p>
 
-            <p className="text-[12px] font-regular ">
+            <p className="text-[14px] font-regular ">
               Custom Fields: 0/0{" "}
-              <span className="ml-1 text-[#DCDCDC] text-[10px] ">Manage </span>{" "}
+              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                Manage{" "}
+              </span>{" "}
             </p>
           </div>
         </>
@@ -1626,12 +1650,15 @@ function SyncFesion() {
         onChange={onFileChange}
       />
       <button onClick={onImportClick}>Import</button> */}
-      <div className="flex  py-1 px-4 gap-4">
+      <div
+        className="flex  
+        gap-4"
+      >
         {/* File Button and Dropdown */}
 
         <div className="relative ">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
+            className={`text-black text-[16px]  rounded focus:outline-none ml-4  ${
               showBlock == "uploadTrack"
                 ? "text-gray-300 hover:text-gray-300"
                 : "text-black hover:text-gray-700"
@@ -1730,7 +1757,7 @@ function SyncFesion() {
         {/* View Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
+            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${
               showBlock == "uploadTrack"
                 ? "text-gray-300"
                 : "text-black hover:text-gray-700"
@@ -1842,7 +1869,7 @@ function SyncFesion() {
         {/* insert and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5  ${
+            className={`text-black text-[16px]   rounded focus:outline-none ml-10  ${
               showBlock == "uploadTrack"
                 ? "text-gray-300"
                 : "text-black hover:text-gray-700"
@@ -1968,7 +1995,7 @@ function SyncFesion() {
         {/* Signature Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]  p-2 rounded focus:outline-none mx-5 ${
+            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${
               showBlock == "uploadTrack"
                 ? "text-gray-300"
                 : "text-black hover:text-gray-700"
@@ -2069,7 +2096,7 @@ function SyncFesion() {
         {/* Export Button and Dropdown */}
         <div className="relative">
           <button
-            className="text-black text-[16px] p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            className="text-black text-[16px] rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("export")}
           >
             Export
@@ -2109,7 +2136,7 @@ function SyncFesion() {
 
         <div className="relative">
           <button
-            className="text-black text-[16px]  p-2 rounded focus:outline-none   mx-5 hover:bg-blue-00 hover:text-gray-700"
+            className="text-black text-[16px]   rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("attach")}
           >
             Attach
@@ -2134,12 +2161,20 @@ function SyncFesion() {
           )}
         </div>
 
-        <div style={{ width: "80%" }}>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div style={{ width: "100%" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginRight: "1rem",
+              paddingBottom: ".5rem",
+            }}
+          >
             {(showBlock == "uploadTrack" || editMode) && (
               <>
                 <Button
                   variant="outlined"
+                  color="error"
                   sx={{ textTransform: "none" }}
                   onClick={() => {
                     setEditMode(false);
@@ -2178,7 +2213,7 @@ function SyncFesion() {
                 sx={{ ml: 2, textTransform: "none" }}
                 type="submit"
                 variant="outlined"
-                color="success"
+                color="primary"
                 onClick={() => {
                   // setSidebarExpanded(true),
                   setEditMode(true);
@@ -2186,7 +2221,7 @@ function SyncFesion() {
                   // setSelectedModule("fields");
                 }}
               >
-                Edit
+                <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
               </Button>
             )}
           </div>
@@ -2224,8 +2259,11 @@ function SyncFesion() {
 
       {showBlock === "" && (
         <>
-          <div className="flex border" style={{ backgroundColor: "#F8FAFD" }}>
-            <div className="text styling flex items-center">
+          <div className="flex " style={{ backgroundColor: "white" }}>
+            <div
+              className="text styling flex items-center "
+              style={{ width: "100%" }}
+            >
               {/* <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
             <p
               onClick={() => {

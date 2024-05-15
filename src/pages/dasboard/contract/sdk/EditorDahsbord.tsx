@@ -471,7 +471,6 @@ const MyComponent: React.FC = () => {
         <Box
           sx={{
             flexGrow: 1,
-            pr: 1,
             height: "calc(100vh - 64px)",
             overflow: "hidden",
           }}
@@ -614,8 +613,7 @@ const MyComponent: React.FC = () => {
             height: "100vh",
             overflowY: "auto",
             backgroundColor: "#fff", // Cards usually have a solid background color
-            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.05)", // Adds a subtle shadow similar to Material-UI cards
-            borderRadius: "4px", // Card-like elements often have rounded corners
+            // boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.05)", // Adds a subtle shadow similar to Material-UI cards
             transition: "box-shadow 0.3s", // Smooth transition for the shadow, makes interaction more lively
             "&:hover": {
               boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2)", // Enhanced shadow on hover for a touch of interactivity
@@ -626,9 +624,10 @@ const MyComponent: React.FC = () => {
             <Grid
               md={sidebarExpanded ? 2 : 0}
               sx={{
-                height: sidebarExpanded ? "100vh" : "98vh",
+                height: sidebarExpanded ? "100vh" : "100vh",
                 borderRight: sidebarExpanded ? "1px solid #E0E0E0" : "none",
                 background: "#174B8B",
+                overflow: "hidden",
               }}
             >
               <List>

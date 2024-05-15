@@ -143,9 +143,10 @@ const CreateContract = () => {
       <Box
         sx={{
           opacity: isLoading ? "30%" : "100%",
-          pl: 3,
-          p: 2,
-          pr: 3,
+          pl: 2,
+          pb: 1,
+          pr: 2,
+          pt: 1,
           width: "100%",
           display: "flex",
           flexWrap: "wrap",
@@ -344,7 +345,9 @@ const CreateContract = () => {
             >
               <Box>
                 <Button
-                  onClick={() => setSelectDocoment("Upload Document")}
+                  onClick={() => {
+                    setSelectDocoment("Upload Document"), setShowPopup(true);
+                  }}
                   variant="outlined"
                   sx={{
                     display: "table-cell",
@@ -541,9 +544,16 @@ const CreateContract = () => {
           </Grid>
         </>
       ) : (
-        <Paper sx={{ display: "table", width: "100%", minHeight: "550px" }}>
-          <Box sx={{ background: "#F0F0F0", p: 2 }}>
-            Select {selectDocoment}
+        <>
+          <Box
+            sx={{
+              background: "white",
+              p: 2,
+              borderTop: "0.5px solid #174B8B", // Add a top border
+              borderBottom: "0.5px solid #174B8B",
+            }}
+          >
+            {selectDocoment}
           </Box>
 
           <Grid
@@ -566,7 +576,7 @@ const CreateContract = () => {
                   alignItems="center"
                   sx={{ mt: 12, width: "50%" }}
                 >
-                  <Grid item xs={12} sm={12}>
+                  {/* <Grid item xs={12} sm={12}>
                     <div
                       style={{
                         border: "2px dashed #eeeeee",
@@ -647,7 +657,7 @@ const CreateContract = () => {
                         </div>
                       </div>
                     </div>
-                  </Grid>
+                  </Grid> */}
                 </Box>
               ) : (
                 <Box sx={{ mt: 12, width: "50%" }}>
@@ -704,12 +714,13 @@ const CreateContract = () => {
               )}
             </Grid>
           </Grid>
-        </Paper>
+        </>
       )}
       <UplodTrackFileDilog
         open={showPopup}
         onClose={() => setShowPopup(false)}
         setDocumentPath={setUplodTrackFile}
+        setSelectDocoment={setSelectDocoment}
         triggerClick={() => triggerClick()}
       />
     </>
