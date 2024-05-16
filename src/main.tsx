@@ -43,6 +43,14 @@ const theme = createTheme({
   //   // ... redefine other elevations if needed
   // ],
   components: {
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: "#725FE7",
+          color: "white", // Optional: Changes the text color to white
+        },
+      },
+    },
     MuiDataGrid: {
       styleOverrides: {
         columnHeader: {

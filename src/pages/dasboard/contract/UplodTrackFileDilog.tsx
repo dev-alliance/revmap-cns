@@ -11,8 +11,9 @@ import {
   Typography,
   Button,
   IconButton,
+  Tooltip,
 } from "@mui/material";
-
+import Zoom from "@mui/material/Zoom";
 import CloseIcon from "@mui/icons-material/Close";
 import logo from "@/assets/collaburater_icon.png";
 
@@ -77,16 +78,41 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
             alignItems: "center",
           }}
         >
-          <IconButton
-            onClick={() => {
-              onClose();
-              setSelectDocoment("");
+          <Tooltip
+            TransitionComponent={Zoom}
+            title="Close"
+            slotProps={{
+              popper: {
+                modifiers: [
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, -14],
+                    },
+                  },
+                ],
+              },
             }}
-            aria-label="close"
-            sx={{ position: "absolute", top: -4, right: 0 }}
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  backgroundColor: "#174B8B", // Sets the background color of the tooltip
+                  color: "white", // Optional: Changes the text color to white
+                },
+              },
+            }}
           >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+            <IconButton
+              onClick={() => {
+                onClose();
+                setSelectDocoment("");
+              }}
+              aria-label="close"
+              sx={{ position: "absolute", top: -4, right: 0 }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </DialogTitle>
         <DialogContent sx={{ maxHeight: "30vh" }}>
           <Box
@@ -195,21 +221,15 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
                 marginRight: 2, // Sets the background color to white
               }}
             >
-              <div style={{ display: "flex" }}>
-                <div style={{ display: "table", margin: "0 auto" }}>
-                  <div style={{ display: "table-row" }}>
-                    <div
-                      style={{
-                        display: "table-cell",
-                        textAlign: "start",
-                      }}
-                    >
-                      <Typography sx={{ fontSize: "10px" }}>
-                        Upload Word document to manage lifecycle
-                      </Typography>
-                    </div>
-                  </div>
-                </div>
+              <div
+                style={{
+                  display: "table-cell",
+                  textAlign: "start",
+                }}
+              >
+                <Typography sx={{ fontSize: "13px", marginTop: "0rem" }}>
+                  Upload Word document to manage lifecycle
+                </Typography>
               </div>
             </Button>
           </Box>
@@ -315,21 +335,15 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
                 marginRight: 2, // Sets the background color to white
               }}
             >
-              <div style={{ display: "flex" }}>
-                <div style={{ display: "table", margin: "0 auto" }}>
-                  <div style={{ display: "table-row" }}>
-                    <div
-                      style={{
-                        display: "table-cell",
-                        textAlign: "start",
-                      }}
-                    >
-                      <Typography sx={{ fontSize: "10px" }}>
-                        Upload PDF document to manage lifecycle
-                      </Typography>
-                    </div>
-                  </div>
-                </div>
+              <div
+                style={{
+                  display: "table-cell",
+                  textAlign: "start",
+                }}
+              >
+                <Typography sx={{ fontSize: "13px", marginTop: "0rem" }}>
+                  Upload PDF document to manage lifecycle
+                </Typography>
               </div>
             </Button>
           </Box>

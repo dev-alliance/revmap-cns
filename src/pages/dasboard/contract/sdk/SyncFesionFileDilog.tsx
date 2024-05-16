@@ -11,6 +11,7 @@ import {
   Typography,
   Button,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -100,16 +101,18 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
           >
             Select the type of document you are importing:
           </Typography> */}
-          <IconButton
-            onClick={() => {
-              onClose();
-            }}
-            aria-label="close"
-            size="small"
-            sx={{ position: "absolute", top: -1, right: 0 }}
-          >
-            <CloseIcon />
-          </IconButton>
+          <Tooltip title="Close">
+            <IconButton
+              onClick={() => {
+                onClose();
+              }}
+              aria-label="close"
+              size="small"
+              sx={{ position: "absolute", top: -1, right: 0 }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </DialogTitle>
         <DialogContent sx={{ maxHeight: "30vh" }}>
           <Box
@@ -206,35 +209,27 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
                 pt: 2,
                 height: "7vh",
                 width: "60%",
-                // Uncomment if fixed width is required
                 color: "black",
                 justifyContent: "center",
                 textTransform: "none",
-                borderColor: "#174B8B !important", // Using !important to ensure the border color is applied
+                border: "1.5px dashed #174B8B",
                 borderWidth: 1,
-                borderStyle: "solid",
                 boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
                 borderRadius: "10px", // Adds rounded corners
                 backgroundColor: "#fff",
                 marginRight: 2, // Sets the background color to white
               }}
             >
-              <div style={{ display: "flex" }}>
-                <div style={{ display: "table", margin: "0 auto" }}>
-                  <div style={{ display: "table-row" }}>
-                    <div
-                      style={{
-                        display: "table-cell",
-                        textAlign: "start",
-                      }}
-                    >
-                      <Typography sx={{ fontSize: "11px" }}>
-                        Import Word, text, RTF, doc, and docx files to continue
-                        editing your document
-                      </Typography>
-                    </div>
-                  </div>
-                </div>
+              <div
+                style={{
+                  display: "table-cell",
+                  textAlign: "start",
+                }}
+              >
+                <Typography sx={{ fontSize: "13px", marginTop: "-.4rem" }}>
+                  Import Word, text, RTF, doc, and docx files to continue
+                  editing your document
+                </Typography>
               </div>
             </Button>
           </Box>
@@ -332,22 +327,16 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
                 marginRight: 2, // Sets the background color to white
               }}
             >
-              <div style={{ display: "flex" }}>
-                <div style={{ display: "table", margin: "0 auto" }}>
-                  <div style={{ display: "table-row" }}>
-                    <div
-                      style={{
-                        display: "table-cell",
-                        textAlign: "start",
-                      }}
-                    >
-                      <Typography sx={{ fontSize: "11px" }}>
-                        Import PDF document, add recipients and send it for
-                        e-signatures
-                      </Typography>
-                    </div>
-                  </div>
-                </div>
+              <div
+                style={{
+                  display: "table-cell",
+                  textAlign: "start",
+                }}
+              >
+                <Typography sx={{ fontSize: "13px", marginTop: "-.4rem" }}>
+                  Import PDF document, add recipients and send it for
+                  e-signatures
+                </Typography>
               </div>
             </Button>
           </Box>

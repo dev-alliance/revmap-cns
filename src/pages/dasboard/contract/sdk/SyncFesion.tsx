@@ -1372,9 +1372,9 @@ function SyncFesion() {
         >
           <span
             style={{
-              marginRight: "1rem",
-              marginLeft: "1rem",
-              color: "#155BE5",
+              marginRight: "0.5rem",
+              marginLeft: "0.5rem",
+              color: "#174B8B",
             }}
           >
             »»
@@ -1384,9 +1384,9 @@ function SyncFesion() {
         <li style={{ color: highlightStep === "Signed" ? "#155BE5" : "black" }}>
           <span
             style={{
-              marginRight: "1rem",
-              marginLeft: "1rem",
-              color: "#155BE5",
+              marginRight: "0.5rem",
+              marginLeft: "0.5rem",
+              color: "#174B8B",
             }}
           >
             »»
@@ -1396,9 +1396,9 @@ function SyncFesion() {
         <li>
           <span
             style={{
-              marginRight: "1rem",
-              marginLeft: "1rem",
-              color: "#155BE5",
+              marginLeft: "0.5rem",
+              marginRight: "0.5rem",
+              color: "#174B8B",
             }}
           >
             »»
@@ -1512,7 +1512,11 @@ function SyncFesion() {
                   color: "#155BE5", // Set the text color
                   borderBottom: "1px solid #174B8B",
                   "&:focus": {
-                    borderBottom: "1px solid #174B8B", // Adjust color as needed
+                    borderBottom: "1px solid #174B8B",
+                    "::placeholder": {
+                      opacity: 0, // Hide placeholder text on focus
+                      visibility: "hidden", // Optionally make the placeholder completely invisible
+                    }, // Adjust color as needed
                   },
                   "::placeholder": {
                     fontSize: "1.3rem", // Placeholder font size
@@ -1542,11 +1546,12 @@ function SyncFesion() {
             >
               <path
                 d="M8.69884 3.625H15.2222C16.2041 3.625 17 4.4085 17 5.375V13.25C17 14.2165 16.2041 15 15.2222 15H2.77778C1.79594 15 1 14.2165 1 13.25V3.625M8.69884 3.625C8.26621 3.625 7.84843 3.46971 7.52378 3.18822L5.50376 1.43678C5.17911 1.15529 4.76132 1 4.3287 1H2.77778C1.79594 1 1 1.7835 1 2.75V3.625M8.69884 3.625H1"
-                stroke={showBlock === "uploadTrack" ? "#D3D3D3" : "#575757"}
+                stroke="#174B8B"
                 stroke-linecap="round"
                 stroke-linejoin="round"
               />
             </svg>
+
             <p className="text-[#155be5] text-[15px] leading-[28px] ">
               Manage Folder
             </p>

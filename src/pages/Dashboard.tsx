@@ -151,12 +151,8 @@ export default function Dashboard() {
   const editorDashboardSegment =
     pathSegments[pathSegments.indexOf("dashboard") + 1];
 
-  const [selectedModule, setSelectedModule] = useState(null);
-  useEffect(() => {
-    if (leftsidebarExpanded) {
-      setOpenSections({ button: "true" });
-    }
-  }, [leftsidebarExpanded]);
+  const [selectedModule, setSelectedModule] = useState<any>(null);
+
   const handleModuleClick = (moduleName: any) => {
     setSelectedModule(moduleName);
   };
@@ -208,10 +204,24 @@ export default function Dashboard() {
 
   const menuId = "primary-account-menu";
 
+  useEffect(() => {
+    if (leftsidebarExpanded) {
+      if (openSections.contract) {
+        handleSectionClick("contract");
+        setSelectedModule("contract");
+      }
+      // handleDrawerToggle();
+    }
+  }, [leftsidebarExpanded]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
     setLeftSideBar(!leftSideBar);
     setLeftSidebarExpanded((prevState: any) => !prevState);
+    console.log(openSections, "openSections");
+    if (openSections.contract) {
+      handleSectionClick("contract");
+    }
   };
 
   const handleStatusClick = (newStatus: any) => {
@@ -230,7 +240,7 @@ export default function Dashboard() {
         alt="Logo"
         style={{
           maxWidth: isMobile ? "100px" : "250px",
-          marginTop: "1px",
+          marginTop: "0px",
           alignItems: "left",
           marginLeft: "-0.5rem",
         }}
@@ -243,11 +253,12 @@ export default function Dashboard() {
           justifyContent: leftsidebarExpanded ? "flex-start" : "flex-end",
           marginLeft: leftsidebarExpanded ? "0.5rem" : "0rem",
           marginTop: "0rem",
+          marginBottom: ".3rem",
         }}
       >
         <IconButton
           onClick={() => {
-            handleDrawerToggle(), setOpenSections({ button: "true" });
+            handleDrawerToggle();
           }}
         >
           <MenuIcon sx={{ color: "white" }} />
@@ -263,7 +274,7 @@ export default function Dashboard() {
           to="/dashboard"
           sx={{
             height: "4vh",
-            mb: "12px",
+            mb: "1.3rem",
             backgroundColor:
               selectedModule === "home" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -336,7 +347,7 @@ export default function Dashboard() {
         <ListItemButton
           sx={{
             height: "4vh",
-            mb: "12px",
+            mb: "1.3rem",
             backgroundColor:
               selectedModule === "contract" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -515,7 +526,7 @@ export default function Dashboard() {
           to="/dashboard/template-list"
           sx={{
             height: "4vh",
-            mb: "12px",
+            mb: "1.3rem",
             backgroundColor:
               selectedModule === "template" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -559,7 +570,7 @@ export default function Dashboard() {
           to="/dashboard/folder-list"
           sx={{
             height: "4vh",
-            mb: "12px",
+            mb: "1.3rem",
             backgroundColor:
               selectedModule === "folder" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -604,7 +615,7 @@ export default function Dashboard() {
           to="/dashboard/folder-list"
           sx={{
             height: "4vh",
-            mb: "12px",
+            mb: "1.3rem",
             backgroundColor:
               selectedModule === "reports" ? "#E4EDF8" : "transparent",
             "&:hover": {
@@ -649,7 +660,7 @@ export default function Dashboard() {
         <ListItemButton
           sx={{
             height: "4vh",
-            mb: "12px",
+            mb: "1.3rem",
             "&:hover": {
               backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
               "& .MuiListItemText-root": {
@@ -702,7 +713,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "billing" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -755,7 +766,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "company-profile"
                     ? "#E4EDF8"
@@ -809,7 +820,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "user" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -859,7 +870,7 @@ export default function Dashboard() {
         <ListItemButton
           sx={{
             height: "4vh",
-            mb: "12px",
+            mb: "1.3rem",
 
             "&:hover": {
               backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
@@ -911,7 +922,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "approval" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -960,7 +971,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "categories" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1010,7 +1021,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "clauses" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1059,7 +1070,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "custom-feild" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1111,7 +1122,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "roles" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1161,7 +1172,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "teams" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1231,7 +1242,7 @@ export default function Dashboard() {
                 pl: leftsidebarExpanded ? 2 : 7,
                 fontSize: "12px",
                 height: "4vh",
-                mb: "12px",
+                mb: "1.3rem",
                 backgroundColor:
                   selectedModule === "tags" ? "#E4EDF8" : "transparent",
                 "&:hover": {
@@ -1449,6 +1460,7 @@ export default function Dashboard() {
           sx={{
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": {
+              borderRight: "none",
               boxSizing: "border-box",
               width: drawerWidth,
               background: "#174B8B",
