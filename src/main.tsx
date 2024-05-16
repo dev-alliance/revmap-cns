@@ -53,8 +53,10 @@ const theme = createTheme({
     },
     MuiDataGrid: {
       styleOverrides: {
+        border: "1px solid red",
         columnHeader: {
           // fontWeight: "900",
+
           fontSize: "17px",
         },
       },
