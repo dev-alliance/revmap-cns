@@ -562,55 +562,56 @@ const ContractList = () => {
             </Box>
           </Box>
 
-          <Card>
-            <Box
-              sx={{
-                pl: 3,
-                p: 2,
-                pr: 3,
-                width: "100%",
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ display: "flex" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                  }}
-                >
-                  <TextField
-                    size="small"
-                    value={search}
-                    placeholder="Search"
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </Box>
-              </div>
+          <Box
+            sx={{
+              borderTop: "0.5px solid #174B8B", // Add a top border
+              borderBottom: "0.5px solid #174B8B",
+              pl: 3,
+              p: 2,
+              pr: 3,
+              width: "100%",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              background: "white",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                }}
+              >
+                <TextField
+                  size="small"
+                  value={search}
+                  placeholder="Search"
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </Box>
+            </div>
 
-              <div style={{ display: "flex" }}>
-                <Button
-                  sx={{
-                    mr: 2,
-                    textTransform: "none",
-                    backgroundColor: "green", // Set the button color to green
-                    "&:hover": {
-                      backgroundColor: "darkgreen", // Darker green on hover
-                    },
-                  }}
-                  variant="contained"
-                >
-                  Set as a default
-                </Button>
+            <div style={{ display: "flex" }}>
+              <Button
+                sx={{
+                  mr: 2,
+                  textTransform: "none",
+                  backgroundColor: "green", // Set the button color to green
+                  "&:hover": {
+                    backgroundColor: "darkgreen", // Darker green on hover
+                  },
+                }}
+                variant="contained"
+              >
+                Set as a default
+              </Button>
 
-                {/* <MenuButton /> */}
-              </div>
-            </Box>
-          </Card>
+              {/* <MenuButton /> */}
+            </div>
+          </Box>
         </Grid>
 
         <Grid item xs={12}>
