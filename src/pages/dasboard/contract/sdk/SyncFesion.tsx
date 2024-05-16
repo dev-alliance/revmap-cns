@@ -1457,7 +1457,7 @@ function SyncFesion() {
   console.log("editing : ", enabelEditing);
   const inputWidth =
     documentName.length > 0
-      ? `${Math.max(100, documentName.length * 14)}px`
+      ? `${Math.max(110, documentName.length * 11.5)}px`
       : "200px";
 
   const handleInputChange = useCallback(
@@ -1528,6 +1528,9 @@ function SyncFesion() {
             }}
             value={documentName}
             onChange={(e) => handleInputChange(e.target.value)}
+            inputProps={{
+              maxLength: 50, // HTML5 attribute to limit characters directly in the input field
+            }}
           />
 
           <div

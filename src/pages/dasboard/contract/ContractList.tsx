@@ -624,7 +624,7 @@ const ContractList = () => {
               borderBottom: "0.5px solid #174B8B",
               pl: 3,
               p: 2,
-              pr: 3,
+              pr: 5,
               width: "100%",
               display: "flex",
               flexWrap: "wrap",
