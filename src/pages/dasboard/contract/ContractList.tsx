@@ -19,6 +19,9 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
+
 // ** Third Party Imports
 import { useContract } from "@/hooks/useContract";
 import toast from "react-hot-toast";
@@ -122,8 +125,8 @@ const defaultColumns: GridColDef[] = [
   },
   {
     flex: 0.3,
-    minWidth: 170,
-    field: "state",
+    minWidth: 220,
+    field: "Contract with",
     headerName: "Contract with",
 
     renderCell: ({ row }: { row: any }) => {
@@ -136,8 +139,8 @@ const defaultColumns: GridColDef[] = [
     },
   },
   {
-    flex: 0.2,
-    field: "branchName",
+    flex: 0.3,
+    field: "Contract name",
     minWidth: 220,
     headerName: "Contract name",
     renderCell: ({ row }: any) => {
@@ -158,23 +161,9 @@ const defaultColumns: GridColDef[] = [
 
   {
     flex: 0.3,
-    minWidth: 125,
-    field: "Team",
-    headerName: "Team ",
-    renderCell: ({ row }: { row: any }) => {
-      const { manager } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.team || "-"
-        }`}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.2,
-    field: "createdAt",
-    minWidth: 140,
-    headerName: "Created Date",
+    field: "startDate",
+    minWidth: 180,
+    headerName: "Start date",
     renderCell: ({ row }: any) => {
       // Extract the date from the row
       const { lifecycle } = row || {};
@@ -213,10 +202,10 @@ const defaultColumns: GridColDef[] = [
   },
 
   {
-    flex: 0.2,
-    field: "Expiration date",
-    minWidth: 140,
-    headerName: "Expiration date",
+    flex: 0.3,
+    field: "endDate",
+    minWidth: 180,
+    headerName: "End date",
     renderCell: ({ row }: any) => {
       // Extract the date from the row
       const { lifecycle } = row || {};
@@ -254,9 +243,9 @@ const defaultColumns: GridColDef[] = [
     },
   },
   {
-    flex: 0.2,
+    flex: 0.3,
     field: "Notice period",
-    minWidth: 140,
+    minWidth: 180,
     headerName: "Notice period",
     renderCell: ({ row }: any) => {
       // Extract the date from the row
@@ -296,14 +285,84 @@ const defaultColumns: GridColDef[] = [
   },
   {
     flex: 0.3,
-    minWidth: 125,
-    field: "display_name",
+    minWidth: 180,
+    field: "Currency",
+    headerName: "Currency",
+
+    renderCell: ({ row }: { row: any }) => {
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{`${
+          row?.overview?.currency || "-"
+        }`}</Typography>
+      );
+    },
+  },
+  {
+    flex: 0.3,
+    minWidth: 180,
+    field: "anualValue",
     headerName: "Annual Value ",
 
     renderCell: ({ row }: { row: RowType }) => {
       const { display_name } = row;
       return (
         <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
+      );
+    },
+  },
+  {
+    flex: 0.3,
+    minWidth: 200,
+    field: "Categories",
+    headerName: "Categories",
+
+    renderCell: ({ row }: { row: any }) => {
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{`${
+          row?.overview?.category || "-"
+        }`}</Typography>
+      );
+    },
+  },
+  {
+    flex: 0.3,
+    minWidth: 200,
+    field: "SubCategories",
+    headerName: "SubCategories",
+
+    renderCell: ({ row }: { row: any }) => {
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{`${
+          row?.overview?.subcategory || "-"
+        }`}</Typography>
+      );
+    },
+  },
+  {
+    flex: 0.3,
+    minWidth: 200,
+    field: "Tags",
+    headerName: "Tags",
+
+    renderCell: ({ row }: { row: any }) => {
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{`${
+          row?.overview?.tags || "-"
+        }`}</Typography>
+      );
+    },
+  },
+  {
+    flex: 0.3,
+    minWidth: 125,
+    field: "Team",
+    headerName: "Team ",
+    renderCell: ({ row }: { row: any }) => {
+      const { manager } = row;
+      return (
+        <Typography sx={{ color: "text.secondary" }}>{`${
+          row?.overview?.team || "-"
+        }`}</Typography>
       );
     },
   },
@@ -513,9 +572,6 @@ const ContractList = () => {
               </Breadcrumbs>
             </Box>
             <Box>
-              <Button variant="outlined" sx={{ textTransform: "none" }}>
-                <ExitToAppIcon /> Export
-              </Button>
               <Button
                 sx={{ ml: 2, mr: 2, textTransform: "none" }}
                 variant="contained"
@@ -577,27 +633,37 @@ const ContractList = () => {
               background: "white",
             }}
           >
-            <div style={{ display: "flex" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "center",
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                width: "50%",
+              }}
+            >
+              <TextField
+                size="small"
+                sx={{ width: "60%" }}
+                fullWidth
+                value={search}
+                placeholder="Search"
+                onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
                 }}
-              >
-                <TextField
-                  size="small"
-                  value={search}
-                  placeholder="Search"
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </Box>
-            </div>
+              />
+            </Box>
 
             <div style={{ display: "flex" }}>
               <Button
+                size="small"
                 sx={{
-                  mr: 2,
+                  height: "4.5vh",
+                  mr: 1,
                   textTransform: "none",
                   backgroundColor: "green", // Set the button color to green
                   "&:hover": {
@@ -607,6 +673,33 @@ const ContractList = () => {
                 variant="contained"
               >
                 Set as a default
+              </Button>
+
+              <Button
+                variant="text"
+                sx={{
+                  height: "4.5vh",
+                }}
+              >
+                <svg
+                  width="24"
+                  height="32"
+                  viewBox="0 0 24 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.87819 21.3747V17.3901H11.2227V14.7337L5.87819 14.7337V10.7491L3.7404 16.0619L5.87819 21.3747ZM2.67151 5.43632H1.60261V26.6875H2.67151V5.43632Z"
+                    fill="#174B8B"
+                  />
+                  <path
+                    d="M18.1209 10.6261V14.6107L12.7764 14.6107V17.2671L18.1209 17.2671V21.2517L20.2587 15.9389L18.1209 10.6261ZM22.3965 5.31327H21.3276L21.3276 26.5645H22.3965L22.3965 5.31327Z"
+                    fill="#174B8B"
+                  />
+                </svg>
+              </Button>
+              <Button variant="outlined" sx={{ textTransform: "none" }}>
+                <ExitToAppIcon /> Export
               </Button>
 
               {/* <MenuButton /> */}
