@@ -172,7 +172,7 @@ function SyncFesion() {
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
-  useEffect(() => { }, [documentContent, uplodTrackFile]);
+  useEffect(() => {}, [documentContent, uplodTrackFile]);
   useEffect(() => {
     setLeftSidebarExpanded(true);
   }, []);
@@ -1665,10 +1665,11 @@ function SyncFesion() {
 
         <div className="relative ">
           <button
-            className={`text-black text-[16px]  rounded focus:outline-none ml-4  ${showBlock == "uploadTrack"
-              ? "text-gray-300 hover:text-gray-300"
-              : "text-black hover:text-gray-700"
-              }`}
+            className={`text-black text-[16px]  rounded focus:outline-none ml-4  ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300 hover:text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("file")}
           >
@@ -1763,10 +1764,11 @@ function SyncFesion() {
         {/* View Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${showBlock == "uploadTrack"
-              ? "text-gray-300"
-              : "text-black hover:text-gray-700"
-              }`}
+            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("view")}
           >
@@ -1874,10 +1876,11 @@ function SyncFesion() {
         {/* insert and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]   rounded focus:outline-none ml-10  ${showBlock == "uploadTrack"
-              ? "text-gray-300"
-              : "text-black hover:text-gray-700"
-              }`}
+            className={`text-black text-[16px]   rounded focus:outline-none ml-10  ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("insert")}
           >
@@ -1903,9 +1906,9 @@ function SyncFesion() {
               </li>
               <li
                 className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-              // onClick={() => {
-              //   triggerClick("container_toolbar_image_local");
-              // }}
+                // onClick={() => {
+                //   triggerClick("container_toolbar_image_local");
+                // }}
               >
                 <label
                   htmlFor="forimg"
@@ -1999,10 +2002,11 @@ function SyncFesion() {
         {/* Signature Button and Dropdown */}
         <div className="relative">
           <button
-            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${showBlock == "uploadTrack"
-              ? "text-gray-300"
-              : "text-black hover:text-gray-700"
-              }`}
+            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${
+              showBlock == "uploadTrack"
+                ? "text-gray-300"
+                : "text-black hover:text-gray-700"
+            }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("signature")}
           >
@@ -2213,10 +2217,18 @@ function SyncFesion() {
 
             {showBlock == "" && !editMode && (
               <Button
-                sx={{ ml: 2, textTransform: "none" }}
-                type="submit"
                 variant="outlined"
                 color="primary"
+                sx={{
+                  ml: 2,
+                  textTransform: "none",
+
+                  color: "#174B8B",
+                  borderColor: "#174B8B", // Change this to your preferred color
+                  "&:hover": {
+                    borderColor: "#1171D1", // Optional: Change for hover state
+                  },
+                }}
                 onClick={() => {
                   // setSidebarExpanded(true),
                   setEditMode(true);

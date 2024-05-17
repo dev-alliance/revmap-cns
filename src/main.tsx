@@ -70,6 +70,19 @@ const theme = createTheme({
         },
       },
     },
+    // MuiButton: {
+    //   styleOverrides: {
+    //     // Name of the variant
+    //     outlined: {
+    //       color: "#174B8B",
+    //       borderColor: "#174B8B", // Change this to your preferred color
+    //       "&:hover": {
+    //         borderColor: "#1171D1", // Optional: Change for hover state
+    //       },
+    //     },
+    //   },
+
+    // },
   },
   // Other theme configurations
 } as any);

@@ -780,51 +780,65 @@ const MyComponent: React.FC = () => {
             >
               <List>
                 {Object.keys(modules).map((key) => (
-                  <ListItemButton
-                    key={key}
-                    sx={{
-                      mb: 2.5,
-                      mt: 1,
-                      width: "100%",
-                      background: selectedModule === key ? "#E4EDF8" : "none",
-                      "& svg path": {
-                        stroke: selectedModule === key ? "#174B8B" : "white",
-                      },
-                      "&:hover": {
-                        backgroundColor: "white", // Consistent background on hover
-
+                  <div style={{}}>
+                    <ListItemButton
+                      key={key}
+                      sx={{
+                        mb: 2.5,
+                        mt: 1,
+                        width: "100%",
+                        cursor: modules[key].isDisabled
+                          ? "not-allowed"
+                          : "pointer",
+                        color: modules[key]?.isDisabled ? "#D3D3D3" : "inherit",
+                        marginBottom: "20px",
+                        background: selectedModule === key ? "#E4EDF8" : "none",
                         "& svg path": {
-                          stroke: "#174B8B", // Consistent SVG path color on hover
+                          stroke: selectedModule === key ? "#174B8B" : "white",
                         },
-                      },
-                    }}
-                    onClick={() => {
-                      if (modules[key].isDisabled) return;
-                      if (key === "toggle") {
-                        toggleSidebar();
-                      } else {
-                        handleModuleClick(key);
-                        if (!sidebarExpanded) {
-                          setSidebarExpanded(true);
+                        "&:hover": {
+                          backgroundColor: "white", // Consistent background on hover
+
+                          "& svg path": {
+                            stroke: "#174B8B", // Consistent SVG path color on hover
+                          },
+                        },
+                      }}
+                      onClick={() => {
+                        if (modules[key].isDisabled) return;
+                        if (key === "toggle") {
+                          toggleSidebar();
+                        } else {
+                          handleModuleClick(key);
+                          if (!sidebarExpanded) {
+                            setSidebarExpanded(true);
+                          }
                         }
-                      }
-                    }}
-                    style={{
-                      cursor: modules[key].isDisabled
-                        ? "not-allowed"
-                        : "pointer",
-                      color: modules[key]?.isDisabled ? "#D3D3D3" : "inherit",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <ListItemIcon>
-                      {modules[key]?.getIcon ? (
-                        modules[key].getIcon(selectedModule === key)
-                      ) : (
-                        <span>No icon defined</span>
-                      )}
-                    </ListItemIcon>
-                  </ListItemButton>
+                      }}
+                      style={{}}
+                    >
+                      <div>
+                        <ListItemIcon
+                          sx={{
+                            width: "100x",
+                            "&:hover": {
+                              backgroundColor: "white", // Consistent background on hover
+
+                              "& svg path": {
+                                stroke: "#174B8B", // Consistent SVG path color on hover
+                              },
+                            },
+                          }}
+                        >
+                          {modules[key]?.getIcon ? (
+                            modules[key].getIcon(selectedModule === key)
+                          ) : (
+                            <span>No icon defined</span>
+                          )}
+                        </ListItemIcon>
+                      </div>
+                    </ListItemButton>
+                  </div>
                 ))}
               </List>
             </Grid>

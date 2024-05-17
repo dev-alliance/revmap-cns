@@ -72,8 +72,8 @@ interface RowType {
 
 const defaultColumns: GridColDef[] = [
   {
-    flex: 0.2,
-    minWidth: 125,
+    flex: 0.3,
+    minWidth: 180,
     field: "status",
     headerName: "Status",
     renderCell: ({ row }: { row: any }) => (
@@ -312,7 +312,7 @@ const defaultColumns: GridColDef[] = [
   },
   {
     flex: 0.3,
-    minWidth: 200,
+    minWidth: 180,
     field: "Categories",
     headerName: "Categories",
 
@@ -326,7 +326,7 @@ const defaultColumns: GridColDef[] = [
   },
   {
     flex: 0.3,
-    minWidth: 200,
+    minWidth: 180,
     field: "SubCategories",
     headerName: "SubCategories",
 
@@ -340,7 +340,7 @@ const defaultColumns: GridColDef[] = [
   },
   {
     flex: 0.3,
-    minWidth: 200,
+    minWidth: 180,
     field: "Tags",
     headerName: "Tags",
 
@@ -354,7 +354,7 @@ const defaultColumns: GridColDef[] = [
   },
   {
     flex: 0.3,
-    minWidth: 125,
+    minWidth: 180,
     field: "Team",
     headerName: "Team ",
     renderCell: ({ row }: { row: any }) => {
@@ -560,7 +560,7 @@ const ContractList = () => {
             }}
           >
             <Box>
-              <CardHeader title="Contracts" />
+              <CardHeader title="Documents" />
               <Breadcrumbs
                 aria-label="breadcrumb"
                 sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
@@ -573,7 +573,19 @@ const ContractList = () => {
             </Box>
             <Box>
               <Button
-                sx={{ ml: 2, mr: 2, textTransform: "none" }}
+                // sx={{ }}
+                // variant="contained"
+                size="small"
+                sx={{
+                  height: "4.5vh",
+                  ml: 2,
+                  mr: 2,
+                  textTransform: "none",
+                  backgroundColor: "#174B8B", // Set the button color to green
+                  "&:hover": {
+                    backgroundColor: "#2B6EC2", // Darker green on hover
+                  },
+                }}
                 variant="contained"
                 component={Link}
                 to="/dashboard/create-contract"
@@ -613,7 +625,7 @@ const ContractList = () => {
                     });
                 }}
               >
-                <AddIcon /> Create Contract
+                <AddIcon /> Create Document
               </Button>
             </Box>
           </Box>
@@ -643,7 +655,6 @@ const ContractList = () => {
             >
               <TextField
                 size="small"
-                sx={{ width: "60%" }}
                 fullWidth
                 value={search}
                 placeholder="Search"
@@ -655,6 +666,21 @@ const ContractList = () => {
                     </InputAdornment>
                   ),
                 }}
+                sx={{
+                  width: "60%", // Adjusted width here
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#174B8B !important", // Your desired color for normal state
+                      borderWidth: "1px !important", // Set border thickness to 0.5px
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#1171D1", // Change for hover state
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#174B8B", // Border color when the TextField is focused
+                    },
+                  },
+                }}
               />
             </Box>
 
@@ -665,7 +691,7 @@ const ContractList = () => {
                   height: "4.5vh",
                   mr: 1,
                   textTransform: "none",
-                  backgroundColor: "green", // Set the button color to green
+                  backgroundColor: "#3F9748", // Set the button color to green
                   "&:hover": {
                     backgroundColor: "darkgreen", // Darker green on hover
                   },
@@ -698,8 +724,20 @@ const ContractList = () => {
                   />
                 </svg>
               </Button>
-              <Button variant="outlined" sx={{ textTransform: "none" }}>
-                <ExitToAppIcon /> Export
+              <Button
+                variant="outlined"
+                color="primary"
+                sx={{
+                  textTransform: "none",
+
+                  color: "#174B8B",
+                  borderColor: "#174B8B", // Change this to your preferred color
+                  "&:hover": {
+                    borderColor: "#1171D1", // Optional: Change for hover state
+                  },
+                }}
+              >
+                <ExitToAppIcon sx={{ color: "#174B8B", mr: 1 }} /> Export
               </Button>
 
               {/* <MenuButton /> */}
@@ -733,6 +771,33 @@ const ContractList = () => {
               </Box>
             ) : (
               <DataGrid
+                sx={{
+                  "& .MuiDataGrid-row:hover": {
+                    backgroundColor: "#F8FAFD", // Set your desired hover color
+                  },
+                  "& .MuiDataGrid-cell": {
+                    borderColor: "#D3DFFD", // Grid line color for normal cells
+                  },
+                  "& .MuiDataGrid-columnSeparator": {
+                    visibility: "visible",
+                    borderColor: "#D3DFFD", // Column separator color
+                  },
+                  "& .MuiDataGrid-virtualScroller": {
+                    borderColor: "transparent", // Transparent border around the grid
+                  },
+                  "& .MuiDataGrid-root": {
+                    border: "1px solid white", // Change this to 'transparent' if no border is desired
+                  },
+                  "& .MuiDataGrid-columnHeaders": {
+                    borderColor: "#D3DFFD", // Border color for header
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                      // You can customize header text color here
+                    },
+                  },
+                  "& .MuiDataGrid-columnHeader": {
+                    borderColor: "#D3DFFD", // Ensure headers' border color matches
+                  },
+                }}
                 style={{ maxHeight: 500 }}
                 pagination
                 rows={filteredList || []}
