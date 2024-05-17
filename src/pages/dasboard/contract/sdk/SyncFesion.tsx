@@ -2571,7 +2571,7 @@ function SyncFesion() {
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
             id="container"
-            height="79vh"
+            height="87vh"
             toolbarItems={items}
             toolbarClick={onToolbarClick}
             enableToolbar={true}

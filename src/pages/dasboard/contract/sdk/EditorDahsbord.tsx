@@ -607,148 +607,10 @@ const MyComponent: React.FC = () => {
         <Box
           sx={{
             flexGrow: 1,
-            height: "calc(100vh - 64px)",
+            height: "calc(107vh - 64px)",
             overflow: "hidden",
           }}
         >
-          <Box
-            sx={{
-              py: 1,
-              pr: 3,
-              width: "100%",
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            {/* <div className="flex p-2 bg-gray-200">
-                <div className="flex items-center">
-                  <div className="px-4 py-1 bg-white border border-r-0 border-gray-400">Draft</div>
-                  <div className="w-4 h-4 bg-white transform rotate-45 -translate-x-2 border border-gray-400 border-t-0 border-l-0"></div>
-                </div>
-
-                <div className="flex items-center">
-                  <div className="px-4 py-1 bg-white border border-r-0 border-gray-400">Review</div>
-                  <div className="w-4 h-4 bg-white transform rotate-[315deg] -translate-x-2 border border-gray-400 border-t-0 border-l-0"></div>
-                </div>
-
-                <div className="flex items-center">
-                  <div className="px-4 py-1 bg-white border border-r-0 border-gray-400">Signing</div>
-                  <div className="w-4 h-4 bg-white transform rotate-45 -translate-x-2 border border-gray-400 border-t-0 border-l-0"></div>
-                </div>
-
-                <div className="flex items-center">
-                  <div className="px-4 py-1 bg-white border border-r-0 border-gray-400">Signed</div>
-                  <div className="w-4 h-4 bg-white transform rotate-45 -translate-x-2 border border-gray-400 border-t-0 border-l-0"></div>
-                </div>
-
-                <div className="flex items-center">
-                  <div className="px-4 py-1 bg-white border border-gray-400">Active</div>
-                </div>
-              </div> */}
-
-            {/* <div> */}
-            {/* <Box
-                sx={{
-                  width: 30,
-                  height: 30,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "50%",
-                  backgroundColor: "green",
-                  color: "#FFFFFF",
-                  ml: "-13px",
-                  fontSize: "10px",
-                  mb: "-32px",
-                }}
-              >
-                <Typography>pk</Typography>
-              </Box>
-              <Tooltip
-                TransitionComponent={Zoom}
-          componentsProps={{
-            popper: {
-              modifiers: [
-                {
-                  name: "offset",
-                  options: {
-                    offset: [0, -14],
-                  },
-                },
-              ],
-            },
-          }} title={
-                  ""
-                  // user?.role?.permissions?.create_clauses
-                  //   ? ""
-                  //   : "You have no permission"
-                }
-                arrow
-              >
-                <span>
-                  <Button
-                    sx={{ ml: 2, textTransform: "none" }}
-                    variant="contained"
-                    color="success"
-                  >
-                    Owner
-                  </Button>
-                </span>
-              </Tooltip> */}
-            {/* <Button
-                sx={{ ml: 2, textTransform: "none" }}
-                variant="outlined"
-                color="success"
-                onClick={handleClick}
-              >
-                <AddIcon /> Share
-              </Button> */}
-            {/* <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                sx={{ marginLeft: "-7rem", marginTop: "0.5rem" }}
-              >
-                <Card sx={{ m: 1.5, backgroundColor: "#9FBFC" }}>
-                  <MenuItem onClick={handleClose}>
-                    <Box
-                      sx={{ display: "flex", alignItems: "center" }}
-                      onClick={() => handleOpenDialog()}
-                    >
-                      <DrawIcon sx={{ color: "blue" }} />
-                      {/* Replace with your logo path */}
-            {/* <Box sx={{ ml: 2 }}>
-                        <Typography variant="subtitle1">
-                          Add signatory
-                        </Typography>
-                        <Typography variant="body2">
-                          Can sign and receive a copy of the document
-                        </Typography>
-                      </Box> */}
-            {/* </Box>
-                  </MenuItem> */}
-
-            {/* <MenuItem onClick={handleClose}>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <PersonAddAltIcon sx={{ color: "blue" }} />
-                      {/* Replace with your logo path */}
-            {/* <Box sx={{ ml: 2 }}>
-                        <Typography variant="subtitle1">
-                          Add collaborator
-                        </Typography>
-                        <Typography variant="body2">
-                          Collaborator can view, edit and comment.
-                        </Typography>
-                      </Box> */}
-            {/* </Box> */}
-            {/* </MenuItem>  */}
-            {/* </Card> */}
-            {/* </Menu> */}
-            {/* </div> */}
-          </Box>
-
           <SyncFesion></SyncFesion>
         </Box>
 
@@ -842,9 +704,17 @@ const MyComponent: React.FC = () => {
                 ))}
               </List>
             </Grid>
+
             <Grid item md={10}>
               {sidebarExpanded && selectedModule !== "toggle" && (
-                <Box sx={{ position: "relative", padding: 2 }}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    padding: 2,
+                    flex: 5,
+                    overflow: "auto",
+                  }}
+                >
                   <Box
                     sx={{
                       position: "absolute",
