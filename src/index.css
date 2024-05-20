@@ -41,7 +41,7 @@
 /* sdk  */
 .e-toolbar.e-control[class*="e-toolbar"] {
   box-sizing: content-box;
-  border: 1px solid #174b8b !important;
+  /* border: 1px solid #174b8b !important; */
   background-color: white !important;
   width: 100% !important;
 }

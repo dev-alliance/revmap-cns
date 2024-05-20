@@ -189,7 +189,6 @@ const LifeCycle = () => {
         execute contract.
       </Typography>
       <Divider style={{ margin: "20px 0" }} />
-
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"
@@ -316,7 +315,6 @@ const LifeCycle = () => {
           )}
         />
       </Box>
-
       {/* End Date Field */}
       {!lifecycleData.formData.checkboxStates.isEvergreen && (
         <Box sx={{ mb: 0 }}>
@@ -382,149 +380,149 @@ const LifeCycle = () => {
           />
         </Box>
       )}
-
-      {/* Notice Period Field */}
-
-      {/* Evergreen Checkbox */}
-      <div style={{ display: "flex" }}>
-        <FormControlLabel
-          sx={{
-            mt: 0.5,
-            ml: "-.4rem",
-            "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
-            // Apply any additional styling you need for the FormControlLabel here
-          }}
-          control={
-            <Checkbox
-              disabled={!!lifecycleData.formData.dateFields.endDate} // Disabled if endDate is set
-              checked={lifecycleData.formData.checkboxStates.isEvergreen}
-              onChange={handleCheckboxChange}
-              name="isEvergreen"
+      {!lifecycleData.formData.dateFields.endDate && (
+        <>
+          <div style={{ display: "flex" }}>
+            <FormControlLabel
               sx={{
-                padding: "5px", // Adjusts padding around the checkbox
-                "& .MuiSvgIcon-root": {
-                  // Targets the SVG icon representing the checkbox
-                  fontSize: "18px", // Adjust this value to scale the icon size
-                },
+                mt: 0.5,
+                ml: "-.4rem",
+                "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
+                // Apply any additional styling you need for the FormControlLabel here
               }}
-            />
-          }
-          label="Evergreen"
-        />
-        <Tooltip
-          title={
-            "This agreement automatically renews indefinitely until terminated."
-          }
-        >
-          <div style={{ marginTop: "14px" }}>
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5.4 9.6H6.6V8.4H5.4V9.6ZM6 0C5.21207 0 4.43185 0.155195 3.7039 0.456723C2.97595 0.758251 2.31451 1.20021 1.75736 1.75736C0.632141 2.88258 0 4.4087 0 6C0 7.5913 0.632141 9.11742 1.75736 10.2426C2.31451 10.7998 2.97595 11.2417 3.7039 11.5433C4.43185 11.8448 5.21207 12 6 12C7.5913 12 9.11742 11.3679 10.2426 10.2426C11.3679 9.11742 12 7.5913 12 6C12 5.21207 11.8448 4.43185 11.5433 3.7039C11.2417 2.97595 10.7998 2.31451 10.2426 1.75736C9.68549 1.20021 9.02405 0.758251 8.2961 0.456723C7.56815 0.155195 6.78793 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM6 2.4C5.36348 2.4 4.75303 2.65286 4.30294 3.10294C3.85286 3.55303 3.6 4.16348 3.6 4.8H4.8C4.8 4.48174 4.92643 4.17652 5.15147 3.95147C5.37652 3.72643 5.68174 3.6 6 3.6C6.31826 3.6 6.62348 3.72643 6.84853 3.95147C7.07357 4.17652 7.2 4.48174 7.2 4.8C7.2 6 5.4 5.85 5.4 7.8H6.6C6.6 6.45 8.4 6.3 8.4 4.8C8.4 4.16348 8.14714 3.55303 7.69706 3.10294C7.24697 2.65286 6.63652 2.4 6 2.4Z"
-                fill="#949494"
-              />
-            </svg>
-          </div>
-        </Tooltip>
-      </div>
-      <Box sx={{ mb: 0 }}>
-        <div style={{ display: "flex" }}>
-          <Typography
-            variant="body2"
-            sx={{
-              minWidth: "75px",
-              mr: 2,
-              mb: 0.8,
-              mt: 0.8,
-              whiteSpace: "nowrap",
-              color: endDate ? "#949494" : "#155BE5",
-            }}
-          >
-            Rolling days notice
-          </Typography>
-          <Tooltip
-            title={"Notice required to terminate this evergreen agreement."}
-          >
-            <div style={{ marginTop: "7px" }}>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5.4 9.6H6.6V8.4H5.4V9.6ZM6 0C5.21207 0 4.43185 0.155195 3.7039 0.456723C2.97595 0.758251 2.31451 1.20021 1.75736 1.75736C0.632141 2.88258 0 4.4087 0 6C0 7.5913 0.632141 9.11742 1.75736 10.2426C2.31451 10.7998 2.97595 11.2417 3.7039 11.5433C4.43185 11.8448 5.21207 12 6 12C7.5913 12 9.11742 11.3679 10.2426 10.2426C11.3679 9.11742 12 7.5913 12 6C12 5.21207 11.8448 4.43185 11.5433 3.7039C11.2417 2.97595 10.7998 2.31451 10.2426 1.75736C9.68549 1.20021 9.02405 0.758251 8.2961 0.456723C7.56815 0.155195 6.78793 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM6 2.4C5.36348 2.4 4.75303 2.65286 4.30294 3.10294C3.85286 3.55303 3.6 4.16348 3.6 4.8H4.8C4.8 4.48174 4.92643 4.17652 5.15147 3.95147C5.37652 3.72643 5.68174 3.6 6 3.6C6.31826 3.6 6.62348 3.72643 6.84853 3.95147C7.07357 4.17652 7.2 4.48174 7.2 4.8C7.2 6 5.4 5.85 5.4 7.8H6.6C6.6 6.45 8.4 6.3 8.4 4.8C8.4 4.16348 8.14714 3.55303 7.69706 3.10294C7.24697 2.65286 6.63652 2.4 6 2.4Z"
-                  fill="#949494"
+              control={
+                <Checkbox
+                  disabled={!!lifecycleData.formData.dateFields.endDate} // Disabled if endDate is set
+                  checked={lifecycleData.formData.checkboxStates.isEvergreen}
+                  onChange={handleCheckboxChange}
+                  name="isEvergreen"
+                  sx={{
+                    padding: "5px", // Adjusts padding around the checkbox
+                    "& .MuiSvgIcon-root": {
+                      // Targets the SVG icon representing the checkbox
+                      fontSize: "18px", // Adjust this value to scale the icon size
+                    },
+                  }}
                 />
-              </svg>
-            </div>
-          </Tooltip>
-        </div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Controller
-            name="rollingDaysNotice"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                placeholder="Rolling days notice"
-                fullWidth
-                type="number"
-                size="small"
-                variant="standard"
-                disabled={!!endDate} // Disabled if endDate is set
-                InputProps={{
-                  disableUnderline: true,
-                  sx: {
-                    backgroundColor: "#f0f0f0", // Adjust this value to change the background color
-                    "::after": {
-                      borderBottom: "2px solid",
-                    },
-                    "::before": {
-                      borderBottom: "none !important",
-                    },
-                    ":hover:not(.Mui-disabled)::before": {
-                      borderBottom: "none !important",
-                    },
-                    "input:focus + fieldset": {
-                      border: "none",
-                    },
-                    "::placeholder": {
-                      fontSize: "0.55rem",
-                    },
-                    input: {
-                      fontSize: "0.875rem",
-                      "&:focus": {
-                        borderBottom: "2px solid",
-                      },
-                    },
-                  },
+              }
+              label="Evergreen"
+            />
+            <Tooltip
+              title={
+                "This agreement automatically renews indefinitely until terminated."
+              }
+            >
+              <div style={{ marginTop: "14px" }}>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.4 9.6H6.6V8.4H5.4V9.6ZM6 0C5.21207 0 4.43185 0.155195 3.7039 0.456723C2.97595 0.758251 2.31451 1.20021 1.75736 1.75736C0.632141 2.88258 0 4.4087 0 6C0 7.5913 0.632141 9.11742 1.75736 10.2426C2.31451 10.7998 2.97595 11.2417 3.7039 11.5433C4.43185 11.8448 5.21207 12 6 12C7.5913 12 9.11742 11.3679 10.2426 10.2426C11.3679 9.11742 12 7.5913 12 6C12 5.21207 11.8448 4.43185 11.5433 3.7039C11.2417 2.97595 10.7998 2.31451 10.2426 1.75736C9.68549 1.20021 9.02405 0.758251 8.2961 0.456723C7.56815 0.155195 6.78793 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM6 2.4C5.36348 2.4 4.75303 2.65286 4.30294 3.10294C3.85286 3.55303 3.6 4.16348 3.6 4.8H4.8C4.8 4.48174 4.92643 4.17652 5.15147 3.95147C5.37652 3.72643 5.68174 3.6 6 3.6C6.31826 3.6 6.62348 3.72643 6.84853 3.95147C7.07357 4.17652 7.2 4.48174 7.2 4.8C7.2 6 5.4 5.85 5.4 7.8H6.6C6.6 6.45 8.4 6.3 8.4 4.8C8.4 4.16348 8.14714 3.55303 7.69706 3.10294C7.24697 2.65286 6.63652 2.4 6 2.4Z"
+                    fill="#949494"
+                  />
+                </svg>
+              </div>
+            </Tooltip>
+          </div>
+          <Box sx={{ mb: 0 }}>
+            <div style={{ display: "flex" }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  minWidth: "75px",
+                  mr: 2,
+                  mb: 0.8,
+                  mt: 0.8,
+                  whiteSpace: "nowrap",
+                  color: endDate ? "#949494" : "#155BE5",
                 }}
+              >
+                Rolling days notice
+              </Typography>
+              <Tooltip
+                title={"Notice required to terminate this evergreen agreement."}
+              >
+                <div style={{ marginTop: "7px" }}>
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5.4 9.6H6.6V8.4H5.4V9.6ZM6 0C5.21207 0 4.43185 0.155195 3.7039 0.456723C2.97595 0.758251 2.31451 1.20021 1.75736 1.75736C0.632141 2.88258 0 4.4087 0 6C0 7.5913 0.632141 9.11742 1.75736 10.2426C2.31451 10.7998 2.97595 11.2417 3.7039 11.5433C4.43185 11.8448 5.21207 12 6 12C7.5913 12 9.11742 11.3679 10.2426 10.2426C11.3679 9.11742 12 7.5913 12 6C12 5.21207 11.8448 4.43185 11.5433 3.7039C11.2417 2.97595 10.7998 2.31451 10.2426 1.75736C9.68549 1.20021 9.02405 0.758251 8.2961 0.456723C7.56815 0.155195 6.78793 0 6 0ZM6 10.8C3.354 10.8 1.2 8.646 1.2 6C1.2 3.354 3.354 1.2 6 1.2C8.646 1.2 10.8 3.354 10.8 6C10.8 8.646 8.646 10.8 6 10.8ZM6 2.4C5.36348 2.4 4.75303 2.65286 4.30294 3.10294C3.85286 3.55303 3.6 4.16348 3.6 4.8H4.8C4.8 4.48174 4.92643 4.17652 5.15147 3.95147C5.37652 3.72643 5.68174 3.6 6 3.6C6.31826 3.6 6.62348 3.72643 6.84853 3.95147C7.07357 4.17652 7.2 4.48174 7.2 4.8C7.2 6 5.4 5.85 5.4 7.8H6.6C6.6 6.45 8.4 6.3 8.4 4.8C8.4 4.16348 8.14714 3.55303 7.69706 3.10294C7.24697 2.65286 6.63652 2.4 6 2.4Z"
+                      fill="#949494"
+                    />
+                  </svg>
+                </div>
+              </Tooltip>
+            </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Controller
+                name="rollingDaysNotice"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    disabled={!!lifecycleData.formData.dateFields.endDate}
+                    {...field}
+                    placeholder="Rolling days notice"
+                    fullWidth
+                    type="number"
+                    size="small"
+                    variant="standard"
+                    InputProps={{
+                      disableUnderline: true,
+                      sx: {
+                        backgroundColor: "#f0f0f0", // Adjust this value to change the background color
+                        "::after": {
+                          borderBottom: "2px solid",
+                        },
+                        "::before": {
+                          borderBottom: "none !important",
+                        },
+                        ":hover:not(.Mui-disabled)::before": {
+                          borderBottom: "none !important",
+                        },
+                        "input:focus + fieldset": {
+                          border: "none",
+                        },
+                        "::placeholder": {
+                          fontSize: "0.55rem",
+                        },
+                        input: {
+                          fontSize: "0.875rem",
+                          "&:focus": {
+                            borderBottom: "2px solid",
+                          },
+                        },
+                      },
+                    }}
+                  />
+                )}
               />
-            )}
-          />
 
-          <Button
-            variant="text"
-            sx={{
-              backgroundColor: "#f0f0f0", // Ensures there is no background color
-              color: "black", // Text color
-              width: "60%", // Full width of the FormControl
-              textTransform: "none",
-              height: "25px",
-              ml: 2, // Prevents uppercase transformation
-            }}
-          >
-            Day(s)
-          </Button>
-        </div>
-      </Box>
+              <Button
+                variant="text"
+                sx={{
+                  backgroundColor: "#f0f0f0", // Ensures there is no background color
+                  color: "black", // Text color
+                  width: "60%", // Full width of the FormControl
+                  textTransform: "none",
+                  height: "25px",
+                  ml: 2, // Prevents uppercase transformation
+                }}
+              >
+                Day(s)
+              </Button>
+            </div>
+          </Box>
+        </>
+      )}
       {/* Conditional Evergreen Duration Field */}
       {!lifecycleData.formData.checkboxStates.isEvergreen && (
         <>

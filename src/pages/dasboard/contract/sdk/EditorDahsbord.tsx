@@ -637,7 +637,8 @@ const MyComponent: React.FC = () => {
                 height: sidebarExpanded ? "100vh" : "100vh",
                 borderRight: sidebarExpanded ? "1px solid #E0E0E0" : "none",
                 background: "#174B8B",
-                overflow: "hidden",
+                position: "fixed",
+                width: "57px",
               }}
             >
               <List>
@@ -659,12 +660,13 @@ const MyComponent: React.FC = () => {
                           stroke: selectedModule === key ? "#174B8B" : "white",
                         },
                         "&:hover": {
-                          backgroundColor: "white", // Consistent background on hover
-
-                          "& svg path": {
-                            stroke: "#174B8B", // Consistent SVG path color on hover
-                          },
+                          backgroundColor:
+                            selectedModule === key ? "#E4EDF8" : "none", // Consistent background on hover
                         },
+                        //   "& svg path": {
+                        //     stroke: "#174B8B", // Consistent SVG path color on hover
+                        //   },
+                        // },
                       }}
                       onClick={() => {
                         if (modules[key].isDisabled) return;
@@ -682,14 +684,7 @@ const MyComponent: React.FC = () => {
                       <div>
                         <ListItemIcon
                           sx={{
-                            width: "100x",
-                            "&:hover": {
-                              backgroundColor: "white", // Consistent background on hover
-
-                              "& svg path": {
-                                stroke: "#174B8B", // Consistent SVG path color on hover
-                              },
-                            },
+                            width: "100px",
                           }}
                         >
                           {modules[key]?.getIcon ? (
@@ -705,7 +700,11 @@ const MyComponent: React.FC = () => {
               </List>
             </Grid>
 
-            <Grid item md={10}>
+            <Grid
+              item
+              md={10}
+              sx={{ marginLeft: sidebarExpanded ? "17%" : "0", flex: 1 }}
+            >
               {sidebarExpanded && selectedModule !== "toggle" && (
                 <Box
                   sx={{

@@ -295,12 +295,12 @@ export default function Dashboard() {
               backgroundColor:
                 selectedModule === "home" ? "#E4EDF8" : "transparent",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -356,12 +356,12 @@ export default function Dashboard() {
               backgroundColor:
                 selectedModule === "inbox" ? "#E4EDF8" : "transparent",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -409,17 +409,17 @@ export default function Dashboard() {
         >
           <ListItemButton
             sx={{
-              height: "4vh",
+              height: "5vh",
               mb: "1.3rem",
               backgroundColor:
                 selectedModule === "contract" ? "#E4EDF8" : "transparent",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -431,9 +431,10 @@ export default function Dashboard() {
                 style={{ color: "inherit", textDecoration: "none" }}
               >
                 <svg
-                  width="24"
-                  height="24"
+                  width="29"
+                  height="29"
                   viewBox="0 0 24 24"
+                  // viewBox={leftsidebarExpanded ? "-5 -5 35 35" : "0 0 24 24"}
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -606,12 +607,12 @@ export default function Dashboard() {
               backgroundColor:
                 selectedModule === "template" ? "#E4EDF8" : "transparent",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -667,12 +668,12 @@ export default function Dashboard() {
               backgroundColor:
                 selectedModule === "folder" ? "#E4EDF8" : "transparent",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -728,12 +729,12 @@ export default function Dashboard() {
               backgroundColor:
                 selectedModule === "reports" ? "#E4EDF8" : "transparent",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -787,12 +788,12 @@ export default function Dashboard() {
               height: "4vh",
               mb: "1.3rem",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -858,12 +859,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "billing" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF",
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B",
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B",
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -929,12 +932,14 @@ export default function Dashboard() {
                       ? "#E4EDF8"
                       : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1002,12 +1007,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "user" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1067,12 +1074,12 @@ export default function Dashboard() {
               mb: "1.3rem",
 
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}
@@ -1136,12 +1143,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "approval" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1202,12 +1211,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "categories" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1271,12 +1282,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "clauses" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1339,12 +1352,14 @@ export default function Dashboard() {
                       ? "#E4EDF8"
                       : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1408,12 +1423,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "roles" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1475,12 +1492,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "teams" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1561,12 +1580,14 @@ export default function Dashboard() {
                   backgroundColor:
                     selectedModule === "tags" ? "#E4EDF8" : "transparent",
                   "&:hover": {
-                    backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                    backgroundColor: leftsidebarExpanded
+                      ? "initial"
+                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
                     "& .MuiListItemText-root": {
-                      color: "#174B8B", // Color change on hover for text
+                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                     },
                     "& svg path": {
-                      fill: "#174B8B", // Color change on hover for SVG
+                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                     },
                   },
                 }}
@@ -1628,12 +1649,13 @@ export default function Dashboard() {
               backgroundColor:
                 selectedModule === "logout" ? "#E4EDF8" : "transparent",
               "&:hover": {
-                backgroundColor: "#FFFFFF", // Example hover background color, adjust as needed
+                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF",
+                // Only change background color on hover if sidebar is not expanded
                 "& .MuiListItemText-root": {
-                  color: "#174B8B", // Color change on hover for text
+                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
                 },
                 "& svg path": {
-                  fill: "#174B8B", // Color change on hover for SVG
+                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
                 },
               },
             }}

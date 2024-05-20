@@ -439,6 +439,25 @@ function SyncFesion() {
       // Implement any default action or log an unhandled case
     }
   };
+  useEffect(() => {
+    if (editorContainerRef.current) {
+      const documentEditor = editorContainerRef.current.documentEditor;
+      // Set default to A4 size paper
+      documentEditor.selection.sectionFormat.pageWidth = 595; // Width for A4 paper
+      documentEditor.selection.sectionFormat.pageHeight = 842; // Height for A4 paper
+
+      // Log current page size to console
+      console.log(
+        "Default Page Size Set to:",
+        documentEditor.selection.sectionFormat.pageWidth +
+          "x" +
+          documentEditor.selection.sectionFormat.pageHeight
+      );
+
+      // Optionally, open the page setup dialog immediately after initialization
+      // documentEditor.showDialog("PageSetup");
+    }
+  }, []);
 
   function ShowPageSetupDialog() {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1472,8 +1491,8 @@ function SyncFesion() {
         style={{
           display: "flex",
           background: "white",
-          paddingTop: "0.5rem",
-          paddingBottom: "0.5rem",
+          paddingTop: "1rem",
+          paddingBottom: "0.8rem",
           marginTop: "-1rem",
           paddingLeft: "1rem",
         }}
@@ -1618,7 +1637,7 @@ function SyncFesion() {
       )}
       {(showBlock === "" || showBlock === "pdf") && (
         <>
-          <div className="flex justify-between items-center gap-x-9 max-w-[820px] pb-0 my-4 pl-4 ">
+          <div className="flex justify-between items-center gap-x-9 max-w-[820px] pb-0 my-3 pl-4 ">
             <p className="text-[14px] font-regular ">
               Approvals: 0/0{" "}
               <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
@@ -1671,6 +1690,7 @@ function SyncFesion() {
                 : "text-black hover:text-gray-700"
             }`}
             disabled={showBlock == "uploadTrack"}
+            onMouseEnter={() => toggleDropdown("file")} // Change to onMouseEnter
             onClick={() => toggleDropdown("file")}
           >
             File
@@ -1762,15 +1782,24 @@ function SyncFesion() {
         </div>
 
         {/* View Button and Dropdown */}
-        <div className="relative">
+        <div
+          className="relative"
+          onMouseLeave={() => {
+            console.log("Mouse left the outer div");
+            toggleDropdown("file"); // Adjust based on your toggleDropdown logic if needed
+          }}
+        >
           <button
-            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${
+            className={`text-black text-[16px] rounded focus:outline-none ml-10 ${
               showBlock == "uploadTrack"
                 ? "text-gray-300"
                 : "text-black hover:text-gray-700"
             }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("view")}
+            onMouseEnter={() => {
+              toggleDropdown("view");
+            }}
           >
             View
           </button>
@@ -1883,6 +1912,9 @@ function SyncFesion() {
             }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("insert")}
+            onMouseEnter={() => {
+              toggleDropdown("insert");
+            }}
           >
             Insert
           </button>
@@ -2009,6 +2041,9 @@ function SyncFesion() {
             }`}
             disabled={showBlock == "uploadTrack"}
             onClick={() => toggleDropdown("signature")}
+            onMouseEnter={() => {
+              toggleDropdown("signature");
+            }}
           >
             Signature
           </button>
@@ -2105,6 +2140,9 @@ function SyncFesion() {
           <button
             className="text-black text-[16px] rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("export")}
+            onMouseEnter={() => {
+              toggleDropdown("export");
+            }}
           >
             Export
           </button>
@@ -2145,6 +2183,9 @@ function SyncFesion() {
           <button
             className="text-black text-[16px]   rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("attach")}
+            onMouseEnter={() => {
+              toggleDropdown("attach");
+            }}
           >
             Attach
           </button>
@@ -2274,7 +2315,7 @@ function SyncFesion() {
 
       {showBlock === "" && (
         <>
-          <div className="flex " style={{ backgroundColor: "white" }}>
+          <div className=" " style={{ backgroundColor: "white" }}>
             <div
               className="text styling flex items-center "
               style={{ width: "100%" }}

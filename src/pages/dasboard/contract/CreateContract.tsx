@@ -23,7 +23,8 @@ import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircul
 import { useAuth } from "@/hooks/useAuth";
 import { create } from "@/service/api/clauses";
 
-import logo from "@/assets/upload_logo.png";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 import { getList } from "@/service/api/template";
 
 import { Worker, Viewer } from "@react-pdf-viewer/core";
@@ -49,6 +50,7 @@ const CreateContract = () => {
   const [selectionField, setSelectionField] = useState("");
   const [feildList, setFeildList] = useState<Array<any>>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<any>("");
+  const [inputFocused, setInputFocused] = useState(false);
   const triggerClick = async () => {
     navigate("/dashboard/editor-dahsbord", {
       state: { openFileChooser: true },
@@ -662,6 +664,7 @@ const CreateContract = () => {
               ) : (
                 <Box sx={{ mt: 12, width: "50%" }}>
                   <Autocomplete
+                    size="small"
                     fullWidth
                     options={feildList}
                     value={selectedTemplate}
@@ -680,14 +683,45 @@ const CreateContract = () => {
                       </MenuItem>
                     )}
                     renderInput={(params: any) => (
-                      <TextField {...params} label="Search Templates" />
+                      <TextField
+                        {...params}
+                        placeholder="Search Templates"
+                        // Adjust label based on selection and focus
+                        InputLabelProps={{
+                          shrink: false, // Prevent the label from floating when focused or filled
+                        }}
+                        InputProps={{
+                          ...params.InputProps, // Spread existing input properties
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon />
+                            </InputAdornment>
+                          ),
+                        }}
+                        onFocus={() => setInputFocused(true)} // Set focus to true
+                        onBlur={() => setInputFocused(false)} // Set focus to false
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              border: "1px dashed #174B8B ",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "#1171D1", // Change for hover state
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#174B8B", // Border color when the TextField is focused
+                            },
+                          },
+                        }}
+                      />
                     )}
                     renderTags={() => null} // Optionally, prevent tags from rendering if `multiple` is enabled
                   />
                   <div style={{ float: "right", marginTop: "2rem" }}>
                     <Button
                       variant="outlined"
-                      onClick={handleBack}
+                      color="error"
+                      onClick={() => setSelectDocoment("")}
                       sx={{ textTransform: "none" }}
                     >
                       Cancel
@@ -701,10 +735,19 @@ const CreateContract = () => {
                         component={Link}
                         to="/dashboard/editor-dahsbord"
                         disabled={!selectedTemplate}
-                        sx={{ ml: 2, textTransform: "none" }}
-                        type="submit"
+                        size="small"
+                        sx={{
+                          height: "4.5vh",
+                          ml: 2,
+                          mr: 2,
+                          textTransform: "none",
+                          backgroundColor: "#174B8B", // Set the button color to green
+                          "&:hover": {
+                            backgroundColor: "#2B6EC2", // Darker green on hover
+                          },
+                        }}
                         variant="contained"
-                        color="primary"
+                        type="submit"
                       >
                         Use Template
                       </Button>
