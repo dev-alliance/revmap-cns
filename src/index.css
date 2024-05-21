@@ -197,9 +197,9 @@ blockquote.fancy {
   display: block;
   font-size: 12px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 7px !important;
   opacity: 92%;
-  margin-top: 13px !important;
+  margin-top: 18px !important;
 }
 
 #_tab_header_items {
@@ -228,117 +228,10 @@ blockquote.fancy {
   --blue-color: #155be5;
 }
 
-#breadcrumb {
-  list-style: none;
-  display: inline-block;
-}
-
-#breadcrumb .icon {
-  font-size: 14px;
-}
-
-#breadcrumb li {
-  float: left;
-}
-
-#breadcrumb li a {
-  color: #fff;
-  display: block;
-  background: var(--gray-color);
-  text-decoration: none;
-  position: relative;
-  height: 22px;
-  line-height: 22px;
-  padding: 0 10px 0 5px;
-  text-align: center;
-  margin-right: 23px;
-  font-size: 12px;
-}
-
-#breadcrumb li a {
-  background-color: var(--gray-color);
-}
-
-#breadcrumb li a:before {
-  border-color: var(--gray-color);
-  border-left-color: transparent;
-}
-
-#breadcrumb li a:after {
-  border-left-color: var(--gray-color);
-}
-
-#breadcrumb li:first-child a {
-  padding-left: 15px;
-  /* border-radius: 4px 0 0 4px; */
-}
-
-#breadcrumb li:first-child a:before {
-  border: none;
-}
-
-#breadcrumb li:last-child a {
-  padding-right: 15px;
-  /* border-radius: 0 4px 4px 0; */
-}
-
-#breadcrumb li:last-child a:after {
-  border: none;
-}
-
-#breadcrumb li a:before,
-#breadcrumb li a:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  border: 0 solid var(--gray-color);
-  border-width: 11px 10px;
-  width: 0;
-  height: 0;
-}
-
-#breadcrumb li a:before {
-  left: -18px;
-  border-left-color: transparent;
-}
-
-#breadcrumb li a:after {
-  left: 100%;
-  border-color: transparent;
-  border-left-color: var(--gray-color);
-}
-
-/* extra */
-#breadcrumb li a:hover {
-  background-color: var(--gray-color);
-}
-
-#breadcrumb li a:hover:before {
-  border-color: var(--gray-color);
-  border-left-color: transparent;
-}
-
-#breadcrumb li a:hover:after {
-  border-left-color: var(--gray-color);
-}
-
-#breadcrumb li a:active {
-  background-color: var(--gray-color);
-}
-
-#breadcrumb li a:active:before {
-  border-color: var(--gray-color);
-  border-left-color: transparent;
-}
-
-#breadcrumb li a:active:after {
-  border-left-color: var(--gray-color);
-}
-
 .e-tab {
   display: block;
   position: absolute !important;
-  width: 92% !important;
+  width: 95% !important;
 }
 
 .e-tab .e-content .e-item {
