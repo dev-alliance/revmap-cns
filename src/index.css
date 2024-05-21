@@ -192,6 +192,16 @@ blockquote.fancy {
   width: 400px !important;
 }
 
+.e-de-para-dlg-heading {
+  color: #000000de;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  opacity: 92%;
+  margin-top: 13px !important;
+}
+
 #_tab_header_items {
   margin-top: -10px !important;
 }
