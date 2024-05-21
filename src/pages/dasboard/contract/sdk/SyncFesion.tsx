@@ -401,7 +401,7 @@ function SyncFesion() {
         documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
         break;
       case "Numbering-Roman":
-        documentEditor.editor.applyNumbering("%1.", "UpperRoman"); // Uppercase Roman numbering
+        documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
         break;
       case "Numbering-Alpha":
         documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
@@ -471,7 +471,6 @@ function SyncFesion() {
 
   const clearAndCloseFooter = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
-
     documentEditor.selection.closeHeaderFooter();
   };
 
@@ -2315,7 +2314,14 @@ function SyncFesion() {
 
       {showBlock === "" && (
         <>
-          <div className=" " style={{ backgroundColor: "white" }}>
+          <div
+            className=" "
+            style={{
+              backgroundColor: "white",
+              borderTop: "0.5px solid #174B8B", // Add a top border
+              borderBottom: "0.5px solid #174B8B",
+            }}
+          >
             <div
               className="text styling flex items-center "
               style={{ width: "100%" }}
@@ -2398,6 +2404,12 @@ function SyncFesion() {
                     tooltipText="Superscript"
                   />
 
+                  {/* <ItemDirective
+                    id="container_editor_font_properties_rightDiv2_changeCase"
+                    prefixIcon="e-btn-icon e-icons e-de-ctnr-change-case"
+                    tooltipText="Change case"
+                  /> */}
+
                   <ItemDirective type="Separator" />
 
                   {/* Font Color Picker */}
@@ -2451,6 +2463,16 @@ function SyncFesion() {
                     prefixIcon="e-de-ctnr-justify e-icons"
                     tooltipText="Justify"
                   />
+                  <ItemDirective
+                    id="IncreaseIndent"
+                    prefixIcon="e-de-ctnr-increaseindent e-icons"
+                    tooltipText="Increase Indent"
+                  />
+                  <ItemDirective
+                    id="DecreaseIndent"
+                    prefixIcon="e-de-ctnr-decreaseindent e-icons"
+                    tooltipText="Decrease Indent"
+                  />
                   {/* lineheight  */}
                   <ItemDirective
                     template={lineHeight1}
@@ -2464,15 +2486,36 @@ function SyncFesion() {
                     tooltipText="Arabic Numbering"
                   />
                   <ItemDirective
-                    id="Numbering-Roman"
+                    id="Bullets-Dot"
                     prefixIcon="e-de-ctnr-bullets e-icons"
-                    tooltipText="Roman Numbering"
+                    tooltipText="Bullets-Dot"
                   />
                   <ItemDirective
+                    id="Bullets-Circle"
+                    prefixIcon="e-de-ctnr-bullet-circle e-icons"
+                    tooltipText="Bullets Circle"
+                  />
+                  <ItemDirective
+                    id="Bullets-Square"
+                    prefixIcon="e-de-ctnr-bullet-square e-icons"
+                    tooltipText="Bullets Square"
+                  />
+
+                  <ItemDirective
+                    id="ShowParagraphMark"
+                    prefixIcon="e-de-e-paragraph-mark e-icons"
+                    tooltipText="Show the hidden characters like spaces, tab, paragraph marks, and breaks.(Ctrl + *)"
+                  />
+                  <ItemDirective
+                    id="ClearFormat"
+                    prefixIcon="e-de-ctnr-clearall e-icons"
+                    tooltipText="Clear Formatting"
+                  />
+                  {/* <ItemDirective
                     id="clearlist"
                     text="Clear"
                     tooltipText="Clear List"
-                  />
+                  /> */}
                 </ItemsDirective>
               </ToolbarComponent>
               {/* <ColorPickerComponent
@@ -2517,11 +2560,11 @@ function SyncFesion() {
                 /> */}
                     <ItemDirective
                       id="delete_rows"
-                      prefixIcon="e-de-ctnr-deleterows e-icons"
+                      prefixIcon=" e-de-ctnr-deletecolumns e-icons"
                     />
                     <ItemDirective
                       id="delete_columns"
-                      prefixIcon="e-de-ctnr-deletecolumns e-icons"
+                      prefixIcon="e-de-ctnr-deleterows e-icons"
                     />
                     <ItemDirective type="Separator" />
                     <ItemDirective
