@@ -233,7 +233,11 @@ blockquote.fancy {
   position: absolute !important;
   width: 95% !important;
 }
-
+.e-toolbar.e-control[class*="e-toolbar"] {
+  box-sizing: content-box;
+  background-color: #fff !important;
+  width: 99% !important;
+}
 .e-tab .e-content .e-item {
   background: inherit;
   color: #000;

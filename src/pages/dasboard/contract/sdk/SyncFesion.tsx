@@ -258,186 +258,190 @@ function SyncFesion() {
     }
   }
 
-  const onToolbarClick = (args: any) => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    console.log("args text:", args.item.id);
-    // if (!documentEditor) {
-    //   console.error("Document Editor is not initialized yet.");
-    //   return;
-    // }
+  const onToolbarClick = useCallback(
+    (args: any) => {
+      const documentEditor = editorContainerRef.current?.documentEditor;
+      console.log("args text:", args.item.id);
+      // if (!documentEditor) {
+      //   console.error("Document Editor is not initialized yet.");
+      //   return;
+      // }
 
-    switch (args.item.id) {
-      case "undo":
-        documentEditor.editorHistory.undo();
-        break;
-      case "redo":
-        documentEditor.editorHistory.redo();
-        break;
-      case "delete":
-        documentEditor.editor.delete();
-        break;
+      switch (args.item.id) {
+        case "undo":
+          documentEditor.editorHistory.undo();
+          break;
+        case "redo":
+          documentEditor.editorHistory.redo();
+          break;
+        case "delete":
+          documentEditor.editor.delete();
+          break;
 
-      case "bold":
-        // Toggles the bold of selected content
-        documentEditor.editor.toggleBold();
-        break;
-      case "italic":
-        // Toggles the Italic of selected content
-        documentEditor.editor.toggleItalic();
-        break;
-      case "underline":
-        // Toggles the underline of selected content
-        documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
-        break;
+        case "bold":
+          // Toggles the bold of selected content
+          documentEditor.editor.toggleBold();
+          break;
+        case "italic":
+          // Toggles the Italic of selected content
+          documentEditor.editor.toggleItalic();
+          break;
+        case "underline":
+          // Toggles the underline of selected content
+          documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
+          break;
 
-      case "highlight":
-        if (documentEditor && documentEditor.selection) {
-          // Check if the selected text is already highlighted
-          const highlightColor: any =
-            documentEditor.selection.characterFormat.highlightColor;
-          //Sets highlightColor formatting for selected text.
-          documentEditor.selection.characterFormat.highlightColor = "Pink";
-          documentEditor.focusIn();
-        }
-        break;
-
-      case "setupHeader":
-        setupHeader();
-        break;
-      case "setupFooter":
-        setupFooter();
-        break;
-
-      case "findText":
-        const searchText = "example"; // Example text to search for
-        if (documentEditor) {
-          documentEditor.search.findAll(searchText, "None");
-        }
-        break;
-
-      case "container_toolbar_open":
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.accept = ".docx,.pdf";
-        fileInput.onchange = (e: any) => {
-          const file = e.target.files[0];
-          if (file) {
-            if (file.name.endsWith(".docx")) {
-              const reader = new FileReader();
-              reader.onload = () => {
-                documentEditor?.open(reader.result as string, "Docx");
-              };
-              reader.readAsDataURL(file);
-            } else if (file.name.endsWith(".pdf")) {
-              // PDF opening not supported in DocumentEditor; use PDF Viewer or convert to DOCX
-              alert("Please convert PDF to DOCX format to open");
-            }
+        case "highlight":
+          if (documentEditor && documentEditor.selection) {
+            // Check if the selected text is already highlighted
+            const highlightColor: any =
+              documentEditor.selection.characterFormat.highlightColor;
+            //Sets highlightColor formatting for selected text.
+            documentEditor.selection.characterFormat.highlightColor = "Pink";
+            documentEditor.focusIn();
           }
-        };
-        fileInput.click();
-        break;
+          break;
 
-      case "container_toolbar_save":
-        documentEditor?.save("Document.docx", "Docx");
+        case "setupHeader":
+          setupHeader();
+          break;
+        case "setupFooter":
+          setupFooter();
+          break;
 
-        break;
+        case "findText":
+          const searchText = "example"; // Example text to search for
+          if (documentEditor) {
+            documentEditor.search.findAll(searchText, "None");
+          }
+          break;
 
-      case "strikethrough":
-        // Toggles the strikethrough of selected content
-        documentEditor.editor.toggleStrikethrough();
-        break;
-      case "subscript":
-        // Toggles the subscript of selected content
-        documentEditor.editor.toggleSubscript();
-        break;
-      case "superscript":
-        // Toggles the superscript of selected content
-        documentEditor.editor.toggleSuperscript();
-        break;
-      case "AlignLeft":
-        //Toggle the Left alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Left");
-        break;
-      case "AlignRight":
-        //Toggle the Right alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Right");
-        break;
-      case "AlignCenter":
-        //Toggle the Center alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Center");
-        break;
-      case "Justify":
-        //Toggle the Justify alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Justify");
-        break;
-      case "IncreaseIndent":
-        //Increase the left indent of selected or current paragraph
-        documentEditor.editor.increaseIndent();
-        break;
-      case "DecreaseIndent":
-        //Decrease the left indent of selected or current paragraph
-        documentEditor.editor.decreaseIndent();
-        break;
-      case "ClearFormat":
-        documentEditor.editor.clearFormatting();
-        break;
-      case "ShowParagraphMark":
-        //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
-        documentEditor.documentEditorSettings.showHiddenMarks =
-          !documentEditor.documentEditorSettings.showHiddenMarks;
-        break;
+        case "container_toolbar_open":
+          const fileInput = document.createElement("input");
+          fileInput.type = "file";
+          fileInput.accept = ".docx,.pdf";
+          fileInput.onchange = (e: any) => {
+            const file = e.target.files[0];
+            if (file) {
+              if (file.name.endsWith(".docx")) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  documentEditor?.open(reader.result as string, "Docx");
+                };
+                reader.readAsDataURL(file);
+              } else if (file.name.endsWith(".pdf")) {
+                // PDF opening not supported in DocumentEditor; use PDF Viewer or convert to DOCX
+                alert("Please convert PDF to DOCX format to open");
+              }
+            }
+          };
+          fileInput.click();
+          break;
 
-      case "Bullets-Dot":
-        documentEditor.editor.applyBullet("\uf0b7", "Symbol"); // Standard dot bullet
-        break;
-      case "Bullets-Circle":
-        documentEditor.editor.applyBullet("\uf06f", "Symbol"); // Open circle bullet
-        break;
-      case "Bullets-Square":
-        documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
-        break;
-      case "Numbering-Arabic":
-        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
-        break;
-      case "Numbering-Roman":
-        documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
-        break;
-      case "Numbering-Alpha":
-        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
-        break;
-      // upper lower case
-      case "uppercase":
-        // Changes the selected text to uppercase
-        if (documentEditor.selection && documentEditor.selection.text) {
-          const uppercaseText = documentEditor.selection.text.toUpperCase();
-          documentEditor.editor.insertText(uppercaseText);
-        }
-        break;
+        case "container_toolbar_save":
+          documentEditor?.save("Document.docx", "Docx");
 
-      case "lowercase":
-        // Changes the selected text to lowercase
-        if (documentEditor.selection && documentEditor.selection.text) {
-          const lowercaseText = documentEditor.selection.text.toLowerCase();
-          documentEditor.editor.insertText(lowercaseText);
-        }
-        break;
+          break;
 
-      case "lineHeight1":
-        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
-        break;
-      case "lineHeight1_5":
-        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
-        break;
-      case "lineHeight2":
-        documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
-        break;
+        case "strikethrough":
+          // Toggles the strikethrough of selected content
+          documentEditor.editor.toggleStrikethrough();
+          break;
+        case "subscript":
+          // Toggles the subscript of selected content
+          documentEditor.editor.toggleSubscript();
+          break;
+        case "superscript":
+          // Toggles the superscript of selected content
+          documentEditor.editor.toggleSuperscript();
+          break;
+        case "AlignLeft":
+          //Toggle the Left alignment for selected or current paragraph
+          documentEditor.editor.toggleTextAlignment("Left");
+          break;
+        case "AlignRight":
+          //Toggle the Right alignment for selected or current paragraph
+          documentEditor.editor.toggleTextAlignment("Right");
+          break;
+        case "AlignCenter":
+          //Toggle the Center alignment for selected or current paragraph
+          documentEditor.editor.toggleTextAlignment("Center");
+          break;
+        case "Justify":
+          //Toggle the Justify alignment for selected or current paragraph
+          documentEditor.editor.toggleTextAlignment("Justify");
+          break;
+        case "IncreaseIndent":
+          //Increase the left indent of selected or current paragraph
+          documentEditor.editor.increaseIndent();
+          break;
+        case "DecreaseIndent":
+          //Decrease the left indent of selected or current paragraph
+          documentEditor.editor.decreaseIndent();
+          break;
+        case "ClearFormat":
+          documentEditor.editor.clearFormatting();
+          break;
+        case "ShowParagraphMark":
+          //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
+          documentEditor.documentEditorSettings.showHiddenMarks =
+            !documentEditor.documentEditorSettings.showHiddenMarks;
+          break;
 
-      // Removed the duplicated 'Custom' case as it seems unnecessary
-      default:
-        console.warn("Unhandled toolbar item:", args.item.id);
-      // Implement any default action or log an unhandled case
-    }
-  };
+        case "Bullets-Dot":
+          documentEditor.editor.applyBullet("\uf0b7", "Symbol"); // Standard dot bullet
+          break;
+        case "Bullets-Circle":
+          documentEditor.editor.applyBullet("\uf06f", "Symbol"); // Open circle bullet
+          break;
+        case "Bullets-Square":
+          documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
+          break;
+        case "Numbering-Arabic":
+          documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
+          break;
+        case "Numbering-Roman":
+          documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
+          break;
+        case "Numbering-Alpha":
+          documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
+          break;
+        // upper lower case
+        case "uppercase":
+          // Changes the selected text to uppercase
+          if (documentEditor.selection && documentEditor.selection.text) {
+            const uppercaseText = documentEditor.selection.text.toUpperCase();
+            documentEditor.editor.insertText(uppercaseText);
+          }
+          break;
+
+        case "lowercase":
+          // Changes the selected text to lowercase
+          if (documentEditor.selection && documentEditor.selection.text) {
+            const lowercaseText = documentEditor.selection.text.toLowerCase();
+            documentEditor.editor.insertText(lowercaseText);
+          }
+          break;
+
+        case "lineHeight1":
+          documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
+          break;
+        case "lineHeight1_5":
+          documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
+          break;
+        case "lineHeight2":
+          documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
+          break;
+
+        // Removed the duplicated 'Custom' case as it seems unnecessary
+        default:
+          console.warn("Unhandled toolbar item:", args.item.id);
+        // Implement any default action or log an unhandled case
+      }
+    },
+    [editorContainerRef]
+  );
+
   useEffect(() => {
     if (editorContainerRef.current) {
       const documentEditor = editorContainerRef.current.documentEditor;
@@ -780,7 +784,7 @@ function SyncFesion() {
 
   const cellFillColorPickerTemplate = () => (
     <>
-      <div className="relative w-[60px]">
+      <div className="relative  mt-2 w-[60px]">
         <ColorPickerComponent
           id="cellFillColorPicker"
           showButtons={true}
@@ -1425,7 +1429,7 @@ function SyncFesion() {
   };
 
   let container: DocumentEditorContainerComponent;
-  const onCreated = () => {
+  const onCreated = useCallback(() => {
     // To insert text in cursor position
     container?.documentEditor?.editor.insertText("Document editor");
     // Move selection to previous character
@@ -1436,7 +1440,8 @@ function SyncFesion() {
     // documentEditor?.restrictEditing = true;
     // To get the selected content as text
     const selectedContent: string = container?.documentEditor?.selection.text;
-  };
+  }, []);
+
   const [showPopup, setShowPopup] = useState<any>(false);
   const [documentPath, setDocumentPath] = useState("");
 
@@ -1664,21 +1669,15 @@ function SyncFesion() {
           </div>
         </>
       )}
-      {/* <input
-        type="file"
-        id="file_upload"
-        style={{ display: 'none' }}
-        ref={fileInputRef}
-        onChange={onFileChange}
-      />
-      <button onClick={onImportClick}>Import</button> */}
+
       <div
-        className="flex  
+        style={{ marginTop: "-7px" }}
+        className="flex  mt-2
         gap-4"
       >
         {/* File Button and Dropdown */}
 
-        <div className="relative ">
+        <div className="relative  mt-2 ">
           <button
             className={`text-black text-[16px]  rounded focus:outline-none ml-4  ${
               showBlock == "uploadTrack"
@@ -1777,7 +1776,7 @@ function SyncFesion() {
 
         {/* View Button and Dropdown */}
         <div
-          className="relative"
+          className="relative  mt-2"
           onMouseLeave={() => {
             console.log("Mouse left the outer div");
             toggleDropdown("file"); // Adjust based on your toggleDropdown logic if needed
@@ -1897,7 +1896,7 @@ function SyncFesion() {
         </div>
 
         {/* insert and Dropdown */}
-        <div className="relative">
+        <div className="relative  mt-2">
           <button
             className={`text-black text-[16px]   rounded focus:outline-none ml-10  ${
               showBlock == "uploadTrack"
@@ -2026,7 +2025,7 @@ function SyncFesion() {
         </div>
 
         {/* Signature Button and Dropdown */}
-        <div className="relative">
+        <div className="relative  mt-2">
           <button
             className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${
               showBlock == "uploadTrack"
@@ -2130,7 +2129,7 @@ function SyncFesion() {
         </div>
 
         {/* Export Button and Dropdown */}
-        <div className="relative">
+        <div className="relative  mt-2">
           <button
             className="text-black text-[16px] rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("export")}
@@ -2173,7 +2172,7 @@ function SyncFesion() {
           )}
         </div>
 
-        <div className="relative">
+        <div className="relative  mt-2">
           <button
             className="text-black text-[16px]   rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
             onClick={() => toggleDropdown("attach")}
