@@ -172,7 +172,6 @@ function SyncFesion() {
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
-  useEffect(() => {}, [documentContent, uplodTrackFile]);
   useEffect(() => {
     setLeftSidebarExpanded(true);
   }, []);
@@ -630,6 +629,7 @@ function SyncFesion() {
     const documentEditor = editorContainerRef?.current?.documentEditor;
     setEditorRefContext(documentEditor);
   }, []);
+
   //Change the line spacing of selected or current paragraph
   function lineSpacingAction(args: any) {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1306,8 +1306,6 @@ function SyncFesion() {
     };
   }, []); // Assuming no dependencies, adjust if necessary
 
-  const [fieldFreshData, setFieldFreshData] = useState(0); // Default font color
-
   useEffect(() => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     const formFieldsNames: string[] = documentEditor?.exportFormData();
@@ -1466,7 +1464,6 @@ function SyncFesion() {
   useEffect(() => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor) {
-      console.log("chala a");
       documentEditor.isReadOnly = enabelEditing; // This will disable editing
     }
   }, [enabelEditing]);
@@ -1689,7 +1686,6 @@ function SyncFesion() {
                 : "text-black hover:text-gray-700"
             }`}
             disabled={showBlock == "uploadTrack"}
-            onMouseEnter={() => toggleDropdown("file")} // Change to onMouseEnter
             onClick={() => toggleDropdown("file")}
           >
             File
@@ -1747,7 +1743,6 @@ function SyncFesion() {
 
               <li
                 onClick={() => {
-                  triggerClick("container_toolbar_open");
                   saveDocumentToState();
                   toggleDropdown("file");
                 }}

@@ -81,9 +81,15 @@ interface Module {
 
 const MyComponent: React.FC = () => {
   const location = useLocation();
-  const { setOpenDocoment, sidebarExpanded, setSidebarExpanded, showBlock } =
-    useContext(ContractContext);
-  // const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
+  const {
+    setOpenDocoment,
+    leftsidebarExpanded,
+    setLeftSidebarExpanded,
+    sidebarExpanded,
+    setSidebarExpanded,
+    showBlock,
+  } = useContext(ContractContext);
+  // const [leftsidebarExpanded, setLeftSidebarExpanded] = useState<boolean>(false);
   const {
     signatories,
     setSignatories,
@@ -102,12 +108,13 @@ const MyComponent: React.FC = () => {
 
   const handlePinClick = () => {
     setIsPinned(!isPinned); // Toggle the pinned state
-    setSidebarExpanded(true); // Ensure sidebar is expanded when pinning
+    setLeftSidebarExpanded(true); // Ensure sidebar is expanded when pinning
   };
+  console.log(leftsidebarExpanded, "leftsidebarExpanded");
 
   const toggleSidebar = () => {
     if (!isPinned) {
-      setSidebarExpanded((prev: any) => !prev);
+      setLeftSidebarExpanded((prev: any) => !prev);
       // Only allow toggling if not pinned
     }
   };
@@ -130,6 +137,11 @@ const MyComponent: React.FC = () => {
       console.log("ok");
     }
   }, []);
+  // useEffect(() => {
+  //   if (!leftsidebarExpanded) {
+  //     setLeftSidebarExpanded(false);
+  //   }
+  // }, [leftsidebarExpanded]);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -616,7 +628,7 @@ const MyComponent: React.FC = () => {
 
         <Box
           sx={{
-            width: sidebarExpanded ? 320 : 50, // Adjust width based on sidebarExpanded state
+            width: leftsidebarExpanded ? 320 : 50, // Adjust width based on leftsidebarExpanded state
             flexShrink: 0,
             display: "flex",
             flexDirection: "column", // Typically, card content is laid out vertically
@@ -632,10 +644,10 @@ const MyComponent: React.FC = () => {
         >
           <Grid container>
             <Grid
-              md={sidebarExpanded ? 2 : 0}
+              md={leftsidebarExpanded ? 2 : 0}
               sx={{
-                height: sidebarExpanded ? "100vh" : "100vh",
-                borderRight: sidebarExpanded ? "1px solid #E0E0E0" : "none",
+                height: leftsidebarExpanded ? "100vh" : "100vh",
+                borderRight: leftsidebarExpanded ? "1px solid #E0E0E0" : "none",
                 background: "#174B8B",
                 position: "fixed",
                 width: "57px",
@@ -674,8 +686,8 @@ const MyComponent: React.FC = () => {
                           toggleSidebar();
                         } else {
                           handleModuleClick(key);
-                          if (!sidebarExpanded) {
-                            setSidebarExpanded(true);
+                          if (!leftsidebarExpanded) {
+                            setLeftSidebarExpanded(true);
                           }
                         }
                       }}
@@ -703,9 +715,9 @@ const MyComponent: React.FC = () => {
             <Grid
               item
               md={10}
-              sx={{ marginLeft: sidebarExpanded ? "17%" : "0", flex: 1 }}
+              sx={{ marginLeft: leftsidebarExpanded ? "17%" : "0", flex: 1 }}
             >
-              {sidebarExpanded && selectedModule !== "toggle" && (
+              {leftsidebarExpanded && selectedModule !== "toggle" && (
                 <Box
                   sx={{
                     position: "relative",
