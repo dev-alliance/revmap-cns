@@ -117,6 +117,8 @@ import DetailBranch from "@/pages/dasboard/branch/DetailBranch";
 import { useContract } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import { ContractContext } from "@/context/ContractContext";
+import NewSyncsF from "@/pages/dasboard/contract/sdk/NewSyncsF";
+import Default from "@/Default";
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />
@@ -1920,7 +1922,8 @@ export default function Dashboard() {
           <Route path="/crete-custom-role" element={<CreateCustomRole />} />
           <Route path="/system-role" element={<SystemsRole />} />
           <Route path="/editor" element={<CustomTextEditor />} />
-          <Route path="/test" element={<CustomTextEditor />} />
+          <Route path="/test" element={<Default />} />
+          <Route path="/testSync" element={<NewSyncsF />} />
         </Routes>
       </Box>
     </div>

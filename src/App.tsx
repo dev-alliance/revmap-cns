@@ -32,6 +32,9 @@ function App() {
           </BrowserRouter>
         </ContractProvider>
       </AuthProvider>
+      {/* <div className="App">
+        <Default></Default>
+      </div> */}
     </>
   );
 }
