@@ -48,22 +48,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import Collaburater from "@/pages/dasboard/contract/sdk/Collaburater";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import DrawIcon from "@mui/icons-material/Draw";
-import {
-  DocumentEditorContainerComponent,
-  Toolbar,
-  Inject,
-} from "@syncfusion/ej2-react-documenteditor";
-import "@syncfusion/ej2-base/styles/material.css";
-import "@syncfusion/ej2-buttons/styles/material.css";
-import "@syncfusion/ej2-calendars/styles/material.css";
-import "@syncfusion/ej2-dropdowns/styles/material.css";
-import "@syncfusion/ej2-inputs/styles/material.css";
-import "@syncfusion/ej2-lists/styles/material.css";
-import "@syncfusion/ej2-navigations/styles/material.css";
-import "@syncfusion/ej2-popups/styles/material.css";
-import "@syncfusion/ej2-splitbuttons/styles/material.css";
-import "@syncfusion/ej2-react-documenteditor/styles/material.css";
-import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
+
 import { Link, useLocation } from "react-router-dom";
 import SignatureDialog from "@/pages/dasboard/contract/sdk/SignatureDialog";
 import Signature from "@/pages/dasboard/contract/sdk/Signature";
@@ -72,6 +57,7 @@ import OpenSignatureDialog from "@/pages/dasboard/contract/sdk/OpenSignatureDial
 import { debounce } from "lodash";
 import { Close, PushPin } from "@mui/icons-material";
 import Fields from "@/pages/dasboard/contract/sdk/Fields";
+import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
 
 interface Module {
   getIcon: (isSelected: boolean) => JSX.Element;
@@ -552,6 +538,7 @@ const MyComponent: React.FC = () => {
         </Tooltip>
       ),
       content: <LifeSycle />,
+
       // isDisabled: showBlock === "",
     },
     // shere: {
@@ -727,7 +714,6 @@ const MyComponent: React.FC = () => {
                       overflow: "auto",
                     }}
                   >
-                    {/* Always show the pin icon, change color when pinned */}
                     <Tooltip
                       title={isPinned ? "Unpin" : "Pin"}
                       placement="left"
@@ -740,7 +726,6 @@ const MyComponent: React.FC = () => {
                         }}
                       />
                     </Tooltip>
-                    {/* Close Icon */}
 
                     <Close
                       onClick={toggleSidebar}
@@ -755,7 +740,7 @@ const MyComponent: React.FC = () => {
         </Box>
       </Box>
       <SignatureDialog open={openDialog} onClosePre={handleCloseDialog} />
-      <OpenSignatureDialog />
+      {/* <OpenSignatureDialog /> */}
     </>
   );
 };

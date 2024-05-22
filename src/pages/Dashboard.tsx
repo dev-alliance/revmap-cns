@@ -106,7 +106,7 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import ContractList from "@/pages/dasboard/contract/ContractList";
 import ArticleIcon from "@mui/icons-material/Article";
 import CreateContract from "@/pages/dasboard/contract/CreateContract";
-import TinyDahsbord from "@/pages/dasboard/contract/sdk/EditorDahsbord";
+import EditorDahsbord from "@/pages/dasboard/contract/sdk/EditorDahsbord";
 import CustomTextEditor from "@/pages/dasboard/contract/sdk/CustomTextEditor";
 import CardsSubscription from "@/pages/dasboard/billing/CardsSubcription";
 import RoleList from "@/pages/dasboard/role_permission/RoleList";
@@ -1912,8 +1912,8 @@ export default function Dashboard() {
 
           <Route path="/contract-list" element={<ContractList />} />
           <Route path="/create-contract" element={<CreateContract />} />
-          <Route path="/editor-dahsbord" element={<TinyDahsbord />} />
-          <Route path="/editor-dahsbord/open" element={<TinyDahsbord />} />
+          <Route path="/editor-dahsbord" element={<EditorDahsbord />} />
+          {/* <Route path="/editor-dahsbord/open" element={<EditorDahsbord />} /> */}
           <Route path="/sub-page-1" element={<SubPage1 />} />
           <Route path="/billing" element={<CardsSubscription />} />
 
@@ -1921,8 +1921,9 @@ export default function Dashboard() {
           <Route path="/crete-custom-role/:id" element={<CreateCustomRole />} />
           <Route path="/crete-custom-role" element={<CreateCustomRole />} />
           <Route path="/system-role" element={<SystemsRole />} />
+
           <Route path="/editor" element={<CustomTextEditor />} />
-          <Route path="/test" element={<Default />} />
+          {/* <Route path="/test" element={<Default />} /> */}
           <Route path="/testSync" element={<NewSyncsF />} />
         </Routes>
       </Box>

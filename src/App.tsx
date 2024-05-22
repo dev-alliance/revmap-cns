@@ -11,6 +11,7 @@ import ForgotPassword from "@/pages/ForgotPassword";
 import Dashboard from "@/pages/Dashboard";
 import { AuthProvider } from "@/context/AuthContext";
 import { ContractProvider } from "@/context/ContractContext";
+import Default from "@/Default";
 function App() {
   return (
     <>
@@ -27,6 +28,7 @@ function App() {
               <Route path="componydetails" element={<ComponyDetails />} />
               <Route path="forgotpassword" element={<ForgotPassword />} />
               <Route path="resetpassword" element={<ResetPassword />} />
+
               <Route path="dashboard/*" element={<Dashboard />} />
             </Routes>
           </BrowserRouter>

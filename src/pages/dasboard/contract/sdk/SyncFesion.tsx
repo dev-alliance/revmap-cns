@@ -16,16 +16,7 @@ import {
   Toolbar,
   CustomToolbarItemModel,
 } from "@syncfusion/ej2-react-documenteditor";
-import "@syncfusion/ej2-base/styles/material.css";
-import "@syncfusion/ej2-buttons/styles/material.css";
-import "@syncfusion/ej2-calendars/styles/material.css";
-import "@syncfusion/ej2-dropdowns/styles/material.css";
-import "@syncfusion/ej2-inputs/styles/material.css";
-import "@syncfusion/ej2-lists/styles/material.css";
-import "@syncfusion/ej2-navigations/styles/material.css";
-import "@syncfusion/ej2-popups/styles/material.css";
-import "@syncfusion/ej2-splitbuttons/styles/material.css";
-import "@syncfusion/ej2-react-documenteditor/styles/material.css";
+
 import {
   PdfDocument,
   PdfPageSettings,
@@ -828,26 +819,26 @@ function SyncFesion() {
     "Open",
     "Undo",
     "Redo",
-    // "Separator",
+    "Separator",
     "Image",
     "Table",
     "Hyperlink",
     "TrackChanges",
     "Comments",
-    // "TableOfContents",
-    // "Separator",
+    "TableOfContents",
+    "Separator",
     "Header",
     "Footer",
     "PageSetup",
     "PageNumber",
     "Find",
-    // "Break",
+    "Break",
 
-    // "Separator",
-    // "Find",
-    // "Separator",
-    // "LocalClipboard",
-    // "RestrictEditing",
+    "Separator",
+    "Find",
+    "Separator",
+    "LocalClipboard",
+    "RestrictEditing",
   ];
 
   const triggerClick = (id: any) => {
@@ -948,26 +939,26 @@ function SyncFesion() {
 
   const [isTableSelected, setIsTableSelected] = useState(false);
 
-  useEffect(() => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
+  // useEffect(() => {
+  //   const documentEditor = editorContainerRef.current?.documentEditor;
 
-    if (documentEditor) {
-      // Listen to selection changes
-      documentEditor.selectionChange = () => {
-        // Check if the current selection is within a table
-        const isInTable =
-          documentEditor?.selection?.contextTypeInternal == "TableText";
+  //   if (documentEditor) {
+  //     // Listen to selection changes
+  //     documentEditor.selectionChange = () => {
+  //       // Check if the current selection is within a table
+  //       const isInTable =
+  //         documentEditor?.selection?.contextTypeInternal == "TableText";
 
-        setIsTableSelected(isInTable);
-      };
-    }
+  //       setIsTableSelected(isInTable);
+  //     };
+  //   }
 
-    // return () => {
-    //   if (documentEditor && documentEditor.selectionChange) {
-    //     documentEditor.selectionChange = undefined;
-    //   }
-    // };
-  }, []);
+  //   // return () => {
+  //   //   if (documentEditor && documentEditor.selectionChange) {
+  //   //     documentEditor.selectionChange = undefined;
+  //   //   }
+  //   // };
+  // }, []);
 
   const save = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -2519,96 +2510,96 @@ function SyncFesion() {
             </div>
 
             {/* ***************Table************************ */}
-            {isTableSelected && (
-              <div className="text styling flex items-center">
-                <ToolbarComponent clicked={toolbarButtonClick}>
-                  <ItemsDirective>
-                    <ItemDirective
-                      id="table"
-                      prefixIcon="e-de-ctnr-table e-icons"
-                    />
-                    <ItemDirective type="Separator" />
-                    <ItemDirective
-                      id="insert_above"
-                      prefixIcon="e-de-ctnr-insertabove e-icons"
-                    />
-                    <ItemDirective
-                      id="insert_below"
-                      prefixIcon="e-de-ctnr-insertbelow e-icons"
-                    />
-                    <ItemDirective type="Separator" />
-                    <ItemDirective
-                      id="insert_left"
-                      prefixIcon="e-de-ctnr-insertleft e-icons"
-                    />
-                    <ItemDirective
-                      id="insert_right"
-                      prefixIcon="e-de-ctnr-insertright e-icons"
-                    />
-                    <ItemDirective type="Separator" />
-                    {/* <ItemDirective
+            {/* {isTableSelected && ( */}
+            <div className="text styling flex items-center">
+              <ToolbarComponent clicked={toolbarButtonClick}>
+                <ItemsDirective>
+                  <ItemDirective
+                    id="table"
+                    prefixIcon="e-de-ctnr-table e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="insert_above"
+                    prefixIcon="e-de-ctnr-insertabove e-icons"
+                  />
+                  <ItemDirective
+                    id="insert_below"
+                    prefixIcon="e-de-ctnr-insertbelow e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="insert_left"
+                    prefixIcon="e-de-ctnr-insertleft e-icons"
+                  />
+                  <ItemDirective
+                    id="insert_right"
+                    prefixIcon="e-de-ctnr-insertright e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  {/* <ItemDirective
                   id="delete_table"
                   tooltipText="Delete"
                   text="Delete"
                   prefixIcon="custom-delete-icon"
                 /> */}
-                    <ItemDirective
-                      id="delete_rows"
-                      prefixIcon=" e-de-ctnr-deletecolumns e-icons"
-                    />
-                    <ItemDirective
-                      id="delete_columns"
-                      prefixIcon="e-de-ctnr-deleterows e-icons"
-                    />
-                    <ItemDirective type="Separator" />
-                    <ItemDirective
-                      id="merge_cell"
-                      text="Merge Cells"
-                      prefixIcon="e-merge-cells e-icons"
-                    />
-                    <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="delete_rows"
+                    prefixIcon=" e-de-ctnr-deletecolumns e-icons"
+                  />
+                  <ItemDirective
+                    id="delete_columns"
+                    prefixIcon="e-de-ctnr-deleterows e-icons"
+                  />
+                  <ItemDirective type="Separator" />
+                  <ItemDirective
+                    id="merge_cell"
+                    text="Merge Cells"
+                    prefixIcon="e-merge-cells e-icons"
+                  />
+                  <ItemDirective type="Separator" />
 
-                    <ItemDirective
-                      id="delete_table"
-                      prefixIcon="e-table-delete e-icons"
-                      text="Delete"
-                      tooltipText="Delete Table"
-                    />
-                    {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
+                  <ItemDirective
+                    id="delete_table"
+                    prefixIcon="e-table-delete e-icons"
+                    text="Delete"
+                    tooltipText="Delete Table"
+                  />
+                  {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
 
-                    <DropDownListComponent
-                      id="borderWidthDropdown"
-                      dataSource={[1, 2, 3, 4, 5]}
-                      placeholder="Select border width"
-                      floatLabelType="Auto"
-                      change={onWrapTextChange}
-                    />
-                    {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
-                    <ItemDirective type="Separator" />
+                  <DropDownListComponent
+                    id="borderWidthDropdown"
+                    dataSource={[1, 2, 3, 4, 5]}
+                    placeholder="Select border width"
+                    floatLabelType="Auto"
+                    change={onWrapTextChange}
+                  />
+                  {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
+                  <ItemDirective type="Separator" />
 
-                    <ItemDirective
-                      id="set_border_width"
-                      text="Apply Border"
-                      prefixIcon="e-border-all-2"
-                    />
+                  <ItemDirective
+                    id="set_border_width"
+                    text="Apply Border"
+                    prefixIcon="e-border-all-2"
+                  />
 
-                    <ItemDirective type="Separator" />
+                  <ItemDirective type="Separator" />
 
-                    <ItemDirective
-                      tooltipText="Cell Fill Color"
-                      template={cellFillColorPickerTemplate}
-                    />
-                  </ItemsDirective>
-                </ToolbarComponent>
+                  <ItemDirective
+                    tooltipText="Cell Fill Color"
+                    template={cellFillColorPickerTemplate}
+                  />
+                </ItemsDirective>
+              </ToolbarComponent>
 
-                {/* <ColorPickerComponent
+              {/* <ColorPickerComponent
               id="cellFillColorPicker"
               mode="Palette"
               showButtons={false}
               change={handleFillColorChange}
             /> */}
 
-                {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
+              {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
             <NumericTextBoxComponent
               value={topMargin}
               placeholder="Top Margin"
@@ -2638,8 +2629,8 @@ function SyncFesion() {
               blur={applyMargins}
             />
           </div> */}
-              </div>
-            )}
+            </div>
+            {/* )} */}
           </div>
         </>
       )}

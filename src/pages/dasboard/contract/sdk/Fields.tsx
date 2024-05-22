@@ -613,6 +613,7 @@ const Fields = () => {
       checkboxes.forEach((checkbox, index) => {
         documentEditor.editor.insertText("\n");
         documentEditor.editor.insertFormField("CheckBox");
+
         const checkboxFieldInfo = documentEditor.getFormFieldInfo(
           "Check1"
         ) as CheckBoxFormFieldInfo;

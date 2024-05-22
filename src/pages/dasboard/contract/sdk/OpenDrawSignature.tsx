@@ -3,16 +3,16 @@ import { useEffect, useRef, useState, useCallback, useContext } from "react";
 import { SignatureComponent } from "@syncfusion/ej2-react-inputs";
 import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
 import { useDropzone } from "react-dropzone";
-import "@syncfusion/ej2-base/styles/material.css";
-import "@syncfusion/ej2-buttons/styles/material.css";
-import "@syncfusion/ej2-calendars/styles/material.css";
-import "@syncfusion/ej2-dropdowns/styles/material.css";
-import "@syncfusion/ej2-inputs/styles/material.css";
-import "@syncfusion/ej2-lists/styles/material.css";
-import "@syncfusion/ej2-navigations/styles/material.css";
-import "@syncfusion/ej2-popups/styles/material.css";
-import "@syncfusion/ej2-splitbuttons/styles/material.css";
-import "@syncfusion/ej2-react-documenteditor/styles/material.css";
+// import "@syncfusion/ej2-base/styles/material.css";
+// import "@syncfusion/ej2-buttons/styles/material.css";
+// import "@syncfusion/ej2-calendars/styles/material.css";
+// import "@syncfusion/ej2-dropdowns/styles/material.css";
+// import "@syncfusion/ej2-inputs/styles/material.css";
+// import "@syncfusion/ej2-lists/styles/material.css";
+// import "@syncfusion/ej2-navigations/styles/material.css";
+// import "@syncfusion/ej2-popups/styles/material.css";
+// import "@syncfusion/ej2-splitbuttons/styles/material.css";
+// import "@syncfusion/ej2-react-documenteditor/styles/material.css";
 import logo from "@/assets/upload_logo.png";
 import {
   Dialog,

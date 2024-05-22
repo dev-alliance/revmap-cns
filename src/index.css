@@ -37,7 +37,83 @@
 .css-s18byi {
   box-shadow: none !important;
 }
+.parent-div {
+  display: flex;
+  justify-content: center;
+  align-items: start; /* Align to the top */
+  min-height: 100vh; /* Full height of the viewport */
+  padding: 2rem 4rem; /* Padding around */
+  box-sizing: border-box;
+  overflow: auto; /* Allows scrolling */
+  background-color: #f0f0f0; /* Background color */
+}
 
+.child-div {
+  width: 843px; /* Fixed width for the page-like appearance */
+  min-height: 610px; /* Minimum height */
+  max-height: 610px; /* Set a max-height if you want a fixed size with internal scrolling */
+  padding: 1rem; /* Padding inside the container */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  background-color: #fff; /* White background */
+  box-sizing: border-box;
+  overflow-y: auto; /* Vertical scrolling */
+  margin-bottom: 1rem; /* Bottom margin */
+}
+
+.condition-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  position: relative;
+  margin-top: 1px;
+  /* Ensure there's space above for the button */
+}
+
+.condition-item .remove-btn {
+  position: absolute;
+  right: 0;
+  top: -10px !important;
+  /* Move the button 10px above the top of the container */
+  opacity: 0;
+  /* Button is initially invisible */
+  transition: opacity 0.2s ease;
+  /* Smooth transition for opacity change */
+}
+
+.no-scrollbar {
+  overflow: hidden !important;
+}
+
+.condition-item:hover .remove-btn {
+  opacity: 1;
+  /* Button becomes visible on hover */
+}
+h1.class-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+h2.class-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+blockquote.fancy {
+  font-style: italic;
+  border-left: 2px solid #ccc;
+  margin: 20px;
+  padding-left: 15px;
+}
+
+.link-no-underline {
+  text-decoration: none;
+  color: inherit;
+}
+
+.link-no-underline:hover {
+  text-decoration: underline;
+}
+/* end */
+
+/* syncFesion css  */
 .ej2-new {
   height: 590px;
 }
@@ -348,3 +424,141 @@ body {
     margin-top: 5px;
   }
 }
+
+/* end */
+
+/* sdk  */
+/* 
+.e-toolbar.e-control[class*="e-toolbar"] {
+  box-sizing: content-box;
+  background-color: white !important;
+  width: 100% !important;
+}
+
+.e-toolbar .e-toolbar-items {
+  background: white !important;
+}
+
+.e-de-ctnr-properties-pane-btn {
+  display: none;
+}
+
+.e-de-pane {
+  display: none !important;
+}
+
+.e-popup {
+  height: 360px !important;
+}
+
+.e-content {
+  width: 90%;
+}
+
+#dialog_538769107_0_dialog-content {
+  height: 400px !important;
+}
+
+.e-icons.e-font-color {
+  background-image: url("./assets/fontcolor.png");
+  width: 100px;
+  height: 100px;
+}
+
+.e-icons.e-text-highlight {
+  background-image: url("./assets/fontcolor.png");
+  width: 100px;
+  height: 100px;
+}
+
+#container_editorReview_Tab {
+  width: 300px !important;
+}
+
+.e-de-ctnr-toolbar {
+  display: none !important;
+}
+
+#e-split-btn_43_dropdownbtn {
+  margin-right: -2px;
+}
+
+#dialog_538769107_0 {
+  width: 400px !important;
+  height: 360px !important;
+  overflow-y: scroll;
+}
+
+.e-footer-content {
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+.e-de-search-tab-content {
+  margin-top: 44px !important;
+}
+
+#dialog_968836386_0 {
+  width: 400px !important;
+}
+
+.e-de-para-dlg-heading {
+  color: #000000de;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 7px !important;
+  opacity: 92%;
+  margin-top: 18px !important;
+}
+
+#_tab_header_items {
+  margin-top: -10px !important;
+}
+
+.e-de-ctn {
+  background-color: #fff !important;
+}
+
+.e-de-status-bar {
+  background-color: #fff;
+}
+
+.e-de-statusbar-pageweb {
+  display: none !important;
+}
+
+#e-dropdown-btn_16 {
+  display: none !important;
+}
+
+:root {
+  --gray-color: #d9d9d9;
+  --blue-color: #155be5;
+}
+
+.e-tab {
+  display: block;
+  position: absolute !important;
+  width: 95% !important;
+}
+.e-toolbar.e-control[class*="e-toolbar"] {
+  box-sizing: content-box;
+  background-color: #fff !important;
+  width: 99% !important;
+}
+.e-tab .e-content .e-item {
+  background: inherit;
+  color: #000;
+  font-size: 56px;
+}
+
+.e-input-group,
+.e-input-group.e-control-wrapper {
+  display: flex;
+  vertical-align: middle;
+}
+
+.e-de-blink-cursor {
+  border-left: 1px solid rgb(0, 136, 255) !important;
+} */

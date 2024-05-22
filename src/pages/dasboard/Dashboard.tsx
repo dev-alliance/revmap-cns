@@ -551,16 +551,6 @@ const CategoryList = () => {
                     >
                       <AddIcon /> Create Document
                     </Button>
-                    <Button
-                      sx={{ ml: 2, textTransform: "none" }}
-                      variant="contained"
-                      component={Link}
-                      // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
-                      disabled={!user?.role?.permissions?.create_categories}
-                      to="/dashboard/test"
-                    >
-                      <AddIcon /> Create Document new
-                    </Button>
                   </span>
                 </Tooltip>
               </div>
