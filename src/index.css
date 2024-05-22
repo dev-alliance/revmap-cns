@@ -1,3 +1,43 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* for now  */
+
+/* for now end  */
+
+/* them css  */
+.css-bhp9pd-MuiPaper-root-MuiCard-root {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+.css-bhp9pd-MuiPaper-root-MuiCard-root {
+  box-shadow: none !important;
+}
+.css-1igyfd2-MuiPaper-root-MuiAppBar-root {
+  box-shadow: none !important;
+}
+
+.css-vxcyy8-MuiDataGrid-root .MuiDataGrid-withBorderColor {
+  border-color: #d3dbf1 !important;
+  border: 0, 5px solid #d3dbf1 !important;
+}
+.css-vxcyy8-MuiDataGrid-root {
+  border-color: #fff !important;
+}
+.css-13ojviz-MuiPaper-root-MuiAppBar-root {
+  box-shadow: none !important;
+}
+
+.css-ibmg8u {
+  box-shadow: none !important;
+}
+.css-s18byi {
+  box-shadow: none !important;
+}
+
 .ej2-new {
   height: 590px;
 }
