@@ -78,6 +78,7 @@ const MyComponent: React.FC = () => {
     editMode,
     documentName,
     setDucomentName,
+    setSidePine,
   } = useContext(ContractContext);
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -90,11 +91,12 @@ const MyComponent: React.FC = () => {
     setIsPinned(!isPinned); // Toggle the pinned state
     setSidebarExpanded(true); // Ensure sidebar is expanded when pinning
   };
-  console.log(sidebarExpanded);
 
   const toggleSidebar = () => {
     if (!isPinned) {
       setSidebarExpanded((prev: any) => !prev);
+      alert("ok");
+      setSidePine(false);
       // Only allow toggling if not pinned
     }
   };
@@ -664,6 +666,7 @@ const MyComponent: React.FC = () => {
                           handleModuleClick(key);
                           if (!sidebarExpanded) {
                             setSidebarExpanded(true);
+                            setSidePine(false);
                           }
                         }
                       }}

@@ -122,6 +122,9 @@ interface ContractContextProps {
 
   leftsidebarExpanded: any | null;
   setLeftSidebarExpanded: Dispatch<SetStateAction<any>>;
+
+  sidePine: any | null;
+  setSidePine: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -196,6 +199,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setDucomentName: () => {},
   leftsidebarExpanded: {},
   setLeftSidebarExpanded: () => {},
+  sidePine: {},
+  setSidePine: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -250,6 +255,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [openDocoment, setOpenDocoment] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
+  const [sidePine, setSidePine] = useState<boolean>(false);
   const [showCompanySelect, setShowCompanySelect] = useState(false);
   const [showConditionalSelect, setShowConditionalSelect] = useState(false);
   const [showSignatories, setShowSignatories] = useState<any>("");
@@ -450,6 +456,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (leftsidebarExpanded) {
       setLeftSidebarExpanded(JSON.parse(leftsidebarExpanded));
     }
+    const sidePine = localStorage.getItem("sidePine");
+    if (sidePine) {
+      setSidePine(JSON.parse(sidePine));
+    }
   }, []);
   useEffect(() => {
     // Check if 'contract' is not null before storing
@@ -545,6 +555,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setDucomentName,
         leftsidebarExpanded,
         setLeftSidebarExpanded,
+        sidePine,
+        setSidePine,
       }}
     >
       {children}

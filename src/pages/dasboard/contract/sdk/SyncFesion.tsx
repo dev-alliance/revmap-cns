@@ -159,6 +159,7 @@ function SyncFesion() {
     documentName,
     setDucomentName,
     setLeftSidebarExpanded,
+    sidePine,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
@@ -2560,8 +2561,7 @@ function SyncFesion() {
             toolbarItems={items}
             toolbarClick={onToolbarClick}
             serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
-            // showPropertiesPane={false}
-
+            showPropertiesPane={sidePine}
             documentEditorSettings={{
               searchHighlightColor: "red",
             }}

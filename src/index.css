@@ -428,15 +428,13 @@ body {
 /* end */
 
 /* sdk  */
-.e-de-ctnr-toolbar.hidden {
-  display: none;
-}
-
-/* Class to show the toolbar (if necessary) */
-.e-de-ctnr-toolbar.visible {
-  display: flex; /* or '-ms-flexbox' depending on your needs */
-}
-
+/* .e-de-ctnr-toolbar {
+  display: -ms-flexbox;
+  display: flex;
+  height: 72px;
+  width: 100%;
+  display: none !;
+} */
 /* 
 .e-toolbar.e-control[class*="e-toolbar"] {
   box-sizing: content-box;
