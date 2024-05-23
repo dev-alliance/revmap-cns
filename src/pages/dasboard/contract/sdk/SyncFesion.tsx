@@ -249,189 +249,186 @@ function SyncFesion() {
     }
   }
 
-  const onToolbarClick = useCallback(
-    (args: any) => {
-      const documentEditor = editorContainerRef.current?.documentEditor;
-      console.log("args text:", args.item.id);
-      // if (!documentEditor) {
-      //   console.error("Document Editor is not initialized yet.");
-      //   return;
-      // }
+  const onToolbarClick = (args: any) => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    console.log("args text:", args.item.id);
+    // if (!documentEditor) {
+    //   console.error("Document Editor is not initialized yet.");
+    //   return;
+    // }
 
-      switch (args.item.id) {
-        case "undo":
-          documentEditor.editorHistory.undo();
-          break;
-        case "redo":
-          documentEditor.editorHistory.redo();
-          break;
-        case "delete":
-          documentEditor.editor.delete();
-          break;
+    switch (args.item.id) {
+      case "undo":
+        documentEditor.editorHistory.undo();
+        break;
+      case "redo":
+        documentEditor.editorHistory.redo();
+        break;
+      case "delete":
+        documentEditor.editor.delete();
+        break;
 
-        case "bold":
-          // Toggles the bold of selected content
-          documentEditor.editor.toggleBold();
-          break;
-        case "italic":
-          // Toggles the Italic of selected content
-          documentEditor.editor.toggleItalic();
-          break;
-        case "underline":
-          // Toggles the underline of selected content
-          documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
-          break;
+      case "bold":
+        // Toggles the bold of selected content
+        documentEditor.editor.toggleBold();
+        break;
+      case "italic":
+        // Toggles the Italic of selected content
+        documentEditor.editor.toggleItalic();
+        break;
+      case "underline":
+        // Toggles the underline of selected content
+        documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
+        break;
 
-        case "highlight":
-          if (documentEditor && documentEditor.selection) {
-            // Check if the selected text is already highlighted
-            const highlightColor: any =
-              documentEditor.selection.characterFormat.highlightColor;
-            //Sets highlightColor formatting for selected text.
-            documentEditor.selection.characterFormat.highlightColor = "Pink";
-            documentEditor.focusIn();
-          }
-          break;
+      case "highlight":
+        if (documentEditor && documentEditor.selection) {
+          // Check if the selected text is already highlighted
+          const highlightColor: any =
+            documentEditor.selection.characterFormat.highlightColor;
+          //Sets highlightColor formatting for selected text.
+          documentEditor.selection.characterFormat.highlightColor = "Pink";
+          documentEditor.focusIn();
+        }
+        break;
 
-        case "setupHeader":
-          setupHeader();
-          break;
-        case "setupFooter":
-          setupFooter();
-          break;
+      case "setupHeader":
+        setupHeader();
+        break;
+      case "setupFooter":
+        setupFooter();
+        break;
 
-        case "findText":
-          const searchText = "example"; // Example text to search for
-          if (documentEditor) {
-            documentEditor.search.findAll(searchText, "None");
-          }
-          break;
+      case "findText":
+        const searchText = "example"; // Example text to search for
+        if (documentEditor) {
+          documentEditor.search.findAll(searchText, "None");
+        }
+        break;
 
-        case "container_toolbar_open":
-          const fileInput = document.createElement("input");
-          fileInput.type = "file";
-          fileInput.accept = ".docx,.pdf";
-          fileInput.onchange = (e: any) => {
-            const file = e.target.files[0];
-            if (file) {
-              if (file.name.endsWith(".docx")) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                  documentEditor?.open(reader.result as string, "Docx");
-                };
-                reader.readAsDataURL(file);
-              } else if (file.name.endsWith(".pdf")) {
-                // PDF opening not supported in DocumentEditor; use PDF Viewer or convert to DOCX
-                alert("Please convert PDF to DOCX format to open");
-              }
+      case "container_toolbar_open":
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = ".docx,.pdf";
+        fileInput.onchange = (e: any) => {
+          const file = e.target.files[0];
+          if (file) {
+            if (file.name.endsWith(".docx")) {
+              const reader = new FileReader();
+              reader.onload = () => {
+                documentEditor?.open(reader.result as string, "Docx");
+              };
+              reader.readAsDataURL(file);
+            } else if (file.name.endsWith(".pdf")) {
+              // PDF opening not supported in DocumentEditor; use PDF Viewer or convert to DOCX
+              alert("Please convert PDF to DOCX format to open");
             }
-          };
-          fileInput.click();
-          break;
-
-        case "container_toolbar_save":
-          documentEditor?.save("Document.docx", "Docx");
-
-          break;
-
-        case "strikethrough":
-          // Toggles the strikethrough of selected content
-          documentEditor.editor.toggleStrikethrough();
-          break;
-        case "subscript":
-          // Toggles the subscript of selected content
-          documentEditor.editor.toggleSubscript();
-          break;
-        case "superscript":
-          // Toggles the superscript of selected content
-          documentEditor.editor.toggleSuperscript();
-          break;
-        case "AlignLeft":
-          //Toggle the Left alignment for selected or current paragraph
-          documentEditor.editor.toggleTextAlignment("Left");
-          break;
-        case "AlignRight":
-          //Toggle the Right alignment for selected or current paragraph
-          documentEditor.editor.toggleTextAlignment("Right");
-          break;
-        case "AlignCenter":
-          //Toggle the Center alignment for selected or current paragraph
-          documentEditor.editor.toggleTextAlignment("Center");
-          break;
-        case "Justify":
-          //Toggle the Justify alignment for selected or current paragraph
-          documentEditor.editor.toggleTextAlignment("Justify");
-          break;
-        case "IncreaseIndent":
-          //Increase the left indent of selected or current paragraph
-          documentEditor.editor.increaseIndent();
-          break;
-        case "DecreaseIndent":
-          //Decrease the left indent of selected or current paragraph
-          documentEditor.editor.decreaseIndent();
-          break;
-        case "ClearFormat":
-          documentEditor.editor.clearFormatting();
-          break;
-        case "ShowParagraphMark":
-          //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
-          documentEditor.documentEditorSettings.showHiddenMarks =
-            !documentEditor.documentEditorSettings.showHiddenMarks;
-          break;
-
-        case "Bullets-Dot":
-          documentEditor.editor.applyBullet("\uf0b7", "Symbol"); // Standard dot bullet
-          break;
-        case "Bullets-Circle":
-          documentEditor.editor.applyBullet("\uf06f", "Symbol"); // Open circle bullet
-          break;
-        case "Bullets-Square":
-          documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
-          break;
-        case "Numbering-Arabic":
-          documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
-          break;
-        case "Numbering-Roman":
-          documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
-          break;
-        case "Numbering-Alpha":
-          documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
-          break;
-        // upper lower case
-        case "uppercase":
-          // Changes the selected text to uppercase
-          if (documentEditor.selection && documentEditor.selection.text) {
-            const uppercaseText = documentEditor.selection.text.toUpperCase();
-            documentEditor.editor.insertText(uppercaseText);
           }
-          break;
+        };
+        fileInput.click();
+        break;
 
-        case "lowercase":
-          // Changes the selected text to lowercase
-          if (documentEditor.selection && documentEditor.selection.text) {
-            const lowercaseText = documentEditor.selection.text.toLowerCase();
-            documentEditor.editor.insertText(lowercaseText);
-          }
-          break;
+      case "container_toolbar_save":
+        documentEditor?.save("Document.docx", "Docx");
 
-        case "lineHeight1":
-          documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
-          break;
-        case "lineHeight1_5":
-          documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
-          break;
-        case "lineHeight2":
-          documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
-          break;
+        break;
 
-        // Removed the duplicated 'Custom' case as it seems unnecessary
-        default:
-          console.warn("Unhandled toolbar item:", args.item.id);
-        // Implement any default action or log an unhandled case
-      }
-    },
-    [editorContainerRef]
-  );
+      case "strikethrough":
+        // Toggles the strikethrough of selected content
+        documentEditor.editor.toggleStrikethrough();
+        break;
+      case "subscript":
+        // Toggles the subscript of selected content
+        documentEditor.editor.toggleSubscript();
+        break;
+      case "superscript":
+        // Toggles the superscript of selected content
+        documentEditor.editor.toggleSuperscript();
+        break;
+      case "AlignLeft":
+        //Toggle the Left alignment for selected or current paragraph
+        documentEditor.editor.toggleTextAlignment("Left");
+        break;
+      case "AlignRight":
+        //Toggle the Right alignment for selected or current paragraph
+        documentEditor.editor.toggleTextAlignment("Right");
+        break;
+      case "AlignCenter":
+        //Toggle the Center alignment for selected or current paragraph
+        documentEditor.editor.toggleTextAlignment("Center");
+        break;
+      case "Justify":
+        //Toggle the Justify alignment for selected or current paragraph
+        documentEditor.editor.toggleTextAlignment("Justify");
+        break;
+      case "IncreaseIndent":
+        //Increase the left indent of selected or current paragraph
+        documentEditor.editor.increaseIndent();
+        break;
+      case "DecreaseIndent":
+        //Decrease the left indent of selected or current paragraph
+        documentEditor.editor.decreaseIndent();
+        break;
+      case "ClearFormat":
+        documentEditor.editor.clearFormatting();
+        break;
+      case "ShowParagraphMark":
+        //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
+        documentEditor.documentEditorSettings.showHiddenMarks =
+          !documentEditor.documentEditorSettings.showHiddenMarks;
+        break;
+
+      case "Bullets-Dot":
+        documentEditor.editor.applyBullet("\uf0b7", "Symbol"); // Standard dot bullet
+        break;
+      case "Bullets-Circle":
+        documentEditor.editor.applyBullet("\uf06f", "Symbol"); // Open circle bullet
+        break;
+      case "Bullets-Square":
+        documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
+        break;
+      case "Numbering-Arabic":
+        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
+        break;
+      case "Numbering-Roman":
+        documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
+        break;
+      case "Numbering-Alpha":
+        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
+        break;
+      // upper lower case
+      case "uppercase":
+        // Changes the selected text to uppercase
+        if (documentEditor.selection && documentEditor.selection.text) {
+          const uppercaseText = documentEditor.selection.text.toUpperCase();
+          documentEditor.editor.insertText(uppercaseText);
+        }
+        break;
+
+      case "lowercase":
+        // Changes the selected text to lowercase
+        if (documentEditor.selection && documentEditor.selection.text) {
+          const lowercaseText = documentEditor.selection.text.toLowerCase();
+          documentEditor.editor.insertText(lowercaseText);
+        }
+        break;
+
+      case "lineHeight1":
+        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
+        break;
+      case "lineHeight1_5":
+        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
+        break;
+      case "lineHeight2":
+        documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
+        break;
+
+      // Removed the duplicated 'Custom' case as it seems unnecessary
+      default:
+        console.warn("Unhandled toolbar item:", args.item.id);
+      // Implement any default action or log an unhandled case
+    }
+  };
 
   useEffect(() => {
     if (editorContainerRef.current) {
@@ -813,9 +810,9 @@ function SyncFesion() {
     }
   };
 
-  // Full list of toolbar items
   const items: any = [
     // customItem,
+    "New",
     "Open",
     "Undo",
     "Redo",
@@ -823,22 +820,27 @@ function SyncFesion() {
     "Image",
     "Table",
     "Hyperlink",
-    "TrackChanges",
-    "Comments",
+    "Bookmark",
     "TableOfContents",
     "Separator",
     "Header",
     "Footer",
     "PageSetup",
     "PageNumber",
-    "Find",
     "Break",
-
+    "InsertEndnote",
+    "InsertFootnote",
     "Separator",
     "Find",
+    "Separator",
+    "TrackChanges",
+    "Comments",
     "Separator",
     "LocalClipboard",
     "RestrictEditing",
+    "Separator",
+    "FormFields",
+    "UpdateFields",
   ];
 
   const triggerClick = (id: any) => {
@@ -2297,37 +2299,20 @@ function SyncFesion() {
 
       {documentPath && <PDFUploaderViewer documentPath={documentPath} />}
 
-      {showBlock === "" && (
-        <>
-          <div
+      {/* {showBlock === "" && (
+        <> */}
+      {/* <div
             className=" "
             style={{
               backgroundColor: "white",
               borderTop: "0.5px solid #174B8B", // Add a top border
               borderBottom: "0.5px solid #174B8B",
             }}
-          >
-            <div
+          > */}
+      {/* <div
               className="text styling flex items-center "
               style={{ width: "100%" }}
             >
-              {/* <div className="flex items-center px-1 space-x-2 bg-[#fafafa] h-[40px] opacity-70">
-            <p
-              onClick={() => {
-                triggerClick("container_toolbar_undo ");
-              }}
-            >
-              <img src={undo} className="h-6 w-5 cursor-pointer" />{" "}
-            </p>
-            <p
-              onClick={() => {
-                triggerClick("container_toolbar_redo ");
-              }}
-            >
-              <img src={redo} className="h-6 w-5 cursor-pointer" />{" "}
-            </p>
-          </div> */}
-
               <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
                 <ItemsDirective>
                   <ItemDirective
@@ -2343,7 +2328,6 @@ function SyncFesion() {
 
                   <ItemDirective template={contentTemplate2} />
                   <ItemDirective template={contentTemplate3} />
-                  {/* <ItemDirective id="customPageSetup" prefixIcon="e-icons e-page-setup" tooltipText="Page Setup" /> */}
                   <ItemDirective type="Separator" />
 
                   <ItemDirective
@@ -2368,11 +2352,7 @@ function SyncFesion() {
                     prefixIcon="e-icons e-underline"
                     tooltipText="Underline"
                   />
-                  {/* <ItemDirective
-                id="highlight"
-                prefixIcon="e-icons e-highlight"
-                tooltipText="Highlight"
-              /> */}
+
                   <ItemDirective
                     id="strikethrough"
                     prefixIcon="e-icons e-strikethrough"
@@ -2389,20 +2369,13 @@ function SyncFesion() {
                     tooltipText="Superscript"
                   />
 
-                  {/* <ItemDirective
-                    id="container_editor_font_properties_rightDiv2_changeCase"
-                    prefixIcon="e-btn-icon e-icons e-de-ctnr-change-case"
-                    tooltipText="Change case"
-                  /> */}
-
                   <ItemDirective type="Separator" />
 
-                  {/* Font Color Picker */}
                   <ItemDirective
                     tooltipText="Font Color"
                     template={fontColorPickerTemplate}
                   />
-                  {/* Highlight Color Picker */}
+
                   <ItemDirective type="Separator" />
 
                   <ItemDirective
@@ -2411,7 +2384,7 @@ function SyncFesion() {
                   />
 
                   <ItemDirective type="Separator" />
-                  {/* uppercase lowercase */}
+
                   <ItemDirective
                     id="uppercase"
                     prefixIcon=" e-upper-case e-icons"
@@ -2424,9 +2397,6 @@ function SyncFesion() {
                   />
                   <ItemDirective type="Separator" />
 
-                  {/* <ItemDirective template={lineHeight1} /> */}
-
-                  {/* align text  */}
                   <ItemDirective
                     id="AlignLeft"
                     prefixIcon="e-de-ctnr-alignleft e-icons"
@@ -2458,7 +2428,7 @@ function SyncFesion() {
                     prefixIcon="e-de-ctnr-decreaseindent e-icons"
                     tooltipText="Decrease Indent"
                   />
-                  {/* lineheight  */}
+                  
                   <ItemDirective
                     template={lineHeight1}
                     prefixIcon="e-de-ctnr-aligncenter e-icons"
@@ -2496,22 +2466,13 @@ function SyncFesion() {
                     prefixIcon="e-de-ctnr-clearall e-icons"
                     tooltipText="Clear Formatting"
                   />
-                  {/* <ItemDirective
-                    id="clearlist"
-                    text="Clear"
-                    tooltipText="Clear List"
-                  /> */}
                 </ItemsDirective>
               </ToolbarComponent>
-              {/* <ColorPickerComponent
-            value={highlightColor}
-            change={handleColorChange}
-          /> */}
-            </div>
+            </div> */}
 
-            {/* ***************Table************************ */}
-            {/* {isTableSelected && ( */}
-            <div className="text styling flex items-center">
+      {/* ***************Table************************ */}
+      {/* {isTableSelected && ( */}
+      {/* <div className="text styling flex items-center">
               <ToolbarComponent clicked={toolbarButtonClick}>
                 <ItemsDirective>
                   <ItemDirective
@@ -2537,12 +2498,7 @@ function SyncFesion() {
                     prefixIcon="e-de-ctnr-insertright e-icons"
                   />
                   <ItemDirective type="Separator" />
-                  {/* <ItemDirective
-                  id="delete_table"
-                  tooltipText="Delete"
-                  text="Delete"
-                  prefixIcon="custom-delete-icon"
-                /> */}
+
                   <ItemDirective
                     id="delete_rows"
                     prefixIcon=" e-de-ctnr-deletecolumns e-icons"
@@ -2565,7 +2521,6 @@ function SyncFesion() {
                     text="Delete"
                     tooltipText="Delete Table"
                   />
-                  {/* <ItemDirective id="adjust_margins" text="Adjust Margins" prefixIcon="your-icon-class" /> */}
 
                   <DropDownListComponent
                     id="borderWidthDropdown"
@@ -2574,7 +2529,6 @@ function SyncFesion() {
                     floatLabelType="Auto"
                     change={onWrapTextChange}
                   />
-                  {/* <ItemDirective id="delete_table" text="Delete" prefixIcon="e-de-ctnr-deletetable e-icons" /> */}
                   <ItemDirective type="Separator" />
 
                   <ItemDirective
@@ -2591,49 +2545,11 @@ function SyncFesion() {
                   />
                 </ItemsDirective>
               </ToolbarComponent>
-
-              {/* <ColorPickerComponent
-              id="cellFillColorPicker"
-              mode="Palette"
-              showButtons={false}
-              change={handleFillColorChange}
-            /> */}
-
-              {/* <div style={{ display: 'flex', justifyContent: 'space-between', width: '20%', padding: '10px' }}>
-            <NumericTextBoxComponent
-              value={topMargin}
-              placeholder="Top Margin"
-              floatLabelType="Auto"
-              change={(e) => setTopMargin(e.value)}
-              blur={applyMargins}
-            />
-            <NumericTextBoxComponent
-              value={bottomMargin}
-              placeholder="Bottom Margin"
-              floatLabelType="Auto"
-              change={(e) => setBottomMargin(e.value)}
-              blur={applyMargins}
-            />
-            <NumericTextBoxComponent
-              value={leftMargin}
-              placeholder="Left Margin"
-              floatLabelType="Auto"
-              change={(e) => setLeftMargin(e.value)}
-              blur={applyMargins}
-            />
-            <NumericTextBoxComponent
-              value={rightMargin}
-              placeholder="Right Margin"
-              floatLabelType="Auto"
-              change={(e) => setRightMargin(e.value)}
-              blur={applyMargins}
-            />
-          </div> */}
-            </div>
-            {/* )} */}
-          </div>
-        </>
-      )}
+            </div> */}
+      {/* )} */}
+      {/* </div> */}
+      {/* </> */}
+      {/* )} */}
 
       {(showBlock === "" || documentContent == "word") && (
         <div style={{ display: "flex", width: "100%", height: "100vh" }}>
@@ -2643,7 +2559,6 @@ function SyncFesion() {
             height="87vh"
             toolbarItems={items}
             toolbarClick={onToolbarClick}
-            enableToolbar={true}
             serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
             // showPropertiesPane={false}
 
