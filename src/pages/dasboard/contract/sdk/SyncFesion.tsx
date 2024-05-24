@@ -14,7 +14,6 @@ import React, {
 import {
   DocumentEditorContainerComponent,
   Toolbar,
-  CustomToolbarItemModel,
 } from "@syncfusion/ej2-react-documenteditor";
 
 import {
