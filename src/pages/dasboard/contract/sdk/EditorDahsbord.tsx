@@ -468,7 +468,7 @@ const MyComponent: React.FC = () => {
           >
             <path
               d="M8.30435 14.4V14.026L8.05895 13.7438L6.54259 12L8.05895 10.2562L8.30435 9.97398V9.6V4.8C8.30435 3.88792 8.91943 3.4 9.3913 3.4H21.913C22.3924 3.4 23 3.88448 23 4.8V19.2C23 20.1155 22.3924 20.6 21.913 20.6H9.3913C8.91943 20.6 8.30435 20.1121 8.30435 19.2V14.4ZM19.7826 13.2V12.2H18.7826H10.4348H9.43478V13.2V15.6V16.6H10.4348H18.7826H19.7826V15.6V13.2ZM21.8696 8.4V7.4H20.8696H10.4348H9.43478V8.4V10.8V11.8H10.4348H20.8696H21.8696V10.8V8.4ZM2.13043 1V6.2H2.04348V1H2.13043ZM2.13043 17.8V23H2.04348V17.8H2.13043ZM2.08696 10.6C2.56328 10.6 3.17391 11.093 3.17391 12C3.17391 12.9155 2.56627 13.4 2.08696 13.4C1.61508 13.4 1 12.9121 1 12C1 11.0965 1.61808 10.6 2.08696 10.6Z"
-              stroke={isSelected ? "#174B8B" : "white"}
+              stroke={isSelected ? "#174B8B" : "#174B8B"}
               stroke-width="2"
             />
           </svg>
@@ -569,7 +569,7 @@ const MyComponent: React.FC = () => {
             width="24"
             height="24"
             viewBox="0 0 24 24"
-            fill="none"
+            fill="black"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -594,7 +594,6 @@ const MyComponent: React.FC = () => {
   const toggleToolbarVisibility = () => {
     setSidePine(!sidePine);
   };
-
   return (
     <>
       <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
@@ -624,7 +623,7 @@ const MyComponent: React.FC = () => {
             },
           }}
         >
-          <button onClick={toggleToolbarVisibility}>Toggle Toolbar</button>
+          {/* <button onClick={toggleToolbarVisibility}>Toggle Toolbar</button> */}
           <Grid container>
             <Grid
               md={sidebarExpanded ? 2 : 0}
@@ -642,17 +641,19 @@ const MyComponent: React.FC = () => {
                     <ListItemButton
                       key={key}
                       sx={{
-                        mb: 2.5,
-                        mt: 1,
                         width: "100%",
+                        height: "35px",
+                        marginBottom: "20px",
                         cursor: modules[key].isDisabled
                           ? "not-allowed"
                           : "pointer",
-                        color: modules[key]?.isDisabled ? "#D3D3D3" : "inherit",
-                        marginBottom: "20px",
                         background: selectedModule === key ? "#E4EDF8" : "none",
                         "& svg path": {
-                          stroke: selectedModule === key ? "#174B8B" : "white",
+                          stroke: modules[key].isDisabled
+                            ? "#656565" // Stroke color when the module is disabled
+                            : selectedModule === key
+                            ? "#174B8B" // Stroke color when the module is the selected one
+                            : "white", // Default stroke color
                         },
                         "&:hover": {
                           backgroundColor:
@@ -671,8 +672,7 @@ const MyComponent: React.FC = () => {
                           handleModuleClick(key);
                           if (!sidebarExpanded) {
                             setSidebarExpanded(true);
-                            setSidePine("off");
-                            alert(sidePine);
+                            setSidePine(false);
                           }
                         }
                       }}
@@ -682,6 +682,7 @@ const MyComponent: React.FC = () => {
                         <ListItemIcon
                           sx={{
                             width: "100px",
+                            marginTop: ".5rem",
                           }}
                         >
                           {modules[key]?.getIcon ? (

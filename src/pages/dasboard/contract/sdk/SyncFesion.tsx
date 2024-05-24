@@ -32,22 +32,7 @@ registerLicense(
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
 // other imports...
-import {
-  TextField,
-  Button,
-  Grid,
-  Typography,
-  Paper,
-  Box,
-  FormControl,
-  Select,
-  DialogActions,
-  IconButton,
-  Divider,
-  DialogContent,
-  DialogTitle,
-  Dialog,
-} from "@mui/material";
+import { TextField, Button, Grid, Typography, Paper, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import linepng from "../../../../assets/line.png";
@@ -95,19 +80,8 @@ import {
   BorderSettings,
   PageSetupDialog,
 } from "@syncfusion/ej2-react-documenteditor";
-import {
-  ToolbarComponent,
-  ItemDirective,
-  ItemsDirective,
-} from "@syncfusion/ej2-react-navigations";
-import {
-  ComboBoxComponent,
-  DropDownListComponent,
-} from "@syncfusion/ej2-react-dropdowns";
-import {
-  ColorPickerComponent,
-  NumericTextBoxComponent,
-} from "@syncfusion/ej2-react-inputs";
+
+import { ColorPickerComponent } from "@syncfusion/ej2-react-inputs";
 import {
   DropDownButtonComponent,
   ItemModel,
@@ -116,14 +90,13 @@ import { ContractContext } from "@/context/ContractContext";
 
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import mammoth from "mammoth";
+
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
 import { create } from "@/service/api/contract";
 import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "react-router-dom";
-import { ok } from "assert";
 
 DocumentEditorComponent.Inject(
   Selection,
@@ -160,6 +133,7 @@ function SyncFesion() {
     setDucomentName,
     setLeftSidebarExpanded,
     sidePine,
+    setSidePine,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
@@ -431,40 +405,53 @@ function SyncFesion() {
     }
   };
 
+  // useEffect(() => {
+  //   if (editorContainerRef.current) {
+  //     const documentEditor = editorContainerRef.current.documentEditor;
+  //     // Set default to A4 size paper
+  //     documentEditor.selection.sectionFormat.pageWidth = 200; // Width for A4 paper
+  //     documentEditor.selection.sectionFormat.pageHeight = 300; // Height for A4 paper
+
+  //     // Log current page size to console
+  //     console.log(
+  //       "Default Page Size Set to:",
+  //       documentEditor.selection.sectionFormat.pageWidth +
+  //         "x" +
+  //         documentEditor.selection.sectionFormat.pageHeight
+  //     );
+
+  //     // Optionally, open the page setup dialog immediately after initialization
+  //     // documentEditor.showDialog("PageSetup");
+  //   }
+  // }, []);
+  const intervalRef = useRef(null);
   useEffect(() => {
     if (editorContainerRef.current) {
       const documentEditor = editorContainerRef.current.documentEditor;
-      // Set default to A4 size paper
-      documentEditor.selection.sectionFormat.pageWidth = 595; // Width for A4 paper
-      documentEditor.selection.sectionFormat.pageHeight = 842; // Height for A4 paper
-
-      // Log current page size to console
-      console.log(
-        "Default Page Size Set to:",
-        documentEditor.selection.sectionFormat.pageWidth +
-          "x" +
-          documentEditor.selection.sectionFormat.pageHeight
-      );
-
-      // Optionally, open the page setup dialog immediately after initialization
-      // documentEditor.showDialog("PageSetup");
+      // Setting the zoom factor to 25%
+      documentEditor.zoomFactor = 0.52;
     }
   }, []);
 
-  function ShowPageSetupDialog() {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.showDialog("PageSetup");
-  }
+  useEffect(() => {
+    if (editorContainerRef.current) {
+      // Set up an interval to check the visibility of the properties pane
+      intervalRef.current = setInterval(() => {
+        const currentVisibility =
+          editorContainerRef.current.documentEditor.showPropertiesPane;
+        if (currentVisibility !== sidePine) {
+          setSidePine(currentVisibility); // Update the state if it differs from the current visibility
+        }
+      }, 1000); // Check every second
+    }
 
-  // const toggleTrackChanges = () => {
-  //   const documentEditor = editorContainerRef.current?.documentEditor;
-  //   documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
-  // };
-
-  const clearAndCloseFooter = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.selection.closeHeaderFooter();
-  };
+    // Clean up the interval when the component unmounts
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [sidePine]); // Depend on sidePine to ensure it reflects the latest state
 
   const setupHeader = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1236,9 +1223,9 @@ function SyncFesion() {
         style={{
           display: "flex",
           background: "white",
-          paddingTop: "1rem",
-          paddingBottom: "0.8rem",
-          marginTop: "-1rem",
+          minHeight: "50.5px",
+          height: "50.5px",
+          maxHeight: "50.5px",
           paddingLeft: "1rem",
         }}
       >
@@ -1325,7 +1312,7 @@ function SyncFesion() {
         </Box>
         {(showBlock === "" || showBlock === "pdf") && (
           <>
-            <div style={{ marginTop: "0.3rem" }}>
+            <div style={{ marginTop: "12px" }}>
               <Breadcrumb recipients={recipients} />
             </div>
           </>
@@ -1382,7 +1369,7 @@ function SyncFesion() {
       )}
       {(showBlock === "" || showBlock === "pdf") && (
         <>
-          <div className="flex justify-between items-center gap-x-9 max-w-[820px] pb-0 my-3 pl-4 ">
+          <div className="flex justify-between items-center gap-x-9 max-w-[820px] pb-0 my-2 pl-4 ">
             <p className="text-[14px] font-regular ">
               Approvals: 0/0{" "}
               <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
@@ -1415,8 +1402,8 @@ function SyncFesion() {
       )}
 
       <div
-        style={{ marginTop: "-7px" }}
-        className="flex  mt-2
+        style={{ marginTop: "-10px" }}
+        className="flex  
         gap-4"
       >
         {/* File Button and Dropdown */}
@@ -1809,264 +1796,12 @@ function SyncFesion() {
 
       {documentPath && <PDFUploaderViewer documentPath={documentPath} />}
 
-      {/* {showBlock === "" && (
-        <> */}
-      {/* <div
-            className=" "
-            style={{
-              backgroundColor: "white",
-              borderTop: "0.5px solid #174B8B", // Add a top border
-              borderBottom: "0.5px solid #174B8B",
-            }}
-          > */}
-      {/* <div
-              className="text styling flex items-center "
-              style={{ width: "100%" }}
-            >
-              <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
-                <ItemsDirective>
-                  <ItemDirective
-                    id="undo"
-                    prefixIcon="e-icons e-undo"
-                    tooltipText="Undo"
-                  />
-                  <ItemDirective
-                    id="redo"
-                    prefixIcon="e-icons e-redo"
-                    tooltipText="Redo"
-                  />
-
-                  <ItemDirective template={contentTemplate2} />
-                  <ItemDirective template={contentTemplate3} />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="delete"
-                    prefixIcon="e-icons e-trash"
-                    tooltipText="Delete"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="bold"
-                    prefixIcon="e-icons e-bold"
-                    tooltipText="Bold"
-                  />
-                  <ItemDirective
-                    id="italic"
-                    prefixIcon="e-icons e-italic"
-                    tooltipText="Italic"
-                  />
-                  <ItemDirective
-                    id="underline"
-                    prefixIcon="e-icons e-underline"
-                    tooltipText="Underline"
-                  />
-
-                  <ItemDirective
-                    id="strikethrough"
-                    prefixIcon="e-icons e-strikethrough"
-                    tooltipText="Strikethrough"
-                  />
-                  <ItemDirective
-                    id="subscript"
-                    prefixIcon="e-icons e-subscript"
-                    tooltipText="Subscript"
-                  />
-                  <ItemDirective
-                    id="superscript"
-                    prefixIcon="e-icons e-superscript"
-                    tooltipText="Superscript"
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    tooltipText="Font Color"
-                    template={fontColorPickerTemplate}
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    tooltipText="Highlight Color"
-                    template={highlightColorPickerTemplate}
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="uppercase"
-                    prefixIcon=" e-upper-case e-icons"
-                    tooltipText="Uppercase"
-                  />
-                  <ItemDirective
-                    id="lowercase"
-                    prefixIcon="e-icons e-lower-case "
-                    tooltipText="Lowercase"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="AlignLeft"
-                    prefixIcon="e-de-ctnr-alignleft e-icons"
-                    tooltipText="Align Left"
-                  />
-
-                  <ItemDirective
-                    id="AlignCenter"
-                    prefixIcon="e-de-ctnr-aligncenter e-icons"
-                    tooltipText="Align Center"
-                  />
-                  <ItemDirective
-                    id="AlignRight"
-                    prefixIcon="e-de-ctnr-alignright e-icons"
-                    tooltipText="Align Right"
-                  />
-                  <ItemDirective
-                    id="Justify"
-                    prefixIcon="e-de-ctnr-justify e-icons"
-                    tooltipText="Justify"
-                  />
-                  <ItemDirective
-                    id="IncreaseIndent"
-                    prefixIcon="e-de-ctnr-increaseindent e-icons"
-                    tooltipText="Increase Indent"
-                  />
-                  <ItemDirective
-                    id="DecreaseIndent"
-                    prefixIcon="e-de-ctnr-decreaseindent e-icons"
-                    tooltipText="Decrease Indent"
-                  />
-                  
-                  <ItemDirective
-                    template={lineHeight1}
-                    prefixIcon="e-de-ctnr-aligncenter e-icons"
-                    tooltipText="Line Height 1"
-                  />
-
-                  <ItemDirective
-                    id="Numbering-Arabic"
-                    prefixIcon="e-icons e-de-ctnr-numbering"
-                    tooltipText="Arabic Numbering"
-                  />
-                  <ItemDirective
-                    id="Bullets-Dot"
-                    prefixIcon="e-de-ctnr-bullets e-icons"
-                    tooltipText="Bullets-Dot"
-                  />
-                  <ItemDirective
-                    id="Bullets-Circle"
-                    prefixIcon="e-de-ctnr-bullet-circle e-icons"
-                    tooltipText="Bullets Circle"
-                  />
-                  <ItemDirective
-                    id="Bullets-Square"
-                    prefixIcon="e-de-ctnr-bullet-square e-icons"
-                    tooltipText="Bullets Square"
-                  />
-
-                  <ItemDirective
-                    id="ShowParagraphMark"
-                    prefixIcon="e-de-e-paragraph-mark e-icons"
-                    tooltipText="Show the hidden characters like spaces, tab, paragraph marks, and breaks.(Ctrl + *)"
-                  />
-                  <ItemDirective
-                    id="ClearFormat"
-                    prefixIcon="e-de-ctnr-clearall e-icons"
-                    tooltipText="Clear Formatting"
-                  />
-                </ItemsDirective>
-              </ToolbarComponent>
-            </div> */}
-
-      {/* ***************Table************************ */}
-      {/* {isTableSelected && ( */}
-      {/* <div className="text styling flex items-center">
-              <ToolbarComponent clicked={toolbarButtonClick}>
-                <ItemsDirective>
-                  <ItemDirective
-                    id="table"
-                    prefixIcon="e-de-ctnr-table e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-                  <ItemDirective
-                    id="insert_above"
-                    prefixIcon="e-de-ctnr-insertabove e-icons"
-                  />
-                  <ItemDirective
-                    id="insert_below"
-                    prefixIcon="e-de-ctnr-insertbelow e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-                  <ItemDirective
-                    id="insert_left"
-                    prefixIcon="e-de-ctnr-insertleft e-icons"
-                  />
-                  <ItemDirective
-                    id="insert_right"
-                    prefixIcon="e-de-ctnr-insertright e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="delete_rows"
-                    prefixIcon=" e-de-ctnr-deletecolumns e-icons"
-                  />
-                  <ItemDirective
-                    id="delete_columns"
-                    prefixIcon="e-de-ctnr-deleterows e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-                  <ItemDirective
-                    id="merge_cell"
-                    text="Merge Cells"
-                    prefixIcon="e-merge-cells e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="delete_table"
-                    prefixIcon="e-table-delete e-icons"
-                    text="Delete"
-                    tooltipText="Delete Table"
-                  />
-
-                  <DropDownListComponent
-                    id="borderWidthDropdown"
-                    dataSource={[1, 2, 3, 4, 5]}
-                    placeholder="Select border width"
-                    floatLabelType="Auto"
-                    change={onWrapTextChange}
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="set_border_width"
-                    text="Apply Border"
-                    prefixIcon="e-border-all-2"
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    tooltipText="Cell Fill Color"
-                    template={cellFillColorPickerTemplate}
-                  />
-                </ItemsDirective>
-              </ToolbarComponent>
-            </div> */}
-      {/* )} */}
-      {/* </div> */}
-      {/* </> */}
-      {/* )} */}
-
       {(showBlock === "" || documentContent == "word") && (
         <div style={{ display: "flex", width: "100%", height: "100vh" }}>
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
             id="container"
-            height="87vh"
+            height="85vh"
             toolbarItems={items}
             toolbarClick={onToolbarClick}
             serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
