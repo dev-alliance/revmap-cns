@@ -26,7 +26,7 @@ import {
 } from "@syncfusion/ej2-pdf-export";
 import { registerLicense } from "@syncfusion/ej2-base";
 registerLicense(
-  "ORg4AjUWIQA/Gnt2UVhiQlJPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSX1Tc0ViWHZcd3dVRWQ="
+  "Ngo9BigBOggjHTQxAR8/V1NBaF1cWGhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdEFjXH1acHBVTmBYVkRxXg=="
 );
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
@@ -91,38 +91,19 @@ import {
   EditorHistory,
   ContextMenu,
   TableDialog,
-  BorderSettings,
-  PageSetupDialog,
 } from "@syncfusion/ej2-react-documenteditor";
-import {
-  ToolbarComponent,
-  ItemDirective,
-  ItemsDirective,
-} from "@syncfusion/ej2-react-navigations";
-import {
-  ComboBoxComponent,
-  DropDownListComponent,
-} from "@syncfusion/ej2-react-dropdowns";
-import {
-  ColorPickerComponent,
-  NumericTextBoxComponent,
-} from "@syncfusion/ej2-react-inputs";
-import {
-  DropDownButtonComponent,
-  ItemModel,
-} from "@syncfusion/ej2-react-splitbuttons";
+
 import { ContractContext } from "@/context/ContractContext";
 
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import mammoth from "mammoth";
+
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
 import { create } from "@/service/api/contract";
 import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "react-router-dom";
-import { ok } from "assert";
 
 DocumentEditorComponent.Inject(
   Selection,
@@ -231,24 +212,6 @@ function SyncFesion() {
     }));
   };
 
-  // To change the font style of selected content
-  function changeFontFamily(args: any) {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontFamily = args.value;
-      documentEditor.focusIn();
-    }
-  }
-
-  // To change the font size of selected content
-  function changeFontSize(args: any) {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontSize = args.value;
-      documentEditor.focusIn();
-    }
-  }
-
   const onToolbarClick = (args: any) => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     console.log("args text:", args.item.id);
@@ -258,47 +221,6 @@ function SyncFesion() {
     // }
 
     switch (args.item.id) {
-      case "undo":
-        documentEditor.editorHistory.undo();
-        break;
-      case "redo":
-        documentEditor.editorHistory.redo();
-        break;
-      case "delete":
-        documentEditor.editor.delete();
-        break;
-
-      case "bold":
-        // Toggles the bold of selected content
-        documentEditor.editor.toggleBold();
-        break;
-      case "italic":
-        // Toggles the Italic of selected content
-        documentEditor.editor.toggleItalic();
-        break;
-      case "underline":
-        // Toggles the underline of selected content
-        documentEditor.editor.toggleUnderline("Single"); // Ensure 'Single' is a valid parameter
-        break;
-
-      case "highlight":
-        if (documentEditor && documentEditor.selection) {
-          // Check if the selected text is already highlighted
-          const highlightColor: any =
-            documentEditor.selection.characterFormat.highlightColor;
-          //Sets highlightColor formatting for selected text.
-          documentEditor.selection.characterFormat.highlightColor = "Pink";
-          documentEditor.focusIn();
-        }
-        break;
-
-      case "setupHeader":
-        setupHeader();
-        break;
-      case "setupFooter":
-        setupFooter();
-        break;
-
       case "findText":
         const searchText = "example"; // Example text to search for
         if (documentEditor) {
@@ -325,102 +247,13 @@ function SyncFesion() {
             }
           }
         };
+
         fileInput.click();
         break;
 
       case "container_toolbar_save":
         documentEditor?.save("Document.docx", "Docx");
 
-        break;
-
-      case "strikethrough":
-        // Toggles the strikethrough of selected content
-        documentEditor.editor.toggleStrikethrough();
-        break;
-      case "subscript":
-        // Toggles the subscript of selected content
-        documentEditor.editor.toggleSubscript();
-        break;
-      case "superscript":
-        // Toggles the superscript of selected content
-        documentEditor.editor.toggleSuperscript();
-        break;
-      case "AlignLeft":
-        //Toggle the Left alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Left");
-        break;
-      case "AlignRight":
-        //Toggle the Right alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Right");
-        break;
-      case "AlignCenter":
-        //Toggle the Center alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Center");
-        break;
-      case "Justify":
-        //Toggle the Justify alignment for selected or current paragraph
-        documentEditor.editor.toggleTextAlignment("Justify");
-        break;
-      case "IncreaseIndent":
-        //Increase the left indent of selected or current paragraph
-        documentEditor.editor.increaseIndent();
-        break;
-      case "DecreaseIndent":
-        //Decrease the left indent of selected or current paragraph
-        documentEditor.editor.decreaseIndent();
-        break;
-      case "ClearFormat":
-        documentEditor.editor.clearFormatting();
-        break;
-      case "ShowParagraphMark":
-        //Show or hide the hidden characters like spaces, tab, paragraph marks, and breaks.
-        documentEditor.documentEditorSettings.showHiddenMarks =
-          !documentEditor.documentEditorSettings.showHiddenMarks;
-        break;
-
-      case "Bullets-Dot":
-        documentEditor.editor.applyBullet("\uf0b7", "Symbol"); // Standard dot bullet
-        break;
-      case "Bullets-Circle":
-        documentEditor.editor.applyBullet("\uf06f", "Symbol"); // Open circle bullet
-        break;
-      case "Bullets-Square":
-        documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
-        break;
-      case "Numbering-Arabic":
-        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
-        break;
-      case "Numbering-Roman":
-        documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
-        break;
-      case "Numbering-Alpha":
-        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
-        break;
-      // upper lower case
-      case "uppercase":
-        // Changes the selected text to uppercase
-        if (documentEditor.selection && documentEditor.selection.text) {
-          const uppercaseText = documentEditor.selection.text.toUpperCase();
-          documentEditor.editor.insertText(uppercaseText);
-        }
-        break;
-
-      case "lowercase":
-        // Changes the selected text to lowercase
-        if (documentEditor.selection && documentEditor.selection.text) {
-          const lowercaseText = documentEditor.selection.text.toLowerCase();
-          documentEditor.editor.insertText(lowercaseText);
-        }
-        break;
-
-      case "lineHeight1":
-        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1 });
-        break;
-      case "lineHeight1_5":
-        documentEditor.editor.applyParagraphFormat({ lineSpacing: 1.5 });
-        break;
-      case "lineHeight2":
-        documentEditor.editor.applyParagraphFormat({ lineSpacing: 2 });
         break;
 
       // Removed the duplicated 'Custom' case as it seems unnecessary
@@ -430,192 +263,25 @@ function SyncFesion() {
     }
   };
 
-  useEffect(() => {
-    if (editorContainerRef.current) {
-      const documentEditor = editorContainerRef.current.documentEditor;
-      // Set default to A4 size paper
-      documentEditor.selection.sectionFormat.pageWidth = 595; // Width for A4 paper
-      documentEditor.selection.sectionFormat.pageHeight = 842; // Height for A4 paper
+  // useEffect(() => {
+  //   if (editorContainerRef.current) {
+  //     const documentEditor = editorContainerRef.current.documentEditor;
+  //     // Set default to A4 size paper
+  //     documentEditor.selection.sectionFormat.pageWidth = 595; // Width for A4 paper
+  //     documentEditor.selection.sectionFormat.pageHeight = 842; // Height for A4 paper
 
-      // Log current page size to console
-      console.log(
-        "Default Page Size Set to:",
-        documentEditor.selection.sectionFormat.pageWidth +
-          "x" +
-          documentEditor.selection.sectionFormat.pageHeight
-      );
+  //     // Log current page size to console
+  //     console.log(
+  //       "Default Page Size Set to:",
+  //       documentEditor.selection.sectionFormat.pageWidth +
+  //         "x" +
+  //         documentEditor.selection.sectionFormat.pageHeight
+  //     );
 
-      // Optionally, open the page setup dialog immediately after initialization
-      // documentEditor.showDialog("PageSetup");
-    }
-  }, []);
-
-  function ShowPageSetupDialog() {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.showDialog("PageSetup");
-  }
-
-  // const toggleTrackChanges = () => {
-  //   const documentEditor = editorContainerRef.current?.documentEditor;
-  //   documentEditor.enableTrackChanges = !documentEditor.enableTrackChanges; // Toggle track changes
-  // };
-
-  const clearAndCloseFooter = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.selection.closeHeaderFooter();
-  };
-
-  const setupHeader = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      // Move to the header region
-      documentEditor.selection.goToHeader();
-      // Insert text or other content into the header
-      documentEditor.editor.insertText("Your header content here");
-
-      // Move out of the header/footer editing mode
-      documentEditor.editor.toggleHeaderFooter();
-    }
-  };
-
-  const setupFooter = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      // Move to the footer region
-      documentEditor.selection.goToFooter();
-      // Insert text or other content into the footer
-      documentEditor.editor.insertText("Your footer content here");
-
-      // Move out of the header/footer editing mode
-      documentEditor.editor.toggleHeaderFooter();
-    }
-  };
-
-  // const addComment = (commentText: any, author: any) => {
-  //   const documentEditor = editorContainerRef.current?.documentEditor;
-  //   if (!documentEditor || !documentEditor.editor) {
-  //     console.error("Document Editor is not initialized yet.");
-  //     return;
+  //     // Optionally, open the page setup dialog immediately after initialization
+  //     // documentEditor.showDialog("PageSetup");
   //   }
-
-  //   // Check if any text is selected
-  //   if (documentEditor.selection && documentEditor.selection.text !== '') {
-  //     // Adds a comment to the selected text
-  //     documentEditor.editor.addComment(commentText, author);
-  //   } else {
-  //     alert('Please select text to comment on.');
-  //   }
-  // };
-
-  // text color highlight
-  const [fontColor, setFontColor] = useState("#000000"); // Default font color
-
-  // Function to change the font color
-  const changeFontColor = (args: any) => {
-    const color = args.currentValue.hex;
-    setFontColor(color);
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontColor = color;
-    }
-  };
-
-  const [highlightColor, setHighlightColor] = useState("#FFFF00"); // Default highlight color
-  // Function to change the highlight color
-  const changeHighlightColor = (args: any) => {
-    console.log("args color hightlight: ", args);
-    const color = args.currentValue.hex;
-    setHighlightColor(color);
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.highlightColor = color;
-    }
-  };
-
-  // Templates for ColorPicker within ItemDirective
-  const fontColorPickerTemplate = () => (
-    <div className="flex">
-      <ColorPickerComponent
-        showButtons={true}
-        value={fontColor}
-        change={changeFontColor}
-      />
-      <p
-        onClick={() => console.log("Open color picker here")}
-        style={{
-          fontWeight: "bold",
-          color: "#000",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "18px",
-          paddingTop: "1px",
-        }}
-      >
-        A
-      </p>
-    </div>
-  );
-
-  const highlightColorPickerTemplate = () => (
-    <>
-      <div className="w-[60px]">
-        <ColorPickerComponent
-          showButtons={true}
-          value={highlightColor}
-          change={changeHighlightColor}
-        />
-        <button className=" mr-2">
-          {/* <img src={colorPencil} className="h-5 w-5 -mt-3 absolute" /> */}
-          <svg
-            className="absolute -ml-1.5 -mt-[15px]"
-            width="24"
-            height="24"
-            focusable="false"
-          >
-            <g fill-rule="nonzero">
-              <path
-                id="tox-icon-highlight-bg-color__color"
-                d="M3 18h18v3H3z"
-              ></path>
-              <path d="M4,17l2.4-2.4C6.1,14.3,6,14,6,13.6c0-0.4,0.2-0.8,0.5-1l9.1-9.1C15.9,3.1,16.2,3,16.6,3s0.8,0.1,1.1,0.4l1.9,1.9C19.8,5.6,20,6,20,6.4s-0.1,0.8-0.4,1.1l-9.1,9.1c-0.3,0.3-0.7,0.4-1.1,0.4s-0.7-0.1-1-0.4L8,17H4z M13.4,11.5l-1.9-1.9l-4,4l1.9,1.9L13.4,11.5z"></path>
-            </g>
-          </svg>
-        </button>
-      </div>
-    </>
-  );
-
-  const itemsss: ItemModel[] = [
-    {
-      text: "Single",
-    },
-    {
-      text: "1.15",
-    },
-    {
-      text: "1.5",
-    },
-    {
-      text: "Double",
-    },
-  ];
-
-  function lineHeight1() {
-    return (
-      <div className="w-[50px]">
-        <DropDownButtonComponent
-          items={itemsss}
-          iconCss="e-de-icon-LineSpacing"
-          select={lineSpacingAction}
-        ></DropDownButtonComponent>
-
-        <button className="-ml-10 mt-2 ">
-          <img src={linepng} className="h-3 w-3" />
-        </button>
-      </div>
-    );
-  }
+  // }, []);
 
   useEffect(() => {
     const documentEditor = editorContainerRef?.current?.documentEditor;
@@ -645,17 +311,6 @@ function SyncFesion() {
     }, 30);
   }
 
-  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  // tables formatting
-
-  // let documenteditor: DocumentEditorComponent;
-  // React.useEffect(() => {
-  //   ComponentDidMount();
-  // }, []);
-  // function ComponentDidMount() {
-  //   documenteditor.editor.insertTable(2, 2);
-  // }
   const [showTableTools, setShowTableTools] = useState(false);
 
   // Function to update the table tool visibility based on the editor's selection
@@ -674,140 +329,10 @@ function SyncFesion() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Functions to perform table operations
-  const deleteTable = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (isTableSelected) {
-      documentEditor.editor.deleteTable();
-    }
-  };
-
-  const insertRowAbove = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (isTableSelected) {
-      documentEditor.editor.insertRow(true);
-    }
-  };
-  function toolbarButtonClick(arg: any) {
-    console.log("arg table", arg);
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    switch (arg.item.id) {
-      case "table":
-        //Insert table API to add table
-        documentEditor.editor.insertTable(3, 2);
-        break;
-      case "delete_table":
-        // Delete the current table
-        documentEditor.editor.deleteTable();
-        break;
-      case "insert_above":
-        //Insert the specified number of rows to the table above to the row at cursor position
-        documentEditor.editor.insertRow(true, 2);
-        break;
-      case "insert_below":
-        //Insert the specified number of rows to the table below to the row at cursor position
-        documentEditor.editor.insertRow();
-        break;
-      case "insert_left":
-        //Insert the specified number of columns to the table left to the column at cursor position
-        documentEditor.editor.insertColumn(true, 2);
-        break;
-      case "insert_right":
-        //Insert the specified number of columns to the table right to the column at cursor position
-        documentEditor.editor.insertColumn();
-        break;
-      case "delete_rows":
-        //Delete the selected number of rows
-        documentEditor.editor.deleteRow();
-        break;
-      case "delete_columns":
-        //Delete the selected number of columns
-        documentEditor.editor.deleteColumn();
-        break;
-      case "merge_cell":
-        //Merge the selected cells into one (both vertically and horizontally)
-        documentEditor.editor.mergeCells();
-        break;
-      case "table_dialog":
-        //Opens insert table dialog
-        documentEditor.showDialog("Table");
-        break;
-      case "adjust_margins":
-        documentEditor.selection.cellFormat.leftMargin = 5.4;
-        //To change the right margin
-        documentEditor.selection.cellFormat.rightMargin = 5.4;
-        //To change the top margin
-        documentEditor.selection.cellFormat.topMargin = 5.4;
-        //To change the bottom margin
-        documentEditor.selection.cellFormat.bottomMargin = 5.4;
-        break;
-      case "set_border_width":
-        // Open a border width selection dropdown
-        documentEditor.showDialog("TableProperties");
-        break;
-      default:
-        console.warn("Unhandled toolbar item:", arg.item.id);
-    }
-  }
-
   const addTable = () => {
     console.log("adding table");
     const documentEditor = editorContainerRef.current?.documentEditor;
     documentEditor.showDialog("Table");
-  };
-
-  // State for the cell fill color
-  const [cellFillColor, setCellFillColor] = useState(""); // Default color
-
-  const applyCellFillColor = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.selection.cellFormat.background = cellFillColor;
-  };
-
-  const handleFillColorChange = (args: any) => {
-    console.log(args);
-    setCellFillColor(args.currentValue.hex);
-    applyCellFillColor();
-  };
-
-  const cellFillColorPickerTemplate = () => (
-    <>
-      <div className="relative  mt-2 w-[60px]">
-        <ColorPickerComponent
-          id="cellFillColorPicker"
-          showButtons={true}
-          value={cellFillColor}
-          change={handleFillColorChange}
-        />
-        <button
-          className="absolute top-0 -right-1 mt-1.5"
-          onClick={() => {
-            /* logic to open color picker if needed */
-          }}
-        >
-          <img src={bucket} className="h-5 w-5" alt="Fill Cell" />
-        </button>
-      </div>
-    </>
-  );
-
-  const [topMargin, setTopMargin] = useState(0);
-  const [bottomMargin, setBottomMargin] = useState(0);
-  const [leftMargin, setLeftMargin] = useState(0);
-  const [rightMargin, setRightMargin] = useState(0);
-
-  const applyMargins = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      const selection = documentEditor.selection;
-      if (selection.cellFormat) {
-        selection.cellFormat.topMargin = topMargin;
-        selection.cellFormat.bottomMargin = bottomMargin;
-        selection.cellFormat.leftMargin = leftMargin;
-        selection.cellFormat.rightMargin = rightMargin;
-        documentEditor.layout.reLayoutTable(selection.cellFormat.ownerTable);
-      }
-    }
   };
 
   const items: any = [
@@ -856,111 +381,28 @@ function SyncFesion() {
     }
   };
 
-  const fontStyle: string[] = [
-    "Algerian",
-    "Arial",
-    "Calibri",
-    "Cambria",
-    "Cambria Math",
-    "Candara",
-    "Courier New",
-    "Georgia",
-    "Impact",
-    "Segoe Print",
-    "Segoe Script",
-    "Segoe UI",
-    "Symbol",
-    "Times New Roman",
-    "Verdana",
-    "Windings",
-  ];
-  const fontSize: string[] = [
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "14",
-    "16",
-    "18",
-    "20",
-    "22",
-    "24",
-    "26",
-    "28",
-    "36",
-    "48",
-    "72",
-    "96",
-  ];
-
-  function contentTemplate2() {
-    return (
-      <ComboBoxComponent
-        dataSource={fontStyle}
-        change={changeFontFamily}
-        index={2}
-        allowCustom={true}
-        showClearButton={false}
-      ></ComboBoxComponent>
-    );
-  }
-  function contentTemplate3() {
-    return (
-      <ComboBoxComponent
-        dataSource={fontSize}
-        change={changeFontSize}
-        index={2}
-        allowCustom={true}
-        showClearButton={false}
-      ></ComboBoxComponent>
-    );
-  }
-
-  function onWrapTextChange(args: any) {
-    if (editorContainerRef.current) {
-      const documentEditor = editorContainerRef.current?.documentEditor;
-      // Assuming we have the border width value in 'args.value'
-      const borderWidth = args.value;
-      if (borderWidth >= 1 && borderWidth <= 5) {
-        const table = documentEditor.selection.tableFormat;
-        if (table) {
-          table.borders.top.lineStyle = "Single";
-          table.borders.top.lineWidth = borderWidth;
-          table.borders.bottom.lineStyle = "Single";
-          table.borders.bottom.lineWidth = borderWidth;
-          table.borders.left.lineStyle = "Single";
-          table.borders.left.lineWidth = borderWidth;
-          table.borders.right.lineStyle = "Single";
-          table.borders.right.lineWidth = borderWidth;
-          documentEditor.selection.tableFormat = table;
-        }
-      }
-    }
-  }
-
   const [isTableSelected, setIsTableSelected] = useState(false);
 
-  // useEffect(() => {
-  //   const documentEditor = editorContainerRef.current?.documentEditor;
+  useEffect(() => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
 
-  //   if (documentEditor) {
-  //     // Listen to selection changes
-  //     documentEditor.selectionChange = () => {
-  //       // Check if the current selection is within a table
-  //       const isInTable =
-  //         documentEditor?.selection?.contextTypeInternal == "TableText";
+    if (documentEditor) {
+      // Listen to selection changes
+      documentEditor.selectionChange = () => {
+        // Check if the current selection is within a table
+        const isInTable =
+          documentEditor?.selection?.contextTypeInternal == "TableText";
 
-  //       setIsTableSelected(isInTable);
-  //     };
-  //   }
+        setIsTableSelected(isInTable);
+      };
+    }
 
-  //   // return () => {
-  //   //   if (documentEditor && documentEditor.selectionChange) {
-  //   //     documentEditor.selectionChange = undefined;
-  //   //   }
-  //   // };
-  // }, []);
+    // return () => {
+    //   if (documentEditor && documentEditor.selectionChange) {
+    //     documentEditor.selectionChange = undefined;
+    //   }
+    // };
+  }, []);
 
   const save = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1068,26 +510,6 @@ function SyncFesion() {
     }
   };
 
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files ? event.target.files[0] : null;
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       const result = reader.result;
-  //       if (result) {
-  //         const documentEditor = editorContainerRef.current?.documentEditor;
-  //         if (documentEditor) {
-  //           const base64String = result.split(',')[1]; // Ensure this split operation is safe
-  //           documentEditor.open(base64String, 'Base64');
-  //         }
-  //       } else {
-  //         console.error('Failed to read the file.');
-  //       }
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-
   const convertToBase64 = (file: any, callback: any) => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     const reader = new FileReader();
@@ -1162,48 +584,6 @@ function SyncFesion() {
     }
   };
 
-  const fileInputRef = useRef<any>(null);
-
-  // const onImportClick = () => {
-  //   fileInputRef.current.click();
-  // };
-
-  // const onFileChange = (event) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = (e) => {
-  //       const content = e.target.result;
-  //       // Construct a more detailed SFDT document with the file's text content
-  //       const sfdt = {
-  //         sections: [{
-  //           blocks: [{
-  //             paragraphFormat: {
-  //               // Apply some paragraph formatting if needed
-  //               afterSpacing: 8,
-  //               beforeSpacing: 0,
-  //               lineSpacing: 1.15,
-  //               lineSpacingType: 'Multiple' // Example formatting
-  //             },
-  //             inlines: [
-  //               {
-  //                 name: '',
-  //                 text: content,
-  //                 characterFormat: {
-  //                   // Apply any needed character formatting
-  //                   fontSize: 11,
-  //                   fontFamily: 'Calibri'
-  //                 }
-  //               }
-  //             ]
-  //           }]
-  //         }]
-  //       };
-  //       editorContainerRef.current.documentEditor?.open(JSON.stringify(sfdt));
-  //     };
-  //     reader.readAsText(file);
-  //   }
-  // };
   const mentionData = [
     { Name: "Selma Rose", Eimg: "3", EmailId: "selma@mycompany.com" },
     { Name: "Russo Kay", Eimg: "8", EmailId: "russo@mycompany.com" },
@@ -1211,65 +591,6 @@ function SyncFesion() {
     // Other mention data...
   ];
 
-  // const DraggableField = ({ field }: any) => {
-  //   const handleDragStart = (e: any) => {
-  //     e.dataTransfer.setData("text/plain", field.placeholder);
-  //   };
-
-  //   return (
-  //     <div
-  //       draggable
-  //       onDragStart={handleDragStart}
-  //       style={{ cursor: 'grab', marginBottom: '10px' }}
-  //     >
-  //       {field.label}
-  //     </div>
-  //   );
-  // };
-
-  // const Sidebar = () => {
-  //   const fields = [
-  //     { id: 'name', label: 'Name', placeholder: '[Name]' },
-  //     { id: 'date', label: 'Date', placeholder: '[Date]' },
-  //     { id: 'company', label: 'Company', placeholder: '[Company]' },
-  //   ];
-
-  //   return (
-  //     <div style={{ padding: '10px' }}>
-  //       {fields.map((field) => (
-  //         <DraggableField key={field.id} field={field} />
-  //       ))}
-  //     </div>
-  //   );
-  // };
-
-  // useEffect(() => {
-  //   const editorContainer = document.getElementById('container');
-  //   const documentEditor = editorContainerRef.current?.documentEditor;
-
-  //   const handleDragOver = (e: any) => {
-  //     e.preventDefault(); // Necessary to allow dropping
-  //   };
-
-  //   const handleDrop = (e: any) => {
-  //     e.preventDefault();
-  //     const fieldPlaceholder = e.dataTransfer.getData("text/plain");
-
-  //     // Now insert the content into the Document Editor at the current cursor position
-  //     if (documentEditor) {
-
-  //       documentEditor.editor.insertText(fieldPlaceholder);
-  //     }
-  //   };
-
-  //   editorContainer.addEventListener('dragover', handleDragOver);
-  //   editorContainer.addEventListener('drop', handleDrop);
-
-  //   return () => {
-  //     editorContainer.removeEventListener('dragover', handleDragOver);
-  //     editorContainer.removeEventListener('drop', handleDrop);
-  //   };
-  // }, []);
   useEffect(() => {
     const editorContainer = document.getElementById("container");
     if (!editorContainer) return; // Exit if the element is not found
@@ -1743,7 +1064,16 @@ function SyncFesion() {
                 <img src={deleteIcon} className="h-[18px] w-[18px]" alt="" />
                 Move to trash
               </li>
-
+              <li
+                className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
+                onClick={() => {
+                  triggerClick("container_editor_font_properties_bold");
+                  toggleDropdown("file");
+                }}
+              >
+                <img src={viewIcon} className="h-4 w-4" alt="" />
+                View Audit trail
+              </li>
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
                 onClick={() => {
@@ -1761,256 +1091,6 @@ function SyncFesion() {
 
               <div
                 // onClick={() => toggleDropdown("file")}
-                className="w-full h-full  fixed inset-0 z-[-9]"
-              ></div>
-            </ul>
-          )}
-        </div>
-
-        {/* View Button and Dropdown */}
-        <div
-          className="relative  mt-2"
-          onMouseLeave={() => {
-            console.log("Mouse left the outer div");
-            toggleDropdown("file"); // Adjust based on your toggleDropdown logic if needed
-          }}
-        >
-          <button
-            className={`text-black text-[16px] rounded focus:outline-none ml-10 ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
-            disabled={showBlock == "uploadTrack"}
-            onClick={() => toggleDropdown("view")}
-            onMouseEnter={() => {
-              toggleDropdown("view");
-            }}
-          >
-            View
-          </button>
-          {openDropdowns.view && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2 "
-                onClick={() => {
-                  ShowHideOptionsPane();
-                  toggleDropdown("view");
-                }}
-              >
-                <img src={searchIcon} className="h-4 w-4" alt="" />
-                Find
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  addComment();
-                  toggleDropdown("view");
-                }}
-              >
-                <img src={commentIcon} className="h-4 w-4" alt="" />
-                View message
-              </li>
-
-              {/* <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-
-              >
-                <button onClick={() => addComment('This is an internal comment', 'Internal Author')}>
-                  Add Internal Comment
-                </button>
-              </li>
-
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-
-              >
-                <button onClick={() => addComment('This is an external comment', 'External Author')}>
-                  Add External Comment
-                </button>
-              </li> */}
-
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  toggleTrackChanges();
-                  toggleDropdown("view");
-                  // triggerClick("container_toolbar_track");
-                }}
-              >
-                <img src={trackChangesIcon} className="h-4 w-4" alt="" />
-                Track changes
-              </li>
-
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  rejectAllChanges();
-                  toggleDropdown("view");
-                }}
-              >
-                <img src={crossIcon} className="h-3 w-3" alt="" />
-                Reject all changes
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  acceptFirstChange();
-                  toggleDropdown("view");
-                }}
-              >
-                <img src={tickIcon} className="h-4 w-4" alt="" />
-                Accept all changes
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
-                  toggleDropdown("view");
-                }}
-              >
-                <img src={viewIcon} className="h-4 w-4" alt="" />
-                View Audit trail
-              </li>
-              <div
-                onClick={() => {
-                  toggleDropdown("view");
-                }}
-                className="w-full h-full  fixed inset-0 z-[-9]"
-              ></div>
-            </ul>
-          )}
-        </div>
-
-        {/* insert and Dropdown */}
-        <div className="relative  mt-2">
-          <button
-            className={`text-black text-[16px]   rounded focus:outline-none ml-10  ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
-            disabled={showBlock == "uploadTrack"}
-            onClick={() => toggleDropdown("insert")}
-            onMouseEnter={() => {
-              toggleDropdown("insert");
-            }}
-          >
-            Insert
-          </button>
-          {openDropdowns.insert && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  addTable();
-                  toggleDropdown("insert");
-                }}
-              >
-                <img src={tableIcon} className="h-4 w-4" alt="" />
-                Table
-              </li>
-              <li
-                className="  hover:bg-gray-200 cursor-pointer   border-t border-[#a1a1a1] flex items-center gap-x-2"
-                // onClick={() => {
-                //   triggerClick("container_toolbar_image_local");
-                // }}
-              >
-                <label
-                  htmlFor="forimg"
-                  className="flex gap-2 px-3 pt-2 cursor-pointer w-full"
-                >
-                  <img src={imageIcon} className="h-4 w-4" alt="" />
-                  Image
-                  <input
-                    id="forimg"
-                    type="file"
-                    className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        convertToBase64(e.target.files[0], insertImage);
-                      }
-                    }}
-                  />
-                </label>
-              </li>
-
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  showHyperlinkDialog();
-                  toggleDropdown("insert");
-                }}
-              >
-                <img src={linkIcon} className="h-4 w-4" alt="" />
-                Link
-              </li>
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  setupHeader();
-                  toggleDropdown("insert");
-                }}
-              >
-                <img src={headerIcon} className="h-4 w-4" alt="" />
-                Header
-              </li>
-
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  setupFooter();
-                  toggleDropdown("insert");
-                }}
-              >
-                <img src={footerIcon} className="h-4 w-4" alt="" />
-                Footer
-              </li>
-
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer pb-2 border-b border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  clearAndCloseFooter();
-                  toggleDropdown("insert");
-                }}
-              >
-                <img src={crossIcon} className="h-3 w-3" alt="" />
-                Clear Header/Footer
-              </li>
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-                onClick={() => {
-                  ShowPageSetupDialog();
-                  toggleDropdown("insert");
-                }}
-              >
-                <img src={pageSetupIcon} className="h-5 w-5" alt="" />
-                Page Setup
-              </li>
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  addpagenumber();
-                  toggleDropdown("insert");
-                }}
-              >
-                <img src={pageNoIcon} className="h-5 w-5" alt="" />
-                Page Number
-              </li>
-              <div
-                onClick={() => toggleDropdown("insert")}
                 className="w-full h-full  fixed inset-0 z-[-9]"
               ></div>
             </ul>
@@ -2298,258 +1378,6 @@ function SyncFesion() {
       )}
 
       {documentPath && <PDFUploaderViewer documentPath={documentPath} />}
-
-      {/* {showBlock === "" && (
-        <> */}
-      {/* <div
-            className=" "
-            style={{
-              backgroundColor: "white",
-              borderTop: "0.5px solid #174B8B", // Add a top border
-              borderBottom: "0.5px solid #174B8B",
-            }}
-          > */}
-      {/* <div
-              className="text styling flex items-center "
-              style={{ width: "100%" }}
-            >
-              <ToolbarComponent id="toolbar" clicked={onToolbarClick}>
-                <ItemsDirective>
-                  <ItemDirective
-                    id="undo"
-                    prefixIcon="e-icons e-undo"
-                    tooltipText="Undo"
-                  />
-                  <ItemDirective
-                    id="redo"
-                    prefixIcon="e-icons e-redo"
-                    tooltipText="Redo"
-                  />
-
-                  <ItemDirective template={contentTemplate2} />
-                  <ItemDirective template={contentTemplate3} />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="delete"
-                    prefixIcon="e-icons e-trash"
-                    tooltipText="Delete"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="bold"
-                    prefixIcon="e-icons e-bold"
-                    tooltipText="Bold"
-                  />
-                  <ItemDirective
-                    id="italic"
-                    prefixIcon="e-icons e-italic"
-                    tooltipText="Italic"
-                  />
-                  <ItemDirective
-                    id="underline"
-                    prefixIcon="e-icons e-underline"
-                    tooltipText="Underline"
-                  />
-
-                  <ItemDirective
-                    id="strikethrough"
-                    prefixIcon="e-icons e-strikethrough"
-                    tooltipText="Strikethrough"
-                  />
-                  <ItemDirective
-                    id="subscript"
-                    prefixIcon="e-icons e-subscript"
-                    tooltipText="Subscript"
-                  />
-                  <ItemDirective
-                    id="superscript"
-                    prefixIcon="e-icons e-superscript"
-                    tooltipText="Superscript"
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    tooltipText="Font Color"
-                    template={fontColorPickerTemplate}
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    tooltipText="Highlight Color"
-                    template={highlightColorPickerTemplate}
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="uppercase"
-                    prefixIcon=" e-upper-case e-icons"
-                    tooltipText="Uppercase"
-                  />
-                  <ItemDirective
-                    id="lowercase"
-                    prefixIcon="e-icons e-lower-case "
-                    tooltipText="Lowercase"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="AlignLeft"
-                    prefixIcon="e-de-ctnr-alignleft e-icons"
-                    tooltipText="Align Left"
-                  />
-
-                  <ItemDirective
-                    id="AlignCenter"
-                    prefixIcon="e-de-ctnr-aligncenter e-icons"
-                    tooltipText="Align Center"
-                  />
-                  <ItemDirective
-                    id="AlignRight"
-                    prefixIcon="e-de-ctnr-alignright e-icons"
-                    tooltipText="Align Right"
-                  />
-                  <ItemDirective
-                    id="Justify"
-                    prefixIcon="e-de-ctnr-justify e-icons"
-                    tooltipText="Justify"
-                  />
-                  <ItemDirective
-                    id="IncreaseIndent"
-                    prefixIcon="e-de-ctnr-increaseindent e-icons"
-                    tooltipText="Increase Indent"
-                  />
-                  <ItemDirective
-                    id="DecreaseIndent"
-                    prefixIcon="e-de-ctnr-decreaseindent e-icons"
-                    tooltipText="Decrease Indent"
-                  />
-                  
-                  <ItemDirective
-                    template={lineHeight1}
-                    prefixIcon="e-de-ctnr-aligncenter e-icons"
-                    tooltipText="Line Height 1"
-                  />
-
-                  <ItemDirective
-                    id="Numbering-Arabic"
-                    prefixIcon="e-icons e-de-ctnr-numbering"
-                    tooltipText="Arabic Numbering"
-                  />
-                  <ItemDirective
-                    id="Bullets-Dot"
-                    prefixIcon="e-de-ctnr-bullets e-icons"
-                    tooltipText="Bullets-Dot"
-                  />
-                  <ItemDirective
-                    id="Bullets-Circle"
-                    prefixIcon="e-de-ctnr-bullet-circle e-icons"
-                    tooltipText="Bullets Circle"
-                  />
-                  <ItemDirective
-                    id="Bullets-Square"
-                    prefixIcon="e-de-ctnr-bullet-square e-icons"
-                    tooltipText="Bullets Square"
-                  />
-
-                  <ItemDirective
-                    id="ShowParagraphMark"
-                    prefixIcon="e-de-e-paragraph-mark e-icons"
-                    tooltipText="Show the hidden characters like spaces, tab, paragraph marks, and breaks.(Ctrl + *)"
-                  />
-                  <ItemDirective
-                    id="ClearFormat"
-                    prefixIcon="e-de-ctnr-clearall e-icons"
-                    tooltipText="Clear Formatting"
-                  />
-                </ItemsDirective>
-              </ToolbarComponent>
-            </div> */}
-
-      {/* ***************Table************************ */}
-      {/* {isTableSelected && ( */}
-      {/* <div className="text styling flex items-center">
-              <ToolbarComponent clicked={toolbarButtonClick}>
-                <ItemsDirective>
-                  <ItemDirective
-                    id="table"
-                    prefixIcon="e-de-ctnr-table e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-                  <ItemDirective
-                    id="insert_above"
-                    prefixIcon="e-de-ctnr-insertabove e-icons"
-                  />
-                  <ItemDirective
-                    id="insert_below"
-                    prefixIcon="e-de-ctnr-insertbelow e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-                  <ItemDirective
-                    id="insert_left"
-                    prefixIcon="e-de-ctnr-insertleft e-icons"
-                  />
-                  <ItemDirective
-                    id="insert_right"
-                    prefixIcon="e-de-ctnr-insertright e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="delete_rows"
-                    prefixIcon=" e-de-ctnr-deletecolumns e-icons"
-                  />
-                  <ItemDirective
-                    id="delete_columns"
-                    prefixIcon="e-de-ctnr-deleterows e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-                  <ItemDirective
-                    id="merge_cell"
-                    text="Merge Cells"
-                    prefixIcon="e-merge-cells e-icons"
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="delete_table"
-                    prefixIcon="e-table-delete e-icons"
-                    text="Delete"
-                    tooltipText="Delete Table"
-                  />
-
-                  <DropDownListComponent
-                    id="borderWidthDropdown"
-                    dataSource={[1, 2, 3, 4, 5]}
-                    placeholder="Select border width"
-                    floatLabelType="Auto"
-                    change={onWrapTextChange}
-                  />
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    id="set_border_width"
-                    text="Apply Border"
-                    prefixIcon="e-border-all-2"
-                  />
-
-                  <ItemDirective type="Separator" />
-
-                  <ItemDirective
-                    tooltipText="Cell Fill Color"
-                    template={cellFillColorPickerTemplate}
-                  />
-                </ItemsDirective>
-              </ToolbarComponent>
-            </div> */}
-      {/* )} */}
-      {/* </div> */}
-      {/* </> */}
-      {/* )} */}
 
       {(showBlock === "" || documentContent == "word") && (
         <div style={{ display: "flex", width: "100%", height: "100vh" }}>

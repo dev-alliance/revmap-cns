@@ -96,8 +96,7 @@ const MyComponent: React.FC = () => {
   const toggleSidebar = () => {
     if (!isPinned) {
       setSidebarExpanded((prev: any) => !prev);
-      alert("ok");
-      setSidePine(false);
+
       // Only allow toggling if not pinned
     }
   };
@@ -595,6 +594,7 @@ const MyComponent: React.FC = () => {
   const toggleToolbarVisibility = () => {
     setSidePine(!sidePine);
   };
+
   return (
     <>
       <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
@@ -671,7 +671,8 @@ const MyComponent: React.FC = () => {
                           handleModuleClick(key);
                           if (!sidebarExpanded) {
                             setSidebarExpanded(true);
-                            setSidePine(false);
+                            setSidePine("off");
+                            alert(sidePine);
                           }
                         }
                       }}
