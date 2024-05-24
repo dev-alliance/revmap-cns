@@ -79,6 +79,7 @@ const MyComponent: React.FC = () => {
     documentName,
     setDucomentName,
     setSidePine,
+    sidePine,
   } = useContext(ContractContext);
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -591,6 +592,9 @@ const MyComponent: React.FC = () => {
     setSelectedModule(moduleName);
   };
 
+  const toggleToolbarVisibility = () => {
+    setSidePine(!sidePine);
+  };
   return (
     <>
       <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
@@ -620,6 +624,7 @@ const MyComponent: React.FC = () => {
             },
           }}
         >
+          <button onClick={toggleToolbarVisibility}>Toggle Toolbar</button>
           <Grid container>
             <Grid
               md={sidebarExpanded ? 2 : 0}

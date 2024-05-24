@@ -813,8 +813,8 @@ function SyncFesion() {
 
   const items: any = [
     // customItem,
-    "New",
-    "Open",
+    // "New",
+    // "Open",
     "Undo",
     "Redo",
     "Separator",
