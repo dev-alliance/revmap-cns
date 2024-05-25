@@ -424,7 +424,7 @@ function SyncFesion() {
   //     // documentEditor.showDialog("PageSetup");
   //   }
   // }, []);
-  const intervalRef = useRef(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     if (editorContainerRef.current) {
       const documentEditor = editorContainerRef.current.documentEditor;
