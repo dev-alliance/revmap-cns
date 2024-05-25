@@ -761,7 +761,7 @@ function SyncFesion() {
   const items: any = [
     // customItem,
     // "New",
-    // "Open",
+    "Open",
     "Undo",
     "Redo",
     "Separator",
@@ -1480,16 +1480,6 @@ function SyncFesion() {
                 <img src={deleteIcon} className="h-[18px] w-[18px]" alt="" />
                 Move to trash
               </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_bold");
-                  toggleDropdown("file");
-                }}
-              >
-                <img src={viewIcon} className="h-4 w-4" alt="" />
-                View Audit trail
-              </li>
 
               <li
                 className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
@@ -1504,6 +1494,16 @@ function SyncFesion() {
                   alt="Import Document"
                 />
                 Import Document
+              </li>
+              <li
+                className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
+                onClick={() => {
+                  triggerClick("container_toolbar_open");
+                  toggleDropdown("file");
+                }}
+              >
+                <img src={viewIcon} className="h-4 w-4" alt="" />
+                View Audit trail
               </li>
 
               <div
