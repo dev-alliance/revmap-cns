@@ -424,34 +424,34 @@ function SyncFesion() {
   //     // documentEditor.showDialog("PageSetup");
   //   }
   // }, []);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  useEffect(() => {
-    if (editorContainerRef.current) {
-      const documentEditor = editorContainerRef.current.documentEditor;
-      // Setting the zoom factor to 25%
-      documentEditor.zoomFactor = 0.52;
-    }
-  }, []);
+  // const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  // useEffect(() => {
+  //   if (editorContainerRef.current) {
+  //     const documentEditor = editorContainerRef.current.documentEditor;
+  //     // Setting the zoom factor to 25%
+  //     documentEditor.zoomFactor = 0.52;
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (editorContainerRef.current) {
-      // Set up an interval to check the visibility of the properties pane
-      intervalRef.current = setInterval(() => {
-        const currentVisibility =
-          editorContainerRef.current.documentEditor.showPropertiesPane;
-        if (currentVisibility !== sidePine) {
-          setSidePine(currentVisibility); // Update the state if it differs from the current visibility
-        }
-      }, 1000); // Check every second
-    }
+  // useEffect(() => {
+  //   if (editorContainerRef.current) {
+  //     // Set up an interval to check the visibility of the properties pane
+  //     intervalRef.current = setInterval(() => {
+  //       const currentVisibility =
+  //         editorContainerRef.current.documentEditor.showPropertiesPane;
+  //       if (currentVisibility !== sidePine) {
+  //         setSidePine(currentVisibility); // Update the state if it differs from the current visibility
+  //       }
+  //     }, 1000); // Check every second
+  //   }
 
-    // Clean up the interval when the component unmounts
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [sidePine]); // Depend on sidePine to ensure it reflects the latest state
+  //   // Clean up the interval when the component unmounts
+  //   return () => {
+  //     if (intervalRef.current) {
+  //       clearInterval(intervalRef.current);
+  //     }
+  //   };
+  // }, [sidePine]); // Depend on sidePine to ensure it reflects the latest state
 
   const setupHeader = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;

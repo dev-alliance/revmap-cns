@@ -428,6 +428,16 @@ body {
 /* end */
 
 /* sdk  */
+
+.container_editor_pageContainer {
+  background: red !important;
+}
+e-btn-toggle {
+  background-color: red !important;
+  outline: none;
+  outline-offset: 0;
+  box-shadow: none !important;
+}
 /* .e-de-ctnr-toolbar {
   display: -ms-flexbox;
   display: flex;
