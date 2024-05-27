@@ -3,6 +3,30 @@
 @import "tailwindcss/utilities";
 
 /* for now  */
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 12px; /* width of the entire scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+  background: #f0f0f0; /* color of the tracking area */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #174b8b; /* color of the scroll thumb */
+  border-radius: 6px; /* roundness of the scroll thumb */
+  border: 3px solid #f0f0f0; /* creates padding around scroll thumb */
+}
+
+/* Works on Firefox */
+* {
+  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-color: #174b8b #f0f0f0; /* thumb and track color */
+}
+
+.e-toolbar .e-toolbar-item.e-separator {
+  border: -0.5px solid #d3dffd !important;
+}
 
 /* for now end  */
 
@@ -428,16 +452,60 @@ body {
 /* end */
 
 /* sdk  */
-
+/* 
 .container_editor_pageContainer {
   background: red !important;
+} */
+.e-toolbar .e-toolbar-items {
+  background: white !important;
 }
-e-btn-toggle {
-  background-color: red !important;
-  outline: none;
-  outline-offset: 0;
-  box-shadow: none !important;
+
+.e-toolbar .e-toolbar-item .e-tbar-btn {
+  background: white !important;
 }
+.e-de-ctnr-properties-pane-btn .e-btn {
+  background: white !important;
+}
+.e-toolbar {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background: white !important;
+  border: 0 solid #dee2e6;
+  box-shadow: none;
+}
+.e-de-tool-ctnr-properties-pane,
+.e-de-ctnr-properties-pane {
+  background: #f8f9fa;
+  border-bottom: 1px solid #174b8b;
+  border-top: 1px solid #174b8b;
+}
+/* .e-toolbar .e-toolbar-item .e-tbar-btn {
+  background: #f8fafd !important;
+  box-shadow: none;
+  color: #212529;
+  border: none;
+} */
+.e-toolbar .e-toolbar-item .e-tbar-btn:hover {
+  background: #174b8b !important;
+}
+.e-toolbar .e-toolbar-item .e-tbar-btn[aria-pressed="true"] {
+  background: #dce7f5fa !important;
+}
+
+/* .e-toolbar .e-toolbar-item .e-tbar-btn:active {
+  background: blue !important;
+} */
+
+/* .e-de-toolbar.e-toolbar .e-toolbar-items .e-toolbar-item:not(.e-separator) {
+  padding: 0;
+  background: #f8fafd !important;
+} */
+/* .e-de-ctnr-toolbar {
+  display: -ms-flexbox;
+  display: flex;
+  height: 72px;
+  width: 100%;
+  background: #f8fafd !important;
+} */
 /* .e-de-ctnr-toolbar {
   display: -ms-flexbox;
   display: flex;

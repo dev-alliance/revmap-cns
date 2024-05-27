@@ -1797,7 +1797,14 @@ function SyncFesion() {
       {documentPath && <PDFUploaderViewer documentPath={documentPath} />}
 
       {(showBlock === "" || documentContent == "word") && (
-        <div style={{ display: "flex", width: "100%", height: "100vh" }}>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            height: "100vh",
+            borderTop: "1px solid #174b8b",
+          }}
+        >
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
             id="container"
