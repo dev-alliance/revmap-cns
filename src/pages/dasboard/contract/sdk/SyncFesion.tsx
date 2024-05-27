@@ -1369,403 +1369,596 @@ function SyncFesion() {
       )}
       {(showBlock === "" || showBlock === "pdf") && (
         <>
-          <div className="flex justify-between items-center gap-x-9 max-w-[820px] pb-0 my-2 pl-4 ">
-            <p className="text-[14px] font-regular ">
-              Approvals: 0/0{" "}
-              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
-                Manage{" "}
-              </span>{" "}
-            </p>
+          <div style={{ display: "flex" }}>
+            <div className="flex justify-between items-center gap-x-9 w-[1000px] min-w[100px] pb-0 my-2 pl-4 ">
+              <div className="relative  ">
+                <button
+                  className={`text-black text-[14px]   rounded focus:outline-none ${
+                    showBlock == "uploadTrack"
+                      ? "text-gray-300"
+                      : "text-black hover:text-gray-700"
+                  }`}
+                  disabled={showBlock == "uploadTrack"}
+                  onClick={() => toggleDropdown("signature")}
+                  onMouseEnter={() => {
+                    toggleDropdown("signature");
+                  }}
+                >
+                  Manage Document
+                  <span
+                    style={{
+                      marginLeft: "0.5rem",
+                      color: "#174B8B",
+                      fontSize: "16px",
+                      transform: openDropdowns.signature
+                        ? "rotate(90deg)"
+                        : "none", // Rotate the chevron when the dropdown is open
+                      display: "inline-block", // Ensure the span can be transformed
+                      transition: "transform 0.3s ease", // Smooth transition for rotation
+                    }}
+                  >
+                    »
+                  </span>{" "}
+                </button>
+                {openDropdowns.signature && (
+                  <ul
+                    className="absolute space-y-0 text-[14px] py-2 left-0 -mt-1 w-50 bg-red shadow-lg rounded z-10"
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      border: "1.5px dashed #174B8B",
+                    }}
+                  >
+                    <li
+                      className="px-2 pb-2 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
+                      onClick={() => {
+                        triggerClick(
+                          "container_editor_font_properties_properties"
+                        );
+                        toggleDropdown("signature");
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.65374 13.7143H1.55125V1.52381H6.98061V5.33333H10.8587V7.69524L12.41 6.17143V4.57143L7.75623 0H1.55125C0.698061 0 0 0.685714 0 1.52381V13.7143C0 14.5524 0.698061 15.2381 1.55125 15.2381H4.65374V13.7143ZM12.5651 8.38095C12.6427 8.38095 12.7978 8.45714 12.8753 8.53333L13.8837 9.52381C14.0388 9.67619 14.0388 9.98095 13.8837 10.1333L13.108 10.8952L11.4792 9.29524L12.2548 8.53333C12.3324 8.45714 12.41 8.38095 12.5651 8.38095ZM12.5651 11.3524L7.8338 16H6.20499V14.4L10.9363 9.75238L12.5651 11.3524Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Edit
+                    </li>
+                    <li
+                      onClick={() => {
+                        saveDocumentToState();
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200  cursor-pointer flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M10.8889 0H1.55556C0.692222 0 0 0.8 0 1.77778V14.2222C0 15.2 0.692222 16 1.55556 16H12.4444C13.3 16 14 15.2 14 14.2222V3.55556L10.8889 0ZM12.4444 14.2222H1.55556V1.77778H10.2433L12.4444 4.29333V14.2222ZM7 8C5.70889 8 4.66667 9.19111 4.66667 10.6667C4.66667 12.1422 5.70889 13.3333 7 13.3333C8.29111 13.3333 9.33333 12.1422 9.33333 10.6667C9.33333 9.19111 8.29111 8 7 8ZM2.33333 2.66667H9.33333V6.22222H2.33333V2.66667Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Save
+                    </li>
 
-            <p className="text-[14px] font-regular ">
-              Signatures: 0/0{" "}
-              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
-                Manage{" "}
-              </span>{" "}
-            </p>
+                    <li
+                      onClick={() => {
+                        saveDocumentToState();
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2  py-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M10.0363 0.499866L13.5811 4.72096C14.1396 5.39599 14.1396 6.47263 13.5811 7.14766L7 15.0003C5.88286 16.3332 4.0711 16.3332 2.9468 15.0003L0.418926 11.984C-0.139642 11.3089 -0.139642 10.2323 0.418926 9.55728L8.00972 0.499866C8.57545 -0.166622 9.47775 -0.166622 10.0363 0.499866ZM1.42864 10.7706L3.96368 13.7869C4.52225 14.4619 5.42455 14.4619 5.99028 13.7869L8.51816 10.7706L4.9734 6.54099L1.42864 10.7706Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Cancel
+                    </li>
 
-            <p className="text-[14px] font-regular ">
-              Collaborators: 0/0{" "}
-              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
-                Manage{" "}
-              </span>{" "}
-            </p>
+                    <li
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer border-y border-[#174B8B] flex items-center gap-x-2"
+                      onClick={() => {
+                        setShowPopup((current: any) => !current);
+                        toggleDropdown("signature");
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M9.33333 8L6.22222 4V7H0V9H6.22222V12L9.33333 8ZM14 14V2C14 0.89 13.3 0 12.4444 0H3.11111C2.69855 0 2.30289 0.210714 2.01117 0.585786C1.71944 0.960859 1.55556 1.46957 1.55556 2V5H3.11111V2H12.4444V14H3.11111V11H1.55556V14C1.55556 14.5304 1.71944 15.0391 2.01117 15.4142C2.30289 15.7893 2.69855 16 3.11111 16H12.4444C12.857 16 13.2527 15.7893 13.5444 15.4142C13.8361 15.0391 14 14.5304 14 14Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Import Document
+                    </li>
+                    <li
+                      onClick={() => {
+                        saveDocumentToState();
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200  cursor-pointer  flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M12.5263 14.5455H4.42105V4.36364H12.5263V14.5455ZM12.5263 2.90909H4.42105C4.03021 2.90909 3.65537 3.06234 3.379 3.33512C3.10263 3.6079 2.94737 3.97787 2.94737 4.36364V14.5455C2.94737 14.9312 3.10263 15.3012 3.379 15.574C3.65537 15.8468 4.03021 16 4.42105 16H12.5263C12.9172 16 13.292 15.8468 13.5684 15.574C13.8447 15.3012 14 14.9312 14 14.5455V4.36364C14 3.97787 13.8447 3.6079 13.5684 3.33512C13.292 3.06234 12.9172 2.90909 12.5263 2.90909ZM10.3158 0H1.47368C1.08284 0 0.708001 0.153246 0.431632 0.426027C0.155263 0.698807 0 1.06878 0 1.45455V11.6364H1.47368V1.45455H10.3158V0Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Copy as a Template
+                    </li>
+                    <li
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer border-t pt-2 border-b border-[#174B8B]  flex items-center gap-x-2"
+                      onClick={() => {
+                        triggerClick("container_toolbar_open");
+                        toggleDropdown("signature");
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2.43478 8C2.43478 8.888 1.89304 9.6 1.21739 9.6C0.547826 9.6 0 8.888 0 8C0 7.12 0.547826 6.4 1.21739 6.4C1.89304 6.4 2.43478 7.12 2.43478 8ZM1.82609 0V4.8H0.608696V0H1.82609ZM0.608696 16V11.2H1.82609V16H0.608696ZM14 3.2V12.8C14 13.688 13.4583 14.4 12.7826 14.4H5.47826C4.8087 14.4 4.26087 13.688 4.26087 12.8V9.6L3.04348 8L4.26087 6.4V3.2C4.26087 2.312 4.8087 1.6 5.47826 1.6H12.7826C13.4583 1.6 14 2.312 14 3.2ZM12.7826 3.2H5.47826V7.064L4.76609 8L5.47826 8.936V12.8H12.7826V3.2ZM6.69565 5.6H11.5652V7.2H6.69565V5.6ZM6.69565 8.8H10.3478V10.4H6.69565V8.8Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      View Audit Trail
+                    </li>
 
-            <p className="text-[14px] font-regular ">
-              Custom Fields: 0/0{" "}
-              <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
-                Manage{" "}
-              </span>{" "}
-            </p>
+                    <li
+                      onClick={() => {
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M11.8356 8.72L8.22799 13.28H6.77227V11.44L10.3799 6.88L11.8356 8.72ZM13.9876 8.08C13.9876 8.32 13.7977 8.56 13.6078 8.8L12.0255 10.8L11.4559 10.08L13.1015 8L12.7217 7.52L12.2787 8.08L10.823 6.24L12.2154 4.56C12.342 4.4 12.5952 4.4 12.785 4.56L13.6711 5.68C13.7977 5.84 13.7977 6.16 13.6711 6.4C13.5445 6.56 13.418 6.72 13.418 6.88C13.418 7.04 13.5445 7.2 13.6711 7.36C13.861 7.6 14.0509 7.84 13.9876 8.08ZM1.26584 14.4V1.6H5.6963V5.6H8.86091V6.8L10.1268 5.2V4.8L6.32922 0H1.26584C0.56963 0 0 0.72 0 1.6V14.4C0 15.28 0.56963 16 1.26584 16H8.86091C9.55713 16 10.1268 15.28 10.1268 14.4H1.26584ZM6.32922 12.08C6.20264 12.08 6.07606 12.16 6.01276 12.16L5.6963 10.4H4.74692L3.41778 11.76L3.79753 9.6H2.84815L2.21523 13.6H3.16461L5.00009 11.52L5.37984 13.36H6.01276L6.32922 13.28V12.08Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Request Signature
+                    </li>
+                    <li
+                      onClick={() => {
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2   flex items-center gap-x-2"
+                      onClick={cancelAllSignatures}
+                      style={{
+                        color: !recipients.some(
+                          (recipient: any) => recipient.signature
+                        )
+                          ? "gray"
+                          : "inherit", // Light blue if condition is true, else no color
+                        borderColor: !recipients.some(
+                          (recipient: any) => recipient.signature
+                        )
+                          ? "gray"
+                          : "#a1a1a1", // Dark blue if true, else grey
+                        cursor: !recipients.some(
+                          (recipient: any) => recipient.signature
+                        )
+                          ? "auto"
+                          : "pointer",
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="17"
+                        viewBox="0 0 14 17"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M11.8356 9.66089L8.22799 14.19H6.77227V12.3624L10.3799 7.83336L11.8356 9.66089ZM13.9876 9.02523C13.9876 9.2636 13.7977 9.50197 13.6078 9.74034L12.0255 11.7268L11.4559 11.0117L13.1015 8.94577L12.7217 8.46902L12.2787 9.02523L10.823 7.1977L12.2154 5.52909C12.342 5.37017 12.5952 5.37017 12.785 5.52909L13.6711 6.6415C13.7977 6.80041 13.7977 7.11824 13.6711 7.35661C13.5445 7.51553 13.418 7.67445 13.418 7.83336C13.418 7.99228 13.5445 8.15119 13.6711 8.31011C13.861 8.54848 14.0509 8.78685 13.9876 9.02523ZM1.26584 15.3024V2.58915H5.6963V6.56204H8.86091V7.7539L10.1268 6.16475V5.76746L6.32922 1H1.26584C0.56963 1 0 1.71512 0 2.58915V15.3024C0 16.1764 0.56963 16.8915 1.26584 16.8915H8.86091C9.55713 16.8915 10.1268 16.1764 10.1268 15.3024H1.26584ZM6.32922 12.9981C6.20264 12.9981 6.07606 13.0776 6.01276 13.0776L5.6963 11.3295H4.74692L3.41778 12.6803L3.79753 10.5349H2.84815L2.21523 14.5078H3.16461L5.00009 12.4419L5.37984 14.2694H6.01276L6.32922 14.19V12.9981Z"
+                          fill="#174B8B"
+                        />
+                        <line
+                          y1="-0.5"
+                          x2="19.6648"
+                          y2="-0.5"
+                          transform="matrix(0.581374 0.813637 -0.735688 0.677321 0 1)"
+                          stroke="#174B8B"
+                        />
+                      </svg>
+                      Cancel All Signature
+                    </li>
+                    <li
+                      onClick={() => {
+                        reverToReview(), toggleDropdown("signature");
+                      }}
+                      className="px-2  py-2 cursor-pointer flex items-center gap-x-2"
+                      style={{
+                        color: !recipients.some(
+                          (recipient: any) => recipient.ReqOption
+                        )
+                          ? "gray"
+                          : "inherit",
+                        cursor: !recipients.some(
+                          (recipient: any) => recipient.ReqOption
+                        )
+                          ? "auto"
+                          : "pointer",
+                      }}
+                    >
+                      <svg
+                        width="16"
+                        height="18"
+                        viewBox="0 0 16 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2.24925 7.08754C1.46178 6.22567 1.11613 5.69893 1.01358 4.43391C0.916387 3.23499 1.35071 1.9988 2.0037 1.36731C2.91177 0.489144 3.99008 1.31537 4.59306 2.48019C5.2465 3.74247 5.81153 7.39155 5.85476 8.95648C5.90384 10.7333 5.67812 12.3476 5.09734 13.8921C4.69899 14.9513 4.1104 16.2 3.32699 16.623C2.61703 17.0063 1.84553 16.8634 1.70265 15.5666C1.52751 13.9772 2.01007 12.4287 2.53763 11.1151C3.2371 9.37351 4.12041 7.93155 5.34372 7.08754C10.0609 3.83281 7.27543 14.3129 8.83991 14.3129C10.4044 14.3129 10.5054 9.1645 11.6022 9.98748C12.6989 10.8105 10.6021 15.9217 14.5269 12.6917"
+                          stroke="#174B8B"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Revert To Review
+                    </li>
+                    <li
+                      onClick={() => {
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer pt-2 border-b border-[#174B8B] flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="16"
+                        height="18"
+                        viewBox="0 0 16 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M6.16016 17H15.0009"
+                          stroke="#174B8B"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M2.24925 7.08754C1.46178 6.22567 1.11613 5.69893 1.01358 4.43391C0.916387 3.23499 1.35071 1.9988 2.0037 1.36731C2.91177 0.489144 3.99008 1.31537 4.59306 2.48019C5.2465 3.74247 5.81153 7.39155 5.85476 8.95648C5.90384 10.7333 5.67812 12.3476 5.09734 13.8921C4.69899 14.9513 4.1104 16.2 3.32699 16.623C2.61703 17.0063 1.84553 16.8634 1.70265 15.5666C1.52751 13.9772 2.01007 12.4287 2.53763 11.1151C3.2371 9.37351 4.12041 7.93155 5.34372 7.08754C10.0609 3.83281 7.27543 14.3129 8.83991 14.3129C10.4044 14.3129 10.5054 9.1645 11.6022 9.98748C12.6989 10.8105 10.6021 15.9217 14.5269 12.6917"
+                          stroke="#174B8B"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Sign
+                    </li>
+                    <li
+                      onClick={() => {
+                        onClick(), toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="16"
+                        height="18"
+                        viewBox="0 0 60 80"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M59.9996 12.236V77.2044C59.9996 78.744 58.7808 80 57.2867 80H7.27353C5.77943 80 4.56055 78.744 4.56055 77.2044V2.79564C4.56055 1.25601 5.77943 0 7.27353 0H48.1058L59.9996 12.236Z"
+                          fill="white"
+                        />
+                        <path
+                          d="M60.001 12.236V77.2044C60.001 78.744 58.7821 80 57.288 80H53.4151C54.9092 80 56.1281 78.744 56.1281 77.2044V12.236L44.2539 0H48.1268L60.001 12.236Z"
+                          fill="#E5E5E5"
+                        />
+                        <path
+                          d="M59.9993 12.236H50.8185C49.3244 12.236 48.1055 10.98 48.1055 9.44036V0L59.9993 12.236Z"
+                          fill="#92929D"
+                        />
+                        <path
+                          d="M48.5389 37.8827H16.337C15.2558 37.8827 14.3711 36.9711 14.3711 35.8569C14.3711 34.7427 15.2558 33.8311 16.337 33.8311H48.5389C49.6201 33.8311 50.5048 34.7427 50.5048 35.8569C50.5048 36.9913 49.6398 37.8827 48.5389 37.8827Z"
+                          fill="#92929D"
+                        />
+                        <path
+                          d="M48.5389 48.2753H16.337C15.2558 48.2753 14.3711 47.3637 14.3711 46.2495C14.3711 45.1353 15.2558 44.2236 16.337 44.2236H48.5389C49.6201 44.2236 50.5048 45.1353 50.5048 46.2495C50.5048 47.3839 49.6398 48.2753 48.5389 48.2753Z"
+                          fill="#92929D"
+                        />
+                        <path
+                          d="M48.5389 58.6679H16.337C15.2558 58.6679 14.3711 57.7562 14.3711 56.642C14.3711 55.5278 15.2558 54.6162 16.337 54.6162H48.5389C49.6201 54.6162 50.5048 55.5278 50.5048 56.642C50.5048 57.7765 49.6398 58.6679 48.5389 58.6679Z"
+                          fill="#92929D"
+                        />
+                        <path
+                          d="M27.2281 27.3486H0V15.9837C0 15.1329 0.668405 14.4238 1.51375 14.4238H27.2281C28.0537 14.4238 28.7418 15.1126 28.7418 15.9837V25.7887C28.7418 26.6396 28.0734 27.3486 27.2281 27.3486Z"
+                          fill="#F55B4B"
+                        />
+                        <path
+                          d="M28.7418 25.5861V25.7887C28.7418 26.6396 28.0734 27.3486 27.2281 27.3486H0V15.9837C0 15.1329 0.668405 14.4238 1.51375 14.4238H2.28047V18.4755C2.28047 22.4056 5.36697 25.6064 9.20053 25.6064H28.7418V25.5861Z"
+                          fill="#DD4E43"
+                        />
+                        <path
+                          d="M0 27.3486L4.56094 32.6968V27.3486H0Z"
+                          fill="#DB1B1B"
+                        />
+                        <path
+                          d="M7.37246 23.3386V24.6959H3.26367V23.3386H4.26629V18.0106H3.26367V16.6533H7.37246C8.33576 16.6533 9.06315 16.8762 9.59395 17.3421C10.1248 17.808 10.3803 18.4361 10.3803 19.2059C10.3803 19.6515 10.282 20.0567 10.1051 20.4214C9.92816 20.786 9.69225 21.0696 9.39736 21.252C9.10247 21.4545 8.78792 21.5761 8.4144 21.6571C8.04087 21.7382 7.58871 21.7584 7.03825 21.7584H6.2912V23.3183H7.37246V23.3386ZM6.2912 20.4214H6.58609C7.27416 20.4214 7.72632 20.2998 7.92292 20.077C8.11951 19.8541 8.21781 19.5503 8.21781 19.2059C8.21781 18.9223 8.13916 18.6589 8.00155 18.4563C7.86393 18.2537 7.70667 18.1322 7.52973 18.0714C7.3528 18.0309 7.05791 17.9904 6.64507 17.9904H6.27154V20.4214H6.2912Z"
+                          fill="white"
+                        />
+                        <path
+                          d="M10.8516 24.6959V23.3386H12.0311V18.0106H10.8516V16.6533H14.5475C15.3339 16.6533 15.9433 16.6938 16.4348 16.7951C16.9066 16.8964 17.3588 17.1193 17.7913 17.4434C18.2238 17.7878 18.5777 18.2335 18.8332 18.8007C19.0888 19.3679 19.2264 19.9959 19.2264 20.6847C19.2264 21.252 19.1281 21.7787 18.9512 22.2851C18.7742 22.7916 18.5383 23.1967 18.2631 23.5209C17.9879 23.8248 17.6733 24.0881 17.2801 24.2704C16.9066 24.4528 16.5527 24.5743 16.2382 24.6351C15.9237 24.6959 15.4322 24.7161 14.7638 24.7161H10.8516V24.6959ZM14.0757 23.3386H14.5672C15.1569 23.3386 15.6288 23.2575 15.9826 23.0955C16.3365 22.9334 16.6117 22.6498 16.8083 22.2649C17.0246 21.8597 17.1229 21.3532 17.1229 20.705C17.1229 20.0972 17.0246 19.5705 16.8083 19.1451C16.5921 18.7197 16.3168 18.4158 15.9433 18.2537C15.5894 18.0917 15.1176 18.0106 14.5672 18.0106H14.0757V23.3386Z"
+                          fill="white"
+                        />
+                        <path
+                          d="M20.1309 24.6959V23.3386H21.2514V18.0106H20.1309V16.6533H27.1296V19.1451H25.6354V18.0309H23.296V19.8946H24.9867V21.252H23.296V23.3386H24.4952V24.6959H20.1309Z"
+                          fill="white"
+                        />
+                        <path
+                          d="M24.2393 31.1167H4.58008V27.3486H27.3258V27.9564C27.3062 29.6986 25.93 31.1167 24.2393 31.1167Z"
+                          fill="#E5E5E5"
+                        />
+                      </svg>
+                      Download PDF
+                    </li>
+                    <li
+                      onClick={() => {
+                        save(), toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer  flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="16"
+                        height="14"
+                        viewBox="0 0 16 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M15.336 0C15.512 0 15.6693 0.0666667 15.808 0.2C15.936 0.328 16 0.482667 16 0.664V13.336C16 13.5173 15.936 13.672 15.808 13.8C15.6693 13.9333 15.512 14 15.336 14H4.664C4.488 14 4.33067 13.9333 4.192 13.8C4.064 13.672 4 13.5173 4 13.336V11H0.664C0.488 11 0.330667 10.936 0.192 10.808C0.064 10.6693 0 10.512 0 10.336V3.664C0 3.488 0.064 3.33067 0.192 3.192C0.330667 3.064 0.488 3 0.664 3H4V0.664C4 0.482667 4.064 0.328 4.192 0.2C4.33067 0.0666667 4.488 0 4.664 0H15.336ZM4.024 6.472L4.984 9.624H6.08L7.128 4.376H6.024L5.4 7.48L4.512 4.48H3.6L2.648 7.496L2.024 4.376H0.872L1.92 9.624H3.016L4.024 6.472ZM15 13V11H5V13H15ZM15 10V7.504H8V10H15ZM15 6.504V4H8V6.504H15ZM15 3V1H5V3H15Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Download Word
+                    </li>
+                    <li
+                      onClick={() => {
+                        toggleDropdown("signature");
+                      }}
+                      style={{ whiteSpace: "nowrap" }}
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer  border-b border-[#174B8B] flex items-center gap-x-1 no-wrap"
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7.7 16L9.1 15.1111L10.5 16V9.77778H7.7V16ZM10.5 5.33333V3.55556L9.1 4.44444L7.7 3.55556V5.33333L6.3 6.22222L7.7 7.11111V8.88889L9.1 8L10.5 8.88889V7.11111L11.9 6.22222L10.5 5.33333ZM12.6 0H1.4C1.0287 0 0.672601 0.187301 0.41005 0.520699C0.1475 0.854097 0 1.30628 0 1.77778V10.6667C0 11.1382 0.1475 11.5903 0.41005 11.9237C0.672601 12.2571 1.0287 12.4444 1.4 12.4444H6.3V10.6667H1.4V1.77778H12.6V10.6667H11.9V12.4444H12.6C12.9713 12.4444 13.3274 12.2571 13.5899 11.9237C13.8525 11.5903 14 11.1382 14 10.6667V1.77778C14 1.30628 13.8525 0.854097 13.5899 0.520699C13.3274 0.187301 12.9713 0 12.6 0ZM6.3 4.44444H2.1V2.66667H6.3V4.44444ZM4.9 7.11111H2.1V5.33333H4.9V7.11111ZM6.3 9.77778H2.1V8H6.3V9.77778Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Download Signature Certificate
+                    </li>
+                    <li
+                      onClick={() => {
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="16"
+                        height="18"
+                        viewBox="0 0 16 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M11.4617 14.3223V10.4926C11.4617 10.2251 11.5549 9.96862 11.7208 9.77949C11.8867 9.59036 12.1117 9.48411 12.3464 9.48411C12.581 9.48411 12.806 9.59036 12.9719 9.77949C13.1378 9.96862 13.231 10.2251 13.231 10.4926V14.945C13.2354 15.2131 13.1929 15.4795 13.106 15.7286C13.019 15.9778 12.8894 16.2047 12.7246 16.3961C12.5598 16.5874 12.3633 16.7395 12.1464 16.8432C11.9295 16.947 11.6966 17.0005 11.4614 17.0005C11.2261 17.0005 10.9933 16.947 10.7764 16.8432C10.5595 16.7395 10.3629 16.5874 10.1981 16.3961C10.0334 16.2047 9.90373 15.9778 9.81677 15.7286C9.72982 15.4795 9.68731 15.2131 9.69172 14.945V10.0564C9.69172 9.25385 9.9714 8.48413 10.4692 7.91662C10.9671 7.3491 11.6423 7.03027 12.3464 7.03027C13.0504 7.03027 13.7256 7.3491 14.2235 7.91662C14.7213 8.48413 15.001 9.25385 15.001 10.0564V14.3223"
+                          stroke="#174B8B"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <path
+                          d="M7.68791 14.8294H1.9332C1.6857 14.8294 1.44834 14.7173 1.27333 14.5178C1.09832 14.3183 1 14.0478 1 13.7656V2.0638C1 1.78166 1.09832 1.51108 1.27333 1.31158C1.44834 1.11208 1.6857 1 1.9332 1H8.54583C8.79315 1.00006 9.03034 1.11204 9.20529 1.31134L10.992 3.34817C11.1669 3.54759 11.2651 3.81798 11.2652 4.09992V4.95096"
+                          stroke="#174B8B"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                      Add Attachments
+                    </li>
+                    <li
+                      onClick={() => {
+                        toggleDropdown("signature");
+                      }}
+                      style={{ whiteSpace: "nowrap" }}
+                      className="px-2 py-2 hover:bg-gray-200 border-b border-[#174B8B] cursor-pointer flex items-center gap-x-2 no-wrap"
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M8.75 0H1.75C0.77875 0 0 0.72 0 1.6V14.4C0 15.288 0.77875 16 1.75 16H12.25C13.2212 16 14 15.288 14 14.4V4.8L8.75 0ZM12.25 14.4H1.75V1.6H7.875V5.6H12.25V14.4ZM6.125 13.6H5.90625C4.76875 13.6 2.625 12.976 2.625 10.6C2.625 8.224 4.76875 7.6 5.90625 7.6H6.125V8.8H5.90625C5.5825 8.8 3.9375 8.904 3.9375 10.6C3.9375 12.352 5.6875 12.4 5.90625 12.4H6.125V13.6ZM8.75 11.2H5.25V10H8.75V11.2ZM7.875 7.6H8.09375C9.23125 7.6 11.375 8.224 11.375 10.6C11.375 12.976 9.23125 13.6 8.09375 13.6H7.875V12.4H8.09375C8.4175 12.4 10.0625 12.296 10.0625 10.6C10.0625 8.848 8.3125 8.8 8.09375 8.8H7.875V7.6Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      View Linked Documents
+                    </li>
+                    <li
+                      onClick={() => {
+                        saveDocumentToState();
+                        toggleDropdown("signature");
+                      }}
+                      className="px-2 py-2 hover:bg-gray-200  cursor-pointer  flex items-center gap-x-2"
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 14 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 14.2222C1 14.6937 1.21071 15.1459 1.58579 15.4793C1.96086 15.8127 2.46957 16 3 16H11C11.5304 16 12.0391 15.8127 12.4142 15.4793C12.7893 15.1459 13 14.6937 13 14.2222V3.55556H1V14.2222ZM3 5.33333H11V14.2222H3V5.33333ZM10.5 0.888889L9.5 0H4.5L3.5 0.888889H0V2.66667H14V0.888889H10.5Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                      Move to Bin
+                    </li>
+                    <div
+                      onClick={() => toggleDropdown("signature")}
+                      className="w-full h-full  fixed inset-0 z-[-9]"
+                    ></div>
+                  </ul>
+                )}
+              </div>
+              <p className="text-[14px] font-regular ">
+                Approvals: 0/0{" "}
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                  Manage{" "}
+                </span>{" "}
+              </p>
+
+              <p className="text-[14px] font-regular ">
+                Signatures: 0/0{" "}
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                  Manage{" "}
+                </span>{" "}
+              </p>
+
+              <p className="text-[14px] font-regular ">
+                Collaborators: 0/0{" "}
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                  Manage{" "}
+                </span>{" "}
+              </p>
+
+              <p className="text-[14px] font-regular ">
+                Custom Fields: 0/0{" "}
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                  Manage{" "}
+                </span>{" "}
+              </p>
+            </div>
+            <div style={{ width: "40%" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginRight: "1rem",
+                  marginTop: ".5rem",
+                  marginBottom: ".5rem",
+                }}
+              >
+                {(showBlock == "uploadTrack" || editMode) && (
+                  <>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      sx={{ textTransform: "none" }}
+                      onClick={() => {
+                        setEditMode(false);
+                        setEnabelEditing(true);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      sx={{ ml: 2, textTransform: "none" }}
+                      onClick={handleSubmit}
+                      variant="outlined"
+                      color="success"
+                    >
+                      Save
+                    </Button>
+                  </>
+                )}
+
+                {showBlock == "pdf" && (
+                  <Button
+                    sx={{ ml: 2, textTransform: "none" }}
+                    type="submit"
+                    variant="outlined"
+                    color="success"
+                    onClick={() => {
+                      setSidebarExpanded(true), setSelectedModule("fields");
+                    }}
+                  >
+                    Add Field
+                  </Button>
+                )}
+
+                {showBlock == "" && !editMode && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    sx={{
+                      ml: 2,
+                      textTransform: "none",
+
+                      color: "#174B8B",
+                      borderColor: "#174B8B", // Change this to your preferred color
+                      "&:hover": {
+                        borderColor: "#1171D1", // Optional: Change for hover state
+                      },
+                    }}
+                    onClick={() => {
+                      // setSidebarExpanded(true),
+                      setEditMode(true);
+                      setEnabelEditing(false);
+                      // setSelectedModule("fields");
+                    }}
+                  >
+                    <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </>
       )}
-
-      <div
-        style={{ marginTop: "-10px" }}
-        className="flex  
-        gap-4"
-      >
-        {/* File Button and Dropdown */}
-
-        <div className="relative  mt-2 ">
-          <button
-            className={`text-black text-[16px]  rounded focus:outline-none ml-4  ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300 hover:text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
-            disabled={showBlock == "uploadTrack"}
-            onClick={() => toggleDropdown("file")}
-          >
-            File
-          </button>
-          {openDropdowns.file && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_editor_font_properties_properties");
-                  toggleDropdown("file");
-                }}
-              >
-                <img src={editIcon} className="h-4 w-4" alt="" />
-                Edit
-              </li>
-              <li
-                onClick={() => {
-                  saveDocumentToState();
-                  toggleDropdown("file");
-                }}
-                className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
-              >
-                <img src={saveIcon} className="h-4 w-4" alt="" />
-                Save
-              </li>
-
-              <li
-                onClick={() => {
-                  saveDocumentToState();
-                  toggleDropdown("file");
-                }}
-                className="px-3   hover:bg-gray-200  cursor-pointer   flex items-center gap-x-2"
-              >
-                <img src={crossIcon} className="h-4 w-4" alt="" />
-                Cancel
-              </li>
-
-              <li
-                onClick={() => {
-                  saveDocumentToState();
-                  toggleDropdown("file");
-                }}
-                className="px-3 py-2 hover:bg-gray-200  cursor-pointer border-y border-[#a1a1a1] flex items-center gap-x-2"
-              >
-                <img src={copyIcon} className="h-[18px] w-[px]" alt="" />
-                Copy as a template
-              </li>
-
-              <li
-                onClick={() => {
-                  saveDocumentToState();
-                }}
-                className="px-3 pb-2 hover:bg-gray-200  cursor-pointer border-b border-[#a1a1a1] flex items-center gap-x-2"
-              >
-                <img src={deleteIcon} className="h-[18px] w-[18px]" alt="" />
-                Move to trash
-              </li>
-
-              <li
-                className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
-                onClick={() => {
-                  setShowPopup((current: any) => !current);
-                  toggleDropdown("file");
-                }}
-              >
-                <img
-                  src={downloadIcon}
-                  className="h-5 w-5"
-                  alt="Import Document"
-                />
-                Import Document
-              </li>
-              <li
-                className="pl-3 hover:bg-gray-200 cursor-pointer border-t pt-2 border-[#a1a1a1] flex items-center gap-x-2"
-                onClick={() => {
-                  triggerClick("container_toolbar_open");
-                  toggleDropdown("file");
-                }}
-              >
-                <img src={viewIcon} className="h-4 w-4" alt="" />
-                View Audit trail
-              </li>
-
-              <div
-                // onClick={() => toggleDropdown("file")}
-                className="w-full h-full  fixed inset-0 z-[-9]"
-              ></div>
-            </ul>
-          )}
-        </div>
-
-        {/* Signature Button and Dropdown */}
-        <div className="relative  mt-2">
-          <button
-            className={`text-black text-[16px]   rounded focus:outline-none ml-10 ${
-              showBlock == "uploadTrack"
-                ? "text-gray-300"
-                : "text-black hover:text-gray-700"
-            }`}
-            disabled={showBlock == "uploadTrack"}
-            onClick={() => toggleDropdown("signature")}
-            onMouseEnter={() => {
-              toggleDropdown("signature");
-            }}
-          >
-            Signature
-          </button>
-          {openDropdowns.signature && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li className="px-3 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
-                <img src={requestIcon} className="h-4 w-4" alt="" /> Request
-                signature
-              </li>
-              <li
-                className="px-3  py-2 border-y flex items-center gap-x-2"
-                onClick={cancelAllSignatures}
-                style={{
-                  color: !recipients.some(
-                    (recipient: any) => recipient.signature
-                  )
-                    ? "gray"
-                    : "inherit", // Light blue if condition is true, else no color
-                  borderColor: !recipients.some(
-                    (recipient: any) => recipient.signature
-                  )
-                    ? "gray"
-                    : "#a1a1a1", // Dark blue if true, else grey
-                  cursor: !recipients.some(
-                    (recipient: any) => recipient.signature
-                  )
-                    ? "auto"
-                    : "pointer",
-                }}
-              >
-                <img
-                  src={crossIcon}
-                  className="h-4 w-4"
-                  alt=""
-                  style={{
-                    filter: !recipients.some(
-                      (recipient: any) => recipient.signature
-                    )
-                      ? "invert(70%)"
-                      : "none",
-                  }}
-                />
-                Cancel all signature
-              </li>
-              <li
-                onClick={reverToReview}
-                className="px-3 cursor-pointer flex items-center gap-x-2"
-                style={{
-                  color: !recipients.some(
-                    (recipient: any) => recipient.ReqOption
-                  )
-                    ? "gray"
-                    : "inherit",
-                  cursor: !recipients.some(
-                    (recipient: any) => recipient.ReqOption
-                  )
-                    ? "auto"
-                    : "pointer",
-                }}
-              >
-                <img
-                  src={websiteIcon}
-                  className="h-4 w-4"
-                  alt=""
-                  style={{
-                    filter: !recipients.some(
-                      (recipient: any) => recipient.ReqOption
-                    )
-                      ? "invert(70%)"
-                      : "none",
-                  }}
-                />
-                Revert to review
-              </li>
-              <li className="px-3 hover:bg-gray-200 cursor-pointer pt-2 border-t border-[#a1a1a1] flex items-center gap-x-2">
-                <img src={signatureIcon} className="h-4 w-4" alt="" /> Sign
-              </li>
-              <div
-                onClick={() => toggleDropdown("signature")}
-                className="w-full h-full  fixed inset-0 z-[-9]"
-              ></div>
-            </ul>
-          )}
-        </div>
-
-        {/* Export Button and Dropdown */}
-        <div className="relative  mt-2">
-          <button
-            className="text-black text-[16px] rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
-            onClick={() => toggleDropdown("export")}
-            onMouseEnter={() => {
-              toggleDropdown("export");
-            }}
-          >
-            Export
-          </button>
-          {openDropdowns.export && (
-            <ul
-              className="absolute space-y-3 text-[14px] py-2 left-0 -mt-1 w-48 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li
-                onClick={onClick}
-                // onClick={() => exportPdf()}
-                className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
-              >
-                <img src={pdfIcon} className="h-5 w-5" alt="" /> Download PDF
-              </li>
-              <li
-                onClick={save}
-                className="px-2 hover:bg-gray-200 cursor-pointer py-2 border-y border-[#a1a1a1] flex items-center gap-x-2"
-              >
-                <img src={wordIcon} className="h-5 w-5" alt="" /> Download Word
-              </li>
-              <li className="px-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2">
-                <img src={downloadIcon} className="h-6 w-5" alt="" /> Download
-                signature certificate
-              </li>
-              <div
-                onClick={() => toggleDropdown("export")}
-                className="w-full h-full  fixed inset-0 z-[-9]"
-              ></div>
-            </ul>
-          )}
-        </div>
-
-        <div className="relative  mt-2">
-          <button
-            className="text-black text-[16px]   rounded focus:outline-none   ml-10 hover:bg-blue-00 hover:text-gray-700"
-            onClick={() => toggleDropdown("attach")}
-            onMouseEnter={() => {
-              toggleDropdown("attach");
-            }}
-          >
-            Attach
-          </button>
-          {openDropdowns.attach && (
-            <ul
-              className="absolute space-y-2 text-[16px] py-2 left-0 -mt-1 w-44 bg-red shadow-lg rounded z-10"
-              style={{
-                backgroundColor: "#F0F2F5",
-                border: "1px solid #C1C1C1",
-              }}
-            >
-              <li className="px-3 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2">
-                <img src={attachIcon} className="h-4 w-4" alt="" />
-                Add attachment
-              </li>
-              <div
-                onClick={() => toggleDropdown("attach")}
-                className="w-full h-full  fixed inset-0 z-[-9]"
-              ></div>
-            </ul>
-          )}
-        </div>
-
-        <div style={{ width: "100%" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginRight: "1rem",
-              paddingBottom: ".5rem",
-            }}
-          >
-            {(showBlock == "uploadTrack" || editMode) && (
-              <>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  sx={{ textTransform: "none" }}
-                  onClick={() => {
-                    setEditMode(false);
-                    setEnabelEditing(true);
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  onClick={handleSubmit}
-                  variant="outlined"
-                  color="success"
-                >
-                  Save
-                </Button>
-              </>
-            )}
-
-            {showBlock == "pdf" && (
-              <Button
-                sx={{ ml: 2, textTransform: "none" }}
-                type="submit"
-                variant="outlined"
-                color="success"
-                onClick={() => {
-                  setSidebarExpanded(true), setSelectedModule("fields");
-                }}
-              >
-                Add Field
-              </Button>
-            )}
-
-            {showBlock == "" && !editMode && (
-              <Button
-                variant="outlined"
-                color="primary"
-                sx={{
-                  ml: 2,
-                  textTransform: "none",
-
-                  color: "#174B8B",
-                  borderColor: "#174B8B", // Change this to your preferred color
-                  "&:hover": {
-                    borderColor: "#1171D1", // Optional: Change for hover state
-                  },
-                }}
-                onClick={() => {
-                  // setSidebarExpanded(true),
-                  setEditMode(true);
-                  setEnabelEditing(false);
-                  // setSelectedModule("fields");
-                }}
-              >
-                <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* <div id="xyz">show </div> */}
       {showBlock == "uploadTrack" && uplodTrackFile && (
