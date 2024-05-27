@@ -478,17 +478,21 @@ body {
   border-bottom: 1px solid #174b8b;
   border-top: 1px solid #174b8b;
 }
-/* .e-toolbar .e-toolbar-item .e-tbar-btn {
-  background: #f8fafd !important;
-  box-shadow: none;
-  color: #212529;
-  border: none;
-} */
+
 .e-toolbar .e-toolbar-item .e-tbar-btn:hover {
   background: #174b8b !important;
 }
 .e-toolbar .e-toolbar-item .e-tbar-btn[aria-pressed="true"] {
   background: #dce7f5fa !important;
+}
+.e-pv-viewer-main-container {
+  background-color: #e9ecef;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border: 1px solid #174b8b !important;
 }
 
 /* .e-toolbar .e-toolbar-item .e-tbar-btn:active {

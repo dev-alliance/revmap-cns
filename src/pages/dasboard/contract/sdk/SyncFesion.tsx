@@ -761,7 +761,7 @@ function SyncFesion() {
   const items: any = [
     // customItem,
     // "New",
-    // "Open",
+
     "Undo",
     "Redo",
     "Separator",
@@ -775,6 +775,7 @@ function SyncFesion() {
     "Footer",
     "PageSetup",
     "PageNumber",
+    "Open",
     "Break",
     "InsertEndnote",
     "InsertFootnote",
@@ -1369,8 +1370,8 @@ function SyncFesion() {
       )}
       {(showBlock === "" || showBlock === "pdf") && (
         <>
-          <div style={{ display: "flex" }}>
-            <div className="flex justify-between items-center gap-x-9 w-[1000px] min-w[100px] pb-0 my-2 pl-4 ">
+          <div style={{ display: "flex", width: "100%" }}>
+            <div className="flex justify-between items-center gap-x-9 min-w-[1000px] pb-0 my-2 pl-4">
               <div className="relative  ">
                 <button
                   className={`text-black text-[14px]   rounded focus:outline-none ${
@@ -1882,79 +1883,82 @@ function SyncFesion() {
                 </span>{" "}
               </p>
             </div>
-            <div style={{ width: "40%" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  marginRight: "1rem",
-                  marginTop: ".5rem",
-                  marginBottom: ".5rem",
-                }}
-              >
-                {(showBlock == "uploadTrack" || editMode) && (
-                  <>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      sx={{ textTransform: "none" }}
-                      onClick={() => {
-                        setEditMode(false);
-                        setEnabelEditing(true);
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      sx={{ ml: 2, textTransform: "none" }}
-                      onClick={handleSubmit}
-                      variant="outlined"
-                      color="success"
-                    >
-                      Save
-                    </Button>
-                  </>
-                )}
-
-                {showBlock == "pdf" && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginRight: "1rem",
+                marginTop: ".5rem",
+                marginBottom: ".5rem",
+                marginLeft: "13rem",
+              }}
+            >
+              {(showBlock == "uploadTrack" || editMode) && (
+                <>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{
+                      textTransform: "none",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                    onClick={() => {
+                      setEditMode(false);
+                      setEnabelEditing(true);
+                    }}
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     sx={{ ml: 2, textTransform: "none" }}
-                    type="submit"
+                    onClick={handleSubmit}
                     variant="outlined"
                     color="success"
-                    onClick={() => {
-                      setSidebarExpanded(true), setSelectedModule("fields");
-                    }}
                   >
-                    Add Field
+                    Save
                   </Button>
-                )}
+                </>
+              )}
 
-                {showBlock == "" && !editMode && (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    sx={{
-                      ml: 2,
-                      textTransform: "none",
+              {showBlock == "pdf" && (
+                <Button
+                  sx={{ ml: 2, textTransform: "none" }}
+                  type="submit"
+                  variant="outlined"
+                  color="success"
+                  onClick={() => {
+                    setSidebarExpanded(true), setSelectedModule("fields");
+                  }}
+                >
+                  Add Field
+                </Button>
+              )}
 
-                      color: "#174B8B",
-                      borderColor: "#174B8B", // Change this to your preferred color
-                      "&:hover": {
-                        borderColor: "#1171D1", // Optional: Change for hover state
-                      },
-                    }}
-                    onClick={() => {
-                      // setSidebarExpanded(true),
-                      setEditMode(true);
-                      setEnabelEditing(false);
-                      // setSelectedModule("fields");
-                    }}
-                  >
-                    <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
-                  </Button>
-                )}
-              </div>
+              {showBlock == "" && !editMode && (
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    ml: 2,
+                    textTransform: "none",
+
+                    color: "#174B8B",
+                    borderColor: "#174B8B", // Change this to your preferred color
+                    "&:hover": {
+                      borderColor: "#1171D1", // Optional: Change for hover state
+                    },
+                  }}
+                  onClick={() => {
+                    // setSidebarExpanded(true),
+                    setEditMode(true);
+                    setEnabelEditing(false);
+                    // setSelectedModule("fields");
+                  }}
+                >
+                  <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
+                </Button>
+              )}
             </div>
           </div>
         </>
@@ -2001,7 +2005,7 @@ function SyncFesion() {
           <DocumentEditorContainerComponent
             ref={editorContainerRef}
             id="container"
-            height="85vh"
+            height="88vh"
             toolbarItems={items}
             toolbarClick={onToolbarClick}
             serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"

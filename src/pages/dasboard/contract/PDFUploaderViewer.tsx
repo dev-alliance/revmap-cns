@@ -74,7 +74,7 @@ const PDFUploaderViewer = ({ documentPath }: any) => {
             documentPath={documentPath}
             resourceUrl="https://cdn.syncfusion.com/ej2/25.1.35/dist/ej2-pdfviewer-lib"
             documentLoad={documentLoaded}
-            height="640px"
+            height="685px"
           >
             <Inject
               services={[
