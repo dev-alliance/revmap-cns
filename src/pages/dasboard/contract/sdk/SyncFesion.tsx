@@ -225,6 +225,9 @@ function SyncFesion() {
   }
 
   const onToolbarClick = (args: any) => {
+
+    console.log('item clicked : ', args)
+
     const documentEditor = editorContainerRef.current?.documentEditor;
     console.log("args text:", args.item.id);
     // if (!documentEditor) {
@@ -775,7 +778,6 @@ function SyncFesion() {
     "Footer",
     "PageSetup",
     "PageNumber",
-    "Open",
     "Break",
     "InsertEndnote",
     "InsertFootnote",
@@ -790,6 +792,7 @@ function SyncFesion() {
     "Separator",
     "FormFields",
     "UpdateFields",
+    "Open",
   ];
 
   const triggerClick = (id: any) => {
@@ -1205,7 +1208,7 @@ function SyncFesion() {
     }
   }, [enabelEditing]);
 
-  console.log("editing : ", enabelEditing);
+
   const inputWidth =
     documentName.length > 0
       ? `${Math.max(110, documentName.length * 11.5)}px`
@@ -1217,6 +1220,23 @@ function SyncFesion() {
     }, 100),
     []
   );
+
+  console.log('current : ', editorContainerRef.current)
+
+  useEffect(() => {
+    // Check if the editorContainerRef is available
+    if (editorContainerRef.current) {
+
+
+      // Get the DOM element using current property
+      // const toolbarItem = editorContainerRef.current.querySelector('.e-toolbar-item[aria-label="Open a document."]');
+      // Check if the toolbarItem is available
+      // if (toolbarItem) {
+      //   // Hide the element by setting its display property to 'none'
+      //   toolbarItem.style.display = 'none';
+      // }
+    }
+  }, []);
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
@@ -1370,15 +1390,14 @@ function SyncFesion() {
       )}
       {(showBlock === "" || showBlock === "pdf") && (
         <>
-          <div style={{ display: "flex", width: "100%" }}>
-            <div className="flex justify-between items-center gap-x-9 min-w-[1000px] pb-0 my-2 pl-4">
+          <div className="w-full flex justify-between">
+            <div className="flex items-center gap-x-5 min-w-[500px] pb-0 my-2 pl-4">
               <div className="relative  ">
                 <button
-                  className={`text-black text-[14px]   rounded focus:outline-none ${
-                    showBlock == "uploadTrack"
-                      ? "text-gray-300"
-                      : "text-black hover:text-gray-700"
-                  }`}
+                  className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${showBlock == "uploadTrack"
+                    ? "text-gray-300"
+                    : "text-black hover:text-gray-700"
+                    }`}
                   disabled={showBlock == "uploadTrack"}
                   onClick={() => toggleDropdown("signature")}
                   onMouseEnter={() => {
@@ -1855,34 +1874,37 @@ function SyncFesion() {
                   </ul>
                 )}
               </div>
-              <p className="text-[14px] font-regular ">
+              <p className="text-[14px] font-regular flex whitespace-nowrap ">
                 Approvals: 0/0{" "}
                 <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
                   Manage{" "}
                 </span>{" "}
               </p>
 
-              <p className="text-[14px] font-regular ">
+              <p className="text-[14px] font-regular flex whitespace-nowrap">
                 Signatures: 0/0{" "}
                 <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
                   Manage{" "}
                 </span>{" "}
               </p>
 
-              <p className="text-[14px] font-regular ">
+              <p className="text-[14px] font-regular flex whitespace-nowrap">
                 Collaborators: 0/0{" "}
                 <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
                   Manage{" "}
                 </span>{" "}
               </p>
 
-              <p className="text-[14px] font-regular ">
+              <p className="text-[14px] font-regular flex whitespace-nowrap">
                 Custom Fields: 0/0{" "}
                 <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
                   Manage{" "}
                 </span>{" "}
               </p>
             </div>
+
+
+            {/* buttons */}
             <div
               style={{
                 display: "flex",
