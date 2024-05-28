@@ -1574,7 +1574,7 @@ function SyncFesion() {
                           fill="#174B8B"
                         />
                       </svg>
-                      Request Signature
+                      Request Signatures
                     </li>
                     <li
                       onClick={() => {
