@@ -225,8 +225,7 @@ function SyncFesion() {
   }
 
   const onToolbarClick = (args: any) => {
-
-    console.log('item clicked : ', args)
+    console.log("item clicked : ", args);
 
     const documentEditor = editorContainerRef.current?.documentEditor;
     console.log("args text:", args.item.id);
@@ -1208,7 +1207,6 @@ function SyncFesion() {
     }
   }, [enabelEditing]);
 
-
   const inputWidth =
     documentName.length > 0
       ? `${Math.max(110, documentName.length * 11.5)}px`
@@ -1221,13 +1219,11 @@ function SyncFesion() {
     []
   );
 
-  console.log('current : ', editorContainerRef.current)
+  console.log("current : ", editorContainerRef.current);
 
   useEffect(() => {
     // Check if the editorContainerRef is available
     if (editorContainerRef.current) {
-
-
       // Get the DOM element using current property
       // const toolbarItem = editorContainerRef.current.querySelector('.e-toolbar-item[aria-label="Open a document."]');
       // Check if the toolbarItem is available
@@ -1394,10 +1390,11 @@ function SyncFesion() {
             <div className="flex items-center gap-x-5 min-w-[500px] pb-0 my-2 pl-4">
               <div className="relative  ">
                 <button
-                  className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${showBlock == "uploadTrack"
-                    ? "text-gray-300"
-                    : "text-black hover:text-gray-700"
-                    }`}
+                  className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${
+                    showBlock == "uploadTrack"
+                      ? "text-gray-300"
+                      : "text-black hover:text-gray-700"
+                  }`}
                   disabled={showBlock == "uploadTrack"}
                   onClick={() => toggleDropdown("signature")}
                   onMouseEnter={() => {
@@ -1581,10 +1578,9 @@ function SyncFesion() {
                     </li>
                     <li
                       onClick={() => {
-                        toggleDropdown("signature");
+                        cancelAllSignatures(), toggleDropdown("signature");
                       }}
                       className="px-2 py-2   flex items-center gap-x-2"
-                      onClick={cancelAllSignatures}
                       style={{
                         color: !recipients.some(
                           (recipient: any) => recipient.signature
@@ -1902,7 +1898,6 @@ function SyncFesion() {
                 </span>{" "}
               </p>
             </div>
-
 
             {/* buttons */}
             <div
