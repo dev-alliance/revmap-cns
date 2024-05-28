@@ -67,6 +67,7 @@ const OverView = () => {
   const [catategorylist, setCategorylist] = useState<Array<any>>([]);
   const [taglist, setTaglist] = useState<Array<any>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [addField, setAddFied] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subCategories, setSubCategories] = useState([]);
   const [fields, setFields] = useState<any>([]);
@@ -236,19 +237,19 @@ const OverView = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="body1" color="black">
+      <Typography variant="subtitle1" color="black">
         Overview
       </Typography>
-      <Divider style={{ margin: "10px 0" }} />
+      <Divider sx={{ mt: 0.1, mb: 1, pl: -1, background: "#174B8B" }} />
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
+          variant="body1"
           sx={{
             minWidth: "75px",
             mr: 2,
             mb: 0.8,
             whiteSpace: "nowrap",
-            color: "#155BE5",
+            color: "#000000",
           }}
         >
           Document Name
@@ -275,7 +276,7 @@ const OverView = () => {
                 disableUnderline: true, // Disables the underline by default
                 sx: {
                   "::after": {
-                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                    borderBottom: "2px solid transparent", // Default state with transparent color
                   },
                   "::before": {
                     borderBottom: "none !important", // Hides the underline
@@ -288,12 +289,21 @@ const OverView = () => {
                   },
                   "::placeholder": {
                     fontSize: "0.55rem",
+                    color: "gray", // Default placeholder color
                   },
                   input: {
                     fontSize: "0.875rem",
                     "&:focus": {
-                      // Shows the underline when the input is focused
-                      borderBottom: "2px solid", // Adjust color as needed
+                      borderBottom: "2px solid transparent", // Transparent on focus by default
+                    },
+                    "&:not(:placeholder-shown)": {
+                      // When input has content
+                      "&::placeholder": {
+                        color: "#0F151B !important", // New placeholder color when typing
+                      },
+                      "&:focus": {
+                        borderBottom: "1px solid #174B8B", // New underline color when typing
+                      },
                     },
                   },
                 },
@@ -305,14 +315,13 @@ const OverView = () => {
 
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
+          variant="body1"
           sx={{
             minWidth: "75px",
             mr: 2,
             mb: 0.8,
-            mt: 0.8,
             whiteSpace: "nowrap",
-            color: "#155BE5",
+            color: "#000000",
           }}
         >
           With
@@ -332,7 +341,7 @@ const OverView = () => {
                 disableUnderline: true, // Disables the underline by default
                 sx: {
                   "::after": {
-                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                    borderBottom: "2px solid transparent", // Default state with transparent color
                   },
                   "::before": {
                     borderBottom: "none !important", // Hides the underline
@@ -345,12 +354,21 @@ const OverView = () => {
                   },
                   "::placeholder": {
                     fontSize: "0.55rem",
+                    color: "gray", // Default placeholder color
                   },
                   input: {
                     fontSize: "0.875rem",
                     "&:focus": {
-                      // Shows the underline when the input is focused
-                      borderBottom: "2px solid", // Adjust color as needed
+                      borderBottom: "2px solid transparent", // Transparent on focus by default
+                    },
+                    "&:not(:placeholder-shown)": {
+                      // When input has content
+                      "&::placeholder": {
+                        color: "#0F151B !important",
+                      },
+                      "&:focus": {
+                        borderBottom: "1px solid #174B8B", // New underline color when typing
+                      },
                     },
                   },
                 },
@@ -361,13 +379,13 @@ const OverView = () => {
       </Box>
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
+          variant="body1"
           sx={{
             minWidth: "75px",
+            mr: 2,
             mb: 0.8,
-            mt: 0.8,
             whiteSpace: "nowrap",
-            color: "#155BE5",
+            color: "#000000",
           }}
         >
           Annual Value
@@ -389,7 +407,7 @@ const OverView = () => {
                 disableUnderline: true, // Disables the underline by default
                 sx: {
                   "::after": {
-                    borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
+                    borderBottom: "2px solid transparent", // Default state with transparent color
                   },
                   "::before": {
                     borderBottom: "none !important", // Hides the underline
@@ -402,12 +420,21 @@ const OverView = () => {
                   },
                   "::placeholder": {
                     fontSize: "0.55rem",
+                    color: "gray", // Default placeholder color
                   },
                   input: {
                     fontSize: "0.875rem",
                     "&:focus": {
-                      // Shows the underline when the input is focused
-                      borderBottom: "2px solid", // Adjust color as needed
+                      borderBottom: "2px solid transparent", // Transparent on focus by default
+                    },
+                    "&:not(:placeholder-shown)": {
+                      // When input has content
+                      "&::placeholder": {
+                        color: "#0F151B !important",
+                      },
+                      "&:focus": {
+                        borderBottom: "1px solid #174B8B", // New underline color when typing
+                      },
                     },
                   },
                 },
@@ -418,8 +445,8 @@ const OverView = () => {
       </Box>
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
-          sx={{ minWidth: "75px", mt: 0.8, mr: 2, color: "#155BE5" }}
+          variant="body1"
+          sx={{ minWidth: "75px", mt: 0.8, mr: 2, color: "#000000" }}
         >
           Currency
         </Typography>
@@ -437,7 +464,7 @@ const OverView = () => {
                     return (
                       <em
                         style={{
-                          color: "#C2C2C2",
+                          color: "#92929D",
                           fontStyle: "normal",
                           fontSize: "13px",
                         }}
@@ -541,12 +568,12 @@ const OverView = () => {
       </Box> */}
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
+          variant="body1"
           sx={{
             minWidth: "75px",
             mr: 2,
             whiteSpace: "nowrap",
-            color: "#155BE5",
+            color: "#000000",
           }}
         >
           Team
@@ -568,7 +595,7 @@ const OverView = () => {
                     return (
                       <em
                         style={{
-                          color: "#C2C2C2",
+                          color: "#92929D",
                           fontStyle: "normal",
                           fontSize: "13px",
                         }}
@@ -610,8 +637,8 @@ const OverView = () => {
       </Box>
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
-          sx={{ minWidth: "75px", mr: 2, color: "#155BE5" }}
+          variant="body1"
+          sx={{ minWidth: "75px", mr: 2, color: "#000000" }}
         >
           Category
         </Typography>
@@ -635,7 +662,7 @@ const OverView = () => {
                     return (
                       <em
                         style={{
-                          color: "#C2C2C2",
+                          color: "#92929D",
                           fontStyle: "normal",
                           fontSize: "13px",
                         }}
@@ -676,8 +703,8 @@ const OverView = () => {
       </Box>
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
-          sx={{ minWidth: "75px", mr: 2, color: "#155BE5" }}
+          variant="body1"
+          sx={{ minWidth: "75px", mr: 2, color: "#000000" }}
         >
           Subcategory
         </Typography>
@@ -695,7 +722,7 @@ const OverView = () => {
                   value === "" ? (
                     <em
                       style={{
-                        color: "#C2C2C2",
+                        color: "#92929D",
                         fontStyle: "normal",
                         fontSize: "13px",
                       }}
@@ -732,12 +759,12 @@ const OverView = () => {
       </Box>
       <Box sx={{ mb: 0 }}>
         <Typography
-          variant="body2"
+          variant="body1"
           sx={{
             minWidth: "75px",
             mr: 2,
             whiteSpace: "nowrap",
-            color: "#155BE5",
+            color: "#000000",
           }}
         >
           Tag
@@ -758,10 +785,9 @@ const OverView = () => {
                     return (
                       <em
                         style={{
-                          color: "#C2C2C2",
+                          color: "#92929D",
                           fontStyle: "normal",
-                          fontSize: "14px",
-                          // Reduced font size for placeholder
+                          fontSize: "13px",
                         }}
                       >
                         Select tag
@@ -798,29 +824,28 @@ const OverView = () => {
           )}
         />
       </Box>
-
+      <Divider sx={{ mt: 1, mb: 2, background: "#174B8B" }} />
       <Box>
         <Button
-          onClick={handleAddField}
-          variant="text"
-          disabled={!canAddField}
+          onClick={() => {
+            if (canAddField) {
+              handleAddField();
+            }
+            setAddFied(true);
+          }}
+          size="small"
           sx={{
             fontSize: "12px",
-            marginLeft: "-0.6rem",
-            color: "#155BE5",
-            backgroundColor: "transparent",
-            boxShadow: "none",
-            "&:hover": {
-              backgroundColor: "transparent",
-              boxShadow: "none",
-            },
-            "&:active": {
-              boxShadow: "none",
-            },
+            mb: "5px",
             textTransform: "none",
+            backgroundColor: "#174B8B", // Set the button color to green
+            "&:hover": {
+              backgroundColor: "#2B6EC2", // Darker green on hover
+            },
           }}
+          variant="contained"
         >
-          <AddIcon sx={{ color: "black", fontSize: "14px" }} /> Add Field
+          <AddIcon sx={{ fontSize: "14px" }} /> Add Field
         </Button>
 
         {fields?.map((field: any, index: any) => (
@@ -864,21 +889,97 @@ const OverView = () => {
             )}
           </Box>
         ))}
-        <TextField
-          value={newField?.name}
-          onChange={(e) => handleNewFieldChange("name", e.target.value)}
-          placeholder="Enter name"
-          size="small"
-          sx={{ mr: 2 }}
-          variant="standard"
-        />
-        <TextField
-          value={newField?.value}
-          onChange={(e) => handleNewFieldChange("value", e.target.value)}
-          placeholder="Enter value"
-          size="small"
-          variant="standard"
-        />
+        {addField && (
+          <>
+            <TextField
+              value={newField?.name}
+              onChange={(e) => handleNewFieldChange("name", e.target.value)}
+              placeholder="Enter name"
+              size="small"
+              sx={{ mr: 2 }}
+              variant="standard"
+              InputProps={{
+                disableUnderline: true, // Disables the underline by default
+                sx: {
+                  "::after": {
+                    borderBottom: "2px solid transparent", // Default state with transparent color
+                  },
+                  "::before": {
+                    borderBottom: "none !important", // Hides the underline
+                  },
+                  ":hover:not(.Mui-disabled)::before": {
+                    borderBottom: "none !important", // Ensures underline stays hidden on hover
+                  },
+                  "input:focus + fieldset": {
+                    border: "none", // Optional: for outlined variant if ever used
+                  },
+                  "::placeholder": {
+                    fontSize: "0.55rem",
+                    color: "gray", // Default placeholder color
+                  },
+                  input: {
+                    fontSize: "0.875rem",
+                    "&:focus": {
+                      borderBottom: "2px solid transparent", // Transparent on focus by default
+                    },
+                    "&:not(:placeholder-shown)": {
+                      // When input has content
+                      "&::placeholder": {
+                        color: "#0F151B !important",
+                      },
+                      "&:focus": {
+                        borderBottom: "1px solid #174B8B", // New underline color when typing
+                      },
+                    },
+                  },
+                },
+              }}
+            />
+            <TextField
+              value={newField?.value}
+              onChange={(e) => handleNewFieldChange("value", e.target.value)}
+              placeholder="Enter value"
+              size="small"
+              variant="standard"
+              InputProps={{
+                disableUnderline: true, // Disables the underline by default
+                sx: {
+                  "::after": {
+                    borderBottom: "2px solid transparent", // Default state with transparent color
+                  },
+                  "::before": {
+                    borderBottom: "none !important", // Hides the underline
+                  },
+                  ":hover:not(.Mui-disabled)::before": {
+                    borderBottom: "none !important", // Ensures underline stays hidden on hover
+                  },
+                  "input:focus + fieldset": {
+                    border: "none", // Optional: for outlined variant if ever used
+                  },
+                  "::placeholder": {
+                    fontSize: "0.55rem",
+                    color: "gray", // Default placeholder color
+                  },
+                  input: {
+                    fontSize: "0.875rem",
+                    "&:focus": {
+                      borderBottom: "2px solid transparent", // Transparent on focus by default
+                    },
+                    "&:not(:placeholder-shown)": {
+                      // When input has content
+                      "&::placeholder": {
+                        color: "#0F151B !important",
+                      },
+                      "&:focus": {
+                        borderBottom: "1px solid #174B8B", // New underline color when typing
+                      },
+                    },
+                  },
+                },
+              }}
+            />
+          </>
+        )}
       </Box>
     </form>
   );

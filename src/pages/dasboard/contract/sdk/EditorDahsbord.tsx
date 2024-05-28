@@ -615,7 +615,7 @@ const MyComponent: React.FC = () => {
             flexDirection: "column", // Typically, card content is laid out vertically
             height: "100vh",
             overflowY: "auto",
-            backgroundColor: "#fff", // Cards usually have a solid background color
+            background: "#F8FAFD",
             // boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.05)", // Adds a subtle shadow similar to Material-UI cards
             transition: "box-shadow 0.3s", // Smooth transition for the shadow, makes interaction more lively
             "&:hover": {
@@ -707,15 +707,17 @@ const MyComponent: React.FC = () => {
                 <Box
                   sx={{
                     position: "relative",
-                    padding: 2,
+                    py: 1,
+                    px: 2,
                     flex: 5,
                     overflow: "auto",
+                    background: "#F8FAFD",
                   }}
                 >
                   <Box
                     sx={{
                       position: "absolute",
-                      top: 0,
+                      top: "5px",
                       right: 0,
                       padding: "8px",
                       display: "flex",
@@ -728,18 +730,36 @@ const MyComponent: React.FC = () => {
                       title={isPinned ? "Unpin" : "Pin"}
                       placement="left"
                     >
-                      <PushPin
+                      <div>
+                        <svg
+                          width="12"
+                          height="16"
+                          viewBox="0 0 12 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10 8V1.6H11V0H1V1.6H2V8L0 9.6V11.2H5.2V16H6.8V11.2H12V9.6L10 8ZM2.8 9.6L4 8.64V1.6H8V8.64L9.2 9.6H2.8Z"
+                            fill={isPinned ? "black" : "#155BE5"}
+                          />
+                        </svg>
+                      </div>
+                      {/* <PushPin
                         onClick={handlePinClick}
                         sx={{
                           cursor: "pointer",
                           color: isPinned ? "primary.main" : "action.active", // Change color when pinned
                         }}
-                      />
+                      /> */}
                     </Tooltip>
 
                     <Close
                       onClick={toggleSidebar}
-                      sx={{ cursor: "pointer", color: "action.active" }}
+                      sx={{
+                        cursor: "pointer",
+                        color: "action.active",
+                        fontSize: "18px",
+                      }}
                     />
                   </Box>
                   {modules[selectedModule].content}

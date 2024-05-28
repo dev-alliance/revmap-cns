@@ -1387,7 +1387,7 @@ function SyncFesion() {
       {(showBlock === "" || showBlock === "pdf") && (
         <>
           <div className="w-full flex justify-between">
-            <div className="flex items-center gap-x-5 min-w-[500px] pb-0 my-2 pl-4">
+            <div className="flex items-center gap-x-8 min-w-[500px] pb-0 my-2 pl-4">
               <div className="relative  ">
                 <button
                   className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${
@@ -1405,28 +1405,47 @@ function SyncFesion() {
                   <span
                     style={{
                       marginLeft: "0.5rem",
+                      marginTop: ".4rem",
                       color: "#174B8B",
                       fontSize: "16px",
-                      transform: openDropdowns.signature
-                        ? "rotate(90deg)"
+                      transform: !openDropdowns.signature
+                        ? "rotate(-90deg)"
                         : "none", // Rotate the chevron when the dropdown is open
                       display: "inline-block", // Ensure the span can be transformed
                       transition: "transform 0.3s ease", // Smooth transition for rotation
                     }}
                   >
-                    »
+                    <svg
+                      width="16"
+                      height="12"
+                      viewBox="0 0 16 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1.88 7.41504L8 10.2513L14.12 7.41504L16 8.29248L8 12L0 8.29248L1.88 7.41504ZM1.88 3.70752L8 6.54377L14.12 3.70752L16 4.58496L8 8.29248L0 4.58496L1.88 3.70752ZM1.88 0L8 2.83625L14.12 0L16 0.877446L8 4.58496L0 0.877446L1.88 0Z"
+                        fill="#174B8B"
+                      />
+                    </svg>
                   </span>{" "}
                 </button>
                 {openDropdowns.signature && (
                   <ul
-                    className="absolute space-y-0 text-[14px] py-2 left-0 -mt-1 w-50 bg-red shadow-lg rounded z-10"
+                    className="absolute space-y-0 text-[14px] py-2 left-0 -mt-1 w-60 bg-red shadow-lg rounded z-10"
                     style={{
                       backgroundColor: "#FFFFFF",
                       border: "1.5px dashed #174B8B",
                     }}
                   >
                     <li
-                      className="px-2 pb-2 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
+                      className="px-2 py-2 pb-2 cursor-pointer flex items-center gap-x-2"
+                      style={{ backgroundColor: "#E4EDF8" }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                       onClick={() => {
                         triggerClick(
                           "container_editor_font_properties_properties"
@@ -1618,7 +1637,7 @@ function SyncFesion() {
                           stroke="#174B8B"
                         />
                       </svg>
-                      Cancel All Signature
+                      Cancel All Signatures
                     </li>
                     <li
                       onClick={() => {
@@ -1640,16 +1659,14 @@ function SyncFesion() {
                     >
                       <svg
                         width="16"
-                        height="18"
-                        viewBox="0 0 16 18"
+                        height="16"
+                        viewBox="0 0 14 16"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          d="M2.24925 7.08754C1.46178 6.22567 1.11613 5.69893 1.01358 4.43391C0.916387 3.23499 1.35071 1.9988 2.0037 1.36731C2.91177 0.489144 3.99008 1.31537 4.59306 2.48019C5.2465 3.74247 5.81153 7.39155 5.85476 8.95648C5.90384 10.7333 5.67812 12.3476 5.09734 13.8921C4.69899 14.9513 4.1104 16.2 3.32699 16.623C2.61703 17.0063 1.84553 16.8634 1.70265 15.5666C1.52751 13.9772 2.01007 12.4287 2.53763 11.1151C3.2371 9.37351 4.12041 7.93155 5.34372 7.08754C10.0609 3.83281 7.27543 14.3129 8.83991 14.3129C10.4044 14.3129 10.5054 9.1645 11.6022 9.98748C12.6989 10.8105 10.6021 15.9217 14.5269 12.6917"
-                          stroke="#174B8B"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          d="M8 0C6.4087 0 4.88258 0.842855 3.75736 2.34315C2.63214 3.84344 2 5.87827 2 8H0L2.59333 11.4578L2.64 11.5822L5.33333 8H3.33333C3.33333 6.34976 3.825 4.76712 4.70017 3.60022C5.57534 2.43333 6.76232 1.77778 8 1.77778C9.23768 1.77778 10.4247 2.43333 11.2998 3.60022C12.175 4.76712 12.6667 6.34976 12.6667 8C12.6667 9.65024 12.175 11.2329 11.2998 12.3998C10.4247 13.5667 9.23768 14.2222 8 14.2222C6.71333 14.2222 5.54667 13.52 4.70667 12.3911L3.76 13.6533C4.84667 15.1111 6.33333 16 8 16C9.5913 16 11.1174 15.1571 12.2426 13.6569C13.3679 12.1566 14 10.1217 14 8C14 5.87827 13.3679 3.84344 12.2426 2.34315C11.1174 0.842855 9.5913 0 8 0Z"
+                          fill="#174B8B"
                         />
                       </svg>
                       Revert To Review
@@ -1778,7 +1795,7 @@ function SyncFesion() {
                       className="px-2 py-2 hover:bg-gray-200 cursor-pointer  border-b border-[#174B8B] flex items-center gap-x-1 no-wrap"
                     >
                       <svg
-                        width="14"
+                        width="18"
                         height="16"
                         viewBox="0 0 14 16"
                         fill="none"
@@ -1789,7 +1806,10 @@ function SyncFesion() {
                           fill="#174B8B"
                         />
                       </svg>
-                      Download Signature Certificate
+                      <span style={{ marginTop: "-2px", marginLeft: "2px" }}>
+                        {" "}
+                        Download Signature Certificate
+                      </span>
                     </li>
                     <li
                       onClick={() => {
@@ -1872,28 +1892,28 @@ function SyncFesion() {
               </div>
               <p className="text-[14px] font-regular flex whitespace-nowrap ">
                 Approvals: 0/0{" "}
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular mt-0.5 ">
                   Manage{" "}
                 </span>{" "}
               </p>
 
               <p className="text-[14px] font-regular flex whitespace-nowrap">
-                Signatures: 0/0{" "}
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                Signers: 0/0{" "}
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular mt-0.5  ">
                   Manage{" "}
                 </span>{" "}
               </p>
 
               <p className="text-[14px] font-regular flex whitespace-nowrap">
-                Collaborators: 0/0{" "}
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                Collaborators: 0
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular mt-0.5  ">
                   Manage{" "}
                 </span>{" "}
               </p>
 
               <p className="text-[14px] font-regular flex whitespace-nowrap">
-                Custom Fields: 0/0{" "}
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular ">
+                Fields: 0/0{" "}
+                <span className="ml-1 text-[#92929D] text-[12px] font-regular  mt-0.5 ">
                   Manage{" "}
                 </span>{" "}
               </p>
