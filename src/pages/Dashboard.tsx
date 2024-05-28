@@ -118,7 +118,7 @@ import { useContract } from "@/hooks/useContract";
 import { useLocation } from "react-router-dom";
 import { ContractContext } from "@/context/ContractContext";
 import NewSyncsF from "@/pages/dasboard/contract/sdk/NewSyncsF";
-import Default from "@/Default";
+
 // Usage: <ArticleIcon />
 
 // Usage: <AssignmentIcon />

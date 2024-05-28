@@ -11,7 +11,6 @@ import ForgotPassword from "@/pages/ForgotPassword";
 import Dashboard from "@/pages/Dashboard";
 import { AuthProvider } from "@/context/AuthContext";
 import { ContractProvider } from "@/context/ContractContext";
-import Default from "@/Default";
 function App() {
   return (
     <>
