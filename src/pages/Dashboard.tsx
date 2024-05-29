@@ -409,7 +409,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Documents"
+          title={leftsidebarExpanded ? "Documents" : ""}
         >
           <ListItemButton
             sx={{
@@ -491,7 +491,7 @@ export default function Dashboard() {
           </ListItemButton>
         </Tooltip>
         <Collapse in={openSections.contract} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
+          <List component="div" disablePadding sx={{ mt: -2 }}>
             {statuses?.map((statusItem) => (
               <ListItemButton
                 key={statusItem}

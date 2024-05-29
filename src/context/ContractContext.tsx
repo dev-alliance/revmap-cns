@@ -123,8 +123,8 @@ interface ContractContextProps {
   leftsidebarExpanded: any | null;
   setLeftSidebarExpanded: Dispatch<SetStateAction<any>>;
 
-  sidePine: any | null;
-  setSidePine: Dispatch<SetStateAction<any>>;
+  attachments: any | null;
+  setAttachments: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -199,8 +199,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setDucomentName: () => {},
   leftsidebarExpanded: {},
   setLeftSidebarExpanded: () => {},
-  sidePine: {},
-  setSidePine: () => {},
+  attachments: {},
+  setAttachments: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -255,7 +255,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [openDocoment, setOpenDocoment] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>("overview");
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
-  const [sidePine, setSidePine] = useState<boolean>(false);
+  const [attachments, setAttachments] = useState<Array<any>>([]);
   const [showCompanySelect, setShowCompanySelect] = useState(false);
   const [showConditionalSelect, setShowConditionalSelect] = useState(false);
   const [showSignatories, setShowSignatories] = useState<any>("");
@@ -456,13 +456,12 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (leftsidebarExpanded) {
       setLeftSidebarExpanded(JSON.parse(leftsidebarExpanded));
     }
-    const sidePine = localStorage.getItem("sidePine");
-    if (sidePine) {
-      setSidePine(JSON.parse(sidePine));
+    const attachments = localStorage.getItem("attachments");
+    if (attachments) {
+      setAttachments(JSON.parse(attachments));
     }
   }, []);
   useEffect(() => {
-    // Check if 'contract' is not null before storing
     if (contract) {
       localStorage.setItem("contract", JSON.stringify(contract));
     }
@@ -479,7 +478,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (lifecycleData) {
       localStorage.setItem("lifecycleData", JSON.stringify(lifecycleData));
     }
-  }, [contract, comments, collaborater]);
+    if (attachments) {
+      localStorage.setItem("attachments", JSON.stringify(attachments));
+    }
+  }, [contract, comments, collaborater, attachments]);
 
   return (
     <ContractContext.Provider
@@ -555,8 +557,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setDucomentName,
         leftsidebarExpanded,
         setLeftSidebarExpanded,
-        sidePine,
-        setSidePine,
+        attachments,
+        setAttachments,
       }}
     >
       {children}

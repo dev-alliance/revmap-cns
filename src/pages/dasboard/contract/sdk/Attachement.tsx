@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useState, useContext } from "react";
+import React, { useCallback, useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDropzone } from "react-dropzone";
 import {
@@ -9,40 +9,83 @@ import {
   Button,
   Box,
   TextField,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import logo from "@/assets/upload_logo.png";
 import { ContractContext } from "@/context/ContractContext";
 import AddIcon from "@mui/icons-material/Add";
+import { useAuth } from "@/hooks/useAuth";
+import { getList } from "@/service/api/contract";
+import ContractList from "@/pages/dasboard/contract/ContractList";
 const Attachement = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<any>();
-  const { activeSection, setActiveSection, showButtons, setShowButtons } =
+  const { activeSection, setActiveSection, attachments, setAttachments } =
     useContext(ContractContext);
+  const { user } = useAuth();
 
-  const [attachments, setAttachments] = useState<any>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showselectField, setShowselectField] = useState(false);
+
   const [reason, setReason] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [selectedDocument, setSelectedDocuments] = useState("");
+  const [cntractlist, setContractlist] = useState<Array<any>>([]);
+
+  const [fileUrl, setFileUrl] = useState<string | null>(null); // State to store the file URL
+
+  const onDrop = useCallback((acceptedFiles: any) => {
+    const file = acceptedFiles[0];
+    setSelectedFile(file);
+    const url = URL.createObjectURL(file); // Create a URL for the file
+    setFileUrl(url); // Store the URL in state
+  }, []);
+
+  const { getRootProps, getInputProps, open } = useDropzone({
+    onDrop,
+    noClick: true, // Disable automatic click handling
+    noKeyboard: true, // Optional, to disable keyboard interaction if not needed
+  });
+
+  const inputProps = getInputProps({
+    onChange: (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files && event.target.files.length > 0) {
+        const file = event.target.files[0];
+        setSelectedFile(file);
+        const url = URL.createObjectURL(file); // Create a URL for the file
+        setFileUrl(url); // Update the state with the new URL
+      }
+    },
+  });
+
+  const onBrowseClick = () => {
+    open(); // Only open the file dialog when the Browse text is explicitly clicked
+  };
 
   const handleAddAttachment = () => {
-    // This function will append a new attachment to the existing list
-    if (reason && selectedFile) {
-      const newAttachment = { reason, file: selectedFile };
+    if (reason && (selectedFile || selectedDocument)) {
+      // Use selectedDocument if it exists, otherwise use selectedFile
+      const newAttachment = {
+        reason,
+        file: selectedDocument ? selectedDocument : selectedFile.name,
+        fileUrl: selectedFile ? fileUrl : undefined, // Use fileUrl only if selectedFile is defined
+      };
       setAttachments((prevAttachments: any) => [
         ...prevAttachments,
         newAttachment,
       ]);
-      // Clear the input for reason and the selected file to allow for new entries
+      // Reset the inputs after adding
       setReason("");
       setSelectedFile(null);
+      setSelectedDocuments("");
+      setShowselectField(false);
+      setFileUrl(null);
     }
-  };
-
-  const handleFileChange = (event: any) => {
-    setSelectedFile(event.target.files[0]);
   };
 
   const handleRemoveAttachment = (index: any) => {
@@ -51,14 +94,21 @@ const Attachement = () => {
     );
   };
 
-  const onDrop = useCallback((acceptedFiles: any) => {
-    setSelectedFile(acceptedFiles[0]);
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    multiple: false, // This is set to false as per your setup to handle one file at a time
-  });
+  const listData = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await getList(user?._id);
+      setContractlist(data);
+      console.log("contract", data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (user?._id) listData();
+  }, [user?._id]);
 
   const onRemoveFile = () => {
     setSelectedFile(null);
@@ -103,7 +153,7 @@ const Attachement = () => {
             setActiveSection("Attachments");
           }}
         >
-          + Attachments
+          Attachments
         </Button>
 
         <Button
@@ -131,45 +181,82 @@ const Attachement = () => {
           + Link Documents
         </Button>
       </Box>
-      {activeSection === "Attachments" && <></>}
-      {activeSection === "linkDocuments" && (
-        <div>
-          <TextField
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            placeholder="Enter Attachment Reason"
-            size="small"
-            variant="standard"
-            InputProps={{
-              disableUnderline: true,
-              sx: {
-                "::after": { borderBottom: "2px solid transparent" },
-                "::before": { borderBottom: "none !important" },
-                ":hover:not(.Mui-disabled)::before": {
-                  borderBottom: "none !important",
-                },
-                "::placeholder": { fontSize: "0.55rem", color: "gray" },
-                input: {
-                  fontSize: "0.875rem",
-                  "&:focus": { borderBottom: "2px solid transparent" },
-                  "&:not(:placeholder-shown)": {
-                    "&::placeholder": { color: "#0F151B !important" },
-                    "&:focus": { borderBottom: "1px solid #174B8B" },
-                  },
-                },
-              },
-            }}
-          />
-          <div
-            {...getRootProps()}
-            style={{
-              marginTop: "1rem",
-              borderRadius: "10px",
-              border: "1.5px dashed #174B8B",
-              cursor: "pointer",
+      {activeSection === "Attachments" && (
+        <>
+          {" "}
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#92929D",
+              textAlign: "center",
+              justifyItems: "center",
             }}
           >
-            <input {...getInputProps()} />
+            No attachments added
+          </Typography>
+        </>
+      )}
+      {activeSection === "linkDocuments" && (
+        <div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Button
+              variant="text"
+              sx={{
+                whiteSpace: "nowrap",
+                backgroundColor: "#174B8B", // Ensures there is no background color
+                "&:hover": {
+                  backgroundColor: "#2B6EC2", // Darker green on hover
+                },
+                color: "white", // Text color
+                width: "55%", // Full width of the FormControl
+                textTransform: "none",
+                height: "25px",
+                fontSize: "14px",
+                px: "2",
+                mr: 0.9,
+                mt: -0.5, // Prevents uppercase transformation
+              }}
+            >
+              This document
+            </Button>
+            <TextField
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="add relationship"
+              size="small"
+              variant="standard"
+              InputProps={{
+                disableUnderline: true,
+                sx: {
+                  "::after": { borderBottom: "2px solid transparent" },
+                  ":hover:not(.Mui-disabled)::before": {
+                    borderBottom: "none !important",
+                  },
+                  "::placeholder": { fontSize: "14px", color: "#92929D" },
+                  input: {
+                    fontSize: "14px",
+                    borderBottom: "1px solid #174B8B", // Default border applied here
+                    "&:focus": { borderBottom: "1px solid #174B8B" },
+                    "&:not(:placeholder-shown)": {
+                      "&::placeholder": { color: "#0F151B !important" },
+                    },
+                  },
+                },
+              }}
+            />
+          </div>
+          <div
+            {...getRootProps({
+              style: {
+                marginTop: "1rem",
+                borderRadius: "10px",
+                border: "1.5px dashed #174B8B",
+
+                pointerEvents: "auto",
+                opacity: 1,
+              },
+            })}
+          >
             <div
               style={{
                 display: "flex",
@@ -177,55 +264,205 @@ const Attachement = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 height: "45px",
+                opacity: reason ? 1 : 0.5,
               }}
             >
               <p>
-                Drag n drop files or &nbsp;
-                <span style={{ color: "#155BE5" }}>Browse</span>
+                {selectedFile ? (
+                  selectedFile.name
+                ) : (
+                  <>
+                    <span
+                      style={{
+                        color: "#155BE5",
+                        cursor: reason ? "pointer" : "",
+                      }}
+                      onClick={
+                        reason && !showselectField ? onBrowseClick : undefined
+                      }
+                    >
+                      <input
+                        {...getInputProps()}
+                        disabled={!reason}
+                        style={{ display: "none" }}
+                      />
+                      Browse
+                    </span>
+                    &nbsp; or &nbsp;
+                    <span
+                      style={{
+                        color: "#155BE5",
+                        cursor: reason ? "pointer" : "",
+                      }}
+                      onClick={() => {
+                        reason && !selectedDocument
+                          ? setShowselectField(true)
+                          : undefined;
+                      }}
+                    >
+                      select files
+                    </span>
+                  </>
+                )}
               </p>
             </div>
           </div>
-          {attachments?.map((attachment: any, index: any) => (
-            <div
-              key={index}
-              style={{
-                marginTop: "20px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+          {showselectField && (
+            <Select
+              fullWidth
+              onChange={(e) => setSelectedDocuments(e.target.value)}
+              value={selectedDocument}
+              labelId="team-label"
+              placeholder="Team"
+              displayEmpty
+              renderValue={(value) => {
+                if (value === "") {
+                  return (
+                    <em
+                      style={{
+                        color: "#92929D",
+                        fontStyle: "normal",
+                        fontSize: "13px",
+                      }}
+                    >
+                      Select Document
+                    </em> // Placeholder text with custom color
+                  );
+                }
+
+                // Find the team with the matching ID in teamData and return its name
+                const selectdocument = cntractlist.find(
+                  (doc) => doc._id === value
+                );
+                return selectdocument ? selectdocument.overview?.with_name : "";
               }}
-            >
-              <Typography variant="body1" sx={{ width: "110px" }}>
-                {attachment?.reason}:
-              </Typography>
-              <Typography variant="body1" sx={{ width: "110px" }}>
-                {attachment?.file.name}
-              </Typography>
-              <IconButton
-                onClick={() => handleRemoveAttachment(index)}
-                aria-label="remove"
-              >
-                <CloseIcon />
-              </IconButton>
-            </div>
-          ))}
-          <Box sx={{ mt: "1rem", display: "flex", justifyContent: "flex-end" }}>
-            <Button
-              size="small"
-              disabled={!reason || !selectedFile}
-              onClick={handleAddAttachment}
               sx={{
-                fontSize: "12px",
-                mb: "5px",
-                textTransform: "none",
-                backgroundColor: "#174B8B",
-                "&:hover": { backgroundColor: "#2B6EC2" },
+                ".MuiSelect-select": {
+                  border: "none", // Remove border
+                  fontSize: "13px", // Ensure consistent font size
+                  marginLeft: "-0.8rem",
+                  "&:focus": {
+                    backgroundColor: "transparent", // Remove the background color on focus
+                  },
+                },
+                ".MuiOutlinedInput-notchedOutline": {
+                  border: "none", // Ensure no border
+                },
               }}
-              variant="contained"
             >
-              <AddIcon sx={{ fontSize: "14px" }} /> Add Attachment
+              <MenuItem value="">
+                <em style={{ fontSize: "13px" }}>None</em>{" "}
+                {/* This is the 'deselect' option */}
+              </MenuItem>
+              {cntractlist?.map((doc: any) => (
+                <MenuItem key={doc._id} value={doc._id}>
+                  {doc.overview?.with_name}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+
+          <Box sx={{ my: "1rem", display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              variant="outlined"
+              disabled={
+                !reason ||
+                (!selectedFile && !selectedDocument && !showselectField)
+              }
+              color="error"
+              sx={{
+                height: "25px !important",
+                fontSize: "0.675rem",
+                textTransform: "none",
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+              onClick={() => {
+                setReason("");
+                setSelectedFile(null);
+                setSelectedDocuments("");
+                setShowselectField(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              sx={{
+                ml: 2,
+                textTransform: "none",
+                height: "25px !important",
+                fontSize: "0.675rem",
+              }}
+              disabled={!reason || (!selectedFile && !selectedDocument)}
+              onClick={handleAddAttachment}
+              variant="outlined"
+              color="success"
+            >
+              Save
             </Button>
           </Box>
+
+          {attachments?.map((attachment: any, index: any) => {
+            const name = cntractlist.filter(
+              (list) => list._id == attachment.file
+            );
+            console.log(name[0]?.overview?.with_name, "name");
+
+            return (
+              <div
+                key={index}
+                style={{
+                  marginBottom: "-8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{ width: "120px", whiteSpace: "nowrap" }}
+                >
+                  {attachment?.reason}:
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    width: "130px",
+                    whiteSpace: "nowrap",
+                    color: "#155BE5",
+                  }}
+                >
+                  {
+                    name[0]?.overview?.with_name ? (
+                      name[0]?.overview?.with_name
+                    ) : // Ensure fileUrl is not null before rendering the link
+                    attachment.fileUrl ? (
+                      <a
+                        href={attachment.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#155BE5", textDecoration: "none" }}
+                      >
+                        {attachment?.file}
+                      </a>
+                    ) : null // Or handle the case when fileUrl is null (perhaps render something else or nothing)
+                  }
+                </Typography>
+                <IconButton
+                  onClick={() => handleRemoveAttachment(index)}
+                  aria-label="remove"
+                >
+                  <CloseIcon
+                    sx={{
+                      cursor: "pointer",
+                      color: "action.active",
+                      fontSize: "18px",
+                    }}
+                  />
+                </IconButton>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

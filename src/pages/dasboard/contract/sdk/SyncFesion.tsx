@@ -132,8 +132,6 @@ function SyncFesion() {
     documentName,
     setDucomentName,
     setLeftSidebarExpanded,
-    sidePine,
-    setSidePine,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
@@ -1439,7 +1437,6 @@ function SyncFesion() {
                   >
                     <li
                       className="px-2 py-2 pb-2 cursor-pointer flex items-center gap-x-2"
-                      style={{ backgroundColor: "#E4EDF8" }}
                       onMouseEnter={(e) =>
                         (e.currentTarget.style.backgroundColor = "#E4EDF8")
                       }
@@ -1472,7 +1469,13 @@ function SyncFesion() {
                         saveDocumentToState();
                         toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200  cursor-pointer flex items-center gap-x-2"
+                      className="px-2 py-2 cursor-pointer flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="14"
@@ -1494,7 +1497,13 @@ function SyncFesion() {
                         saveDocumentToState();
                         toggleDropdown("signature");
                       }}
-                      className="px-2  py-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                      className="px-2  py-2 cursor-pointer   flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="14"
@@ -1512,11 +1521,17 @@ function SyncFesion() {
                     </li>
 
                     <li
-                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer border-y border-[#174B8B] flex items-center gap-x-2"
+                      className="px-2 py-2 cursor-pointer border-y border-[#174B8B] flex items-center gap-x-2"
                       onClick={() => {
                         setShowPopup((current: any) => !current);
                         toggleDropdown("signature");
                       }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="14"
@@ -1537,7 +1552,13 @@ function SyncFesion() {
                         saveDocumentToState();
                         toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200  cursor-pointer  flex items-center gap-x-2"
+                      className="px-2 py-2   cursor-pointer  flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="14"
@@ -1579,7 +1600,13 @@ function SyncFesion() {
                       onClick={() => {
                         toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                      className="px-2 py-2  cursor-pointer   flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="14"
@@ -1600,6 +1627,17 @@ function SyncFesion() {
                         cancelAllSignatures(), toggleDropdown("signature");
                       }}
                       className="px-2 py-2   flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          !recipients.some(
+                            (recipient: any) => recipient.signature
+                          )
+                            ? "inherit"
+                            : "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                       style={{
                         color: !recipients.some(
                           (recipient: any) => recipient.signature
@@ -1643,6 +1681,17 @@ function SyncFesion() {
                       onClick={() => {
                         reverToReview(), toggleDropdown("signature");
                       }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          !recipients.some(
+                            (recipient: any) => recipient.signature
+                          )
+                            ? "inherit"
+                            : "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                       className="px-2  py-2 cursor-pointer flex items-center gap-x-2"
                       style={{
                         color: !recipients.some(
@@ -1675,7 +1724,13 @@ function SyncFesion() {
                       onClick={() => {
                         toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer pt-2 border-b border-[#174B8B] flex items-center gap-x-2"
+                      className="px-2 py-2 cursor-pointer pt-2 border-b border-[#174B8B] flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="16"
@@ -1703,7 +1758,13 @@ function SyncFesion() {
                       onClick={() => {
                         onClick(), toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer   flex items-center gap-x-2"
+                      className="px-2 py-2  cursor-pointer   flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="16"
@@ -1771,7 +1832,13 @@ function SyncFesion() {
                       onClick={() => {
                         save(), toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer  flex items-center gap-x-2"
+                      className="px-2 py-2cursor-pointer  flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="16"
@@ -1792,7 +1859,13 @@ function SyncFesion() {
                         toggleDropdown("signature");
                       }}
                       style={{ whiteSpace: "nowrap" }}
-                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer  border-b border-[#174B8B] flex items-center gap-x-1 no-wrap"
+                      className="px-2 py-2 cursor-pointer  border-b border-[#174B8B] flex items-center gap-x-1 no-wrap"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="18"
@@ -1815,7 +1888,13 @@ function SyncFesion() {
                       onClick={() => {
                         toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer flex items-center gap-x-2"
+                      className="px-2 py-2 cursor-pointer flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="16"
@@ -1846,7 +1925,13 @@ function SyncFesion() {
                         toggleDropdown("signature");
                       }}
                       style={{ whiteSpace: "nowrap" }}
-                      className="px-2 py-2 hover:bg-gray-200 border-b border-[#174B8B] cursor-pointer flex items-center gap-x-2 no-wrap"
+                      className="px-2 py-2 border-b border-[#174B8B] cursor-pointer flex items-center gap-x-2 no-wrap"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="14"
@@ -1867,7 +1952,13 @@ function SyncFesion() {
                         saveDocumentToState();
                         toggleDropdown("signature");
                       }}
-                      className="px-2 py-2 hover:bg-gray-200  cursor-pointer  flex items-center gap-x-2"
+                      className="px-2 py-2  cursor-pointer  flex items-center gap-x-2"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "initial")
+                      }
                     >
                       <svg
                         width="14"
@@ -2028,7 +2119,9 @@ function SyncFesion() {
         </div>
       )}
 
-      {documentPath && <PDFUploaderViewer documentPath={documentPath} />}
+      {documentContent == "pdf" && (
+        <PDFUploaderViewer documentPath={documentPath} />
+      )}
 
       {(showBlock === "" || documentContent == "word") && (
         <div
@@ -2046,7 +2139,7 @@ function SyncFesion() {
             toolbarItems={items}
             toolbarClick={onToolbarClick}
             serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
-            showPropertiesPane={sidePine}
+            showPropertiesPane={false}
             documentEditorSettings={{
               searchHighlightColor: "red",
             }}

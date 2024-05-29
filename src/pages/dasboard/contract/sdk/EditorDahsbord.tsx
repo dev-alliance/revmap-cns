@@ -78,8 +78,6 @@ const MyComponent: React.FC = () => {
     editMode,
     documentName,
     setDucomentName,
-    setSidePine,
-    sidePine,
   } = useContext(ContractContext);
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -591,9 +589,6 @@ const MyComponent: React.FC = () => {
     setSelectedModule(moduleName);
   };
 
-  const toggleToolbarVisibility = () => {
-    setSidePine(!sidePine);
-  };
   return (
     <>
       <Box sx={{ display: "flex", width: "100%", height: "100vh" }}>
@@ -672,7 +667,6 @@ const MyComponent: React.FC = () => {
                           handleModuleClick(key);
                           if (!sidebarExpanded) {
                             setSidebarExpanded(true);
-                            setSidePine(false);
                           }
                         }
                       }}
@@ -737,10 +731,12 @@ const MyComponent: React.FC = () => {
                           viewBox="0 0 12 16"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
+                          onClick={handlePinClick}
+                          style={{ cursor: "pointer" }}
                         >
                           <path
                             d="M10 8V1.6H11V0H1V1.6H2V8L0 9.6V11.2H5.2V16H6.8V11.2H12V9.6L10 8ZM2.8 9.6L4 8.64V1.6H8V8.64L9.2 9.6H2.8Z"
-                            fill={isPinned ? "black" : "#155BE5"}
+                            fill={isPinned ? "#155BE5" : "black"}
                           />
                         </svg>
                       </div>

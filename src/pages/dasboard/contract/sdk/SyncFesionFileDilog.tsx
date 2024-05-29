@@ -37,7 +37,8 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
   const fileInputRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
-  const { setDucomentName, setShowBlock } = useContext(ContractContext);
+  const { setDucomentName, setShowBlock, setDocumentContent } =
+    useContext(ContractContext);
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
@@ -55,18 +56,13 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
       };
       reader.readAsDataURL(file);
       setShowBlock("pdf");
+      setDocumentContent("pdf");
       onClose();
     } else {
       alert("Please upload a valid PDF file.");
     }
   };
-  useEffect(() => {
-    // This can be used to trigger actions that depend on states updated by file upload
-    if (documentPath) {
-      // Assuming documentPath should trigger something
-      triggerClick();
-    }
-  }, [documentPath]);
+
   return (
     <>
       <Dialog
@@ -198,9 +194,12 @@ const SyncFesionFileDilog: React.FC<DetailDialogProps> = ({
 
             <Button
               onClick={() => {
-                triggerClick();
+                setShowBlock("");
+                setTimeout(() => {
+                  triggerClick();
+                }, 500); // Delay of 1000 milliseconds (1 second)
                 onClose();
-                setDocumentPath("");
+                setDocumentContent("word");
               }}
               variant="outlined"
               sx={{
