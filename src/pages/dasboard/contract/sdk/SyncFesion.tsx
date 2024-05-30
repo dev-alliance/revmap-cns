@@ -1223,8 +1223,35 @@ function SyncFesion() {
     setEnabelEditing(false);
     const documentEditor = editorContainerRef.current?.documentEditor;
     documentEditor.focusIn(); // Focusing the editor
-  };
+    const buttons = document.querySelectorAll(".e-tbar-btn");
+    const items = document.querySelectorAll(".e-toolbar-item");
+    items.forEach((item) => {
+      item.classList.remove("e-overlay");
 
+      console.log(item, "e-overlay"); // This line is optional, for debugging purposes
+    });
+
+    buttons.forEach((button) => {
+      button.setAttribute("aria-disabled", "false");
+
+      console.log(button.id, "aria-disabled set to false"); // This line is optional, for debugging purposes
+    });
+  };
+  const handleClickCencel = () => {
+    setEditMode(false);
+    setEnabelEditing(true);
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    documentEditor.focusIn(); // Focusing the editor
+    const buttons = document.querySelectorAll(".e-tbar-btn");
+    const items = document.querySelectorAll(".e-toolbar-item");
+    items.forEach((item) => {
+      item.classList.add("e-overlay");
+    });
+
+    buttons.forEach((button) => {
+      button.setAttribute("aria-disabled", "true");
+    });
+  };
   const inputWidth =
     documentName.length > 0
       ? `${Math.max(110, documentName.length * 11.5)}px`
@@ -2052,8 +2079,7 @@ function SyncFesion() {
                       justifyContent: "flex-end",
                     }}
                     onClick={() => {
-                      setEditMode(false);
-                      setEnabelEditing(true);
+                      handleClickCencel();
                     }}
                   >
                     Cancel
