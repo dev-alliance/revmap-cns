@@ -11,6 +11,7 @@ import {
   TextField,
   Select,
   MenuItem,
+  FormControl,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import logo from "@/assets/upload_logo.png";
@@ -243,6 +244,9 @@ const Attachement = () => {
                   },
                 },
               }}
+              inputProps={{
+                maxLength: 30, // Limiting input to 25 characters
+              }}
             />
           </div>
           <div
@@ -300,66 +304,111 @@ const Attachement = () => {
                           : undefined;
                       }}
                     >
-                      select files
+                      Select
                     </span>
+                    &nbsp; files
                   </>
                 )}
               </p>
             </div>
           </div>
           {showselectField && (
-            <Select
-              fullWidth
-              onChange={(e) => setSelectedDocuments(e.target.value)}
-              value={selectedDocument}
-              labelId="team-label"
-              placeholder="Team"
-              displayEmpty
-              renderValue={(value) => {
-                if (value === "") {
-                  return (
-                    <em
-                      style={{
-                        color: "#92929D",
-                        fontStyle: "normal",
-                        fontSize: "13px",
-                      }}
-                    >
-                      Select Document
-                    </em> // Placeholder text with custom color
+            //   <FormControl
+            //   size="small"
+            //   variant="standard"
+            //   sx={{ ml: 2, width: "60%" }}
+            // >
+            //   <Select
+            //     name="renewalType"
+            //     value={
+            //       lifecycleData.formData.renewalDetails.renewalType
+            //     }
+            //     onChange={(e) =>
+            //       handleFieldChange(
+            //         "formData.renewalDetails.renewalType",
+            //         e.target.value
+            //       )
+            //     }
+            //     labelId="renewal-type-label"
+            //     label="Type"
+            //     displayEmpty
+            //     inputProps={{
+            //       "aria-label": "Without label",
+            //       sx: {
+            //         backgroundColor: "#f0f0f0",
+            //       },
+            //     }}
+            //   >
+            //     <MenuItem value="days">Day(s)</MenuItem>
+            //     <MenuItem value="months">Month(s)</MenuItem>
+            //     <MenuItem value="years">Year(s)</MenuItem>
+            //   </Select>
+            // </FormControl>
+            <FormControl fullWidth variant="standard" sx={{ mt: 1 }}>
+              <Select
+                onChange={(e) => setSelectedDocuments(e.target.value)}
+                value={selectedDocument}
+                labelId="team-label"
+                displayEmpty
+                renderValue={(value) => {
+                  if (value === "") {
+                    return (
+                      <em
+                        style={{
+                          color: "#92929D",
+                          fontStyle: "normal",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Select Document
+                      </em>
+                    );
+                  }
+                  const selectdocument = cntractlist.find(
+                    (doc) => doc._id === value
                   );
-                }
-
-                // Find the team with the matching ID in teamData and return its name
-                const selectdocument = cntractlist.find(
-                  (doc) => doc._id === value
-                );
-                return selectdocument ? selectdocument.overview?.with_name : "";
-              }}
-              sx={{
-                ".MuiSelect-select": {
-                  border: "none", // Remove border
-                  fontSize: "13px", // Ensure consistent font size
-                  marginLeft: "-0.8rem",
-                  "&:focus": {
-                    backgroundColor: "transparent", // Remove the background color on focus
+                  return selectdocument
+                    ? selectdocument.overview?.with_name
+                    : "";
+                }}
+                sx={{
+                  ".MuiSelect-select": {
+                    fontSize: "13px",
+                    border: "none", // Disable the border
+                    "&:focus": {
+                      backgroundColor: "transparent",
+                      borderBottom: "2px solid green", // Underline color when focused
+                    },
+                    "&:hover": {
+                      borderBottom: "2px solid red", // Underline color on hover
+                    },
+                    "&::before, &::after": {
+                      borderBottom: "2px solid red", // Underline color on hover
+                    },
                   },
-                },
-                ".MuiOutlinedInput-notchedOutline": {
-                  border: "none", // Ensure no border
-                },
-              }}
-            >
-              <MenuItem value="">
-                <em style={{ fontSize: "13px" }}>None</em>{" "}
-                {/* This is the 'deselect' option */}
-              </MenuItem>
-              {cntractlist?.map((doc: any) => (
-                <MenuItem key={doc._id} value={doc._id}>
-                  {doc.overview?.with_name}
+                  "& .MuiInput-underline:before, & .MuiInput-underline:after": {
+                    borderBottom: "2px solid red", // Underline color on hover
+                  },
+                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                    borderBottom: "", // Ensure there is no underline on hover
+                  },
+                  // Adjust placeholder styles if needed
+                  "::placeholder": {
+                    fontSize: "14px",
+                    color: "#92929D",
+                  },
+                }}
+              >
+                <MenuItem value="">
+                  <em style={{ fontSize: "13px" }}>None</em>
                 </MenuItem>
-              ))}
-            </Select>
+                {cntractlist?.map((doc) => (
+                  <MenuItem key={doc._id} value={doc._id}>
+                    {doc.overview?.with_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           )}
 
           <Box sx={{ my: "1rem", display: "flex", justifyContent: "flex-end" }}>
@@ -412,54 +461,56 @@ const Attachement = () => {
               <div
                 key={index}
                 style={{
-                  marginBottom: "-8px",
+                  marginBottom: "0px",
                   display: "flex",
                   alignItems: "center",
+
                   justifyContent: "center",
                 }}
               >
-                <Typography
-                  variant="body1"
-                  sx={{ width: "120px", whiteSpace: "nowrap" }}
-                >
-                  {attachment?.reason}:
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    width: "130px",
-                    whiteSpace: "nowrap",
-                    color: "#155BE5",
-                  }}
-                >
-                  {
-                    name[0]?.overview?.with_name ? (
-                      name[0]?.overview?.with_name
-                    ) : // Ensure fileUrl is not null before rendering the link
-                    attachment.fileUrl ? (
-                      <a
-                        href={attachment.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: "#155BE5", textDecoration: "none" }}
-                      >
-                        {attachment?.file}
-                      </a>
-                    ) : null // Or handle the case when fileUrl is null (perhaps render something else or nothing)
-                  }
-                </Typography>
-                <IconButton
-                  onClick={() => handleRemoveAttachment(index)}
-                  aria-label="remove"
-                >
-                  <CloseIcon
+                <div style={{ width: "80%" }}>
+                  <Typography variant="body1" sx={{ whiteSpace: "nowrap" }}>
+                    {attachment?.reason}
+                  </Typography>
+                  <Typography
+                    variant="body1"
                     sx={{
-                      cursor: "pointer",
-                      color: "action.active",
-                      fontSize: "18px",
+                      whiteSpace: "nowrap",
+                      color: "#155BE5",
                     }}
-                  />
-                </IconButton>
+                  >
+                    {
+                      name[0]?.overview?.with_name ? (
+                        name[0]?.overview?.with_name
+                      ) : // Ensure fileUrl is not null before rendering the link
+                      attachment.fileUrl ? (
+                        <a
+                          href={attachment.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "#155BE5", textDecoration: "none" }}
+                        >
+                          {attachment?.file}
+                        </a>
+                      ) : null // Or handle the case when fileUrl is null (perhaps render something else or nothing)
+                    }
+                  </Typography>
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                  <IconButton
+                    onClick={() => handleRemoveAttachment(index)}
+                    aria-label="remove"
+                  >
+                    <CloseIcon
+                      sx={{
+                        cursor: "pointer",
+                        color: "action.active",
+
+                        fontSize: "18px",
+                      }}
+                    />
+                  </IconButton>
+                </div>
               </div>
             );
           })}

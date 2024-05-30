@@ -260,6 +260,7 @@ const OverView = () => {
           rules={{ required: "This field is required" }}
           render={({ field }) => (
             <TextField
+              title={documentName}
               {...field}
               placeholder="Add document name"
               fullWidth
@@ -308,6 +309,9 @@ const OverView = () => {
                   },
                 },
               }}
+              inputProps={{
+                maxLength: 50, // HTML5 attribute to limit characters directly in the input field
+              }}
             />
           )}
         />
@@ -332,6 +336,7 @@ const OverView = () => {
           rules={{ required: "This field is required" }}
           render={({ field }) => (
             <TextField
+              title={field?.value}
               {...field}
               placeholder="Add third party name"
               fullWidth
@@ -372,6 +377,9 @@ const OverView = () => {
                     },
                   },
                 },
+              }}
+              inputProps={{
+                maxLength: 50, // HTML5 attribute to limit characters directly in the input field
               }}
             />
           )}

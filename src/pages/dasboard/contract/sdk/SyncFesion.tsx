@@ -1137,6 +1137,18 @@ function SyncFesion() {
         <li
           style={{ color: highlightStep === "Review" ? "#155BE5" : "black" }}
         ></li>
+        <li style={{ color: highlightStep === "Review" ? "#155BE5" : "black" }}>
+          <span
+            style={{
+              marginRight: "0.5rem",
+              marginLeft: "0.5rem",
+              color: "#174B8B",
+            }}
+          >
+            »»
+          </span>{" "}
+          Review
+        </li>
         <li
           style={{ color: highlightStep === "Signing" ? "#155BE5" : "black" }}
         >
@@ -1151,6 +1163,7 @@ function SyncFesion() {
           </span>{" "}
           Signing
         </li>
+
         <li style={{ color: highlightStep === "Signed" ? "#155BE5" : "black" }}>
           <span
             style={{
@@ -1201,9 +1214,16 @@ function SyncFesion() {
   useEffect(() => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor) {
-      documentEditor.isReadOnly = enabelEditing; // This will disable editing
+      documentEditor.isReadOnly = enabelEditing;
     }
   }, [enabelEditing]);
+
+  const handleClick = () => {
+    setEditMode(true);
+    setEnabelEditing(false);
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    documentEditor.focusIn(); // Focusing the editor
+  };
 
   const inputWidth =
     documentName.length > 0
@@ -1395,9 +1415,9 @@ function SyncFesion() {
                   }`}
                   disabled={showBlock == "uploadTrack"}
                   onClick={() => toggleDropdown("signature")}
-                  onMouseEnter={() => {
-                    toggleDropdown("signature");
-                  }}
+                  // onMouseEnter={() => {
+                  //   toggleDropdown("signature");
+                  // }}
                 >
                   Manage Document
                   <span
@@ -1832,7 +1852,7 @@ function SyncFesion() {
                       onClick={() => {
                         save(), toggleDropdown("signature");
                       }}
-                      className="px-2 py-2cursor-pointer  flex items-center gap-x-2"
+                      className="px-2 py-2 cursor-pointer  flex items-center gap-x-2"
                       onMouseEnter={(e) =>
                         (e.currentTarget.style.backgroundColor = "#E4EDF8")
                       }
@@ -2078,10 +2098,7 @@ function SyncFesion() {
                     },
                   }}
                   onClick={() => {
-                    // setSidebarExpanded(true),
-                    setEditMode(true);
-                    setEnabelEditing(false);
-                    // setSelectedModule("fields");
+                    handleClick();
                   }}
                 >
                   <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
