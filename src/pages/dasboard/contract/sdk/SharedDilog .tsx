@@ -46,7 +46,14 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
         onClose={onClose}
         maxWidth="sm"
         fullWidth
-        sx={{ alignItems: "center" }}
+        sx={{
+          "& .MuiPaper-root": {
+            // Targeting the Paper component inside the Dialog
+            border: "1.5px dashed #174B8B", // Customizing the border to dashed
+            borderRadius: "16px",
+          },
+          alignItems: "center",
+        }}
       >
         <DialogTitle
           sx={{
@@ -66,7 +73,7 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
 
         <DialogContent
           sx={{
-            height: "420px",
+            maxHeight: "30vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -122,8 +129,15 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
             }}
           >
             <Button
-              variant="outlined"
-              sx={{ textTransform: "none", mt: "4" }}
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                mt: "4",
+                backgroundColor: "#174B8B", // Set the button color to green
+                "&:hover": {
+                  backgroundColor: "#2B6EC2", // Darker green on hover
+                },
+              }}
               onClick={onClose}
               // onClick={() => setOpenDialog(true)}
             >

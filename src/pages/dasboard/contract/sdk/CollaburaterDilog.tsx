@@ -98,7 +98,14 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
         onClose={onClose}
         maxWidth="sm"
         fullWidth
-        sx={{ alignItems: "center" }}
+        sx={{
+          "& .MuiPaper-root": {
+            // Targeting the Paper component inside the Dialog
+            border: "1.5px dashed #174B8B", // Customizing the border to dashed
+            borderRadius: "16px",
+          },
+          alignItems: "center",
+        }}
       >
         <DialogTitle
           sx={{
@@ -127,7 +134,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent>
+        <DialogContent sx={{ maxHeight: "30vh" }}>
           <Card
             sx={{
               display: "flex",
@@ -225,11 +232,12 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
               display: "flex",
               alignItems: "flex-end",
               float: "right",
-              marginTop: "16px",
+              marginTop: "2rem",
             }}
           >
             <Button
               variant="outlined"
+              color="error"
               sx={{ textTransform: "none", mt: "4", mr: 2 }}
               onClick={onClose}
               // onClick={() => setOpenDialog(true)}
@@ -240,7 +248,14 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
               disabled={!selectedPermission}
               variant="contained"
               color="primary"
-              sx={{ textTransform: "none", mt: "4" }}
+              sx={{
+                textTransform: "none",
+                mt: "4",
+                backgroundColor: "#174B8B", // Set the button color to green
+                "&:hover": {
+                  backgroundColor: "#2B6EC2", // Darker green on hover
+                },
+              }}
               onClick={() => {
                 handleClick();
                 updateCollaboratorPermission(); // Call the new function here

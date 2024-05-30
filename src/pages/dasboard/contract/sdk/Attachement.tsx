@@ -163,6 +163,7 @@ const Attachement = () => {
             fontSize: "14px",
             textTransform: "none",
             whiteSpace: "nowrap",
+            pl: 0,
             // borderBottom: activeSection === "message" ? 2 : 0,
             borderColor:
               activeSection === "linkDocuments" ? "#174B8B" : "transparent",
@@ -313,37 +314,6 @@ const Attachement = () => {
             </div>
           </div>
           {showselectField && (
-            //   <FormControl
-            //   size="small"
-            //   variant="standard"
-            //   sx={{ ml: 2, width: "60%" }}
-            // >
-            //   <Select
-            //     name="renewalType"
-            //     value={
-            //       lifecycleData.formData.renewalDetails.renewalType
-            //     }
-            //     onChange={(e) =>
-            //       handleFieldChange(
-            //         "formData.renewalDetails.renewalType",
-            //         e.target.value
-            //       )
-            //     }
-            //     labelId="renewal-type-label"
-            //     label="Type"
-            //     displayEmpty
-            //     inputProps={{
-            //       "aria-label": "Without label",
-            //       sx: {
-            //         backgroundColor: "#f0f0f0",
-            //       },
-            //     }}
-            //   >
-            //     <MenuItem value="days">Day(s)</MenuItem>
-            //     <MenuItem value="months">Month(s)</MenuItem>
-            //     <MenuItem value="years">Year(s)</MenuItem>
-            //   </Select>
-            // </FormControl>
             <FormControl fullWidth variant="standard" sx={{ mt: 1 }}>
               <Select
                 onChange={(e) => setSelectedDocuments(e.target.value)}
@@ -364,45 +334,30 @@ const Attachement = () => {
                       </em>
                     );
                   }
-                  const selectdocument = cntractlist.find(
+                  const selectedDocument = cntractlist.find(
                     (doc) => doc._id === value
                   );
-                  return selectdocument
-                    ? selectdocument.overview?.with_name
+                  return selectedDocument
+                    ? selectedDocument.overview?.with_name
                     : "";
                 }}
+                inputProps={{
+                  className: "custom-select-input",
+                }}
                 sx={{
-                  ".MuiSelect-select": {
-                    fontSize: "13px",
-                    border: "none", // Disable the border
+                  fontSize: "13px",
+                  "& .MuiSelect-select": {
+                    border: "none",
                     "&:focus": {
                       backgroundColor: "transparent",
-                      borderBottom: "2px solid green", // Underline color when focused
                     },
-                    "&:hover": {
-                      borderBottom: "2px solid red", // Underline color on hover
-                    },
-                    "&::before, &::after": {
-                      borderBottom: "2px solid red", // Underline color on hover
-                    },
-                  },
-                  "& .MuiInput-underline:before, & .MuiInput-underline:after": {
-                    borderBottom: "2px solid red", // Underline color on hover
-                  },
-                  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                    borderBottom: "", // Ensure there is no underline on hover
-                  },
-                  // Adjust placeholder styles if needed
-                  "::placeholder": {
-                    fontSize: "14px",
-                    color: "#92929D",
                   },
                 }}
               >
                 <MenuItem value="">
                   <em style={{ fontSize: "13px" }}>None</em>
                 </MenuItem>
-                {cntractlist?.map((doc) => (
+                {cntractlist.map((doc) => (
                   <MenuItem key={doc._id} value={doc._id}>
                     {doc.overview?.with_name}
                   </MenuItem>
@@ -414,11 +369,11 @@ const Attachement = () => {
           <Box sx={{ my: "1rem", display: "flex", justifyContent: "flex-end" }}>
             <Button
               variant="outlined"
+              color="error"
               disabled={
                 !reason ||
                 (!selectedFile && !selectedDocument && !showselectField)
               }
-              color="error"
               sx={{
                 height: "25px !important",
                 fontSize: "0.675rem",

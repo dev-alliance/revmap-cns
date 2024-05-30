@@ -326,7 +326,11 @@ const ApprovalsComp = () => {
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   return (
     <div style={{ textAlign: "left", position: "relative" }}>
-      <Typography variant="body1" color="primary">
+      <Typography variant="subtitle1" color="black">
+        Approvals
+      </Typography>
+      <Divider sx={{ mt: 0.1, mb: 1, pl: -1, background: "#174B8B" }} />
+      {/* <Typography variant="body1" color="primary">
         Approvals
       </Typography>
       <Typography
@@ -337,7 +341,7 @@ const ApprovalsComp = () => {
         Add a pre-approved approval workflow or create a custom or conditional
         workflow to get the contract approved before signing
       </Typography>
-      <Divider style={{ margin: "20px 0" }} />
+      <Divider style={{ margin: "20px 0" }} /> */}
 
       <div style={{ textAlign: "left" }}>
         <Button

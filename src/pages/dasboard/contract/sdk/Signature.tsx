@@ -242,13 +242,10 @@ const Signature = () => {
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
-        <Typography variant="body1" color="primary">
-          Recipients
+        <Typography variant="subtitle1" color="black">
+          Signers
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Add recipients who will sign this document.
-        </Typography>
-        <Divider style={{ margin: "10px 0" }} />
+        <Divider sx={{ mt: 0.1, mb: 1, pl: -1, background: "#174B8B" }} />
 
         {recipients.length === 0 && (
           <Box
@@ -261,21 +258,18 @@ const Signature = () => {
           >
             <Button
               sx={{
-                fontSize: "12px",
+                fontSize: "14px",
                 textTransform: "none !important",
                 borderRadius: 0,
-                color:
-                  activeSection === "collaborate" ? "primary.main" : "black",
+                color: activeSection === "collaborate" ? "#155BE5" : "black",
                 fontWeight: "bold",
                 "&:hover": {
                   borderBottom: 2,
-                  borderColor: "primary.main",
+                  borderColor: "#174B8B",
                   backgroundColor: "transparent",
                 },
                 borderColor:
-                  activeSection === "collaborate"
-                    ? "primary.main"
-                    : "transparent",
+                  activeSection === "collaborate" ? "#174B8B" : "transparent",
               }}
               onClick={() => {
                 setActiveSection("collaborate");
@@ -546,40 +540,52 @@ const Signature = () => {
                 label: `${user.firstName} ${user.lastName}`,
                 email: user.email,
               }))}
-              getOptionLabel={(option: any) => option.label || ""}
+              getOptionLabel={(option) => option.label || ""}
               onInputChange={handleInputChange}
               inputValue={inputValue}
               value={selectedValue}
-              onChange={(_, value: any) => {
-                setSelectedValue(value); // Only update selectedValue here
-              }}
+              onChange={(_, value) => setSelectedValue(value)}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Search by name or add email"
+                  placeholder="Search by name or add email" // Use placeholder
                   margin="normal"
                   variant="outlined"
                   size="small"
                   onKeyPress={handleKeyPress}
+                  InputLabelProps={{
+                    shrink: false,
+                    style: { display: "none" }, // Hide label by default
+                  }}
                   sx={{
-                    ".MuiInputLabel-root": { fontSize: "14px" },
-                    ".MuiOutlinedInput-root": { fontSize: "14px" },
+                    ".MuiOutlinedInput-root": {
+                      fontSize: "14px",
+                      "& fieldset": {
+                        borderColor: "rgba(0, 0, 0, 0.23)", // Subtle underline by default
+                        borderWidth: "0 0 2px 0", // Only bottom border
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "rgba(0, 0, 0, 0.87)", // Darken underline on hover
+                        borderWidth: "0 0 2px 0", // Only bottom border
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "primary.main", // Highlighted underline when focused
+                        borderWidth: "0 0 2px 0", // Only bottom border
+                      },
+                    },
                   }}
                 />
               )}
             />
+
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
               <Button
-                variant="contained"
-                color="inherit"
+                variant="outlined"
+                color="error"
                 sx={{
                   mr: "20px",
                   textTransform: "none",
-                  backgroundColor: "#DCDCDC",
-                  "&:hover": {
-                    backgroundColor: "#757575",
-                  },
-                  color: "white",
+
                   padding: "2px 5px !important",
                   height: "25px !important",
                   fontSize: "0.675rem",
@@ -594,16 +600,12 @@ const Signature = () => {
               </Button>
 
               <Button
-                variant="contained"
-                color="inherit"
+                variant="outlined"
+                color="success"
                 disabled={!selectedValue && !inputValue.trim()}
                 sx={{
                   textTransform: "none",
-                  backgroundColor: "#62BD6B",
-                  "&:hover": {
-                    backgroundColor: "#62BD6d",
-                  },
-                  color: "white",
+
                   padding: "2px 5px !important",
                   height: "25px !important",
                   fontSize: "0.675rem",

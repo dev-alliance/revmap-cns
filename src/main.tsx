@@ -61,6 +61,24 @@ const theme = createTheme({
         },
       },
     },
+    MuiInput: {
+      styleOverrides: {
+        underline: {
+          "&:before": {
+            // default underline color
+            borderBottom: "1px solid #174B8B",
+          },
+          "&:after": {
+            // underline color when focused
+            borderBottom: "2px solid #174B8B",
+          },
+          "&:hover:not(.Mui-disabled):before": {
+            // underline color on hover
+            borderBottom: "1px solid #174B8B",
+          },
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: {
         body: {

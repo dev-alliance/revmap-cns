@@ -40,14 +40,10 @@ const TimelineComp = () => {
 
   return (
     <div style={{ textAlign: "left" }}>
-      <Typography variant="body1" color="primary">
-        Timeline
+      <Typography variant="subtitle1" color="black">
+        TimeLine
       </Typography>
-      <Typography variant="body2" color="textSecondary">
-        Timeline provides transparency, accountability, and a clear audit trail
-        for all activities associated with the contract.
-      </Typography>
-      <Divider style={{ margin: "20px 0" }} />
+      <Divider sx={{ mt: 0.1, mb: 1, pl: -1, background: "#174B8B" }} />
 
       <div
         style={{

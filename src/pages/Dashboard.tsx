@@ -288,7 +288,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Home"
+          title={leftsidebarExpanded ? "Home" : ""}
         >
           <ListItemButton
             component={Link}
@@ -349,7 +349,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Home"
+          title={leftsidebarExpanded ? "Inbox" : ""}
         >
           <ListItemButton
             component={Link}
@@ -600,7 +600,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Templates"
+          title={leftsidebarExpanded ? "Templates" : ""}
         >
           <ListItemButton
             component={Link}
@@ -661,7 +661,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Folder"
+          title={leftsidebarExpanded ? "Folder" : ""}
         >
           <ListItemButton
             component={Link}
@@ -722,7 +722,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Reports"
+          title={leftsidebarExpanded ? "Reports" : ""}
         >
           <ListItemButton
             component={Link}
@@ -785,7 +785,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Settings"
+          title={leftsidebarExpanded ? "Settings" : ""}
         >
           <ListItemButton
             sx={{
@@ -852,7 +852,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Billing"
+              title={leftsidebarExpanded ? "Billing" : ""}
             >
               <ListItemButton
                 sx={{
@@ -923,7 +923,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Company profile"
+              title={leftsidebarExpanded ? "Compony Profile" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1000,7 +1000,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="User"
+              title={leftsidebarExpanded ? "User" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1070,7 +1070,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Configration"
+          title={leftsidebarExpanded ? "Configration" : ""}
         >
           <ListItemButton
             sx={{
@@ -1136,7 +1136,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Approval"
+              title={leftsidebarExpanded ? "Approval" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1204,7 +1204,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Categories"
+              title={leftsidebarExpanded ? "Categories" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1275,7 +1275,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Clauses"
+              title={leftsidebarExpanded ? "Clauses" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1343,7 +1343,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Custom Fields"
+              title={leftsidebarExpanded ? "Custom Fields" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1416,7 +1416,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Roles"
+              title={leftsidebarExpanded ? "Roles" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1485,7 +1485,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Teams"
+              title={leftsidebarExpanded ? "Teams" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1573,7 +1573,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
-              title="Tags"
+              title={leftsidebarExpanded ? "Tags" : ""}
             >
               <ListItemButton
                 sx={{
@@ -1644,7 +1644,7 @@ export default function Dashboard() {
               ],
             },
           }}
-          title="Logout"
+          title={leftsidebarExpanded ? "Logout" : ""}
         >
           <ListItemButton
             sx={{

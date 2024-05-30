@@ -39,11 +39,25 @@
 /* for now end  */
 
 /* them css  */
+.input-placeholder-color::placeholder {
+  color: #155be5 !important;
+}
 .css-bhp9pd-MuiPaper-root-MuiCard-root {
   background-color: #fff;
   border-radius: 4px;
   box-shadow: none !important;
   overflow: hidden;
+}
+.custom-select-input:before {
+  border-bottom: 2px solid green; /* Default underline color */
+}
+
+.custom-select-input:after {
+  border-bottom: 2px solid red; /* Underline color when focused */
+}
+
+.custom-select-input:hover:before {
+  border-bottom: 2px solid red; /* Underline color on hover */
 }
 
 .css-bhp9pd-MuiPaper-root-MuiCard-root {

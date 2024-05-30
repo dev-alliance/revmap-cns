@@ -185,7 +185,7 @@ const MyComponent: React.FC = () => {
               ],
             },
           }}
-          title="Signature"
+          title="Signers"
         >
           {/* <img src={writingIcon} alt="Logo" style={{ width: '5%' }} /> */}
 
@@ -624,10 +624,10 @@ const MyComponent: React.FC = () => {
               md={sidebarExpanded ? 2 : 0}
               sx={{
                 height: sidebarExpanded ? "100vh" : "100vh",
-                borderRight: sidebarExpanded ? "1px solid #E0E0E0" : "none",
+                // borderRight: sidebarExpanded ? "1px solid #E4EDF8" : "none",
                 background: "#174B8B",
                 position: "fixed",
-                width: "57px",
+                width: "53px",
               }}
             >
               <List>
@@ -711,9 +711,10 @@ const MyComponent: React.FC = () => {
                   <Box
                     sx={{
                       position: "absolute",
-                      top: "5px",
+                      top: 0,
                       right: 0,
-                      padding: "8px",
+                      px: "6px",
+                      pt: "2px",
                       display: "flex",
                       alignItems: "center",
                       gap: "4px",

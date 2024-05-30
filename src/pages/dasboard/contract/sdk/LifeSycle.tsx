@@ -181,14 +181,10 @@ const LifeCycle = () => {
       onSubmit={handleSubmit(onSubmit)}
       style={{ textAlign: "left", position: "relative" }}
     >
-      <Typography variant="body1" color="primary">
+      <Typography variant="subtitle1" color="black">
         Lifecycle
       </Typography>
-      <Typography variant="body2" color="textSecondary">
-        Collaborate and communicate with your team or third party to efficiently
-        execute contract.
-      </Typography>
-      <Divider style={{ margin: "20px 0" }} />
+      <Divider sx={{ mt: 0.1, mb: 1, pl: -1, background: "#174B8B" }} />
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body2"

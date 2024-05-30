@@ -199,14 +199,14 @@ const Discussion = () => {
   return (
     <>
       <div style={{ textAlign: "left", position: "relative" }}>
-        <Typography variant="body1" color="primary" sx={{ fontSize: "15px" }}>
+        <Typography
+          variant="subtitle1"
+          color="black"
+          sx={{ whiteSpace: "nowrap", fontSize: "18px" }}
+        >
           Collaborate & Communicate
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Collaborate and communicate with your team or third party to
-          efficiently execute contract.
-        </Typography>
-        <Divider sx={{ mt: 1, mb: 2 }} />
+        <Divider sx={{ mt: 0.3, mb: 0.7, pl: -1, background: "#174B8B" }} />
         <Box
           sx={{
             display: "flex",
@@ -219,21 +219,19 @@ const Discussion = () => {
             style={{}}
             sx={{
               width: "100%",
-              fontSize: "12px",
+              fontSize: "14px",
               whiteSpace: "nowrap",
 
               textTransform: "none !important",
               // borderBottom: activeSection === "collaborate" ? 2 : 0,
               borderColor:
-                activeSection === "collaborate"
-                  ? "primary.main"
-                  : "transparent",
+                activeSection === "collaborate" ? "#174B8B" : "transparent",
               borderRadius: 0, // Remove border radius to mimic tab appearance
-              color: activeSection === "collaborate" ? "primary.main" : "black",
-              fontWeight: activeSection === "collaborate" ? "bold" : "bold",
+              color: activeSection === "collaborate" ? "#155BE5" : "black",
+              fontWeight: activeSection === "collaborate" ? "bold" : "normal",
               "&:hover": {
                 borderBottom: 2,
-                borderColor: "primary.main",
+                borderColor: "#174B8B",
                 backgroundColor: "transparent",
               },
             }}
@@ -249,17 +247,21 @@ const Discussion = () => {
           <Button
             fullWidth
             sx={{
-              fontSize: "12px",
+              width: "90%",
+              whiteSpace: "nowrap",
+              fontSize: "14px",
               textTransform: "none",
+              ml: 2,
+
               // borderBottom: activeSection === "message" ? 2 : 0,
               borderColor:
-                activeSection === "message" ? "primary.main" : "transparent",
+                activeSection === "message" ? "#174B8B" : "transparent",
               borderRadius: 0,
-              color: activeSection === "message" ? "primary.main" : "black",
+              color: activeSection === "message" ? "#155BE5" : "black",
               fontWeight: activeSection === "message" ? "bold" : "normal",
               "&:hover": {
                 borderBottom: 2,
-                borderColor: "primary.main",
+                borderColor: "#174B8B",
                 backgroundColor: "transparent",
               },
             }}
@@ -311,16 +313,12 @@ const Discussion = () => {
 
                 <div style={{ flex: 1, textAlign: "right", marginTop: "10px" }}>
                   <Button
-                    variant="contained"
-                    color="inherit"
+                    variant="outlined"
+                    color="error"
                     sx={{
                       mr: "20px",
                       textTransform: "none",
-                      backgroundColor: "#DCDCDC",
-                      "&:hover": {
-                        backgroundColor: "#757575",
-                      },
-                      color: "white",
+
                       padding: "2px 5px !important",
                       height: "25px !important",
                       fontSize: "0.675rem",
@@ -335,16 +333,12 @@ const Discussion = () => {
                   </Button>
 
                   <Button
-                    variant="contained"
-                    color="inherit"
+                    variant="outlined"
+                    color="success"
                     disabled={!selectedValue && !inputValue.trim()}
                     sx={{
                       textTransform: "none",
-                      backgroundColor: "#62BD6B",
-                      "&:hover": {
-                        backgroundColor: "#62BD6d",
-                      },
-                      color: "white",
+
                       padding: "2px 5px !important",
                       height: "25px !important",
                       fontSize: "0.675rem",
@@ -456,8 +450,12 @@ const Discussion = () => {
                   <Box sx={{ display: "flex", mt: -0.5 }}>
                     <Button
                       variant="text"
-                      color="primary"
-                      sx={{ textTransform: "none", whiteSpace: "nowrap" }}
+                      sx={{
+                        textTransform: "none",
+                        whiteSpace: "nowrap",
+                        color: "#155BE5",
+                        fontSize: "14px",
+                      }}
                       onClick={() => handleShareDilog(colb)}
                     >
                       {colb.permission ? "Document Shared" : "Share Document"}
@@ -569,20 +567,16 @@ const Discussion = () => {
                       display: "flex",
                       justifyContent: "flex-end",
                       width: "100%",
+                      marginTop: "0.5rem",
                       marginBottom: "0.5rem",
                     }}
                   >
                     <Button
-                      variant="contained"
-                      color="inherit"
+                      variant="outlined"
+                      color="error"
                       sx={{
                         mr: "20px",
                         textTransform: "none",
-                        backgroundColor: "#DCDCDC",
-                        "&:hover": {
-                          backgroundColor: "#757575",
-                        },
-                        color: "white",
                         padding: "2px 5px !important",
                         height: "25px !important",
                         fontSize: "0.675rem",
@@ -598,15 +592,11 @@ const Discussion = () => {
 
                     <Button
                       variant="contained"
-                      color="inherit"
+                      color="success"
                       disabled={!message}
                       sx={{
                         textTransform: "none",
-                        backgroundColor: "#62BD6B",
-                        "&:hover": {
-                          backgroundColor: "#62BD6d",
-                        },
-                        color: "white",
+
                         padding: "2px 5px !important",
                         height: "25px !important",
                         fontSize: "0.675rem",

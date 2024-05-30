@@ -1252,32 +1252,24 @@ function SyncFesion() {
       button.setAttribute("aria-disabled", "true");
     });
   };
-  const inputWidth =
-    documentName.length > 0
-      ? `${Math.max(110, documentName.length * 11.5)}px`
-      : "200px";
 
-  const handleInputChange = useCallback(
-    debounce((value: any) => {
-      setDucomentName(value);
-    }, 100),
-    []
-  );
-
-  console.log("current : ", editorContainerRef.current);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Check if the editorContainerRef is available
-    if (editorContainerRef.current) {
-      // Get the DOM element using current property
-      // const toolbarItem = editorContainerRef.current.querySelector('.e-toolbar-item[aria-label="Open a document."]');
-      // Check if the toolbarItem is available
-      // if (toolbarItem) {
-      //   // Hide the element by setting its display property to 'none'
-      //   toolbarItem.style.display = 'none';
-      // }
-    }
-  }, []);
+    const calculateWidth = () => {
+      const context = document.createElement("canvas").getContext("2d");
+      if (context && inputRef.current) {
+        context.font = getComputedStyle(inputRef.current).font; // Get the font style from the input
+        let totalWidth = 0;
+        for (const char of documentName) {
+          totalWidth += context.measureText(char).width; // Calculate total width of all characters
+        }
+        inputRef.current.style.width = `${Math.max(175, totalWidth)}px`; // Set input width
+      }
+    };
+
+    calculateWidth(); // Call on mount and documentName change
+  }, [documentName]);
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
@@ -1299,49 +1291,28 @@ function SyncFesion() {
             mr: "1rem",
           }}
         >
-          <TextField
-            placeholder="Untitled Document"
-            variant="standard"
-            sx={{ width: inputWidth }}
-            InputProps={{
-              disableUnderline: true,
-              sx: {
-                width: inputWidth, // Apply dynamic width
-                "::after": {
-                  borderBottom: "2px solid", // Specify the color if needed, defaults to the theme's primary color
-                },
-                "::before": {
-                  borderBottom: "none !important", // Hides the underline
-                },
-                ":hover:not(.Mui-disabled)::before": {
-                  borderBottom: "none !important", // Ensures underline stays hidden on hover
-                },
-                "input:focus + fieldset": {
-                  border: "none", // Optional: for outlined variant if ever used
-                },
-                input: {
-                  fontSize: "1.3rem",
-                  color: "#155BE5", // Set the text color
-                  borderBottom: "1px solid #174B8B",
-                  "&:focus": {
-                    borderBottom: "1px solid #174B8B",
-                    "::placeholder": {
-                      opacity: 0, // Hide placeholder text on focus
-                      visibility: "hidden", // Optionally make the placeholder completely invisible
-                    }, // Adjust color as needed
-                  },
-                  "::placeholder": {
-                    fontSize: "1.3rem", // Placeholder font size
-                    color: "#155BE5", // Adjust placeholder text color here
-                    opacity: 1, // Set opacity to 1 for full color intensity
-                  },
-                },
-              },
-            }}
+          <input
+            ref={inputRef}
+            type="text"
             value={documentName}
-            onChange={(e) => handleInputChange(e.target.value)}
-            inputProps={{
-              maxLength: 50, // HTML5 attribute to limit characters directly in the input field
+            onChange={(e) => setDucomentName(e.target.value)}
+            placeholder="Untitled Document"
+            className="input-placeholder-color"
+            style={{
+              minWidth: "175px",
+              fontSize: "1.3rem",
+              color: "#155BE5",
+              borderBottom: "1px solid #174B8B",
+              borderTop: "none",
+              borderLeft: "none",
+              borderRight: "none",
+              outline: "none",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
+            }}
+            onBlur={(e) => {
+              e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
             }}
           />
 
