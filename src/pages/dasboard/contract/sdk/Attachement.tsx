@@ -116,7 +116,7 @@ const Attachement = () => {
   };
 
   return (
-    <div style={{ textAlign: "left", position: "relative" }}>
+    <div>
       <Typography variant="subtitle1" color="black">
         Attachments
       </Typography>

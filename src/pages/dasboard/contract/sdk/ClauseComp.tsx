@@ -49,14 +49,11 @@ const ClauseComp = () => {
   }, []);
   const bubbleColors = ["#FEC85E", "#BC3D89", "#725FE7,#00A7B1"]; // Yellow, Green, Blue
   return (
-    <div style={{ textAlign: "left", position: "relative" }}>
-      <Typography variant="body1" color="primary">
+    <div>
+      <Typography variant="subtitle1" color="black">
         Clauses
       </Typography>
-      <Typography variant="body2" color="textSecondary">
-        Drag and drop approved clauses into your contract
-      </Typography>
-      <Divider style={{ margin: "20px 0" }} />
+      <Divider sx={{ mt: 0.1, mb: 1, pl: -1, background: "#174B8B" }} />
 
       <FormControl fullWidth size="small">
         <Controller

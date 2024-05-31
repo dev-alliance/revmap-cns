@@ -96,7 +96,6 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
           user.email.trim().toLowerCase() ===
           ClickData?.email.trim().toLowerCase();
         if (matches) {
-          alert("ok");
           return { ...user, ReqOption: requestOption, signature: "" };
         }
         return user;
@@ -140,7 +139,14 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
         onClose={onClose}
         maxWidth="sm"
         fullWidth
-        sx={{ alignItems: "center" }}
+        sx={{
+          "& .MuiPaper-root": {
+            // Targeting the Paper component inside the Dialog
+            border: "1.5px dashed #174B8B", // Customizing the border to dashed
+            borderRadius: "16px",
+          },
+          alignItems: "center",
+        }}
       >
         <DialogTitle
           sx={{

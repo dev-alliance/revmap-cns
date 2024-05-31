@@ -644,7 +644,7 @@ const Fields = () => {
 
   return (
     <>
-      <div style={{ textAlign: "left", position: "relative" }}>
+      <div>
         {/* <SignatureMultiSendReq
           open={openMultiDialog}
           onClose={handleClosMultieDialog}

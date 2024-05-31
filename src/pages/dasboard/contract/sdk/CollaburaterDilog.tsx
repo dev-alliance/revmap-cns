@@ -46,22 +46,24 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedPermission, setSelectedPermission] = useState("");
+  const [selectedPermission, setSelectedPermission] = useState(
+    "Can view, edit, and comment"
+  );
 
-  useEffect(() => {
-    // Reset selectedPermission when dialog opens or the ClickData changes
-    console.log(ClickData, "click");
+  // useEffect(() => {
+  //   // Reset selectedPermission when dialog opens or the ClickData changes
+  //   console.log(ClickData, "click");
 
-    const index = collaborater.findIndex(
-      (user: any) =>
-        user?.email?.trim().toLowerCase() ===
-        ClickData?.email?.trim().toLowerCase()
-    );
+  //   const index = collaborater.findIndex(
+  //     (user: any) =>
+  //       user?.email?.trim().toLowerCase() ===
+  //       ClickData?.email?.trim().toLowerCase()
+  //   );
 
-    if (index !== -1) {
-      setSelectedPermission(collaborater[index].permission || ""); // Assume each collaborator has a `permission` field
-    }
-  }, [ClickData, collaborater, open]);
+  //   if (index !== -1) {
+  //     setSelectedPermission(collaborater[index].permission || ""); // Assume each collaborator has a `permission` field
+  //   }
+  // }, [ClickData, collaborater, open]);
 
   const handlePermissionChange = (event: any) => {
     const newPermission = event.target.value as string;
@@ -139,6 +141,8 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
             sx={{
               display: "flex",
               flexDirection: "column",
+              border: "none !important",
+              boxShadow: "none !important",
               // alignItems: "center",
               // textAlign: "center",
               mt: 3,
@@ -155,6 +159,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: "50%",
+
                     backgroundColor: bubbleColors[1 % bubbleColors.length],
                     color: "#FFFFFF",
                     marginRight: -1,
@@ -167,22 +172,32 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                     {ClickData?.lastName?.charAt(0).toUpperCase()}
                   </Typography>
                 </Box>
-                <div>
+                <div
+                  style={{
+                    display: "flex", // Use flex layout
+                    flexDirection: "column", // Stack children vertically
+                    justifyContent: "center", // Center content vertically
+                    alignItems: "center", // Center content horizontally
+
+                    textAlign: "start",
+                  }}
+                >
+                  {ClickData?.firstName ? (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        alignItems: "start",
+                        width: "130px",
+                        textOverflow: "ellipsis",
+                        fontSize: "16px",
+                      }}
+                    >
+                      {ClickData?.firstName}
+                    </Typography>
+                  ) : null}
                   <Typography
                     variant="body2"
                     sx={{
-                      // fontWeight: "bold",
-                      width: "130px",
-                      textOverflow: "ellipsis",
-                      fontSize: "16px",
-                    }}
-                  >
-                    {ClickData?.firstName}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      // fontWeight: "bold",
                       width: "130px",
                       textOverflow: "ellipsis",
                       fontSize: "16px",
@@ -192,8 +207,9 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
                   </Typography>
                 </div>
               </div>
-              <div style={{ float: "right" }}>
+              <div style={{ float: "right", marginTop: 5 }}>
                 <Select
+                  variant="standard"
                   size="small"
                   labelId="permession-label"
                   value={selectedPermission}

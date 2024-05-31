@@ -288,6 +288,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Home" : ""}
         >
           <ListItemButton
@@ -349,6 +350,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Inbox" : ""}
         >
           <ListItemButton
@@ -409,6 +411,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Documents" : ""}
         >
           <ListItemButton
@@ -600,6 +603,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Templates" : ""}
         >
           <ListItemButton
@@ -661,6 +665,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Folder" : ""}
         >
           <ListItemButton
@@ -722,6 +727,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Reports" : ""}
         >
           <ListItemButton
@@ -785,6 +791,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Settings" : ""}
         >
           <ListItemButton
@@ -852,6 +859,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Billing" : ""}
             >
               <ListItemButton
@@ -923,6 +931,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Compony Profile" : ""}
             >
               <ListItemButton
@@ -1000,6 +1009,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "User" : ""}
             >
               <ListItemButton
@@ -1070,6 +1080,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Configration" : ""}
         >
           <ListItemButton
@@ -1136,6 +1147,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Approval" : ""}
             >
               <ListItemButton
@@ -1204,6 +1216,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Categories" : ""}
             >
               <ListItemButton
@@ -1275,6 +1288,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Clauses" : ""}
             >
               <ListItemButton
@@ -1343,6 +1357,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Custom Fields" : ""}
             >
               <ListItemButton
@@ -1416,6 +1431,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Roles" : ""}
             >
               <ListItemButton
@@ -1485,6 +1501,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Teams" : ""}
             >
               <ListItemButton
@@ -1573,6 +1590,7 @@ export default function Dashboard() {
                   ],
                 },
               }}
+              placement="right"
               title={leftsidebarExpanded ? "Tags" : ""}
             >
               <ListItemButton
@@ -1644,6 +1662,7 @@ export default function Dashboard() {
               ],
             },
           }}
+          placement="right"
           title={leftsidebarExpanded ? "Logout" : ""}
         >
           <ListItemButton

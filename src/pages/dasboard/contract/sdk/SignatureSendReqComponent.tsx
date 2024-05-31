@@ -93,7 +93,6 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
           ClickData?.email.trim().toLowerCase();
         console.log(user.email, ClickData?.email, matches); // Log the comparison result
         if (matches) {
-          alert("ok");
           return { ...user, ReqOption: requestOption, signature: "" };
         }
         return user;
@@ -126,6 +125,8 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
   };
   const handleClick = () => {
     setOpenLDialog(true);
+
+    setOpenMultiDialog(false);
   };
 
   return (

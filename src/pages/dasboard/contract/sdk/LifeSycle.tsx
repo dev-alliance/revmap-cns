@@ -177,10 +177,7 @@ const LifeCycle = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      style={{ textAlign: "left", position: "relative" }}
-    >
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Typography variant="subtitle1" color="black">
         Lifecycle
       </Typography>

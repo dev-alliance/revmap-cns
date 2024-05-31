@@ -28,6 +28,7 @@ import { getCategoryList } from "@/service/api/category";
 import { getList } from "@/service/api/tags";
 import AddIcon from "@mui/icons-material/Add";
 import { ContractContext } from "@/context/ContractContext";
+import CloseIcon from "@mui/icons-material/Close";
 import { log } from "console";
 
 type FormValues = {
@@ -836,19 +837,19 @@ const OverView = () => {
       <Box>
         <Button
           onClick={() => {
-            if (canAddField) {
-              handleAddField();
-            }
-            setAddFied(true);
+            // if (canAddField) {
+            //   handleAddField();
+            // }
+            setAddFied((prevState) => !prevState);
           }}
           size="small"
           sx={{
             fontSize: "12px",
             mb: "5px",
             textTransform: "none",
-            backgroundColor: "#174B8B", // Set the button color to green
+            backgroundColor: "#174B8B",
             "&:hover": {
-              backgroundColor: "#2B6EC2", // Darker green on hover
+              backgroundColor: "#2B6EC2",
             },
           }}
           variant="contained"
@@ -857,46 +858,52 @@ const OverView = () => {
         </Button>
 
         {fields?.map((field: any, index: any) => (
-          <Box key={index} sx={{ mb: 0 }}>
+          <Box key={index} sx={{ display: "flex", width: "100px" }}>
             {field.isEditing ? (
-              <>
-                <TextField
-                  value={field.name}
-                  onChange={(e) =>
-                    handleFieldChange(index, "name", e.target.value)
-                  }
-                  placeholder="Enter name"
-                  size="small"
-                  sx={{ mr: 2 }}
-                  variant="standard"
-                />
-                <Box sx={{ mt: 1 }}>
-                  <TextField
-                    value={field.value}
-                    onChange={(e) =>
-                      handleFieldChange(index, "value", e.target.value)
-                    }
-                    placeholder="Enter value"
-                    size="small"
-                    variant="standard"
-                  />
-                </Box>
-              </>
+              <></>
             ) : (
               <div style={{ display: "flex" }}>
-                <Typography
-                  sx={{ mr: 2, flexGrow: 1 }}
-                  onClick={() => handleEditField(index)}
+                <div
+                  style={{
+                    display: "flex",
+                    minWidth: "200px",
+                    maxWidth: "200px",
+                    flexDirection: "column", // This ensures items are stacked vertically if needed
+                  }}
                 >
-                  {field.name}: {field.value}
-                </Typography>
+                  <Typography
+                    style={{
+                      wordWrap: "break-word", // Breaks the words to prevent overflow
+                      whiteSpace: "normal", // Allows the text to wrap
+                    }}
+                  >
+                    {field.name}:
+                  </Typography>
+                  <Typography
+                    style={{
+                      wordWrap: "break-word", // Allows long words to be broken and wrapped
+                      whiteSpace: "normal", // Ensures text wraps to next line
+                    }}
+                  >
+                    {field.value}
+                  </Typography>
+                </div>
+
                 <IconButton onClick={() => handleDeleteField(index)}>
-                  <DeleteIcon fontSize="small" />
+                  <CloseIcon
+                    sx={{
+                      cursor: "pointer",
+                      color: "action.active",
+
+                      fontSize: "18px",
+                    }}
+                  />
                 </IconButton>
               </div>
             )}
           </Box>
         ))}
+
         {addField && (
           <>
             <TextField
@@ -906,41 +913,13 @@ const OverView = () => {
               size="small"
               sx={{ mr: 2 }}
               variant="standard"
-              InputProps={{
-                disableUnderline: true, // Disables the underline by default
-                sx: {
-                  "::after": {
-                    borderBottom: "2px solid transparent", // Default state with transparent color
-                  },
-                  "::before": {
-                    borderBottom: "none !important", // Hides the underline
-                  },
-                  ":hover:not(.Mui-disabled)::before": {
-                    borderBottom: "none !important", // Ensures underline stays hidden on hover
-                  },
-                  "input:focus + fieldset": {
-                    border: "none", // Optional: for outlined variant if ever used
-                  },
-                  "::placeholder": {
-                    fontSize: "0.55rem",
-                    color: "gray", // Default placeholder color
-                  },
-                  input: {
-                    fontSize: "0.875rem",
-                    "&:focus": {
-                      borderBottom: "2px solid transparent", // Transparent on focus by default
-                    },
-                    "&:not(:placeholder-shown)": {
-                      // When input has content
-                      "&::placeholder": {
-                        color: "#0F151B !important",
-                      },
-                      "&:focus": {
-                        borderBottom: "1px solid #174B8B", // New underline color when typing
-                      },
-                    },
-                  },
-                },
+              // onKeyPress={(e) => {
+              //   if (e.key === "Enter") {
+              //     handleAddField();
+              //   }
+              // }}
+              inputProps={{
+                maxLength: 40,
               }}
             />
             <TextField
@@ -949,41 +928,13 @@ const OverView = () => {
               placeholder="Enter value"
               size="small"
               variant="standard"
-              InputProps={{
-                disableUnderline: true, // Disables the underline by default
-                sx: {
-                  "::after": {
-                    borderBottom: "2px solid transparent", // Default state with transparent color
-                  },
-                  "::before": {
-                    borderBottom: "none !important", // Hides the underline
-                  },
-                  ":hover:not(.Mui-disabled)::before": {
-                    borderBottom: "none !important", // Ensures underline stays hidden on hover
-                  },
-                  "input:focus + fieldset": {
-                    border: "none", // Optional: for outlined variant if ever used
-                  },
-                  "::placeholder": {
-                    fontSize: "0.55rem",
-                    color: "gray", // Default placeholder color
-                  },
-                  input: {
-                    fontSize: "0.875rem",
-                    "&:focus": {
-                      borderBottom: "2px solid transparent", // Transparent on focus by default
-                    },
-                    "&:not(:placeholder-shown)": {
-                      // When input has content
-                      "&::placeholder": {
-                        color: "#0F151B !important",
-                      },
-                      "&:focus": {
-                        borderBottom: "1px solid #174B8B", // New underline color when typing
-                      },
-                    },
-                  },
-                },
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleAddField();
+                }
+              }}
+              inputProps={{
+                maxLength: 40,
               }}
             />
           </>

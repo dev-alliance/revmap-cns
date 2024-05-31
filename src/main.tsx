@@ -46,7 +46,7 @@ const theme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: "#725FE7",
+          backgroundColor: "#FFC107",
           color: "white", // Optional: Changes the text color to white
         },
       },

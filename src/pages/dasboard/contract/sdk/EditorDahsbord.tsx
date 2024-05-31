@@ -137,6 +137,7 @@ const MyComponent: React.FC = () => {
       getIcon: (isSelected: any) => (
         <Tooltip
           title="Overview"
+          placement="left"
           TransitionComponent={Zoom}
           componentsProps={{
             popper: {
@@ -144,7 +145,7 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
@@ -179,13 +180,14 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
           title="Signers"
+          placement="left"
         >
           {/* <img src={writingIcon} alt="Logo" style={{ width: '5%' }} /> */}
 
@@ -226,91 +228,27 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
-          title="Collaborate "
+          title="Share "
+          placement="left"
         >
           {/* <img src={commentIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
-            width="26"
-            height="26"
-            viewBox="0 0 26 26"
+            width="24"
+            height="24"
+            viewBox="0 0 24 18"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M18.5623 1H4.19314C3.34627 1 2.53408 1.33714 1.93525 1.93726C1.33642 2.53737 1 3.35131 1 4.2V23.4C1 23.8243 1.16821 24.2313 1.46763 24.5314C1.76704 24.8314 2.17313 25 2.59657 25H4.11864"
-              stroke={isSelected ? "#174B8B" : "white"}
+              d="M2.2541 14.4005C2.94486 12.9167 3.86146 11.5199 5.05033 10.2971C7.21283 8.07279 10.332 6.36555 14.7942 5.79184L15.6667 5.67966V4.8V2.24536L22.5052 8.4L15.6667 14.5546V11.88V10.88H14.6667C9.5484 10.88 5.47491 11.9845 2.2541 14.4005Z"
+              stroke="white"
               stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M4.19336 6.06641H11.9101"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M4.19336 10.332H9.36625"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M16.168 10.6V3.4C16.168 2.76348 16.4203 2.15303 16.8694 1.70294C17.3185 1.25286 17.9277 1 18.5628 1C19.198 1 19.8071 1.25286 20.2562 1.70294C20.7054 2.15303 20.9577 2.76348 20.9577 3.4V6.06667H16.168"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M23.3523 21.1182L18.2539 22.1423"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M18.7623 16.3494L16.3568 17.3628C16.1687 17.4444 15.9658 17.4865 15.7608 17.4865C15.5558 17.4865 15.3529 17.4444 15.1647 17.3628C14.887 17.2366 14.6506 17.0344 14.4826 16.7794C14.3146 16.5244 14.2219 16.227 14.2152 15.9216C14.2086 15.6161 14.2882 15.3149 14.4448 15.0528C14.6015 14.7907 14.829 14.5783 15.1009 14.4401L17.5064 13.2348C17.803 13.0825 18.1311 13.0021 18.4643 13.0001C18.7158 12.9976 18.9654 13.0447 19.1987 13.1388L24.1162 15.1334"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M8.92383 22.1848H10.6162L13.8626 24.6595C13.9386 24.7459 14.0309 24.8163 14.1342 24.8668C14.2375 24.9173 14.3497 24.9469 14.4644 24.9539C14.5791 24.9608 14.6941 24.945 14.8027 24.9073C14.9113 24.8696 15.0114 24.8107 15.0972 24.7342L19.6315 20.9795C19.8125 20.833 19.9285 20.621 19.9544 20.3893C19.9803 20.1577 19.914 19.9251 19.7699 19.7422L17.226 16.9795"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M14.8233 14.6123L14.5572 14.3883C14.2229 14.168 13.8289 14.0563 13.429 14.0683C13.1856 14.0682 12.9441 14.1116 12.7159 14.1963L8.91602 15.7749"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M7.38477 22.9842H7.70408C7.86348 22.9929 8.023 22.9699 8.17352 22.9166C8.32405 22.8634 8.4626 22.7809 8.58125 22.6738C8.6999 22.5668 8.79632 22.4374 8.86497 22.293C8.93362 22.1486 8.97317 21.992 8.98134 21.8322V16.1256C8.96212 15.8048 8.81699 15.5047 8.57766 15.2908C8.33833 15.077 8.02426 14.9667 7.70408 14.9842H7.38477"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M24.9477 22.9842H24.6816C24.5222 22.9929 24.3626 22.9699 24.2121 22.9166C24.0616 22.8634 23.923 22.7809 23.8044 22.6738C23.6857 22.5668 23.5893 22.4374 23.5207 22.293C23.452 22.1486 23.4125 21.992 23.4043 21.8322V16.1256C23.4235 15.8048 23.5686 15.5047 23.808 15.2908C24.0473 15.077 24.3614 14.9667 24.6816 14.9842H25.0009"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
             />
           </svg>
         </Tooltip>
@@ -328,13 +266,14 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
           title="Approvals"
+          placement="left"
         >
           {/* <img src={userIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -365,13 +304,14 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
           title="Clauses"
+          placement="left"
         >
           {/* <img src={clipboardIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -402,13 +342,14 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
           title="Attachement"
+          placement="left"
         >
           {/* <img src={attachIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -448,13 +389,14 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
           title="Audit Trail"
+          placement="left"
         >
           {/* <img src={timelineIcon} alt="Logo" style={{ width: "5%" }} /> */}
           <svg
@@ -485,13 +427,14 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
           title="Lifecycle"
+          placement="left"
         >
           {/* <img src={lifecycleIcon} alt="Logo" style={{ width: "4%" }} /> */}
           <svg
@@ -555,13 +498,18 @@ const MyComponent: React.FC = () => {
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -14],
+                    offset: [0, -0],
                   },
                 },
               ],
             },
           }}
-          title="Fields"
+          title={
+            showBlock === "uploadTrack" || editMode === false
+              ? "Enter edit mode to enable fields"
+              : "Fields"
+          }
+          placement="left"
         >
           <svg
             width="24"
@@ -711,10 +659,10 @@ const MyComponent: React.FC = () => {
                   <Box
                     sx={{
                       position: "absolute",
-                      top: 0,
+                      top: 16,
                       right: 0,
                       px: "6px",
-                      pt: "2px",
+                      pr: 2,
                       display: "flex",
                       alignItems: "center",
                       gap: "4px",
@@ -755,6 +703,7 @@ const MyComponent: React.FC = () => {
                       sx={{
                         cursor: "pointer",
                         color: "action.active",
+                        mt: -0.3,
                         fontSize: "18px",
                       }}
                     />

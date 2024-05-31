@@ -29,6 +29,7 @@ import SignatureMultiSendReq from "@/pages/dasboard/contract/sdk/SignatureMultiS
 import SignatuereErrorDilog from "@/pages/dasboard/contract/sdk/SignatuereErrorDilog";
 import { title } from "process";
 import SignatuereErrorfieldDilog from "@/pages/dasboard/contract/sdk/SignatuereErrorfieldDilog";
+import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 type FormValues = {
   name: string;
   checkboxName: any;
@@ -207,7 +208,7 @@ const Signature = () => {
       setIsLoading(true);
       const { data } = await getUserListNameID(user?._id);
       console.log({ data });
-
+      setIsLoading(false);
       setUserList(data);
     } catch (error) {
       console.log(error);
@@ -241,440 +242,476 @@ const Signature = () => {
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   return (
     <>
-      <div style={{ textAlign: "left", position: "relative" }}>
+      <div>
         <Typography variant="subtitle1" color="black">
           Signers
         </Typography>
         <Divider sx={{ mt: 0.1, mb: 1, pl: -1, background: "#174B8B" }} />
-
-        {recipients.length === 0 && (
+        {isLoading ? (
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-start", // Align items to the left
-              alignItems: "center", // Center items vertically if needed
-              width: "100%", // Ensure the Box takes full width if necessary for your layout
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "auto",
             }}
           >
-            <Button
-              sx={{
-                fontSize: "14px",
-                textTransform: "none !important",
-                borderRadius: 0,
-                color: activeSection === "collaborate" ? "#155BE5" : "black",
-                fontWeight: "bold",
-                "&:hover": {
-                  borderBottom: 2,
-                  borderColor: "#174B8B",
-                  backgroundColor: "transparent",
-                },
-                borderColor:
-                  activeSection === "collaborate" ? "#174B8B" : "transparent",
-              }}
-              onClick={() => {
-                setActiveSection("collaborate");
-                setShowButtons((prevShowButtons: any) => !prevShowButtons);
-                setSelectedValue(null);
-                setInputValue("");
-              }}
-            >
-              + Add Recipients
-            </Button>
+            <ProgressCircularCustomization />
           </Box>
-        )}
+        ) : (
+          <>
+            {recipients.length === 0 && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start", // Align items to the left
+                  alignItems: "center", // Center items vertically if needed
+                  width: "100%", // Ensure the Box takes full width if necessary for your layout
+                }}
+              >
+                <Button
+                  sx={{
+                    fontSize: "14px",
+                    textTransform: "none !important",
+                    borderRadius: 0,
+                    color:
+                      activeSection === "collaborate" ? "#155BE5" : "black",
+                    fontWeight: "bold",
+                    "&:hover": {
+                      borderBottom: 2,
+                      borderColor: "#174B8B",
+                      backgroundColor: "transparent",
+                    },
+                    borderColor:
+                      activeSection === "collaborate"
+                        ? "#174B8B"
+                        : "transparent",
+                  }}
+                  onClick={() => {
+                    setActiveSection("collaborate");
+                    setShowButtons((prevShowButtons: any) => !prevShowButtons);
+                    setSelectedValue(null);
+                    setInputValue("");
+                  }}
+                >
+                  + Add Signers
+                </Button>
+              </Box>
+            )}
 
-        <>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable" isDropDisabled={!siningOrder}>
-              {(provided: any, snapshot: any) => (
-                <Box ref={provided.innerRef} {...provided.droppableProps}>
-                  {recipients.map((colb: any, index: any) => {
-                    console.log(colb, "colb");
-                    const isInternal = userList.some(
-                      (user) => user.email === colb?.email
-                    );
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppable" isDropDisabled={!siningOrder}>
+                {(provided: any, snapshot: any) => (
+                  <Box ref={provided.innerRef} {...provided.droppableProps}>
+                    {recipients.map((colb: any, index: any) => {
+                      const userName = userList.find(
+                        (user) => user.email === colb.email
+                      );
+                      const isInternal = userList.some(
+                        (user) => user.email === colb.email
+                      );
 
-                    return (
-                      <Draggable
-                        key={colb?.email}
-                        draggableId={colb?.email}
-                        index={index}
-                        isDragDisabled={!siningOrder}
-                      >
-                        {(provided: any, snapshot: any) => (
-                          <Box
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            key={index}
-                            sx={{
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "flex-start",
-                              overflow: "auto",
-                              backgroundColor: snapshot.isDragging
-                                ? "lightblue"
-                                : "white",
-                              // Add other styling as needed
-                            }}
-                          >
-                            <div
-                              style={{
+                      return (
+                        <Draggable
+                          key={colb?.email}
+                          draggableId={colb?.email}
+                          index={index}
+                          isDragDisabled={!siningOrder}
+                        >
+                          {(provided: any, snapshot: any) => (
+                            <Box
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              key={index}
+                              sx={{
                                 display: "flex",
-                                alignItems: "center",
+                                flexDirection: "column",
+                                alignItems: "flex-start",
+                                overflow: "auto",
+                                backgroundColor: snapshot.isDragging
+                                  ? "lightblue"
+                                  : "inharit",
+                                // Add other styling as needed
                               }}
                             >
-                              {siningOrder && `${index + 1} \u00A0`}
-                              <Box
-                                sx={{
-                                  width: 25,
-                                  height: 25,
+                              <div
+                                style={{
                                   display: "flex",
                                   alignItems: "center",
-                                  justifyContent: "center",
-                                  borderRadius: "50%",
-                                  backgroundColor:
-                                    bubbleColors[index % bubbleColors.length],
-                                  color: "#FFFFFF",
-                                  marginRight: 1,
                                 }}
                               >
-                                <Typography sx={{ fontSize: "14px" }}>
-                                  {colb?.email?.charAt(0).toUpperCase()}
+                                {siningOrder && `${index + 1} \u00A0`}
+                                <Box
+                                  sx={{
+                                    width: 25,
+                                    height: 25,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRadius: "50%",
+                                    backgroundColor:
+                                      bubbleColors[index % bubbleColors.length],
+                                    color: "#FFFFFF",
+                                    marginRight: 1,
+                                  }}
+                                >
+                                  <Typography sx={{ fontSize: "14px" }}>
+                                    {isInternal ? (
+                                      <>
+                                        {" "}
+                                        {userName?.firstName
+                                          ?.charAt(0)
+                                          .toUpperCase()}
+                                        {userName?.lastName
+                                          ?.charAt(0)
+                                          .toUpperCase()}
+                                      </>
+                                    ) : (
+                                      <>
+                                        {" "}
+                                        {colb?.email
+                                          ?.charAt(0)
+                                          .toUpperCase()}{" "}
+                                      </>
+                                    )}
+                                  </Typography>
+                                </Box>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    width: "160px",
+                                    // overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    fontSize: "15px",
+                                  }}
+                                >
+                                  {colb?.email}
                                 </Typography>
+                              </div>
+
+                              <Box sx={{ display: "contents", ml: 4.5 }}>
+                                <Button
+                                  variant="text"
+                                  color="inherit"
+                                  sx={{
+                                    textTransform: "none",
+                                    // backgroundColor: "#DCDCDC",
+                                    // "&:hover": {
+                                    //   backgroundColor: "#757575",
+                                    // },
+                                    "&:first-of-type": {
+                                      // Only applies margin-left to the first button
+                                    },
+                                    color: "black",
+                                    padding: "0px 5px !important",
+                                    height: "25px !important",
+                                    fontSize: "0.675rem",
+                                    mt: -1,
+                                    ml: siningOrder ? 4.8 : 2.8,
+                                  }}
+                                >
+                                  {isInternal ? "External" : "Internal"}
+                                </Button>
+                                {!colb?.signature && (
+                                  <Button
+                                    variant="text"
+                                    sx={{
+                                      textTransform: "none",
+                                      whiteSpace: "nowrap",
+                                      mt: -0.3,
+                                      ml: 4,
+                                      color: "green",
+                                    }}
+                                    onClick={() => handleShareDilog(colb)}
+                                  >
+                                    {colb?.ReqOption ? (
+                                      <>
+                                        <CheckCircleOutlineIcon fontSize="medium" />{" "}
+                                        Document shared to sign
+                                      </>
+                                    ) : (
+                                      "Send request to sign "
+                                    )}
+                                  </Button>
+                                )}
+                                {colb?.signature && (
+                                  <Button
+                                    variant="text"
+                                    color="success"
+                                    disabled={colb.signature == ""}
+                                    sx={{
+                                      textTransform: "none",
+                                      whiteSpace: "nowrap",
+                                      mt: -0.3,
+                                      ml: 4,
+                                    }}
+                                    onClick={() => handleShareDilog(colb)}
+                                  >
+                                    <CheckCircleOutlineIcon fontSize="medium" />{" "}
+                                    Signed{" "}
+                                  </Button>
+                                )}
+
+                                {/* Debug output */}
+                                {recipients.some(
+                                  (recipient: any) => recipient.date
+                                ) ? (
+                                  <Button
+                                    variant="text"
+                                    color="success"
+                                    sx={{
+                                      textTransform: "none",
+                                      whiteSpace: "nowrap",
+                                      mt: -0.3,
+                                      ml: 4,
+                                    }}
+                                  >
+                                    {colb.date
+                                      ? new Date(colb.date).toLocaleDateString()
+                                      : "Date unavailable"}
+                                  </Button>
+                                ) : (
+                                  <>
+                                    <Tooltip
+                                      title={
+                                        recipients.some(
+                                          (recipient: any) =>
+                                            recipient.signature
+                                        )
+                                          ? "To replace the recipient, cancel all signatures."
+                                          : recipients.some(
+                                              (recipient: any) =>
+                                                recipient.ReqOption
+                                            )
+                                          ? "To replace the recipient, change document status to 'Review'."
+                                          : null
+                                      }
+                                    >
+                                      <span>
+                                        <Button
+                                          variant="text"
+                                          color="warning"
+                                          disabled={recipients.some(
+                                            (recipient: any) =>
+                                              recipient.ReqOption
+                                          )}
+                                          sx={{
+                                            textTransform: "none",
+                                            whiteSpace: "nowrap",
+                                            mt: -0.8,
+                                            ml: 4,
+                                          }}
+                                          onClick={() => {
+                                            setEmailToReplace(colb.email);
+                                            setActiveSection("collaborate");
+                                            setShowButtons(
+                                              (prevShowButtons: any) =>
+                                                !prevShowButtons
+                                            );
+                                            setSelectedValue(null);
+                                            setInputValue("");
+                                          }}
+                                        >
+                                          Replace recipient
+                                        </Button>
+                                      </span>
+                                    </Tooltip>
+                                    <Tooltip
+                                      title={
+                                        recipients.some(
+                                          (recipient: any) =>
+                                            recipient.signature
+                                        )
+                                          ? "To remove the recipient, cancel all signatures."
+                                          : recipients.some(
+                                              (recipient: any) =>
+                                                recipient.ReqOption
+                                            )
+                                          ? "To remove the recipient, change document status to 'Review'."
+                                          : null
+                                      }
+                                    >
+                                      <span>
+                                        <Button
+                                          variant="text"
+                                          color="error"
+                                          disabled={recipients.some(
+                                            (recipient: any) =>
+                                              recipient.ReqOption
+                                          )}
+                                          sx={{
+                                            textTransform: "none",
+                                            whiteSpace: "nowrap",
+                                            mt: -0.8,
+                                            ml: 4,
+                                          }}
+                                          onClick={() => {
+                                            handleRemoveSignatory(colb);
+                                          }}
+                                        >
+                                          Remove recipient
+                                        </Button>
+                                      </span>
+                                    </Tooltip>
+                                  </>
+                                )}
                               </Box>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  width: "160px",
-                                  // overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  fontSize: "15px",
-                                }}
-                              >
-                                {colb?.email}
-                              </Typography>
-                            </div>
-
-                            <Box sx={{ display: "contents", ml: 4.5 }}>
-                              <Button
-                                variant="contained"
-                                color="inherit"
-                                sx={{
-                                  textTransform: "none",
-                                  backgroundColor: "#DCDCDC",
-                                  "&:hover": {
-                                    backgroundColor: "#757575",
-                                  },
-                                  "&:first-of-type": {
-                                    // Only applies margin-left to the first button
-                                  },
-                                  color: "black",
-                                  padding: "2px 5px !important",
-                                  height: "25px !important",
-                                  fontSize: "0.675rem",
-                                  ml: 4.7,
-                                }}
-                              >
-                                {isInternal ? "Internal" : "External"}
-                              </Button>
-                              {!colb?.signature && (
-                                <Button
-                                  variant="text"
-                                  color="success"
-                                  sx={{
-                                    textTransform: "none",
-                                    whiteSpace: "nowrap",
-                                    mt: -0.3,
-                                    ml: 4,
-                                  }}
-                                  onClick={() => handleShareDilog(colb)}
-                                >
-                                  {colb?.ReqOption ? (
-                                    <>
-                                      <CheckCircleOutlineIcon fontSize="medium" />{" "}
-                                      Document shared to sign
-                                    </>
-                                  ) : (
-                                    "Send request to sign "
-                                  )}
-                                </Button>
-                              )}
-                              {colb?.signature && (
-                                <Button
-                                  variant="text"
-                                  color="success"
-                                  disabled={colb.signature == ""}
-                                  sx={{
-                                    textTransform: "none",
-                                    whiteSpace: "nowrap",
-                                    mt: -0.3,
-                                    ml: 4,
-                                  }}
-                                  onClick={() => handleShareDilog(colb)}
-                                >
-                                  <CheckCircleOutlineIcon fontSize="medium" />{" "}
-                                  Signed{" "}
-                                </Button>
-                              )}
-
-                              {/* Debug output */}
-                              {recipients.some(
-                                (recipient: any) => recipient.date
-                              ) ? (
-                                <Button
-                                  variant="text"
-                                  color="success"
-                                  sx={{
-                                    textTransform: "none",
-                                    whiteSpace: "nowrap",
-                                    mt: -0.3,
-                                    ml: 4,
-                                  }}
-                                >
-                                  {colb.date
-                                    ? new Date(colb.date).toLocaleDateString()
-                                    : "Date unavailable"}
-                                </Button>
-                              ) : (
-                                <>
-                                  <Tooltip
-                                    title={
-                                      recipients.some(
-                                        (recipient: any) => recipient.signature
-                                      )
-                                        ? "To replace the recipient, cancel all signatures."
-                                        : recipients.some(
-                                            (recipient: any) =>
-                                              recipient.ReqOption
-                                          )
-                                        ? "To replace the recipient, change document status to 'Review'."
-                                        : null
-                                    }
-                                  >
-                                    <span>
-                                      <Button
-                                        variant="text"
-                                        color="warning"
-                                        disabled={recipients.some(
-                                          (recipient: any) =>
-                                            recipient.ReqOption
-                                        )}
-                                        sx={{
-                                          textTransform: "none",
-                                          whiteSpace: "nowrap",
-                                          mt: -0.8,
-                                          ml: 4,
-                                        }}
-                                        onClick={() => {
-                                          setEmailToReplace(colb.email);
-                                          setActiveSection("collaborate");
-                                          setShowButtons(
-                                            (prevShowButtons: any) =>
-                                              !prevShowButtons
-                                          );
-                                          setSelectedValue(null);
-                                          setInputValue("");
-                                        }}
-                                      >
-                                        Replace recipient
-                                      </Button>
-                                    </span>
-                                  </Tooltip>
-                                  <Tooltip
-                                    title={
-                                      recipients.some(
-                                        (recipient: any) => recipient.signature
-                                      )
-                                        ? "To remove the recipient, cancel all signatures."
-                                        : recipients.some(
-                                            (recipient: any) =>
-                                              recipient.ReqOption
-                                          )
-                                        ? "To remove the recipient, change document status to 'Review'."
-                                        : null
-                                    }
-                                  >
-                                    <span>
-                                      <Button
-                                        variant="text"
-                                        color="error"
-                                        disabled={recipients.some(
-                                          (recipient: any) =>
-                                            recipient.ReqOption
-                                        )}
-                                        sx={{
-                                          textTransform: "none",
-                                          whiteSpace: "nowrap",
-                                          mt: -0.8,
-                                          ml: 4,
-                                        }}
-                                        onClick={() => {
-                                          handleRemoveSignatory(colb);
-                                        }}
-                                      >
-                                        Remove recipient
-                                      </Button>
-                                    </span>
-                                  </Tooltip>
-                                </>
-                              )}
                             </Box>
-                          </Box>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </Box>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </>
-        {showButtons && (
-          <>
-            <Autocomplete
-              freeSolo
-              options={userList.map((user) => ({
-                label: `${user.firstName} ${user.lastName}`,
-                email: user.email,
-              }))}
-              getOptionLabel={(option) => option.label || ""}
-              onInputChange={handleInputChange}
-              inputValue={inputValue}
-              value={selectedValue}
-              onChange={(_, value) => setSelectedValue(value)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Search by name or add email" // Use placeholder
-                  margin="normal"
-                  variant="outlined"
-                  size="small"
-                  onKeyPress={handleKeyPress}
-                  InputLabelProps={{
-                    shrink: false,
-                    style: { display: "none" }, // Hide label by default
-                  }}
-                  sx={{
-                    ".MuiOutlinedInput-root": {
-                      fontSize: "14px",
-                      "& fieldset": {
-                        borderColor: "rgba(0, 0, 0, 0.23)", // Subtle underline by default
-                        borderWidth: "0 0 2px 0", // Only bottom border
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "rgba(0, 0, 0, 0.87)", // Darken underline on hover
-                        borderWidth: "0 0 2px 0", // Only bottom border
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "primary.main", // Highlighted underline when focused
-                        borderWidth: "0 0 2px 0", // Only bottom border
-                      },
-                    },
-                  }}
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </DragDropContext>
+
+            {showButtons && (
+              <>
+                <Autocomplete
+                  freeSolo
+                  options={userList.map((user) => ({
+                    label: `${user.firstName} ${user.lastName}`,
+                    email: user.email,
+                  }))}
+                  getOptionLabel={(option) => option.label || ""}
+                  onInputChange={handleInputChange}
+                  inputValue={inputValue}
+                  value={selectedValue}
+                  onChange={(_, value) => setSelectedValue(value)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Search by name or add email" // Use placeholder
+                      margin="normal"
+                      size="small"
+                      onKeyPress={handleKeyPress}
+                      InputLabelProps={{
+                        shrink: false,
+                        style: { display: "none" }, // Hide label by default
+                      }}
+                      variant="standard"
+                      sx={{
+                        ".MuiOutlinedInput-root": {
+                          fontSize: "14px",
+                          "& fieldset": {
+                            borderBottom: "1px solid #174B8B", // Make bottom border thicker
+                          },
+                          "&:hover fieldset": {
+                            borderBottom: "1px solid #174B8B", // Make bottom border thicker
+                          },
+                          "&.Mui-focused fieldset": {
+                            borderBottom: "1px solid #174B8B", // Make bottom border thicker
+                          },
+                        },
+                      }}
+                    />
+                  )}
                 />
-              )}
-            />
 
-            <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
-              <Button
-                variant="outlined"
-                color="error"
-                sx={{
-                  mr: "20px",
-                  textTransform: "none",
+                <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{
+                      mr: "20px",
+                      textTransform: "none",
 
-                  padding: "2px 5px !important",
-                  height: "25px !important",
-                  fontSize: "0.675rem",
-                }}
-                onClick={() => {
-                  setSelectedValue(null);
-                  setInputValue("");
-                  setShowButtons(false);
-                }}
-              >
-                Cancel
-              </Button>
+                      padding: "2px 5px !important",
+                      height: "25px !important",
+                      fontSize: "0.675rem",
+                    }}
+                    onClick={() => {
+                      setSelectedValue(null);
+                      setInputValue("");
+                      setShowButtons(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
 
-              <Button
-                variant="outlined"
-                color="success"
-                disabled={!selectedValue && !inputValue.trim()}
-                sx={{
-                  textTransform: "none",
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    disabled={!selectedValue && !inputValue.trim()}
+                    sx={{
+                      textTransform: "none",
 
-                  padding: "2px 5px !important",
-                  height: "25px !important",
-                  fontSize: "0.675rem",
-                }}
-                onClick={() => {
-                  if (selectedValue) {
-                    handleAddSignatory(selectedValue.email);
-                  } else if (inputValue.trim() !== "") {
-                    handleAddSignatory(inputValue.trim());
-                  }
-                  setShowButtons(false);
-                }}
-              >
-                Save
-              </Button>
-            </div>
-          </>
-        )}
-        {!showButtons && recipients.length > 0 && (
-          <>
-            <Button
-              variant="text"
-              color="primary"
-              disabled={recipients.some(
-                (recipient: any) => recipient.signature
-              )}
-              sx={{
-                fontSize: "11px",
-                textTransform: "none",
-                whiteSpace: "nowrap",
-
-                fontWeight: "bold",
-              }}
-              onClick={() => {
-                setActiveSection("collaborate");
-                setShowButtons((prevShowButtons: any) => !prevShowButtons);
-                setSelectedValue(null);
-                setInputValue("");
-              }}
-            >
-              + Add Recipients
-            </Button>
-          </>
-        )}
-        {recipients.length !== 0 && (
-          <>
-            <Divider style={{ margin: "10px 0" }} />
-            <FormControlLabel
-              sx={{
-                "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
-                // Apply any additional styling you need for the FormControlLabel here
-              }}
-              control={
-                <Checkbox
-                  checked={siningOrder}
-                  onChange={(e) => setSiningOrder(e.target.checked)}
-                  name="siningOrder"
+                      padding: "2px 5px !important",
+                      height: "25px !important",
+                      fontSize: "0.675rem",
+                    }}
+                    onClick={() => {
+                      if (selectedValue) {
+                        handleAddSignatory(selectedValue.email);
+                      } else if (inputValue.trim() !== "") {
+                        handleAddSignatory(inputValue.trim());
+                      }
+                      setShowButtons(false);
+                    }}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </>
+            )}
+            {!showButtons && recipients.length > 0 && (
+              <>
+                <Button
+                  variant="text"
                   color="primary"
+                  disabled={recipients.some(
+                    (recipient: any) => recipient.signature
+                  )}
                   sx={{
-                    padding: "5px", // Adjusts padding around the checkbox
-                    "& .MuiSvgIcon-root": {
-                      // Targets the SVG icon representing the checkbox
-                      fontSize: "18px", // Adjust this value to scale the icon size
-                    },
+                    fontSize: "11px",
+                    textTransform: "none",
+                    whiteSpace: "nowrap",
+
+                    fontWeight: "bold",
                   }}
+                  onClick={() => {
+                    setActiveSection("collaborate");
+                    setShowButtons((prevShowButtons: any) => !prevShowButtons);
+                    setSelectedValue(null);
+                    setInputValue("");
+                  }}
+                >
+                  + Add Recipients
+                </Button>
+              </>
+            )}
+            {recipients.length !== 0 && (
+              <>
+                <Divider style={{ margin: "10px 0" }} />
+                <FormControlLabel
+                  sx={{
+                    "& .MuiFormControlLabel-label": { fontSize: "12px" }, // Targeting the label directly
+                    // Apply any additional styling you need for the FormControlLabel here
+                  }}
+                  control={
+                    <Checkbox
+                      checked={siningOrder}
+                      onChange={(e) => setSiningOrder(e.target.checked)}
+                      name="siningOrder"
+                      color="primary"
+                      sx={{
+                        padding: "5px", // Adjusts padding around the checkbox
+                        "& .MuiSvgIcon-root": {
+                          // Targets the SVG icon representing the checkbox
+                          fontSize: "18px", // Adjust this value to scale the icon size
+                        },
+                      }}
+                    />
+                  }
+                  label="Signing order"
                 />
-              }
-              label="Signing order"
-            />
+              </>
+            )}
           </>
         )}
       </div>

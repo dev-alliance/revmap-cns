@@ -39,8 +39,8 @@ const Discussion = () => {
   const {
     activeSection,
     setActiveSection,
-    showButtons,
-    setShowButtons,
+    // showButtons,
+    // setShowButtons,
     collaborater,
     setCollaborater,
     comments,
@@ -51,6 +51,7 @@ const Discussion = () => {
   const [selectedValue, setSelectedValue] = useState<any>(null);
   const [isInternal, setIsInternal] = useState<any>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
 
   const [checked, setChecked] = React.useState(false);
@@ -198,15 +199,15 @@ const Discussion = () => {
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   return (
     <>
-      <div style={{ textAlign: "left", position: "relative" }}>
+      <div>
         <Typography
           variant="subtitle1"
           color="black"
-          sx={{ whiteSpace: "nowrap", fontSize: "18px" }}
+          sx={{ whiteSpace: "nowrap" }}
         >
-          Collaborate & Communicate
+          Share Document
         </Typography>
-        <Divider sx={{ mt: 0.3, mb: 0.7, pl: -1, background: "#174B8B" }} />
+        <Divider sx={{ mt: 0.1, mb: 0.7, pl: -1, background: "#174B8B" }} />
         <Box
           sx={{
             display: "flex",
@@ -236,8 +237,7 @@ const Discussion = () => {
               },
             }}
             onClick={() => {
-              setActiveSection("collaborate"),
-                setShowButtons((prevShowButtons: any) => !prevShowButtons);
+              setActiveSection("collaborate"), setShowButtons(true);
               setSelectedValue(null), setInputValue("");
             }}
           >
@@ -268,7 +268,7 @@ const Discussion = () => {
             onClick={() => {
               setActiveSection("message"),
                 setIsInternal(""),
-                setShowButtons((prevShowButtons: any) => !prevShowButtons);
+                setShowButtons(true);
             }}
           >
             + Add Message
@@ -299,13 +299,28 @@ const Discussion = () => {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Search by name or add email"
-                      variant="outlined"
+                      placeholder="Search by name or add email" // Use placeholder
+                      margin="normal"
                       size="small"
                       onKeyPress={handleKeyPress}
+                      InputLabelProps={{
+                        shrink: false,
+                        style: { display: "none" }, // Hide label by default
+                      }}
+                      variant="standard"
                       sx={{
-                        ".MuiInputLabel-root": { fontSize: "14px" },
-                        ".MuiOutlinedInput-root": { fontSize: "14px" },
+                        ".MuiOutlinedInput-root": {
+                          fontSize: "14px",
+                          "& fieldset": {
+                            borderBottom: "1px solid #174B8B", // Make bottom border thicker
+                          },
+                          "&:hover fieldset": {
+                            borderBottom: "1px solid #174B8B", // Make bottom border thicker
+                          },
+                          "&.Mui-focused fieldset": {
+                            borderBottom: "1px solid #174B8B", // Make bottom border thicker
+                          },
+                        },
                       }}
                     />
                   )}

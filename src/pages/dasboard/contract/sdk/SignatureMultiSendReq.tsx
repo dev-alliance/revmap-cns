@@ -113,7 +113,14 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
         onClose={onClose}
         maxWidth="sm"
         fullWidth
-        sx={{ alignItems: "center" }}
+        sx={{
+          "& .MuiPaper-root": {
+            // Targeting the Paper component inside the Dialog
+            border: "1.5px dashed #174B8B", // Customizing the border to dashed
+            borderRadius: "16px",
+          },
+          alignItems: "center",
+        }}
       >
         <DialogTitle
           sx={{

@@ -1216,6 +1216,17 @@ function SyncFesion() {
     if (documentEditor) {
       documentEditor.isReadOnly = enabelEditing;
     }
+
+    // documentEditor.focusIn(); // Focusing the editor
+    // const buttons = document.querySelectorAll(".e-tbar-btn");
+    // const items = document.querySelectorAll(".e-toolbar-item");
+    // items.forEach((item) => {
+    //   item.classList.add("e-overlay");
+    // });
+
+    // buttons.forEach((button) => {
+    //   button.setAttribute("aria-disabled", "true");
+    // });
   }, [enabelEditing]);
 
   const handleClick = () => {

@@ -325,7 +325,7 @@ const ApprovalsComp = () => {
 
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   return (
-    <div style={{ textAlign: "left", position: "relative" }}>
+    <div>
       <Typography variant="subtitle1" color="black">
         Approvals
       </Typography>
