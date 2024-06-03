@@ -1932,7 +1932,7 @@ export default function Dashboard() {
           <Route path="/contract-list" element={<ContractList />} />
           <Route path="/create-contract" element={<CreateContract />} />
           <Route path="/editor-dahsbord" element={<EditorDahsbord />} />
-          {/* <Route path="/editor-dahsbord/open" element={<EditorDahsbord />} /> */}
+          <Route path="/editor-dahsbord/open" element={<EditorDahsbord />} />
           <Route path="/sub-page-1" element={<SubPage1 />} />
           <Route path="/billing" element={<CardsSubscription />} />
 

@@ -73,7 +73,7 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
 
         <DialogContent
           sx={{
-            maxHeight: "30vh",
+            maxHeight: "32vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",

@@ -26,6 +26,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { TextareaAutosize } from "@mui/material";
 import { ContractContext } from "@/context/ContractContext";
 import CollaburaterDilog from "@/pages/dasboard/contract/sdk/CollaburaterDilog";
+import DocumentNameErrorDial from "@/pages/dasboard/contract/sdk/DocumentNameErrorDial";
 
 const Discussion = () => {
   const {
@@ -45,6 +46,7 @@ const Discussion = () => {
     setCollaborater,
     comments,
     setComments,
+    documentName,
   } = useContext(ContractContext);
 
   const [inputValue, setInputValue] = useState("");
@@ -53,7 +55,7 @@ const Discussion = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [userList, setUserList] = useState<Array<any>>([]);
-
+  const [openErrorNameDilog, setOpenErrorNameDilog] = useState(false);
   const [checked, setChecked] = React.useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [ClickData, setClickData] = useState("");
@@ -140,6 +142,10 @@ const Discussion = () => {
   };
 
   const handleShareDilog = (signatory: any) => {
+    if (!documentName) {
+      setOpenErrorNameDilog(true);
+      return;
+    }
     setOpenDialog(true);
     const user = userList.find((user) => user.email === signatory?.email);
     if (user) {
@@ -376,8 +382,11 @@ const Discussion = () => {
             {collaborater?.map((colb: any, index: any) => {
               // Check if the colb's email is in the userList
 
+              const userName = userList.find(
+                (user) => user.email === colb.email
+              );
               const isInternal = userList.some(
-                (user) => user.email === colb?.email
+                (user) => user.email === colb.email
               );
 
               return (
@@ -397,24 +406,35 @@ const Discussion = () => {
                       alignItems: "center",
                     }}
                   >
-                    <Box
-                      sx={{
-                        width: 25,
-                        height: 25,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        backgroundColor:
-                          bubbleColors[index % bubbleColors.length],
-                        color: "#FFFFFF",
-                        marginRight: 1,
-                      }}
-                    >
-                      <Typography sx={{ fontSize: "14px" }}>
-                        {colb?.email?.charAt(0).toUpperCase()}
-                      </Typography>
-                    </Box>
+                    {!isLoading && (
+                      <Box
+                        sx={{
+                          width: 25,
+                          height: 25,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "50%",
+                          backgroundColor:
+                            bubbleColors[index % bubbleColors.length],
+                          color: "#FFFFFF",
+                          marginRight: 1,
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "10px" }}>
+                          {!isLoading &&
+                            (isInternal ? (
+                              <>
+                                {" "}
+                                {userName?.firstName?.charAt(0).toUpperCase()}
+                                {userName?.lastName?.charAt(0).toUpperCase()}
+                              </>
+                            ) : (
+                              <> {colb?.email?.charAt(0).toUpperCase()} </>
+                            ))}
+                        </Typography>
+                      </Box>
+                    )}
                     <Typography
                       variant="body2"
                       sx={{
@@ -429,26 +449,29 @@ const Discussion = () => {
                     </Typography>
                   </div>
                   <Box sx={{ display: "flex", mt: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="inherit"
-                      sx={{
-                        textTransform: "none",
-                        backgroundColor: "#DCDCDC",
-                        "&:hover": {
-                          backgroundColor: "#757575",
-                        },
-                        "&:first-of-type": {
-                          ml: 4.5, // Only applies margin-left to the first button
-                        },
-                        color: "black",
-                        padding: "2px 5px !important",
-                        height: "25px !important",
-                        fontSize: "0.675rem",
-                      }}
-                    >
-                      {isInternal ? "Internal" : "External"}
-                    </Button>
+                    {!isLoading && (
+                      <Button
+                        variant="text"
+                        color="inherit"
+                        sx={{
+                          textTransform: "none",
+                          // backgroundColor: "#DCDCDC",
+                          // "&:hover": {
+                          //   backgroundColor: "#757575",
+                          // },
+                          "&:first-of-type": {
+                            // Only applies margin-left to the first button
+                          },
+                          color: "black",
+                          padding: "0px 5px !important",
+                          height: "25px !important",
+                          fontSize: "0.675rem",
+                          ml: 2.8,
+                        }}
+                      >
+                        {!isInternal ? "External" : "Internal"}
+                      </Button>
+                    )}
                     <IconButton
                       aria-label="delete" // Providing an accessible label is important for assistive technologies
                       color="error"
@@ -643,18 +666,16 @@ const Discussion = () => {
 
                       <Box sx={{ display: "flex", mt: 0.5, mb: 1 }}>
                         <Button
-                          variant="contained"
+                          variant="text"
                           color="inherit"
                           sx={{
                             textTransform: "none",
-                            backgroundColor: "#DCDCDC",
-                            "&:hover": {
-                              backgroundColor: "#757575",
-                            },
+
                             color: "black",
                             padding: "2px 5px !important",
                             height: "20px !important",
                             fontSize: "0.675rem",
+                            ml: -1,
                           }}
                         >
                           {comment.isInternal ? "Internal" : "External"}
@@ -693,6 +714,11 @@ const Discussion = () => {
       <CollaburaterDilog
         open={openDialog}
         onClose={handleCloseDialog}
+        ClickData={ClickData}
+      />
+      <DocumentNameErrorDial
+        open={openErrorNameDilog}
+        onClose={() => setOpenErrorNameDilog(false)}
         ClickData={ClickData}
       />
       {/* <CollaburaterDilog

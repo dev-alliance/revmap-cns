@@ -148,7 +148,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ height: "420px", mt: -1 }}>
+        <DialogContent sx={{ height: "30vh", mt: -1 }}>
           <Box
             sx={{
               mb: 2,
@@ -159,8 +159,8 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
           >
             <Tabs
               value={tabValue}
-              onChange={handleTabChange}
-              variant="scrollable"
+              // onChange={handleTabChange}
+              variant="standard"
               scrollButtons="auto"
               aria-label="recipient tabs"
             >

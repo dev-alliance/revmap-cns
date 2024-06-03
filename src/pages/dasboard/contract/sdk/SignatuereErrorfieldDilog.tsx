@@ -56,7 +56,14 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
         onClose={onClose}
         maxWidth="sm"
         fullWidth
-        sx={{ alignItems: "center" }}
+        sx={{
+          "& .MuiPaper-root": {
+            // Targeting the Paper component inside the Dialog
+            border: "1.5px dashed #174B8B", // Customizing the border to dashed
+            borderRadius: "16px",
+          },
+          alignItems: "center",
+        }}
       >
         <DialogTitle
           sx={{
@@ -64,7 +71,7 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: "1px solid black",
+            borderBottom: "1px solid #174B8B",
           }}
         >
           <Typography
@@ -76,8 +83,8 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
               transform: "translateY(-50%)",
             }}
           >
-            To send the request,please add signature fields for the signers
-            listed below.
+            Please add signature fields for the signer(s) listed below to send
+            the request
           </Typography>
           <IconButton
             onClick={onClose}
@@ -94,12 +101,15 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             flexDirection: "column",
             textAlign: "left",
             lineHeight: "auto",
+            maxHeight: "30vh",
+            // height: "30vh",
           }}
         >
           <Typography
             sx={{
               display: "flex",
               flexDirection: "column",
+
               mt: "1rem",
             }}
           >
@@ -132,11 +142,15 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             }}
           >
             <Button
-              variant="outlined"
               sx={{
                 textTransform: "none",
                 mt: "4",
+                backgroundColor: "#174B8B", // Set the button color to green
+                "&:hover": {
+                  backgroundColor: "#2B6EC2", // Darker green on hover
+                },
               }}
+              variant="contained"
               onClick={() => setSelectedModule("fields")}
             >
               Add fields

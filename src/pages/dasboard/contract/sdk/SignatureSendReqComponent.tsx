@@ -125,8 +125,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
   };
   const handleClick = () => {
     setOpenLDialog(true);
-
-    setOpenMultiDialog(false);
+    // setOpenMultiDialog(false);
   };
 
   return (
@@ -150,8 +149,8 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
               }}
             >
               <Typography sx={{ fontSize: "13px" }}>
-                {ClickData?.email?.charAt(0).toUpperCase()}
-                {ClickData?.lastName?.charAt(0).toUpperCase()}
+                {user?.firstName?.charAt(0).toUpperCase()}
+                {user?.lastName?.charAt(0).toUpperCase()}
               </Typography>
             </Box>
             <Typography
@@ -162,7 +161,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
                 fontSize: "16px",
               }}
             >
-              {ClickData?.firstName}
+              {user?.firstName}
             </Typography>
           </div>
           <div>
@@ -420,6 +419,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
         >
           <Button
             variant="outlined"
+            color="error"
             sx={{ textTransform: "none", mt: "4", mr: 2, marginBottom: "20px" }}
             onClick={onclose}
             // onClick={() => setOpenLDialog(true)}
@@ -430,7 +430,15 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
             // disabled={!requestOption}
             variant="contained"
             color="primary"
-            sx={{ textTransform: "none", mt: "4", marginBottom: "20px" }}
+            sx={{
+              textTransform: "none",
+              mt: "4",
+              marginBottom: "20px",
+              backgroundColor: "#174B8B", // Set the button color to green
+              "&:hover": {
+                backgroundColor: "#2B6EC2", // Darker green on hover
+              },
+            }}
             onClick={() => {
               if (tabValue === recipients.length - 1) {
                 handleClick();

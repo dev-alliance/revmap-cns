@@ -36,39 +36,6 @@ import { TextField, Button, Grid, Typography, Paper, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import linepng from "../../../../assets/line.png";
-import bucket from "../../../../assets/bucket.png";
-import deleteIcon from "../../../../assets/icons/delete.png";
-import copyIcon from "../../../../assets/icons/copy.png";
-// icons
-import openFolder from "../../../../assets/icons/folder.png";
-import saveIcon from "../../../../assets/icons/save.png";
-import editIcon from "../../../../assets/icons/edit.png";
-// view
-import searchIcon from "../../../../assets/icons/search.png";
-import commentIcon from "../../../../assets/icons/comment.png";
-import trackChangesIcon from "../../../../assets/icons/writing.png";
-import crossIcon from "../../../../assets/icons/close.png";
-import tickIcon from "../../../../assets/icons/check.png";
-import viewIcon from "../../../../assets/icons/website.png";
-// insert
-import tableIcon from "../../../../assets/icons/table.png";
-import imageIcon from "../../../../assets/icons/picture.png";
-import linkIcon from "../../../../assets/icons/link.png";
-import headerIcon from "../../../../assets/icons/header.png";
-import footerIcon from "../../../../assets/icons/footer.png";
-import pageNoIcon from "../../../../assets/icons/pageNumber.png";
-import pageSetupIcon from "../../../../assets/icons/cogwheels.png";
-// export
-import pdfIcon from "../../../../assets/icons/pdf.png";
-import wordIcon from "../../../../assets/icons/word.png";
-import downloadIcon from "../../../../assets/icons/download.png";
-// signature
-import requestIcon from "../../../../assets/icons/request.png";
-import websiteIcon from "../../../../assets/icons/website.png";
-import signatureIcon from "../../../../assets/icons/signature.png";
-// attach
-import { debounce } from "lodash";
-import attachIcon from "../../../../assets/icons/attach.png";
 
 import {
   DocumentEditorComponent,
@@ -110,7 +77,9 @@ DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFesion() {
   const location = useLocation();
+
   const open = location?.state?.open;
+
   const { user } = useAuth();
   const {
     setEditorRefContext,
@@ -132,6 +101,7 @@ function SyncFesion() {
     documentName,
     setDucomentName,
     setLeftSidebarExpanded,
+    inputRef,
   } = useContext(ContractContext);
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
@@ -139,6 +109,7 @@ function SyncFesion() {
   useEffect(() => {
     setLeftSidebarExpanded(true);
   }, []);
+  console.log(collaborater, "collaborater?.length");
 
   const editorContainerRef: any = useRef(null);
   const handleSubmit = async (data: any) => {
@@ -1264,12 +1235,11 @@ function SyncFesion() {
     });
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     const calculateWidth = () => {
       const context = document.createElement("canvas").getContext("2d");
       if (context && inputRef.current) {
+        inputRef.current.focus();
         context.font = getComputedStyle(inputRef.current).font; // Get the font style from the input
         let totalWidth = 0;
         for (const char of documentName) {
@@ -2011,29 +1981,66 @@ function SyncFesion() {
                 )}
               </div>
               <p className="text-[14px] font-regular flex whitespace-nowrap ">
-                Approvals: 0/0{" "}
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular mt-0.5 ">
+                Approvals:{" "}
+                {
+                  approvers.filter((recipient: any) => recipient.signature)
+                    .length
+                }
+                /{approvers.length}
+                <span
+                  style={{ color: !approvers.length ? "#92929D" : "blue" }}
+                  className="ml-1 text-[12px] font-regular mt-0.5 cursor-pointer"
+                  onClick={() => {
+                    setSelectedModule("approval"), setSidebarExpanded(true);
+                  }}
+                >
                   Manage{" "}
                 </span>{" "}
               </p>
 
               <p className="text-[14px] font-regular flex whitespace-nowrap">
-                Signers: 0/0{" "}
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular mt-0.5  ">
+                Signers:{" "}
+                {
+                  recipients.filter((recipient: any) => recipient.signature)
+                    .length
+                }
+                /{recipients.length}
+                <span
+                  style={{ color: !recipients?.length ? "#92929D" : "blue" }}
+                  className="ml-1 text-[12px] font-regular mt-0.5  cursor-pointer"
+                  onClick={() => {
+                    setSelectedModule("signature"), setSidebarExpanded(true);
+                  }}
+                >
                   Manage{" "}
                 </span>{" "}
               </p>
 
               <p className="text-[14px] font-regular flex whitespace-nowrap">
-                Collaborators: 0
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular mt-0.5  ">
+                Collaborators:{" "}
+                {collaborater?.filter((dt: any) => dt.permission).length}/
+                {collaborater?.length}
+                <span
+                  style={{ color: !collaborater?.length ? "#92929D" : "blue" }}
+                  className="ml-1  text-[12px] font-regular mt-0.5 cursor-pointer "
+                  onClick={() => {
+                    setSelectedModule("share");
+                    setSidebarExpanded(true);
+                  }}
+                >
                   Manage{" "}
                 </span>{" "}
               </p>
 
               <p className="text-[14px] font-regular flex whitespace-nowrap">
                 Fields: 0/0{" "}
-                <span className="ml-1 text-[#92929D] text-[12px] font-regular  mt-0.5 ">
+                <span
+                  style={{ color: recipients?.length ? "#92929D" : "blue" }}
+                  className="ml-1  text-[12px] font-regular  mt-0.5 cursor-pointer"
+                  onClick={() => {
+                    setSelectedModule("fields"), setSidebarExpanded(true);
+                  }}
+                >
                   Manage{" "}
                 </span>{" "}
               </p>

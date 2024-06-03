@@ -7,6 +7,7 @@ import React, {
   ReactNode,
   Dispatch,
   SetStateAction,
+  useRef,
 } from "react";
 
 interface Overview {
@@ -125,6 +126,9 @@ interface ContractContextProps {
 
   attachments: any | null;
   setAttachments: Dispatch<SetStateAction<any>>;
+  siningOrder: any | null;
+  setSiningOrder: Dispatch<SetStateAction<any>>;
+  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -201,12 +205,17 @@ export const ContractContext = createContext<ContractContextProps>({
   setLeftSidebarExpanded: () => {},
   attachments: {},
   setAttachments: () => {},
+  siningOrder: {},
+  setSiningOrder: () => {},
+  inputRef: { current: null },
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const inputRef = useRef<any>(null);
   const [contract, setContract] = useState<Contract | null>(null);
+  const [siningOrder, setSiningOrder] = useState(false);
   const [documentName, setDucomentName] = useState("");
   const [leftsidebarExpanded, setLeftSidebarExpanded] = useState(false);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -460,6 +469,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (attachments) {
       setAttachments(JSON.parse(attachments));
     }
+    const siningOrder = localStorage.getItem("siningOrder");
+    if (siningOrder) {
+      setSiningOrder(JSON.parse(siningOrder));
+    }
   }, []);
   useEffect(() => {
     if (contract) {
@@ -559,6 +572,9 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setLeftSidebarExpanded,
         attachments,
         setAttachments,
+        siningOrder,
+        setSiningOrder,
+        inputRef,
       }}
     >
       {children}

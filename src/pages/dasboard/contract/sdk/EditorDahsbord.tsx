@@ -58,6 +58,7 @@ import { debounce } from "lodash";
 import { Close, PushPin } from "@mui/icons-material";
 import Fields from "@/pages/dasboard/contract/sdk/Fields";
 import SyncFesion from "@/pages/dasboard/contract/sdk/SyncFesion";
+import AlertBackDilog from "@/pages/dasboard/contract/sdk/AlertBackDilod";
 
 interface Module {
   getIcon: (isSelected: boolean) => JSX.Element;
@@ -67,23 +68,36 @@ interface Module {
 
 const MyComponent: React.FC = () => {
   const location = useLocation();
-  const { setOpenDocoment, sidebarExpanded, setSidebarExpanded, showBlock } =
-    useContext(ContractContext);
-  // const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
   const {
-    signatories,
-    setSignatories,
+    setOpenDocoment,
+    sidebarExpanded,
+    setSidebarExpanded,
+    showBlock,
+    dragFields,
+    recipients,
+    setRecipients,
+    uplodTrackFile,
+    documentContent,
+    setShowBlock,
+    setEditMode,
+    contract,
+    lifecycleData,
+    collaborater,
+    approvers,
+    setLeftSidebarExpanded,
     selectedModule,
     setSelectedModule,
     editMode,
     documentName,
     setDucomentName,
   } = useContext(ContractContext);
+  // const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
+
   const { control, handleSubmit } = useForm();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [openDialog, setOpenDialog] = useState(false);
-
+  const [alertDilog, setAlertDilog] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
 
   const handlePinClick = () => {
@@ -110,12 +124,21 @@ const MyComponent: React.FC = () => {
     }, 100),
     []
   );
+  const handleAlert = () => {
+    setAlertDilog(true);
+  };
 
   useEffect(() => {
     if (location.pathname === "/dashboard/editor-dahsbord/open") {
       setOpenDocoment(true);
       console.log("ok");
     }
+    return () => {
+      if (window.confirm("Are you sure you want to leave the document")) {
+        setRecipients([]);
+        setSelectedModule("overview");
+      }
+    };
   }, []);
 
   const handleOpenDialog = () => {
@@ -716,7 +739,8 @@ const MyComponent: React.FC = () => {
         </Box>
       </Box>
       <SignatureDialog open={openDialog} onClosePre={handleCloseDialog} />
-      {/* <OpenSignatureDialog /> */}
+      <OpenSignatureDialog />
+      <AlertBackDilog open={alertDilog} onClose={() => setAlertDilog(false)} />
     </>
   );
 };

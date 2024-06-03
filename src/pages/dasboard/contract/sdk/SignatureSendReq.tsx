@@ -174,7 +174,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ height: "420px" }}>
+        <DialogContent sx={{ height: "30vh" }}>
           <div>
             <div style={{ display: "flex" }}>
               <Box
@@ -464,6 +464,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
           >
             <Button
               variant="outlined"
+              color="error"
               sx={{ textTransform: "none", mt: "4", mr: 2 }}
               onClick={onClose}
               // onClick={() => setOpenDialog(true)}
@@ -474,7 +475,14 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
               // disabled={!requestOption}
               variant="contained"
               color="primary"
-              sx={{ textTransform: "none", mt: "4" }}
+              sx={{
+                textTransform: "none",
+                mt: "4",
+                backgroundColor: "#174B8B", // Set the button color to green
+                "&:hover": {
+                  backgroundColor: "#2B6EC2", // Darker green on hover
+                },
+              }}
               onClick={() => {
                 handleClick();
                 updateDocument(); // Call the new function here

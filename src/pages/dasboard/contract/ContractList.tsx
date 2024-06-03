@@ -590,39 +590,39 @@ const ContractList = () => {
                 component={Link}
                 to="/dashboard/create-contract"
                 onClick={() => {
-                  setContract(null),
-                    setLifecycleData({
-                      activeSection: "",
-                      showButtons: false,
-                      recipients: [],
-                      formData: {
-                        checkboxStates: {
-                          isEvergreen: false,
-                          isRenewalsActive: false,
-                          isNotificationEmailEnabled: false,
-                          isRemindersEnabled: false,
-                        },
-                        dateFields: {
-                          signedOn: "",
-                          startDate: "",
-                          endDate: "",
-                          noticePeriodDate: "",
-                        },
-                        renewalDetails: {
-                          renewalType: "days",
-                          renewalPeriod: 0,
-                        },
-                        notificationDetails: {
-                          notifyOwner: false,
-                          additionalRecipients: [],
-                        },
-                        reminderSettings: {
-                          firstReminder: 0,
-                          daysBetweenReminders: 0,
-                          daysBeforeFinalExpiration: 0,
-                        },
+                  setContract(null), setSidebarExpanded(false);
+                  setLifecycleData({
+                    activeSection: "",
+                    showButtons: false,
+                    recipients: [],
+                    formData: {
+                      checkboxStates: {
+                        isEvergreen: false,
+                        isRenewalsActive: false,
+                        isNotificationEmailEnabled: false,
+                        isRemindersEnabled: false,
                       },
-                    });
+                      dateFields: {
+                        signedOn: "",
+                        startDate: "",
+                        endDate: "",
+                        noticePeriodDate: "",
+                      },
+                      renewalDetails: {
+                        renewalType: "days",
+                        renewalPeriod: 0,
+                      },
+                      notificationDetails: {
+                        notifyOwner: false,
+                        additionalRecipients: [],
+                      },
+                      reminderSettings: {
+                        firstReminder: 0,
+                        daysBetweenReminders: 0,
+                        daysBeforeFinalExpiration: 0,
+                      },
+                    },
+                  });
                 }}
               >
                 <AddIcon /> Create Document
