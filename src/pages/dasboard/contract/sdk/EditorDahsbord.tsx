@@ -76,20 +76,20 @@ const MyComponent: React.FC = () => {
     dragFields,
     recipients,
     setRecipients,
-    uplodTrackFile,
-    documentContent,
     setShowBlock,
     setEditMode,
     contract,
     lifecycleData,
     collaborater,
     approvers,
+    setApprovers,
     setLeftSidebarExpanded,
     selectedModule,
     setSelectedModule,
     editMode,
     documentName,
     setDucomentName,
+    setCollaborater,
   } = useContext(ContractContext);
   // const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(false);
 
@@ -136,6 +136,9 @@ const MyComponent: React.FC = () => {
     return () => {
       if (window.confirm("Are you sure you want to leave the document")) {
         setRecipients([]);
+        setCollaborater([]);
+        setApprovers([]);
+        setDucomentName("");
         setSelectedModule("overview");
       }
     };
