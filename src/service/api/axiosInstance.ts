@@ -12,8 +12,8 @@ export default baseURL;
 // import axios from "axios";
 
 // const baseURL =
-//   process.env.NODE_ENV === "productionsss"
-//     ? process.env.REACT_APP_API_BASE_URL_PROD
+//   process.env.NODE_ENV === "productionssscccc"
+//     ? process.env.REACT_APP_API_BASE_URL_ggPROD
 //     : process.env.REACT_APP_API_BASE_URL_LOCAL;
 
 // const axiosInstance = axios.create({ baseURL });
