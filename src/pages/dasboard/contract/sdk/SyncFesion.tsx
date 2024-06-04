@@ -1381,10 +1381,11 @@ function SyncFesion() {
           Externally Executed Document
         </Typography>
       )}
-      {(showBlock === "" || showBlock === "pdf") && (
-        <>
-          <div className="w-full flex justify-between">
-            <div className="flex items-center gap-x-8 min-w-[500px] pb-0 my-2 pl-4">
+
+      <div className="w-full flex justify-between">
+        <div className="flex items-center gap-x-8 min-w-[500px] pb-0 my-2 pl-4">
+          {(showBlock === "" || showBlock === "pdf") && (
+            <>
               <div className="relative  ">
                 <button
                   className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${
@@ -2035,7 +2036,7 @@ function SyncFesion() {
               <p className="text-[14px] font-regular flex whitespace-nowrap">
                 Fields: 0/0{" "}
                 <span
-                  style={{ color: recipients?.length ? "#92929D" : "blue" }}
+                  style={{ color: !recipients?.length ? "#92929D" : "#92929D" }}
                   className="ml-1  text-[12px] font-regular  mt-0.5 cursor-pointer"
                   onClick={() => {
                     setSelectedModule("fields"), setSidebarExpanded(true);
@@ -2044,85 +2045,85 @@ function SyncFesion() {
                   Manage{" "}
                 </span>{" "}
               </p>
-            </div>
+            </>
+          )}
+        </div>
 
-            {/* buttons */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginRight: "1rem",
-                marginTop: ".5rem",
-                marginBottom: ".5rem",
-                marginLeft: "13rem",
+        {/* buttons */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginRight: "1rem",
+            marginTop: ".5rem",
+            marginBottom: ".5rem",
+            marginLeft: "13rem",
+          }}
+        >
+          {(showBlock == "uploadTrack" || editMode) && (
+            <>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{
+                  textTransform: "none",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+                onClick={() => {
+                  handleClickCencel();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                sx={{ ml: 2, textTransform: "none" }}
+                onClick={handleSubmit}
+                variant="outlined"
+                color="success"
+              >
+                Save
+              </Button>
+            </>
+          )}
+
+          {showBlock == "pdf" && (
+            <Button
+              sx={{ ml: 2, textTransform: "none" }}
+              type="submit"
+              variant="outlined"
+              color="success"
+              onClick={() => {
+                setSidebarExpanded(true), setSelectedModule("fields");
               }}
             >
-              {(showBlock == "uploadTrack" || editMode) && (
-                <>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    sx={{
-                      textTransform: "none",
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}
-                    onClick={() => {
-                      handleClickCencel();
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    sx={{ ml: 2, textTransform: "none" }}
-                    onClick={handleSubmit}
-                    variant="outlined"
-                    color="success"
-                  >
-                    Save
-                  </Button>
-                </>
-              )}
+              Add Field
+            </Button>
+          )}
 
-              {showBlock == "pdf" && (
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  type="submit"
-                  variant="outlined"
-                  color="success"
-                  onClick={() => {
-                    setSidebarExpanded(true), setSelectedModule("fields");
-                  }}
-                >
-                  Add Field
-                </Button>
-              )}
+          {showBlock == "" && !editMode && (
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{
+                ml: 2,
+                textTransform: "none",
 
-              {showBlock == "" && !editMode && (
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  sx={{
-                    ml: 2,
-                    textTransform: "none",
-
-                    color: "#174B8B",
-                    borderColor: "#174B8B", // Change this to your preferred color
-                    "&:hover": {
-                      borderColor: "#1171D1", // Optional: Change for hover state
-                    },
-                  }}
-                  onClick={() => {
-                    handleClick();
-                  }}
-                >
-                  <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
-                </Button>
-              )}
-            </div>
-          </div>
-        </>
-      )}
+                color: "#174B8B",
+                borderColor: "#174B8B", // Change this to your preferred color
+                "&:hover": {
+                  borderColor: "#1171D1", // Optional: Change for hover state
+                },
+              }}
+              onClick={() => {
+                handleClick();
+              }}
+            >
+              <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
+            </Button>
+          )}
+        </div>
+      </div>
 
       {/* <div id="xyz">show </div> */}
       {showBlock == "uploadTrack" && uplodTrackFile && (

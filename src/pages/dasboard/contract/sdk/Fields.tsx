@@ -483,11 +483,11 @@ const Fields = () => {
   }, [user?._id]);
 
   const validRecipients = recipients.filter((recipient: any) =>
-    userList.some((user) => user.email === recipient.email)
+    userList.some((user) => recipient.email === recipient.email)
   );
 
   const options = validRecipients.map((recipient: any) => {
-    const user = userList.find((user) => user.email === recipient.email);
+    const user = userList.find((user) => recipient.email === recipient.email);
     return {
       email: recipient.email,
       name: `${user.firstName} ${user.lastName}`,
