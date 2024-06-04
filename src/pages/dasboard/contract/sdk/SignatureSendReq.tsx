@@ -193,8 +193,8 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
                 }}
               >
                 <Typography sx={{ fontSize: "13px" }}>
-                  {ClickData?.email?.charAt(0).toUpperCase()}
-                  {ClickData?.lastName?.charAt(0).toUpperCase()}
+                  {user?.firstName?.charAt(0).toUpperCase()}
+                  {user?.lastName?.charAt(0).toUpperCase()}
                 </Typography>
               </Box>
               <Typography
@@ -205,7 +205,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
                   fontSize: "16px",
                 }}
               >
-                {ClickData?.firstName}
+                {user?.firstName}
               </Typography>
             </div>
             <div>
