@@ -339,44 +339,44 @@ const Signature = () => {
                               }}
                             >
                               {siningOrder && `${index + 1}.\u00A0`}
-                              {!isLoading && (
-                                <Box
-                                  sx={{
-                                    width: 25,
-                                    height: 25,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    borderRadius: "50%",
-                                    backgroundColor:
-                                      bubbleColors[index % bubbleColors.length],
-                                    color: "#FFFFFF",
-                                    marginRight: 1,
-                                  }}
-                                >
-                                  <Typography sx={{ fontSize: "10px" }}>
-                                    {!isLoading &&
-                                      (isInternal ? (
-                                        <>
-                                          {" "}
-                                          {userName?.firstName
-                                            ?.charAt(0)
-                                            .toUpperCase()}
-                                          {userName?.lastName
-                                            ?.charAt(0)
-                                            .toUpperCase()}
-                                        </>
-                                      ) : (
-                                        <>
-                                          {" "}
-                                          {colb?.email
-                                            ?.charAt(0)
-                                            .toUpperCase()}{" "}
-                                        </>
-                                      ))}
-                                  </Typography>
-                                </Box>
-                              )}
+
+                              <Box
+                                sx={{
+                                  width: 25,
+                                  height: 25,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  borderRadius: "50%",
+                                  backgroundColor:
+                                    bubbleColors[index % bubbleColors.length],
+                                  color: "#FFFFFF",
+                                  marginRight: 1,
+                                }}
+                              >
+                                <Typography sx={{ fontSize: "10px" }}>
+                                  {!isLoading &&
+                                    (isInternal ? (
+                                      <>
+                                        {" "}
+                                        {userName?.firstName
+                                          ?.charAt(0)
+                                          .toUpperCase()}
+                                        {userName?.lastName
+                                          ?.charAt(0)
+                                          .toUpperCase()}
+                                      </>
+                                    ) : (
+                                      <>
+                                        {" "}
+                                        {colb?.email
+                                          ?.charAt(0)
+                                          .toUpperCase()}{" "}
+                                      </>
+                                    ))}
+                                </Typography>
+                              </Box>
+
                               <Typography
                                 variant="body2"
                                 sx={{
@@ -392,30 +392,30 @@ const Signature = () => {
                             </div>
 
                             <Box sx={{ display: "contents", ml: 4.5 }}>
-                              {!isLoading && (
-                                <Button
-                                  variant="text"
-                                  color="inherit"
-                                  sx={{
-                                    textTransform: "none",
-                                    // backgroundColor: "#DCDCDC",
-                                    // "&:hover": {
-                                    //   backgroundColor: "#757575",
-                                    // },
-                                    "&:first-of-type": {
-                                      // Only applies margin-left to the first button
-                                    },
-                                    color: "black",
-                                    padding: "0px 5px !important",
-                                    height: "25px !important",
-                                    fontSize: "0.675rem",
-                                    mt: -1,
-                                    ml: siningOrder ? 4.8 : 2.8,
-                                  }}
-                                >
-                                  {!isInternal ? "External" : "Internal"}
-                                </Button>
-                              )}
+                              <Button
+                                variant="text"
+                                color="inherit"
+                                sx={{
+                                  textTransform: "none",
+                                  // backgroundColor: "#DCDCDC",
+                                  // "&:hover": {
+                                  //   backgroundColor: "#757575",
+                                  // },
+                                  "&:first-of-type": {
+                                    // Only applies margin-left to the first button
+                                  },
+                                  color: "black",
+                                  padding: "0px 5px !important",
+                                  height: "25px !important",
+                                  fontSize: "0.675rem",
+                                  mt: -1,
+                                  ml: siningOrder ? 4.8 : 2.8,
+                                }}
+                              >
+                                {!isLoading &&
+                                  (!isInternal ? "External" : "Internal")}
+                              </Button>
+
                               {!colb?.signature && (
                                 <Button
                                   variant="text"
