@@ -114,9 +114,10 @@ const OverView = () => {
         vendor: "Vendor Name", // Modify as needed
         currency: data?.currency,
         value: data?.value,
-        category: data?.category,
+
         subcategory: data?.subcategory,
         tags: data?.tags,
+        category: data?.category,
         branch: data?.branch,
         team: data?.team,
         contractType: "Type1", // Modify as needed
@@ -144,9 +145,9 @@ const OverView = () => {
       setValue("with_name", contract?.with_name || "");
       setValue("currency", contract?.currency);
       setValue("value", contract?.value);
-      setValue("category", contract?.category);
       setValue("subcategory", contract?.subcategory);
       setValue("tags", contract?.tags);
+      setValue("category", contract?.category);
       setValue("branch", contract?.branch);
       setValue("team", contract?.team);
       setValue("contractType", contract?.contractType);

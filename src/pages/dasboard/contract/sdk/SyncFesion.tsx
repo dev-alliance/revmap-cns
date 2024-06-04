@@ -63,7 +63,7 @@ import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDil
 import { create } from "@/service/api/contract";
 import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 DocumentEditorComponent.Inject(
   Selection,
@@ -77,9 +77,8 @@ DocumentEditorContainerComponent.Inject(Toolbar);
 
 function SyncFesion() {
   const location = useLocation();
-
+  const navigate = useNavigate();
   const open = location?.state?.open;
-
   const { user } = useAuth();
   const {
     setEditorRefContext,
@@ -90,6 +89,8 @@ function SyncFesion() {
     documentContent,
     showBlock,
     setShowBlock,
+    setApprovers,
+    setCollaborater,
     setSelectedModule,
     setSidebarExpanded,
     setEditMode,
@@ -118,19 +119,28 @@ function SyncFesion() {
         toast.error("Please enter the name of the document");
         return;
       }
+      if (!lifecycleData.formData.dateFields.startDate) {
+        toast.error("Please enter the start date in life sycle");
+        return;
+      }
+      const contracts = { ...contract, name: documentName };
+      console.log(contracts, "name");
+
       const payload = {
         userId: user._id,
-        overview: contract,
+        overview: { ...contract, name: documentName },
         lifecycle: lifecycleData,
         collaburater: collaborater,
         approval: approvers,
         signature: recipients,
         status: "Active",
       };
+      console.log(payload, "payload");
+
       const response = await create(payload);
       if (response.ok === true) {
         toast.success(response.message);
-        // navigate("/dashboard/branchlist");
+        navigate("/dashboard/contract-list");
       } else {
         const errorMessage = response.message || "An error occurred";
         toast.error(errorMessage);
@@ -1220,6 +1230,8 @@ function SyncFesion() {
     });
   };
   const handleClickCencel = () => {
+    navigate("/dashboard/contract-list");
+
     setEditMode(false);
     setEnabelEditing(true);
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1332,58 +1344,61 @@ function SyncFesion() {
           </>
         )}
       </div>
-      {showBlock == "uploadTrack" && (
-        <Typography
-          variant="body2"
-          component="span"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            whiteSpace: "nowrap",
-            marginBottom: "1rem",
-            paddingLeft: "1rem",
-          }}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            style={{ display: "block", marginRight: "7px" }}
-          >
-            <g clipPath="url(#clip0_4225_12326)">
-              <path
-                d="M8.00065 14.6181C11.6825 14.6181 14.6673 11.6432 14.6673 7.9736C14.6673 4.30394 11.6825 1.3291 8.00065 1.3291C4.31875 1.3291 1.33398 4.30394 1.33398 7.9736C1.33398 11.6432 4.31875 14.6181 8.00065 14.6181Z"
-                stroke="#EF3E36"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M8 5.31543V7.97323"
-                stroke="#EF3E36"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M8 10.6309H8.00667"
-                stroke="#EF3E36"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_4225_12326">
-                <rect width="16" height="15.9468" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          Externally Executed Document
-        </Typography>
-      )}
 
-      <div className="w-full flex justify-between">
+      <div
+        className="w-full flex justify-between"
+        style={{
+          border: showBlock == "uploadTrack" ? "1px solid #174B8B" : "none",
+        }}
+      >
         <div className="flex items-center gap-x-8 min-w-[500px] pb-0 my-2 pl-4">
+          {showBlock == "uploadTrack" && (
+            <Typography
+              variant="body2"
+              component="span"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ display: "block", marginRight: "7px" }}
+              >
+                <g clipPath="url(#clip0_4225_12326)">
+                  <path
+                    d="M8.00065 14.6181C11.6825 14.6181 14.6673 11.6432 14.6673 7.9736C14.6673 4.30394 11.6825 1.3291 8.00065 1.3291C4.31875 1.3291 1.33398 4.30394 1.33398 7.9736C1.33398 11.6432 4.31875 14.6181 8.00065 14.6181Z"
+                    stroke="#EF3E36"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M8 5.31543V7.97323"
+                    stroke="#EF3E36"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M8 10.6309H8.00667"
+                    stroke="#EF3E36"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_4225_12326">
+                    <rect width="16" height="15.9468" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+              Externally Executed Document
+            </Typography>
+          )}
           {(showBlock === "" || showBlock === "pdf") && (
             <>
               <div className="relative  ">
@@ -1595,7 +1610,28 @@ function SyncFesion() {
                       </svg>
                       View Audit Trail
                     </li>
-
+                    <li
+                      className="px-2 py-2 hover:bg-gray-200 cursor-pointer  pt-2 border-b border-[#174B8B]  flex items-center gap-x-2"
+                      onClick={() => {
+                        triggerClick("container_toolbar_open");
+                        toggleDropdown("signature");
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M14.2547 1.19687L14.0629 1H14.3474L21.1538 7.98557V8.27758L21.0239 8.14424L14.2547 1.19687ZM12.5385 1V1.89474V8.8421V9.8421H13.5385H20.3077H21.1538V11.7682C20.6813 11.68 20.1934 11.6316 19.6923 11.6316C15.0419 11.6316 11.3077 15.5018 11.3077 20.2105C11.3077 20.7339 11.357 21.2435 11.4468 21.7368H2.46154C1.68109 21.7368 1 21.0817 1 20.2105V2.52632C1 1.65185 1.672 1 2.46154 1H12.5385ZM16.1969 20.1782L17.4376 21.4515L18.1538 22.1866L18.8701 21.4515L22.4994 17.7268L22.6667 17.9355L18.1856 22.5344L16.1365 20.2402L16.1969 20.1782Z"
+                          stroke="#174B8B"
+                          stroke-width="2"
+                        />
+                      </svg>
+                      Clauses
+                    </li>
                     <li
                       onClick={() => {
                         toggleDropdown("signature");

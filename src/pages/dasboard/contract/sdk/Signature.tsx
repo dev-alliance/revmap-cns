@@ -139,14 +139,26 @@ const Signature = () => {
     setRecipients(reorderedRecipients);
   };
 
-  const handleAddSignatory = (newSignatoryEmail: string) => {
+  const handleAddSignatory = (newSignatory: any) => {
+    console.log(newSignatory, "newSignatory");
+
     if (emailToReplace) {
       // Replace the existing email with the new one
       const updatedRecipients = recipients.map((recipient: any) =>
         recipient.email === emailToReplace
-          ? { ...recipient, email: newSignatoryEmail }
+          ? {
+              ...recipient,
+              ...(newSignatory.email
+                ? {
+                    email: newSignatory.email,
+                    label: newSignatory.label,
+                    isInternal: true,
+                  }
+                : { email: newSignatory, isInternal: false }),
+            }
           : recipient
       );
+
       setRecipients(updatedRecipients);
       setEmailToReplace(null); // Reset the replacement email
       const isEmailPresent = recipients.some(
@@ -157,16 +169,24 @@ const Signature = () => {
       if (isEmailPresent) {
         setopenErrorDilog(true);
         setTitle(
-          `Please review the fields previously assigned to ${emailToReplace},as they are now assigned to ${newSignatoryEmail}.`
+          `Please review the fields previously assigned to ${emailToReplace},as they are now assigned to ${newSignatory.email}.`
         );
       }
     } else {
-      // Add new signatory logic remains the same
       const emailExists = recipients.some(
-        (collaborator: any) => collaborator.email === newSignatoryEmail
+        (collaborator: any) => collaborator.email === newSignatory.email
       );
-      if (newSignatoryEmail && !emailExists) {
-        setRecipients((prev: any) => [...prev, { email: newSignatoryEmail }]);
+      if (newSignatory.email && !emailExists) {
+        setRecipients((prev: any) => [
+          ...prev,
+          newSignatory.email
+            ? {
+                email: newSignatory.email,
+                label: newSignatory.label,
+                isInternal: true,
+              }
+            : { email: newSignatory, isInternal: false },
+        ]);
       }
     }
     reset(); // Assuming this resets form states as needed
@@ -190,6 +210,8 @@ const Signature = () => {
       );
     }
   };
+
+  console.log("recipients:", recipients);
 
   const handleConfirmDelete = () => {
     // Implement the deletion logic here, once confirmed
@@ -301,13 +323,6 @@ const Signature = () => {
               {(provided: any, snapshot: any) => (
                 <Box ref={provided.innerRef} {...provided.droppableProps}>
                   {recipients.map((colb: any, index: any) => {
-                    const userName = userList.find(
-                      (user) => user.email === colb.email
-                    );
-                    const isInternal = userList.some(
-                      (user) => user.email === colb.email
-                    );
-
                     return (
                       <Draggable
                         key={colb?.email}
@@ -355,25 +370,24 @@ const Signature = () => {
                                 }}
                               >
                                 <Typography sx={{ fontSize: "10px" }}>
-                                  {!isLoading &&
-                                    (isInternal ? (
-                                      <>
-                                        {" "}
-                                        {userName?.firstName
-                                          ?.charAt(0)
-                                          .toUpperCase()}
-                                        {userName?.lastName
-                                          ?.charAt(0)
-                                          .toUpperCase()}
-                                      </>
-                                    ) : (
-                                      <>
-                                        {" "}
-                                        {colb?.email
-                                          ?.charAt(0)
-                                          .toUpperCase()}{" "}
-                                      </>
-                                    ))}
+                                  {colb?.isInternal ? (
+                                    <>
+                                      {colb.label
+                                        .split(" ")
+                                        .filter(Boolean)
+                                        .map((name: any) =>
+                                          name[0].toUpperCase()
+                                        )
+                                        .join("")}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {" "}
+                                      {colb?.email
+                                        ?.charAt(0)
+                                        .toUpperCase()}{" "}
+                                    </>
+                                  )}
                                 </Typography>
                               </Box>
 
@@ -412,8 +426,7 @@ const Signature = () => {
                                   ml: siningOrder ? 4.8 : 2.8,
                                 }}
                               >
-                                {!isLoading &&
-                                  (!isInternal ? "External" : "Internal")}
+                                {colb?.isInternal ? " Internal" : "External"}
                               </Button>
 
                               {!colb?.signature && (
@@ -646,7 +659,7 @@ const Signature = () => {
                   }}
                   onClick={() => {
                     if (selectedValue) {
-                      handleAddSignatory(selectedValue.email);
+                      handleAddSignatory(selectedValue);
                     } else if (inputValue.trim() !== "") {
                       handleAddSignatory(inputValue.trim());
                     }
@@ -713,6 +726,7 @@ const Signature = () => {
           )}
         </>
       </div>
+
       <SignatureSendReq
         open={signatureopenDialog}
         onClose={handleCloseDialog}

@@ -37,7 +37,6 @@ interface ContractStatus {
 
 interface Contract {
   overview: Overview;
-  lifecycle: Lifecycle;
 }
 
 interface ContractContextProps {
@@ -298,7 +297,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const updateContractOverview = (overview: any) => {
     if (contract !== null) {
-      console.log(overview, "over1");
+      console.log(overview, "updateContractOverview");
       // Check if 'contract' is not null
       setContract({
         ...contract,

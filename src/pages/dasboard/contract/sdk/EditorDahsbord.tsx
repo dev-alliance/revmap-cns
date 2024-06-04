@@ -320,44 +320,44 @@ const MyComponent: React.FC = () => {
       content: <ApprovalsComp />,
       isDisabled: showBlock === "uploadTrack",
     },
-    clause: {
-      getIcon: (isSelected: any) => (
-        <Tooltip
-          TransitionComponent={Zoom}
-          componentsProps={{
-            popper: {
-              modifiers: [
-                {
-                  name: "offset",
-                  options: {
-                    offset: [0, -0],
-                  },
-                },
-              ],
-            },
-          }}
-          title="Clauses"
-          placement="left"
-        >
-          {/* <img src={clipboardIcon} alt="Logo" style={{ width: "4%" }} /> */}
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M14.2547 1.19687L14.0629 1H14.3474L21.1538 7.98557V8.27758L21.0239 8.14424L14.2547 1.19687ZM12.5385 1V1.89474V8.8421V9.8421H13.5385H20.3077H21.1538V11.7682C20.6813 11.68 20.1934 11.6316 19.6923 11.6316C15.0419 11.6316 11.3077 15.5018 11.3077 20.2105C11.3077 20.7339 11.357 21.2435 11.4468 21.7368H2.46154C1.68109 21.7368 1 21.0817 1 20.2105V2.52632C1 1.65185 1.672 1 2.46154 1H12.5385ZM16.1969 20.1782L17.4376 21.4515L18.1538 22.1866L18.8701 21.4515L22.4994 17.7268L22.6667 17.9355L18.1856 22.5344L16.1365 20.2402L16.1969 20.1782Z"
-              stroke={isSelected ? "#174B8B" : "white"}
-              stroke-width="2"
-            />
-          </svg>
-        </Tooltip>
-      ),
-      content: <ClauseComp />,
-      isDisabled: showBlock === "uploadTrack",
-    },
+    // clause: {
+    //   getIcon: (isSelected: any) => (
+    //     <Tooltip
+    //       TransitionComponent={Zoom}
+    //       componentsProps={{
+    //         popper: {
+    //           modifiers: [
+    //             {
+    //               name: "offset",
+    //               options: {
+    //                 offset: [0, -0],
+    //               },
+    //             },
+    //           ],
+    //         },
+    //       }}
+    //       title="Clauses"
+    //       placement="left"
+    //     >
+    //       {/* <img src={clipboardIcon} alt="Logo" style={{ width: "4%" }} /> */}
+    //       <svg
+    //         width="24"
+    //         height="24"
+    //         viewBox="0 0 24 24"
+    //         fill="none"
+    //         xmlns="http://www.w3.org/2000/svg"
+    //       >
+    //         <path
+    //           d="M14.2547 1.19687L14.0629 1H14.3474L21.1538 7.98557V8.27758L21.0239 8.14424L14.2547 1.19687ZM12.5385 1V1.89474V8.8421V9.8421H13.5385H20.3077H21.1538V11.7682C20.6813 11.68 20.1934 11.6316 19.6923 11.6316C15.0419 11.6316 11.3077 15.5018 11.3077 20.2105C11.3077 20.7339 11.357 21.2435 11.4468 21.7368H2.46154C1.68109 21.7368 1 21.0817 1 20.2105V2.52632C1 1.65185 1.672 1 2.46154 1H12.5385ZM16.1969 20.1782L17.4376 21.4515L18.1538 22.1866L18.8701 21.4515L22.4994 17.7268L22.6667 17.9355L18.1856 22.5344L16.1365 20.2402L16.1969 20.1782Z"
+    //           stroke={isSelected ? "#174B8B" : "white"}
+    //           stroke-width="2"
+    //         />
+    //       </svg>
+    //     </Tooltip>
+    //   ),
+    //   content: <ClauseComp />,
+    //   isDisabled: showBlock === "uploadTrack",
+    // },
     attachement: {
       getIcon: (isSelected: any) => (
         <Tooltip

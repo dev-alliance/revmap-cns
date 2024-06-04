@@ -105,56 +105,59 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             // height: "30vh",
           }}
         >
-          <Typography
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-
-              mt: "1rem",
-            }}
-          >
-            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-              {recipients
-                ?.filter((dt: any) => dt.field === undefined)
-                .map((dt: any, index: any) => (
-                  <ListItem key={index} sx={{ pl: 0 }}>
-                    <ListItemIcon
-                      sx={{ minWidth: "auto", mr: 1, color: "gray" }}
-                    >
-                      <FiberManualRecordIcon sx={{ fontSize: "small" }} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={`${dt.email} `}
-                      sx={{ color: "black" }}
-                    />
-                  </ListItem>
-                ))}
-            </List>
-          </Typography>
-
-          {/* Using another flexbox for laying out button to the right */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "8px",
-              width: "100%",
-            }}
-          >
-            <Button
+          <div style={{ display: "flex" }}>
+            <Typography
               sx={{
-                textTransform: "none",
-                mt: "4",
-                backgroundColor: "#174B8B", // Set the button color to green
-                "&:hover": {
-                  backgroundColor: "#2B6EC2", // Darker green on hover
-                },
+                display: "flex",
+                flexDirection: "column",
+
+                mt: "1rem",
               }}
-              variant="contained"
-              onClick={() => setSelectedModule("fields")}
             >
-              Add fields
-            </Button>
+              <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+                {recipients
+                  ?.filter((dt: any) => dt.field === undefined)
+                  .map((dt: any, index: any) => (
+                    <ListItem key={index} sx={{ pl: 0 }}>
+                      <ListItemIcon
+                        sx={{ minWidth: "auto", mr: 1, color: "gray" }}
+                      >
+                        <FiberManualRecordIcon sx={{ fontSize: "small" }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={`${dt.email} `}
+                        sx={{ color: "black" }}
+                      />
+                    </ListItem>
+                  ))}
+              </List>
+            </Typography>
+
+            {/* Using another flexbox for laying out button to the right */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "4rem",
+                width: "100%",
+              }}
+            >
+              <Button
+                sx={{
+                  textTransform: "none",
+                  height: "5vh",
+                  mt: "4",
+                  backgroundColor: "#174B8B", // Set the button color to green
+                  "&:hover": {
+                    backgroundColor: "#2B6EC2", // Darker green on hover
+                  },
+                }}
+                variant="contained"
+                onClick={() => setSelectedModule("fields")}
+              >
+                Add fields
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

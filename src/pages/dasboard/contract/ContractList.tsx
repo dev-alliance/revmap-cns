@@ -319,7 +319,7 @@ const defaultColumns: GridColDef[] = [
     renderCell: ({ row }: { row: any }) => {
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.category || "-"
+          row?.overview?.category?.name || "-"
         }`}</Typography>
       );
     },
@@ -347,7 +347,7 @@ const defaultColumns: GridColDef[] = [
     renderCell: ({ row }: { row: any }) => {
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.tags || "-"
+          row?.overview?.tags?.name || "-"
         }`}</Typography>
       );
     },
@@ -361,7 +361,7 @@ const defaultColumns: GridColDef[] = [
       const { manager } = row;
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.team || "-"
+          row?.overview?.team?.name || "-"
         }`}</Typography>
       );
     },
