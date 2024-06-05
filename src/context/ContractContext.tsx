@@ -127,6 +127,8 @@ interface ContractContextProps {
   setAttachments: Dispatch<SetStateAction<any>>;
   siningOrder: any | null;
   setSiningOrder: Dispatch<SetStateAction<any>>;
+  formState: any | null;
+  setFormState: Dispatch<SetStateAction<any>>;
   inputRef: React.RefObject<HTMLInputElement>;
 }
 
@@ -206,6 +208,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setAttachments: () => {},
   siningOrder: {},
   setSiningOrder: () => {},
+  formState: {},
+  setFormState: () => {},
   inputRef: { current: null },
 });
 
@@ -224,6 +228,18 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [recipients, setRecipients] = useState<string[]>([]);
   const [signatories, setSignatories] = useState<string[]>([]);
   const [comments, setComments] = useState<Array<any>>([]);
+  const [formState, setFormState] = useState({
+    name: "",
+    with_name: undefined,
+    currency: undefined,
+    value: undefined,
+    tags: undefined,
+    // branch: "",
+    teams: undefined,
+    category: undefined,
+    subcategory: undefined,
+    additionalFields: [],
+  });
   const [lifecycleData, setLifecycleData] = useState({
     activeSection: "",
     showButtons: false,
@@ -472,6 +488,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     if (siningOrder) {
       setSiningOrder(JSON.parse(siningOrder));
     }
+    const formState = localStorage.getItem("formState");
+    if (formState) {
+      setFormState(JSON.parse(formState));
+    }
   }, []);
   useEffect(() => {
     if (contract) {
@@ -574,6 +594,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         siningOrder,
         setSiningOrder,
         inputRef,
+        formState,
+        setFormState,
       }}
     >
       {children}

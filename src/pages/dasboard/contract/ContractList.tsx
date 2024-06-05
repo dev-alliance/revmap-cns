@@ -39,7 +39,11 @@ import { useAuth } from "@/hooks/useAuth";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import { ContractContext } from "@/context/ContractContext";
-import { getList } from "@/service/api/contract";
+import {
+  deletecontract,
+  getList,
+  getcontractById,
+} from "@/service/api/contract";
 // import MenuButton from "@/components/MenuButton";
 import { format, utcToZonedTime } from "date-fns-tz";
 
@@ -126,33 +130,29 @@ const defaultColumns: GridColDef[] = [
   {
     flex: 0.3,
     minWidth: 220,
-    field: "Contract with",
+    field: "with_name",
     headerName: "Contract with",
 
     renderCell: ({ row }: { row: any }) => {
-      const { state } = row;
+      const { with_name } = row;
       return (
-        <Typography sx={{ color: "text.secondary" }}>
-          {row?.overview?.with_name}
-        </Typography>
+        <Typography sx={{ color: "text.secondary" }}>{with_name}</Typography>
       );
     },
   },
   {
     flex: 0.3,
-    field: "Contract name",
+    field: "name",
     minWidth: 220,
     headerName: "Contract name",
     renderCell: ({ row }: any) => {
-      const { branchName } = row;
+      const { name } = row;
 
       return (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {row?.overview?.name}
-            </Typography>
+            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
           </Box>
         </Box>
       );
@@ -166,11 +166,10 @@ const defaultColumns: GridColDef[] = [
     headerName: "Start date",
     renderCell: ({ row }: any) => {
       // Extract the date from the row
-      const { lifecycle } = row || {};
-      const { startDate } = lifecycle?.formData?.dateFields || {};
+      const startDate = row?.startDate;
 
-      // If the date is empty, return a default value
-      if (!startDate) {
+      // If the startDate is empty or invalid, return a default value
+      if (!startDate || isNaN(new Date(startDate).getTime())) {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -187,17 +186,29 @@ const defaultColumns: GridColDef[] = [
       const zonedDate = utcToZonedTime(new Date(startDate), timeZone);
 
       // Format the zoned date to the desired output format
-      const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {formattedDate}
-            </Typography>
+      try {
+        const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {formattedDate}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      );
+        );
+      } catch (error) {
+        console.error("Error formatting date:", error);
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                Invalid date
+              </Typography>
+            </Box>
+          </Box>
+        );
+      }
     },
   },
 
@@ -208,11 +219,10 @@ const defaultColumns: GridColDef[] = [
     headerName: "End date",
     renderCell: ({ row }: any) => {
       // Extract the date from the row
-      const { lifecycle } = row || {};
-      const { endDate } = lifecycle?.formData?.dateFields || {};
+      const endDate = row?.endDate;
 
-      // If the date is empty, return a default value
-      if (!endDate) {
+      // If the endDate is empty or invalid, return a default value
+      if (!endDate || isNaN(new Date(endDate).getTime())) {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -229,31 +239,43 @@ const defaultColumns: GridColDef[] = [
       const zonedDate = utcToZonedTime(new Date(endDate), timeZone);
 
       // Format the zoned date to the desired output format
-      const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {formattedDate}
-            </Typography>
+      try {
+        const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {formattedDate}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      );
+        );
+      } catch (error) {
+        console.error("Error formatting date:", error);
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                Invalid date
+              </Typography>
+            </Box>
+          </Box>
+        );
+      }
     },
   },
+
   {
     flex: 0.3,
-    field: "Notice period",
+    field: "noticePeriodDate",
     minWidth: 180,
     headerName: "Notice period",
     renderCell: ({ row }: any) => {
       // Extract the date from the row
-      const { lifecycle } = row || {};
-      const { noticePeriodDate } = lifecycle?.formData?.dateFields || {};
+      const noticePeriodDate = row?.noticePeriodDate;
 
-      // If the date is empty, return a default value
-      if (!noticePeriodDate) {
+      // If the noticePeriodDate is empty or invalid, return a default value
+      if (!noticePeriodDate || isNaN(new Date(noticePeriodDate).getTime())) {
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -270,29 +292,42 @@ const defaultColumns: GridColDef[] = [
       const zonedDate = utcToZonedTime(new Date(noticePeriodDate), timeZone);
 
       // Format the zoned date to the desired output format
-      const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>
-              {formattedDate}
-            </Typography>
+      try {
+        const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                {formattedDate}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      );
+        );
+      } catch (error) {
+        console.error("Error formatting date:", error);
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ color: "text.secondary" }}>
+                Invalid date
+              </Typography>
+            </Box>
+          </Box>
+        );
+      }
     },
   },
+
   {
     flex: 0.3,
     minWidth: 180,
-    field: "Currency",
+    field: "currency",
     headerName: "Currency",
 
     renderCell: ({ row }: { row: any }) => {
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.currency || "-"
+          row?.currency || "-"
         }`}</Typography>
       );
     },
@@ -303,23 +338,24 @@ const defaultColumns: GridColDef[] = [
     field: "anualValue",
     headerName: "Annual Value ",
 
-    renderCell: ({ row }: { row: RowType }) => {
-      const { display_name } = row;
+    renderCell: ({ row }: { row: any }) => {
       return (
-        <Typography sx={{ color: "text.secondary" }}>{"NZD150"}</Typography>
+        <Typography sx={{ color: "text.secondary" }}>
+          {row?.anualValue}
+        </Typography>
       );
     },
   },
   {
     flex: 0.3,
     minWidth: 180,
-    field: "Categories",
+    field: "category",
     headerName: "Categories",
 
     renderCell: ({ row }: { row: any }) => {
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.category?.name || "-"
+          row?.category || "-"
         }`}</Typography>
       );
     },
@@ -327,13 +363,13 @@ const defaultColumns: GridColDef[] = [
   {
     flex: 0.3,
     minWidth: 180,
-    field: "SubCategories",
+    field: "subcategory",
     headerName: "SubCategories",
 
     renderCell: ({ row }: { row: any }) => {
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.subcategory || "-"
+          row?.subcategory || "-"
         }`}</Typography>
       );
     },
@@ -341,13 +377,13 @@ const defaultColumns: GridColDef[] = [
   {
     flex: 0.3,
     minWidth: 180,
-    field: "Tags",
+    field: "tags",
     headerName: "Tags",
 
     renderCell: ({ row }: { row: any }) => {
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.tags?.name || "-"
+          row?.tags || "-"
         }`}</Typography>
       );
     },
@@ -355,13 +391,12 @@ const defaultColumns: GridColDef[] = [
   {
     flex: 0.3,
     minWidth: 180,
-    field: "Team",
+    field: "team",
     headerName: "Team ",
     renderCell: ({ row }: { row: any }) => {
-      const { manager } = row;
       return (
         <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.team?.name || "-"
+          row?.overview?.teams?.name || "-"
         }`}</Typography>
       );
     },
@@ -372,8 +407,13 @@ const ContractList = () => {
   const navigate = useNavigate();
   // ** State
   const { contractStatus, setContractStatus } = useContract();
-  const { setContract, setLifecycleData, setSidebarExpanded } =
-    useContext(ContractContext);
+  const {
+    setContract,
+    setLifecycleData,
+    setSidebarExpanded,
+    setDucomentName,
+    setFormState,
+  } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
@@ -408,7 +448,25 @@ const ContractList = () => {
     try {
       setIsLoading(true);
       const { data } = await getList(user?._id);
-      setContractlist(data);
+      const transformedData = data.map((row: any, index: number) => ({
+        ...row,
+        id: index,
+        name: `${row?.overview?.name || ""}`,
+        with_name: `${row?.overview?.with_name || ""} `,
+        team: `${row?.overview?.teams?.name || ""} `,
+        tags: `${row?.overview?.tags?.name || ""} `,
+        category: `${row?.overview?.category?.name || ""} `,
+        subcategory: `${row?.overview?.subcategory || ""} `,
+        anualValue: `${row?.overview?.value || ""} `,
+        currency: `${row?.overview?.currency || ""} `,
+        noticePeriodDate: `${row?.lifecycle?.formData?.dateFields?.noticePeriodDate}`,
+        startDate: `${row?.lifecycle?.formData?.dateFields?.startDate}`,
+        endDate: `${row?.lifecycle?.formData?.dateFields?.endDate}`,
+
+        // members: row.members ? row.members.length : "",
+      }));
+
+      setContractlist(transformedData);
       console.log("contract", data);
     } catch (error) {
       console.log(error);
@@ -423,11 +481,13 @@ const ContractList = () => {
     try {
       if (
         window.confirm(
-          "Deleting branch will delete all the data associated with it."
+          "Deleting contract will delete all the data associated with it."
         )
       ) {
+        console.log(id, "id");
+
         setIsLoading(true);
-        const res = await deleteBranch(id);
+        const res = await deletecontract(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -471,7 +531,9 @@ const ContractList = () => {
     let result = cntractlist;
     if (search?.trim().length) {
       result = result.filter((item) =>
-        item.branchName?.toLowerCase().includes(search.trim().toLowerCase())
+        item?.overview?.name
+          ?.toLowerCase()
+          .includes(search.trim().toLowerCase())
       );
     }
     return result;
@@ -518,22 +580,68 @@ const ContractList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/branch-edit/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/editor-dahsbord/${row?._id}`);
+                setSidebarExpanded(false);
+                setDucomentName("");
+                setFormState({
+                  name: "",
+                  with_name: undefined,
+                  currency: undefined,
+                  value: undefined,
+                  tags: undefined,
+                  // branch: "",
+                  teams: undefined,
+                  category: undefined,
+                  subcategory: undefined,
+                  additionalFields: [],
+                });
+                setLifecycleData({
+                  activeSection: "",
+                  showButtons: false,
+                  recipients: [],
+                  formData: {
+                    checkboxStates: {
+                      isEvergreen: false,
+                      isRenewalsActive: false,
+                      isNotificationEmailEnabled: false,
+                      isRemindersEnabled: false,
+                    },
+                    dateFields: {
+                      signedOn: "",
+                      startDate: "",
+                      endDate: "",
+                      noticePeriodDate: "",
+                    },
+                    renewalDetails: {
+                      renewalType: "days",
+                      renewalPeriod: 0,
+                    },
+                    notificationDetails: {
+                      notifyOwner: false,
+                      additionalRecipients: [],
+                    },
+                    reminderSettings: {
+                      firstReminder: 0,
+                      daysBetweenReminders: 0,
+                      daysBeforeFinalExpiration: 0,
+                    },
+                  },
+                });
               }}
             >
               Edit
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               onClick={() => {
                 handleClose();
                 handleArchive(menuState.row?._id); // Use menuState.row._id
               }}
             >
               Archive
-            </MenuItem>
+            </MenuItem> */}
             <MenuItem
               onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
+                handleDelete(row?._id); // Use menuState.row._id
                 handleClose();
               }}
             >

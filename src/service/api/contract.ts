@@ -15,9 +15,9 @@ export const deletecontract = async (id: string) => {
   return response.data;
 };
 
-export const updateStatus = async (id: any, data: any) => {
-  const response = await baseURL.patch(
-    `/api/v1/contracts/updte-status/${id}`,
+export const updateDocument = async (id: any, data: any) => {
+  const response = await baseURL.put(
+    `/api/v1/contracts/updateDocument/${id}`,
     data
   );
   return response.data;

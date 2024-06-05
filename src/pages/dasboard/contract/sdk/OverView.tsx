@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 
 import { useForm, Controller } from "react-hook-form";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,7 +30,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { ContractContext } from "@/context/ContractContext";
 import CloseIcon from "@mui/icons-material/Close";
 import { log } from "console";
-
+import _ from "lodash";
 type FormValues = {
   name: string;
   with_name: string;
@@ -59,8 +59,14 @@ const OverView = () => {
     getValues,
   } = useForm<FormValues>();
   const navigate = useNavigate();
-  const { documentName, setDucomentName, contract, setContract } =
-    useContext(ContractContext);
+  const {
+    formState,
+    setFormState,
+    contract,
+    setContract,
+    setDucomentName,
+    documentName,
+  } = useContext(ContractContext);
   const { user } = useAuth();
   const [teamData, setTeamData] = useState<Array<any>>([]);
   const [branchData, setBranchData] = useState<Array<any>>([]);
@@ -73,6 +79,27 @@ const OverView = () => {
   const [subCategories, setSubCategories] = useState([]);
   const [fields, setFields] = useState<any>([]);
   const [newField, setNewField] = useState<any>({ name: "", value: "" });
+
+  const saveFormData = useCallback(
+    _.debounce((newState) => {
+      // setContract(newState); // Make sure setContract is defined and imported
+    }, 1000),
+    []
+  );
+
+  const handleInputChange = (field: any, value: any) => {
+    const newState = { ...formState, [field]: value };
+    if (field === "category") {
+      // Reset subcategory when category changes
+      newState.subcategory = "";
+    }
+    setFormState(newState);
+    saveFormData(newState);
+  };
+
+  console.log(formState, "formState");
+
+  // No need to handle form submission in the same way if you're updating continuously
 
   const handleAddField = () => {
     setFields([...fields, { ...newField, isEditing: false }]);
@@ -105,78 +132,32 @@ const OverView = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      console.log(documentName, "documentName");
       // Assuming data contains the updated overview fields
-
-      const updatedOverview: any = {
-        name: documentName,
-        with_name: data?.with_name,
-        vendor: "Vendor Name", // Modify as needed
-        currency: data?.currency,
-        value: data?.value,
-
-        subcategory: data?.subcategory,
-        tags: data?.tags,
-        category: data?.category,
-        branch: data?.branch,
-        team: data?.team,
-        contractType: "Type1", // Modify as needed
-        status: "Active",
-        feild: newField, // Modify as needed
-        // Add other fields as necessary
-      };
-      console.log(updatedOverview, "dataupdat");
-      setContract(updatedOverview);
-
+      // const updatedOverview: any = {
+      //   name: documentName,
+      //   with_name: data?.with_name,
+      //   vendor: "Vendor Name", // Modify as needed
+      //   currency: data?.currency,
+      //   value: data?.value,
+      //   subcategory: data?.subcategory,
+      //   tags: data?.tags,
+      //   category: data?.category,
+      //   branch: data?.branch,
+      //   team: data?.team,
+      //   contractType: "Type1", // Modify as needed
+      //   status: "Active",
+      //   feild: newField, // Modify as needed
+      //   // Add other fields as necessary
+      // };
+      // console.log(updatedOverview, "dataupdat");
+      // setContract(updatedOverview);
       // updateContractOverview(updatedOverview);
-
       // toast.success("Contract overview updated successfully");
     } catch (error) {
       // toast.error("Failed to update contract overview");
     }
   };
-  console.log(contract, "contract");
-
-  useEffect(() => {
-    console.log(newField, "newField");
-
-    if (contract) {
-      setValue("name", contract?.name);
-      setValue("with_name", contract?.with_name || "");
-      setValue("currency", contract?.currency);
-      setValue("value", contract?.value);
-      setValue("subcategory", contract?.subcategory);
-      setValue("tags", contract?.tags);
-      setValue("category", contract?.category);
-      setValue("branch", contract?.branch);
-      setValue("team", contract?.team);
-      setValue("contractType", contract?.contractType);
-      if (contract.newField) {
-        setNewField(contract.newField);
-      }
-    }
-  }, [contract, setValue]);
-
-  useEffect(() => {
-    // Define a function to handle the logic you want to run on unmount
-    const handleUnload = async () => {
-      const formData = getValues();
-      await onSubmit(formData);
-    };
-
-    return () => {
-      // Set a timeout to delay the unload operation
-      const timeoutId = setTimeout(() => {
-        handleUnload().catch((error) => {
-          console.error("Failed to update on unmount", error);
-          // Ensure toast is available in this scope or imported if necessary
-          toast.error("Failed to save changes.");
-        });
-        return () => clearTimeout(timeoutId);
-      }, 3000); // Delay by 3000 milliseconds (3 seconds)
-    };
-    // Assuming you want this to run only once, on mount and unmount
-  }, []);
+  // console.log(contract, "contract");
 
   useEffect(() => {
     const category = catategorylist.find((c) => c._id === selectedCategory);
@@ -338,11 +319,12 @@ const OverView = () => {
           rules={{ required: "This field is required" }}
           render={({ field }) => (
             <TextField
-              title={field?.value}
-              {...field}
+              value={formState.with_name}
+              onChange={(e) => handleInputChange("with_name", e.target.value)}
               placeholder="Add third party name"
               fullWidth
-              size="small"
+              error={!!errors.with_name}
+              // helperText={errors.with_name}
               variant="standard"
               InputProps={{
                 disableUnderline: true, // Disables the underline by default
@@ -406,12 +388,12 @@ const OverView = () => {
           //   rules={{ required: "This field is required" }}
           render={({ field }) => (
             <TextField
-              {...field}
+              value={formState.value}
+              onChange={(e) => handleInputChange("value", e.target.value)}
               placeholder="Add value"
               fullWidth
-              //   error={!!errors.value}
-              //   helperText={errors.contractWith?.value}
-              size="small"
+              error={!!errors.value}
+              // helperText={errors.name?.value}
               variant="standard"
               InputProps={{
                 disableUnderline: true, // Disables the underline by default
@@ -460,17 +442,23 @@ const OverView = () => {
         >
           Currency
         </Typography>
+
         <Controller
-          name="currency"
+          name="branch"
           control={control}
-          defaultValue="" // Ensure this matches the initial state expected by your form
+          defaultValue=""
           render={({ field }) => (
-            <FormControl fullWidth size="small" variant="outlined">
+            <FormControl fullWidth size="small">
               <Select
-                {...field}
-                displayEmpty // This should ensure the placeholder is displayed when the value is ""
+                value={formState?.currency}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleInputChange("currency", e.target.value);
+                }}
+                labelId="subcategory-label"
+                displayEmpty
                 renderValue={(value) => {
-                  if (value === "") {
+                  if (value === undefined) {
                     return (
                       <em
                         style={{
@@ -483,14 +471,13 @@ const OverView = () => {
                       </em> // Placeholder text with custom color and font size
                     );
                   }
-                  return field.value; // Ensure this reflects the selected option text correctly
+                  return value; // Ensure this reflects the selected option text correctly
                 }}
-                labelId="currency-label"
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "13px", // Ensure consistent font size
-                    marginLeft: "-0.8rem",
+                    fontSize: "13px",
+                    marginLeft: "-0.8rem", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -533,7 +520,7 @@ const OverView = () => {
                 placeholder="Branch"
                 displayEmpty
                 renderValue={(value: any) => {
-                  if (value === "") {
+                  if (value === undefined) {
                     return (
                       <em
                         style={{
@@ -588,20 +575,22 @@ const OverView = () => {
         >
           Team
         </Typography>
-        <FormControl fullWidth size="small">
-          <Controller
-            name="team"
-            control={control}
-            defaultValue=""
-            rules={{ required: " Team is required" }}
-            render={({ field }) => (
+
+        <Controller
+          name="branch"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <FormControl fullWidth size="small">
               <Select
-                {...field}
-                labelId="team-label"
-                placeholder="Team"
+                value={formState.teams}
+                onChange={(e) => {
+                  handleInputChange("teams", e.target.value);
+                }}
+                labelId="subcategory-label"
                 displayEmpty
                 renderValue={(value) => {
-                  if (value === "") {
+                  if (value === undefined) {
                     return (
                       <em
                         style={{
@@ -624,8 +613,8 @@ const OverView = () => {
                 sx={{
                   ".MuiSelect-select": {
                     border: "none", // Remove border
-                    fontSize: "13px", // Ensure consistent font size
-                    marginLeft: "-0.8rem",
+                    fontSize: "13px",
+                    marginLeft: "-0.8rem", // Ensure consistent font size
                     "&:focus": {
                       backgroundColor: "transparent", // Remove the background color on focus
                     },
@@ -641,9 +630,9 @@ const OverView = () => {
                   </MenuItem>
                 ))}
               </Select>
-            )}
-          />
-        </FormControl>
+            </FormControl>
+          )}
+        />
       </Box>
       <Box sx={{ mb: 0 }}>
         <Typography
@@ -661,14 +650,15 @@ const OverView = () => {
               {/* Optional: add this line if you want a label */}
               <Select
                 {...field}
+                value={formState?.category}
                 onChange={(e) => {
-                  field.onChange(e); // Update form
-                  setSelectedCategory(e.target.value as string); // Update local state
+                  field.onChange(e);
+                  handleInputChange("category", e.target.value);
                 }}
                 labelId="manager-label"
                 displayEmpty
                 renderValue={(value) => {
-                  if (value === "") {
+                  if (value === undefined) {
                     return (
                       <em
                         style={{
@@ -725,11 +715,11 @@ const OverView = () => {
           render={({ field }) => (
             <FormControl fullWidth size="small">
               <Select
-                {...field}
+                value={formState?.subcategory}
                 labelId="subcategory-label"
                 displayEmpty
                 renderValue={(value) =>
-                  value === "" ? (
+                  value === undefined ? (
                     <em
                       style={{
                         color: "#92929D",
@@ -756,12 +746,19 @@ const OverView = () => {
                     border: "none", // Ensure no border
                   },
                 }}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleInputChange("subcategory", e.target.value);
+                }}
               >
-                {subCategories.map((subCategory: any) => (
-                  <MenuItem key={subCategory._id} value={subCategory.name}>
-                    {subCategory.name}
-                  </MenuItem>
-                ))}
+                {formState.category &&
+                  catategorylist
+                    .find((cat) => cat._id === formState.category)
+                    ?.subCategories.map((subCategory: any) => (
+                      <MenuItem key={subCategory._id} value={subCategory.name}>
+                        {subCategory.name}
+                      </MenuItem>
+                    ))}
               </Select>
             </FormControl>
           )}
@@ -787,11 +784,14 @@ const OverView = () => {
           render={({ field }) => (
             <FormControl fullWidth size="small">
               <Select
-                {...field}
+                value={formState.tags}
+                onChange={(e) => {
+                  handleInputChange("tags", e.target.value);
+                }}
                 labelId="subcategory-label"
                 displayEmpty
                 renderValue={(value) => {
-                  if (value === "") {
+                  if (value === undefined) {
                     return (
                       <em
                         style={{

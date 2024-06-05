@@ -81,7 +81,7 @@ const MyComponent: React.FC = () => {
     contract,
     lifecycleData,
     collaborater,
-    approvers,
+    setFormState,
     setApprovers,
     setLeftSidebarExpanded,
     selectedModule,
@@ -140,6 +140,18 @@ const MyComponent: React.FC = () => {
         setApprovers([]);
         setDucomentName("");
         setSelectedModule("overview");
+        setFormState({
+          name: "",
+          with_name: undefined,
+          currency: undefined,
+          value: undefined,
+          tags: undefined,
+          // branch: "",
+          teams: undefined,
+          category: undefined,
+          subcategory: undefined,
+          additionalFields: [],
+        });
       }
     };
   }, []);

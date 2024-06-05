@@ -176,7 +176,7 @@ const Signature = () => {
       const emailExists = recipients.some(
         (collaborator: any) => collaborator.email === newSignatory.email
       );
-      if (newSignatory.email && !emailExists) {
+      if (!emailExists) {
         setRecipients((prev: any) => [
           ...prev,
           newSignatory.email

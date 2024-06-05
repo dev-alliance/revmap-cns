@@ -60,10 +60,19 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
-import { create } from "@/service/api/contract";
+import {
+  create,
+  getcontractById,
+  updateDocument,
+} from "@/service/api/contract";
 import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 DocumentEditorComponent.Inject(
   Selection,
@@ -80,6 +89,10 @@ function SyncFesion() {
   const navigate = useNavigate();
   const open = location?.state?.open;
   const { user } = useAuth();
+  const { id } = useParams();
+  const [documentData, setDocumentData] = useState<string | null>(null);
+  const [list, setList] = useState<undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const {
     setEditorRefContext,
     dragFields,
@@ -90,18 +103,21 @@ function SyncFesion() {
     showBlock,
     setShowBlock,
     setApprovers,
-    setCollaborater,
+    formState,
     setSelectedModule,
     setSidebarExpanded,
     setEditMode,
     editMode,
     contract,
     lifecycleData,
+    setLifecycleData,
     collaborater,
+    setCollaborater,
     approvers,
     documentName,
     setDucomentName,
     setLeftSidebarExpanded,
+    setFormState,
     inputRef,
   } = useContext(ContractContext);
   const workerUrl =
@@ -110,7 +126,27 @@ function SyncFesion() {
   useEffect(() => {
     setLeftSidebarExpanded(true);
   }, []);
-  console.log(collaborater, "collaborater?.length");
+  const listData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getcontractById(id);
+      console.log(data, "singal data");
+      setFormState(data?.overview);
+      setDucomentName(data?.overview?.name);
+      setLifecycleData(data?.lifecycle);
+      setApprovers(data?.approval), setCollaborater(data?.collaburater);
+      setRecipients(data?.signature);
+      setList(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  React.useEffect(() => {
+    if (id) listData();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const editorContainerRef: any = useRef(null);
   const handleSubmit = async (data: any) => {
@@ -119,25 +155,29 @@ function SyncFesion() {
         toast.error("Please enter the name of the document");
         return;
       }
-      if (!lifecycleData.formData.dateFields.startDate) {
-        toast.error("Please enter the start date in life sycle");
-        return;
-      }
-      const contracts = { ...contract, name: documentName };
-      console.log(contracts, "name");
+      // if (!lifecycleData.formData.dateFields.startDate) {
+      //   toast.error("Please enter the start date in life sycle");
+      //   return;
+      // }
 
       const payload = {
         userId: user._id,
-        overview: { ...contract, name: documentName },
+        overview: { ...formState, name: documentName },
         lifecycle: lifecycleData,
         collaburater: collaborater,
         approval: approvers,
         signature: recipients,
         status: "Active",
+        wordDocumentData: documentData,
       };
       console.log(payload, "payload");
+      let response;
+      if (id) {
+        response = await updateDocument(id, payload);
+      } else {
+        response = await create(payload);
+      }
 
-      const response = await create(payload);
       if (response.ok === true) {
         toast.success(response.message);
         navigate("/dashboard/contract-list");
@@ -816,36 +856,6 @@ function SyncFesion() {
       documentEditor.save(userFileName, "Docx");
     }
   };
-
-  useEffect(() => {
-    const initializeEditor = () => {
-      const editorInstance = editorContainerRef.current?.documentEditor;
-      if (editorInstance && !editorInstance.isDocumentLoaded) {
-        editorInstance.documentLoaded = () => {
-          console.log(
-            "Document is now loaded, ready to open default document."
-          );
-          loadDefaultDocument(editorInstance);
-        };
-      } else if (editorInstance) {
-        loadDefaultDocument(editorInstance);
-      } else {
-        console.log("Editor instance is not available.");
-      }
-    };
-
-    const loadDefaultDocument = (editorInstance: any) => {
-      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":""}]}]}]}`;
-      try {
-        editorInstance.open(defaultDocument, "Sfdt");
-      } catch (error) {
-        console.error("Failed to load default document:", error);
-      }
-    };
-
-    initializeEditor();
-  }, []);
-
   const onClick = () => {
     const container = editorContainerRef.current;
     if (container) {
@@ -897,8 +907,22 @@ function SyncFesion() {
       }
     }
   };
-  const [documentData, setDocumentData] = useState<string | null>(null);
+  useEffect(() => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    if (documentEditor) {
+      // Attach an event handler for content changes
+      documentEditor.documentChange = () => {
+        saveDocumentToState();
+      };
+    }
 
+    // return () => {
+    //   // Clean up the event handler
+    //   if (documentEditor) {
+    //     documentEditor.documentChange = null;
+    //   }
+    // };
+  }, []);
   const saveDocumentToState = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor) {
@@ -914,6 +938,36 @@ function SyncFesion() {
       });
     }
   };
+  console.log(documentData, "documentData");
+
+  useEffect(() => {
+    const initializeEditor = () => {
+      const editorInstance = editorContainerRef.current?.documentEditor;
+      if (editorInstance && !editorInstance.isDocumentLoaded) {
+        editorInstance.documentLoaded = () => {
+          console.log(
+            "Document is now loaded, ready to open default document."
+          );
+          loadDefaultDocument(editorInstance);
+        };
+      } else if (editorInstance) {
+        loadDefaultDocument(editorInstance);
+      } else {
+        console.log("Editor instance is not available.");
+      }
+    };
+
+    const loadDefaultDocument = (editorInstance: any) => {
+      const defaultDocument = `{"sections":[{"blocks":[{"paragraphFormat":{},"characterFormat":{},"inlines":[{"text":""}]}]}]}`;
+      try {
+        editorInstance.open(defaultDocument, "Sfdt");
+      } catch (error) {
+        console.error("Failed to load default document:", error);
+      }
+    };
+
+    initializeEditor();
+  }, []);
 
   // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   const file = event.target.files ? event.target.files[0] : null;
@@ -2118,7 +2172,7 @@ function SyncFesion() {
                 variant="outlined"
                 color="success"
               >
-                Save
+                {id ? "Update" : "save"}
               </Button>
             </>
           )}
