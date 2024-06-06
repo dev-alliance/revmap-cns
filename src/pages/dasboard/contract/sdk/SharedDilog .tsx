@@ -73,13 +73,14 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
 
         <DialogContent
           sx={{
-            maxHeight: "32vh",
+            maxHeight: "47vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
             textAlign: "center",
             lineHeight: "auto",
+            height: "47vh",
           }}
         >
           <DialogTitle
@@ -100,10 +101,10 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
               alt="Logo"
               style={{
                 // maxWidth: isMobile ? "20px" : "50px",
-                width: "15%",
+                width: "18%",
                 // height: "auto",
-                marginTop: "0rem", // Adjust as needed
-                marginBottom: "1rem", // Adjust as needed
+                marginTop: "1rem", // Adjust as needed
+                marginBottom: "2rem", // Adjust as needed
               }}
             />
           ) : (

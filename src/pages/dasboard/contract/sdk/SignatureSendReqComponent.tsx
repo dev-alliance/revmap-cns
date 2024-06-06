@@ -69,29 +69,51 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
       [name]: type === "checkbox" ? checked : value, // Use checked for checkboxes, value for other inputs
     }));
   };
-  useEffect(() => {
-    // Reset requestOption when dialog opens or the ClickData changes
-    console.log(ClickData, "click");
+  // useEffect(() => {
+  //   // Reset requestOption when dialog opens or the ClickData changes
+  //   console.log(ClickData, "click");
 
+  //   const index = recipients.findIndex(
+  //     (recip: any) =>
+  //       recip?.email?.trim().toLowerCase() ===
+  //       ClickData?.email?.trim().toLowerCase()
+  //   );
+
+  //   if (index !== -1) {
+  //     setRequestOption(recipients[index].permission || ""); // Assume each collaborator has a `permission` field
+  //   }
+  // }, [ClickData, recipients, open]);
+
+  // New function to update the collaborator's permission, called on button click
+  useEffect(() => {
     const index = recipients.findIndex(
       (recip: any) =>
         recip?.email?.trim().toLowerCase() ===
         ClickData?.email?.trim().toLowerCase()
     );
 
-    if (index !== -1) {
-      setRequestOption(recipients[index].permission || ""); // Assume each collaborator has a `permission` field
+    if (index !== -1 && recipients[index].requestOption) {
+      setRequestOption(recipients[index].requestOption);
+    } else {
+      // Maintain the current state or reset to a default state if necessary
+      setRequestOption({
+        message: "",
+        autoReminder: false,
+        daysFirstReminder: "",
+        daysBtwReminder: "",
+        daysBeforeExp: "",
+        daysFinalExp: "",
+        forwarding: false,
+      });
     }
-  }, [ClickData, recipients, open]);
+  }, [ClickData, recipients, open]); // Check dependencies to ensure they're needed
 
-  // New function to update the collaborator's permission, called on button click
   const updateDocument = async () => {
     setRecipients((prev: any) => {
       const updated = prev.map((user: any) => {
         const matches =
           user.email.trim().toLowerCase() ===
           ClickData?.email.trim().toLowerCase();
-        console.log(user.email, ClickData?.email, matches); // Log the comparison result
         if (matches) {
           return { ...user, ReqOption: requestOption, signature: "" };
         }
@@ -450,7 +472,7 @@ const SignatureSendReqComponent: React.FC<DetailDialogProps> = ({
               }
             }}
           >
-            {tabValue === recipients.length - 1 ? "Share" : "Next"}
+            {tabValue === recipients.length - 1 ? "Share document" : "Next"}
           </Button>
         </div>
       </Box>

@@ -18,19 +18,46 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
+import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
+
 // ** Third Party Imports
-// import { formatDistanceToNow } from "date-fns";
+import { useContract } from "@/hooks/useContract";
 import toast from "react-hot-toast";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Button from "@mui/material/Button";
+import { FormControl } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  archiveBranch,
+  deleteBranch,
+  getBranchList,
+} from "@/service/api/apiMethods";
 import ProgressCircularCustomization from "@/pages/dasboard/users/ProgressCircularCustomization";
 import { useAuth } from "@/hooks/useAuth";
-import { archiveTemp, deletetemplates, getList } from "@/service/api/template";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
+import { ContractContext } from "@/context/ContractContext";
+import {
+  deletecontract,
+  getList,
+  getListTemlate,
+  getcontractById,
+} from "@/service/api/contract";
+// import MenuButton from "@/components/MenuButton";
 import { format, utcToZonedTime } from "date-fns-tz";
+
 interface CellType {
   row: any;
   _id: any;
+}
+interface CheckedState {
+  name: boolean;
+  manager: boolean;
+  status: boolean;
+  activeContract: boolean;
+  annualValue: boolean;
 }
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -48,18 +75,29 @@ interface RowType {
 
 // ** Styled components
 
+const defaultColumns: GridColDef[] = [];
+
 const TemplateList = () => {
   const navigate = useNavigate();
   // ** State
+  const { contractStatus, setContractStatus } = useContract();
+  const {
+    setContract,
+    setLifecycleData,
+    setSidebarExpanded,
+    setDucomentName,
+    setFormState,
+  } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 7,
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [catategorylist, setCategorylist] = useState<Array<any>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cntractlist, setContractlist] = useState<Array<any>>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([]);
+  const [data, setData] = useState([]);
 
   const [menuState, setMenuState] = useState<{
     anchorEl: null | HTMLElement;
@@ -80,16 +118,30 @@ const TemplateList = () => {
     setMenuState({ anchorEl: null, row: null });
   };
 
-  // ** Hooks
-
   const listData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getList();
+      const { data } = await getListTemlate(user?._id);
+      console.log("contract", data);
+      const transformedData = data.map((row: any, index: number) => ({
+        ...row,
+        id: index,
+        name: `${row?.overview?.name || ""}`,
+        with_name: `${row?.overview?.with_name || ""} `,
+        team: `${row?.overview?.teams?.name || ""} `,
+        tags: `${row?.overview?.tags?.name || ""} `,
+        category: `${row?.overview?.category?.name || ""} `,
+        subcategory: `${row?.overview?.subcategory || ""} `,
+        anualValue: `${row?.overview?.value || ""} `,
+        currency: `${row?.overview?.currency || ""} `,
+        noticePeriodDate: `${row?.lifecycle?.formData?.dateFields?.noticePeriodDate}`,
+        startDate: `${row?.lifecycle?.formData?.dateFields?.startDate}`,
+        endDate: `${row?.lifecycle?.formData?.dateFields?.endDate}`,
 
-      setCategorylist(data);
+        // members: row.members ? row.members.length : "",
+      }));
 
-      console.log("teams", data);
+      setContractlist(transformedData);
     } catch (error) {
       console.log(error);
     } finally {
@@ -101,55 +153,15 @@ const TemplateList = () => {
 
   const handleDelete = async (id: any) => {
     try {
-      if (window.confirm("Are you sure you want to delete this template?")) {
-        setIsLoading(true);
-        const res = await deletetemplates(id);
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleArchive = async (id: any) => {
-    try {
-      if (window.confirm("Are you sure you want to archive this template?")) {
-        setIsLoading(true);
-        const res = await archiveTemp(id, { status: "Archived" });
-        console.log({ res });
-
-        if (res.ok === true) {
-          toast.success(res.message);
-          listData();
-        } else {
-          toast.error(res?.message || "");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  const handleActive = async (id: any) => {
-    try {
       if (
         window.confirm(
-          "Are you sure you want to change the status this template?"
+          "Deleting contract will delete all the data associated with it."
         )
       ) {
+        console.log(id, "id");
+
         setIsLoading(true);
-
-        const res = await archiveTemp(id, { status: "Active" });
-        console.log({ res });
-
+        const res = await deletecontract(id);
         if (res.ok === true) {
           toast.success(res.message);
           listData();
@@ -165,36 +177,98 @@ const TemplateList = () => {
   };
 
   useEffect(() => {
-    listData();
-  }, []);
-
-  console.log(search, "serch");
+    if (user?._id) listData();
+  }, [user?._id]);
 
   const filteredList = useMemo(() => {
-    let result = catategorylist;
+    let result = cntractlist;
     if (search?.trim().length) {
       result = result.filter((item) =>
-        item.name?.toLowerCase().includes(search.trim().toLowerCase())
+        item?.overview?.name
+          ?.toLowerCase()
+          .includes(search.trim().toLowerCase())
       );
     }
     return result;
-  }, [search, catategorylist]);
-  const handleFileClick = (fileUrl: any) => {
-    window.open(fileUrl, "_blank");
+  }, [search, cntractlist]);
+
+  const handleApplyFilters = async (filters: CheckedState) => {
+    console.log(filters, "filters");
+
+    // const filteredData = await fetchDataWithFilters(filters);
+    // setData(filteredData);
   };
 
-  const columns: GridColDef[] = [
+  const columns: any[] = [
     {
-      flex: 0.2,
+      flex: 0.3,
       field: "name",
-      minWidth: 230,
-      headerName: "Name",
+      minWidth: 220,
+      headerName: "Document name",
       renderCell: ({ row }: any) => {
         const { name } = row;
 
         return (
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
+            {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                // color: "#155BE5",
+                // cursor: "pointer",
+              }}
+              // onClick={() => {
+              //   handleClose();
+              //   navigate(`/dashboard/editor-dahsbord/${row?._id}`);
+              //   setSidebarExpanded(false);
+              //   setDucomentName("");
+              //   setFormState({
+              //     name: "",
+              //     with_name: undefined,
+              //     currency: undefined,
+              //     value: undefined,
+              //     tags: undefined,
+              //     // branch: "",
+              //     teams: undefined,
+              //     category: undefined,
+              //     subcategory: undefined,
+              //     additionalFields: [],
+              //   });
+              //   setLifecycleData({
+              //     activeSection: "",
+              //     showButtons: false,
+              //     recipients: [],
+              //     formData: {
+              //       checkboxStates: {
+              //         isEvergreen: false,
+              //         isRenewalsActive: false,
+              //         isNotificationEmailEnabled: false,
+              //         isRemindersEnabled: false,
+              //       },
+              //       dateFields: {
+              //         signedOn: "",
+              //         startDate: "",
+              //         endDate: "",
+              //         noticePeriodDate: "",
+              //       },
+              //       renewalDetails: {
+              //         renewalType: "days",
+              //         renewalPeriod: 0,
+              //       },
+              //       notificationDetails: {
+              //         notifyOwner: false,
+              //         additionalRecipients: [],
+              //       },
+              //       reminderSettings: {
+              //         firstReminder: 0,
+              //         daysBetweenReminders: 0,
+              //         daysBeforeFinalExpiration: 0,
+              //       },
+              //     },
+              //   });
+              // }}
+            >
               <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
             </Box>
           </Box>
@@ -202,180 +276,209 @@ const TemplateList = () => {
       },
     },
     {
-      flex: 0.4,
-      field: "description",
-      minWidth: 250,
+      flex: 0.3,
+      minWidth: 220,
+      field: "with_name",
       headerName: "Description",
-      renderCell: ({ row }: any) => {
-        const { description } = row;
-        const displaydescription =
-          description?.length > 30
-            ? `${description?.substring(0, 30)}...`
-            : description;
 
+      renderCell: ({ row }: { row: any }) => {
+        const { with_name } = row;
         return (
-          <Tooltip title={description} arrow>
+          <Typography sx={{ color: "text.secondary" }}>{with_name}</Typography>
+        );
+      },
+    },
+
+    {
+      flex: 0.3,
+      field: "createdAt",
+      minWidth: 180,
+      headerName: "Created date",
+      renderCell: ({ row }: any) => {
+        // Extract the date from the row
+        const startDate = row?.createdAt;
+
+        // If the startDate is empty or invalid, return a default value
+        if (!startDate || isNaN(new Date(startDate).getTime())) {
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>-</Typography>
+              </Box>
+            </Box>
+          );
+        }
+
+        // Specify the desired time zone, e.g., 'America/New_York'
+        const timeZone = "America/New_York";
+
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(startDate), timeZone);
+
+        // Format the zoned date to the desired output format
+        try {
+          const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+          return (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Box sx={{ display: "flex", flexDirection: "column" }}>
                 <Typography sx={{ color: "text.secondary" }}>
-                  {displaydescription}
+                  {formattedDate}
                 </Typography>
               </Box>
             </Box>
-          </Tooltip>
-        );
-      },
-    },
-    {
-      flex: 0.2,
-      minWidth: 100,
-      field: "status",
-      headerName: "Status",
-      renderCell: ({ row }: { row: any }) => (
-        <>
-          <Chip
-            size="small"
-            variant="outlined"
-            label={
-              row.status === "Active"
-                ? "Active"
-                : row.status === "Archived"
-                ? "Archived"
-                : "Inactive"
-            }
-            sx={{
-              fontSize: "14px",
-              // fontWeight: "bold",
-              backgroundColor:
-                row.status === "Active"
-                  ? "#D3FDE4"
-                  : row.status === "Archived"
-                  ? "#FFF7CB"
-                  : "#FFCBCB",
-              color:
-                row.status === "Active"
-                  ? "#3F9748"
-                  : row.status === "Archived"
-                  ? "#D32F2F"
-                  : "#red",
-              borderColor:
-                row.status === "Active"
-                  ? "#D3FDE4"
-                  : row.status === "Archived"
-                  ? "#FFF7CB"
-                  : "#FFCBCB", // Optional: to match border color with background
-              "& .MuiChip-label": {
-                // This targets the label inside the chip for more specific styling
-                color:
-                  row.status === "Active"
-                    ? "#3F9748"
-                    : row.status === "Archived"
-                    ? "#D36A2F"
-                    : "#D32F2F",
-              },
-            }}
-          />
-        </>
-      ),
-    },
-
-    {
-      flex: 0.2,
-      field: "file",
-      minWidth: 130,
-      headerName: "Document Type",
-      renderCell: ({ row }: any) => {
-        const { file } = row;
-        // Extracting the file extension
-        const fileType = file?.substring(file.lastIndexOf("."));
-
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {
-                  <IconButton
-                    onClick={() => handleFileClick(file)}
-                    sx={{
-                      color: "#1976d2",
-                      fontSize: "15px",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {fileType}
-                  </IconButton>
-                }
-              </Typography>
+          );
+        } catch (error) {
+          console.error("Error formatting date:", error);
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  Invalid date
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        );
+          );
+        }
       },
     },
 
     {
-      flex: 0.2,
-      field: "createdAt",
-      minWidth: 140,
-      headerName: "Created Date",
+      flex: 0.3,
+      field: "updatedAt",
+      minWidth: 180,
+      headerName: "Last Change",
       renderCell: ({ row }: any) => {
-        const { createdAt } = row;
+        // Extract the date from the row
+        const endDate = row?.updatedAt;
+
+        // If the endDate is empty or invalid, return a default value
+        if (!endDate || isNaN(new Date(endDate).getTime())) {
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>-</Typography>
+              </Box>
+            </Box>
+          );
+        }
 
         // Specify the desired time zone, e.g., 'America/New_York'
-
         const timeZone = "America/New_York";
+
         // Convert UTC date to the specified time zone
-        const zonedDate = utcToZonedTime(new Date(createdAt), timeZone);
+        const zonedDate = utcToZonedTime(new Date(endDate), timeZone);
 
-        const formattedDate = format(zonedDate, "dd-MM-yyyy ", {
-          timeZone,
-        });
-
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {formattedDate}
-              </Typography>
+        // Format the zoned date to the desired output format
+        try {
+          const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {formattedDate}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
+          );
+        } catch (error) {
+          console.error("Error formatting date:", error);
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  Invalid date
+                </Typography>
+              </Box>
+            </Box>
+          );
+        }
+      },
+    },
+
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "createdBy",
+      headerName: "Created by",
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{`${
+            row?.createdBy || "-"
+          }`}</Typography>
         );
       },
     },
-    {
-      flex: 0.2,
-      field: "uploaded_by",
-      minWidth: 140,
-      headerName: "Created By",
-      renderCell: ({ row }: any) => {
-        const { uploaded_by } = row;
 
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {uploaded_by || "-"}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      },
-    },
     {
-      flex: 0.02,
-      minWidth: 100,
+      flex: 0.1,
+      minWidth: 130,
       sortable: false,
       field: "actions",
       headerName: "Actions",
       headerAlign: "center",
-      renderCell: ({ row }: any) => (
+      renderCell: ({ row }: CellType) => (
         <div>
           <IconButton
             aria-label="more"
             aria-controls="long-menu"
             aria-haspopup="true"
-            onClick={(e: any) => handleClick(e, row)} // Pass the current row here
+            onClick={(e) => handleClick(e, row)} // Pass the current row here
           >
-            <MoreVertIcon />
+            <Button
+              // sx={{ }}
+              // variant="contained"
+              size="small"
+              sx={{
+                height: "4.5vh",
+
+                textTransform: "none",
+                backgroundColor: "#174B8B", // Set the button color to green
+                "&:hover": {
+                  backgroundColor: "#2B6EC2", // Darker green on hover
+                },
+              }}
+              variant="contained"
+              component={Link}
+              to="/dashboard/editor-dahsbord"
+              onClick={() => {
+                setContract(null), setSidebarExpanded(false);
+                setLifecycleData({
+                  activeSection: "",
+                  showButtons: false,
+                  recipients: [],
+                  formData: {
+                    checkboxStates: {
+                      isEvergreen: false,
+                      isRenewalsActive: false,
+                      isNotificationEmailEnabled: false,
+                      isRemindersEnabled: false,
+                    },
+                    dateFields: {
+                      signedOn: "",
+                      startDate: "",
+                      endDate: "",
+                      noticePeriodDate: "",
+                    },
+                    renewalDetails: {
+                      renewalType: "days",
+                      renewalPeriod: 0,
+                    },
+                    notificationDetails: {
+                      notifyOwner: false,
+                      additionalRecipients: [],
+                    },
+                    reminderSettings: {
+                      firstReminder: 0,
+                      daysBetweenReminders: 0,
+                      daysBeforeFinalExpiration: 0,
+                    },
+                  },
+                });
+              }}
+            >
+              use
+            </Button>
+            <MoreVertIcon sx={{ fontSize: "20px" }} />
           </IconButton>
           <Menu
             id="long-menu"
@@ -392,34 +495,96 @@ const TemplateList = () => {
             <MenuItem
               onClick={() => {
                 handleClose();
-                navigate(`/dashboard/update-template/${menuState.row?._id}`); // Use menuState.row._id
+                navigate(`/dashboard/editor-dahsbord/${row?._id}`);
+                setSidebarExpanded(false);
+                setDucomentName("");
+                setFormState({
+                  name: "",
+                  with_name: undefined,
+                  currency: undefined,
+                  value: undefined,
+                  tags: undefined,
+                  // branch: "",
+                  teams: undefined,
+                  category: undefined,
+                  subcategory: undefined,
+                  additionalFields: [],
+                });
+                setLifecycleData({
+                  activeSection: "",
+                  showButtons: false,
+                  recipients: [],
+                  formData: {
+                    checkboxStates: {
+                      isEvergreen: false,
+                      isRenewalsActive: false,
+                      isNotificationEmailEnabled: false,
+                      isRemindersEnabled: false,
+                    },
+                    dateFields: {
+                      signedOn: "",
+                      startDate: "",
+                      endDate: "",
+                      noticePeriodDate: "",
+                    },
+                    renewalDetails: {
+                      renewalType: "days",
+                      renewalPeriod: 0,
+                    },
+                    notificationDetails: {
+                      notifyOwner: false,
+                      additionalRecipients: [],
+                    },
+                    reminderSettings: {
+                      firstReminder: 0,
+                      daysBetweenReminders: 0,
+                      daysBeforeFinalExpiration: 0,
+                    },
+                  },
+                });
               }}
             >
               Edit
             </MenuItem>
             <MenuItem
-              onClick={() => {
-                handleClose();
-                handleActive(menuState.row?._id); // Use menuState.row._id
-              }}
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
             >
-              Active
+              Move
             </MenuItem>
             <MenuItem
               onClick={() => {
-                handleClose();
-                handleArchive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Archive
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleDelete(menuState.row?._id); // Use menuState.row._id
+                handleDelete(row?._id); // Use menuState.row._id
                 handleClose();
               }}
             >
               Delete
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Share to folder
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Download
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Transfer ownership
             </MenuItem>
           </Menu>
         </div>
@@ -431,61 +596,163 @@ const TemplateList = () => {
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <CardHeader title="Templates" />
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
+          <Box
+            sx={{
+              pr: 3,
+              width: "100%",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
           >
-            <Link to="/dashboard/template-list" className="link-no-underline">
-              Home
-            </Link>
-            {/* <Typography color="text.primary">Categories</Typography> */}
-          </Breadcrumbs>
-          <Card>
+            <Box>
+              <CardHeader title="Templates" />
+              <Breadcrumbs
+                aria-label="breadcrumb"
+                sx={{ pl: 2.2, mt: -2, mb: 2, fontSize: "13px" }}
+              >
+                <Link
+                  to="/dashboard/template-list"
+                  className="link-no-underline"
+                >
+                  Home
+                </Link>
+                {/* <Typography color="text.primary">Categories</Typography> */}
+              </Breadcrumbs>
+            </Box>
+          </Box>
+
+          <Box
+            sx={{
+              borderTop: "0.5px solid #174B8B", // Add a top border
+              borderBottom: "0.5px solid #174B8B",
+              pl: 3,
+              p: 2,
+              pr: 4,
+              width: "100%",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              background: "white",
+            }}
+          >
             <Box
               sx={{
-                pl: 3,
-                p: 2,
-                pr: 3,
-                width: "100%",
                 display: "flex",
                 flexWrap: "wrap",
                 alignItems: "center",
-                justifyContent: "space-between",
+                width: "50%",
               }}
             >
-              <div style={{ display: "flex" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    alignItems: "center",
-                  }}
-                >
-                  <TextField
-                    size="small"
-                    value={search}
-                    placeholder="Search"
-                    onChange={(e: any) => setSearch(e.target.value)}
-                  />
-                </Box>
-              </div>
-
-              <div>
-                <Button variant="outlined" sx={{ textTransform: "none" }}>
-                  Create Template
-                </Button>
-                <Button
-                  sx={{ ml: 2, textTransform: "none" }}
-                  variant="contained"
-                  component={Link}
-                  to="/dashboard/create-template"
-                >
-                  Upload Template
-                </Button>
-              </div>
+              <TextField
+                size="small"
+                fullWidth
+                value={search}
+                placeholder="Search"
+                onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  width: "60%", // Adjusted width here
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#174B8B !important", // Your desired color for normal state
+                      borderWidth: "1px !important", // Set border thickness to 0.5px
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#1171D1", // Change for hover state
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#174B8B", // Border color when the TextField is focused
+                    },
+                  },
+                }}
+              />
             </Box>
-          </Card>
+
+            <div style={{ display: "flex" }}>
+              <Button
+                size="small"
+                sx={{
+                  height: "4.5vh",
+                  mr: 1,
+                  textTransform: "none",
+                  backgroundColor: "#3F9748", // Set the button color to green
+                  "&:hover": {
+                    backgroundColor: "darkgreen", // Darker green on hover
+                  },
+                }}
+                variant="contained"
+              >
+                Upload Template
+              </Button>
+
+              <Button
+                // sx={{ }}
+                // variant="contained"
+                size="small"
+                sx={{
+                  height: "4.5vh",
+                  ml: 2,
+
+                  textTransform: "none",
+                  backgroundColor: "#174B8B", // Set the button color to green
+                  "&:hover": {
+                    backgroundColor: "#2B6EC2", // Darker green on hover
+                  },
+                }}
+                variant="contained"
+                component={Link}
+                to="/dashboard/editor-dahsbord"
+                onClick={() => {
+                  setContract(null), setSidebarExpanded(false);
+                  setLifecycleData({
+                    activeSection: "",
+                    showButtons: false,
+                    recipients: [],
+                    formData: {
+                      checkboxStates: {
+                        isEvergreen: false,
+                        isRenewalsActive: false,
+                        isNotificationEmailEnabled: false,
+                        isRemindersEnabled: false,
+                      },
+                      dateFields: {
+                        signedOn: "",
+                        startDate: "",
+                        endDate: "",
+                        noticePeriodDate: "",
+                      },
+                      renewalDetails: {
+                        renewalType: "days",
+                        renewalPeriod: 0,
+                      },
+                      notificationDetails: {
+                        notifyOwner: false,
+                        additionalRecipients: [],
+                      },
+                      reminderSettings: {
+                        firstReminder: 0,
+                        daysBetweenReminders: 0,
+                        daysBeforeFinalExpiration: 0,
+                      },
+                    },
+                  });
+                }}
+              >
+                <AddIcon /> Create Template
+              </Button>
+
+              {/* <MenuButton /> */}
+            </div>
+          </Box>
         </Grid>
 
         <Grid item xs={12}>
@@ -514,6 +781,33 @@ const TemplateList = () => {
               </Box>
             ) : (
               <DataGrid
+                sx={{
+                  "& .MuiDataGrid-row:hover": {
+                    backgroundColor: "#F8FAFD", // Set your desired hover color
+                  },
+                  "& .MuiDataGrid-cell": {
+                    borderColor: "#D3DFFD", // Grid line color for normal cells
+                  },
+                  "& .MuiDataGrid-columnSeparator": {
+                    visibility: "visible",
+                    borderColor: "#D3DFFD", // Column separator color
+                  },
+                  "& .MuiDataGrid-virtualScroller": {
+                    borderColor: "transparent", // Transparent border around the grid
+                  },
+                  "& .MuiDataGrid-root": {
+                    border: "1px solid white", // Change this to 'transparent' if no border is desired
+                  },
+                  "& .MuiDataGrid-columnHeaders": {
+                    borderColor: "#D3DFFD", // Border color for header
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                      // You can customize header text color here
+                    },
+                  },
+                  "& .MuiDataGrid-columnHeader": {
+                    borderColor: "#D3DFFD", // Ensure headers' border color matches
+                  },
+                }}
                 style={{ maxHeight: 500 }}
                 pagination
                 rows={filteredList || []}

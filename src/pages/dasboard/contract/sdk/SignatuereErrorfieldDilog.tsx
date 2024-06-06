@@ -48,7 +48,8 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
-  const { recipients, setSelectedModule } = useContext(ContractContext);
+  const { recipients, setSelectedModule, setEditMode } =
+    useContext(ContractContext);
   return (
     <>
       <Dialog
@@ -101,63 +102,62 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             flexDirection: "column",
             textAlign: "left",
             lineHeight: "auto",
-            maxHeight: "30vh",
+            maxHeight: "45vh",
             // height: "30vh",
           }}
         >
-          <div style={{ display: "flex" }}>
-            <Typography
+          <Typography
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+
+              mt: "1rem",
+            }}
+          >
+            <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+              {recipients
+                ?.filter((dt: any) => dt.field === undefined)
+                .map((dt: any, index: any) => (
+                  <ListItem key={index} sx={{ pl: 0 }}>
+                    <ListItemIcon
+                      sx={{ minWidth: "auto", mr: 1, color: "gray" }}
+                    >
+                      <FiberManualRecordIcon sx={{ fontSize: "small" }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={`${dt.email} `}
+                      sx={{ color: "black" }}
+                    />
+                  </ListItem>
+                ))}
+            </List>
+          </Typography>
+
+          {/* Using another flexbox for laying out button to the right */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "8px",
+              width: "100%",
+            }}
+          >
+            <Button
               sx={{
-                display: "flex",
-                flexDirection: "column",
-
-                mt: "1rem",
+                textTransform: "none",
+                mt: "4",
+                backgroundColor: "#174B8B", // Set the button color to green
+                "&:hover": {
+                  backgroundColor: "#2B6EC2", // Darker green on hover
+                },
+              }}
+              variant="contained"
+              onClick={() => {
+                setSelectedModule("fields"), setEditMode(true);
               }}
             >
-              <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-                {recipients
-                  ?.filter((dt: any) => dt.field === undefined)
-                  .map((dt: any, index: any) => (
-                    <ListItem key={index} sx={{ pl: 0 }}>
-                      <ListItemIcon
-                        sx={{ minWidth: "auto", mr: 1, color: "gray" }}
-                      >
-                        <FiberManualRecordIcon sx={{ fontSize: "small" }} />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={`${dt.email} `}
-                        sx={{ color: "black" }}
-                      />
-                    </ListItem>
-                  ))}
-              </List>
-            </Typography>
-
-            {/* Using another flexbox for laying out button to the right */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginTop: "4rem",
-                width: "100%",
-              }}
-            >
-              <Button
-                sx={{
-                  textTransform: "none",
-                  height: "5vh",
-                  mt: "4",
-                  backgroundColor: "#174B8B", // Set the button color to green
-                  "&:hover": {
-                    backgroundColor: "#2B6EC2", // Darker green on hover
-                  },
-                }}
-                variant="contained"
-                onClick={() => setSelectedModule("fields")}
-              >
-                Add fields
-              </Button>
-            </div>
+              Add fields
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -423,7 +423,7 @@ const Signature = () => {
                                   height: "25px !important",
                                   fontSize: "0.675rem",
                                   mt: -1,
-                                  ml: siningOrder ? 4.8 : 2.8,
+                                  ml: siningOrder ? 4.8 : 2.6,
                                 }}
                               >
                                 {colb?.isInternal ? " Internal" : "External"}
@@ -436,14 +436,18 @@ const Signature = () => {
                                     textTransform: "none",
                                     whiteSpace: "nowrap",
                                     mt: -0.3,
-                                    ml: 4,
+
+                                    ml: siningOrder ? 5.3 : 3.5,
                                     color: "green",
                                   }}
                                   onClick={() => handleShareDilog(colb)}
                                 >
                                   {colb?.ReqOption ? (
                                     <>
-                                      <CheckCircleOutlineIcon fontSize="medium" />{" "}
+                                      <CheckCircleOutlineIcon
+                                        sx={{ ml: -4.3, mr: 1.4 }}
+                                        fontSize="medium"
+                                      />{" "}
                                       Document shared to sign
                                     </>
                                   ) : (
@@ -460,11 +464,14 @@ const Signature = () => {
                                     textTransform: "none",
                                     whiteSpace: "nowrap",
                                     mt: -0.3,
-                                    ml: 4,
+                                    ml: siningOrder ? 5.3 : 3.8,
                                   }}
                                   onClick={() => handleShareDilog(colb)}
                                 >
-                                  <CheckCircleOutlineIcon fontSize="medium" />{" "}
+                                  <CheckCircleOutlineIcon
+                                    sx={{ ml: -4.6, mr: 1.4 }}
+                                    fontSize="medium"
+                                  />{" "}
                                   Signed{" "}
                                 </Button>
                               )}
@@ -480,7 +487,7 @@ const Signature = () => {
                                     textTransform: "none",
                                     whiteSpace: "nowrap",
                                     mt: -0.3,
-                                    ml: 4,
+                                    ml: siningOrder ? 5.3 : 4,
                                   }}
                                 >
                                   {colb.date
@@ -515,7 +522,7 @@ const Signature = () => {
                                           textTransform: "none",
                                           whiteSpace: "nowrap",
                                           mt: -0.8,
-                                          ml: 4,
+                                          ml: siningOrder ? 5.3 : 3.7,
                                         }}
                                         onClick={() => {
                                           setEmailToReplace(colb.email);
@@ -558,7 +565,7 @@ const Signature = () => {
                                           textTransform: "none",
                                           whiteSpace: "nowrap",
                                           mt: -0.8,
-                                          ml: 4,
+                                          ml: siningOrder ? 5.3 : 3.7,
                                         }}
                                         onClick={() => {
                                           handleRemoveSignatory(colb);

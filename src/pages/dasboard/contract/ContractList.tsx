@@ -74,334 +74,7 @@ interface RowType {
 
 // ** Styled components
 
-const defaultColumns: GridColDef[] = [
-  {
-    flex: 0.3,
-    minWidth: 180,
-    field: "status",
-    headerName: "Status",
-    renderCell: ({ row }: { row: any }) => (
-      <>
-        <Chip
-          size="small"
-          variant="outlined"
-          label={
-            row.status === "Active"
-              ? "Active"
-              : row.status === "Archived"
-              ? "Archived"
-              : "Inactive"
-          }
-          sx={{
-            fontSize: "14px",
-            // fontWeight: "bold",
-            backgroundColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB",
-            color:
-              row.status === "Active"
-                ? "#3F9748"
-                : row.status === "Archived"
-                ? "#D32F2F"
-                : "#red",
-            borderColor:
-              row.status === "Active"
-                ? "#D3FDE4"
-                : row.status === "Archived"
-                ? "#FFF7CB"
-                : "#FFCBCB", // Optional: to match border color with background
-            "& .MuiChip-label": {
-              // This targets the label inside the chip for more specific styling
-              color:
-                row.status === "Active"
-                  ? "#3F9748"
-                  : row.status === "Archived"
-                  ? "#D36A2F"
-                  : "#D32F2F",
-            },
-          }}
-        />
-      </>
-    ),
-  },
-  {
-    flex: 0.3,
-    minWidth: 220,
-    field: "with_name",
-    headerName: "Contract with",
-
-    renderCell: ({ row }: { row: any }) => {
-      const { with_name } = row;
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{with_name}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    field: "name",
-    minWidth: 220,
-    headerName: "Contract name",
-    renderCell: ({ row }: any) => {
-      const { name } = row;
-
-      return (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
-          </Box>
-        </Box>
-      );
-    },
-  },
-
-  {
-    flex: 0.3,
-    field: "startDate",
-    minWidth: 180,
-    headerName: "Start date",
-    renderCell: ({ row }: any) => {
-      // Extract the date from the row
-      const startDate = row?.startDate;
-
-      // If the startDate is empty or invalid, return a default value
-      if (!startDate || isNaN(new Date(startDate).getTime())) {
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>-</Typography>
-            </Box>
-          </Box>
-        );
-      }
-
-      // Specify the desired time zone, e.g., 'America/New_York'
-      const timeZone = "America/New_York";
-
-      // Convert UTC date to the specified time zone
-      const zonedDate = utcToZonedTime(new Date(startDate), timeZone);
-
-      // Format the zoned date to the desired output format
-      try {
-        const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {formattedDate}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      } catch (error) {
-        console.error("Error formatting date:", error);
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                Invalid date
-              </Typography>
-            </Box>
-          </Box>
-        );
-      }
-    },
-  },
-
-  {
-    flex: 0.3,
-    field: "endDate",
-    minWidth: 180,
-    headerName: "End date",
-    renderCell: ({ row }: any) => {
-      // Extract the date from the row
-      const endDate = row?.endDate;
-
-      // If the endDate is empty or invalid, return a default value
-      if (!endDate || isNaN(new Date(endDate).getTime())) {
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>-</Typography>
-            </Box>
-          </Box>
-        );
-      }
-
-      // Specify the desired time zone, e.g., 'America/New_York'
-      const timeZone = "America/New_York";
-
-      // Convert UTC date to the specified time zone
-      const zonedDate = utcToZonedTime(new Date(endDate), timeZone);
-
-      // Format the zoned date to the desired output format
-      try {
-        const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {formattedDate}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      } catch (error) {
-        console.error("Error formatting date:", error);
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                Invalid date
-              </Typography>
-            </Box>
-          </Box>
-        );
-      }
-    },
-  },
-
-  {
-    flex: 0.3,
-    field: "noticePeriodDate",
-    minWidth: 180,
-    headerName: "Notice period",
-    renderCell: ({ row }: any) => {
-      // Extract the date from the row
-      const noticePeriodDate = row?.noticePeriodDate;
-
-      // If the noticePeriodDate is empty or invalid, return a default value
-      if (!noticePeriodDate || isNaN(new Date(noticePeriodDate).getTime())) {
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>-</Typography>
-            </Box>
-          </Box>
-        );
-      }
-
-      // Specify the desired time zone, e.g., 'America/New_York'
-      const timeZone = "America/New_York";
-
-      // Convert UTC date to the specified time zone
-      const zonedDate = utcToZonedTime(new Date(noticePeriodDate), timeZone);
-
-      // Format the zoned date to the desired output format
-      try {
-        const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                {formattedDate}
-              </Typography>
-            </Box>
-          </Box>
-        );
-      } catch (error) {
-        console.error("Error formatting date:", error);
-        return (
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography sx={{ color: "text.secondary" }}>
-                Invalid date
-              </Typography>
-            </Box>
-          </Box>
-        );
-      }
-    },
-  },
-
-  {
-    flex: 0.3,
-    minWidth: 180,
-    field: "currency",
-    headerName: "Currency",
-
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.currency || "-"
-        }`}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 180,
-    field: "anualValue",
-    headerName: "Annual Value ",
-
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>
-          {row?.anualValue}
-        </Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 180,
-    field: "category",
-    headerName: "Categories",
-
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.category || "-"
-        }`}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 180,
-    field: "subcategory",
-    headerName: "SubCategories",
-
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.subcategory || "-"
-        }`}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 180,
-    field: "tags",
-    headerName: "Tags",
-
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.tags || "-"
-        }`}</Typography>
-      );
-    },
-  },
-  {
-    flex: 0.3,
-    minWidth: 180,
-    field: "team",
-    headerName: "Team ",
-    renderCell: ({ row }: { row: any }) => {
-      return (
-        <Typography sx={{ color: "text.secondary" }}>{`${
-          row?.overview?.teams?.name || "-"
-        }`}</Typography>
-      );
-    },
-  },
-];
+const defaultColumns: GridColDef[] = [];
 
 const ContractList = () => {
   const navigate = useNavigate();
@@ -448,6 +121,7 @@ const ContractList = () => {
     try {
       setIsLoading(true);
       const { data } = await getList(user?._id);
+
       const transformedData = data.map((row: any, index: number) => ({
         ...row,
         id: index,
@@ -547,7 +221,389 @@ const ContractList = () => {
   };
 
   const columns: any[] = [
-    ...defaultColumns,
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "status",
+      headerName: "Status",
+      renderCell: ({ row }: { row: any }) => (
+        <>
+          <Chip
+            size="small"
+            variant="outlined"
+            label={
+              row.status === "Active"
+                ? "Active"
+                : row.status === "Archived"
+                ? "Archived"
+                : "Inactive"
+            }
+            sx={{
+              fontSize: "14px",
+              // fontWeight: "bold",
+              backgroundColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB",
+              color:
+                row.status === "Active"
+                  ? "#3F9748"
+                  : row.status === "Archived"
+                  ? "#D32F2F"
+                  : "#red",
+              borderColor:
+                row.status === "Active"
+                  ? "#D3FDE4"
+                  : row.status === "Archived"
+                  ? "#FFF7CB"
+                  : "#FFCBCB", // Optional: to match border color with background
+              "& .MuiChip-label": {
+                // This targets the label inside the chip for more specific styling
+                color:
+                  row.status === "Active"
+                    ? "#3F9748"
+                    : row.status === "Archived"
+                    ? "#D36A2F"
+                    : "#D32F2F",
+              },
+            }}
+          />
+        </>
+      ),
+    },
+    {
+      flex: 0.3,
+      field: "name",
+      minWidth: 220,
+      headerName: "Document name",
+      renderCell: ({ row }: any) => {
+        const { name } = row;
+
+        return (
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {/* <Img src={checkImageFormat(row?.image?.path)} /> */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                color: "#155BE5",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                handleClose();
+                navigate(`/dashboard/editor-dahsbord/${row?._id}`);
+                setSidebarExpanded(false);
+                setDucomentName("");
+                setFormState({
+                  name: "",
+                  with_name: undefined,
+                  currency: undefined,
+                  value: undefined,
+                  tags: undefined,
+                  // branch: "",
+                  teams: undefined,
+                  category: undefined,
+                  subcategory: undefined,
+                  additionalFields: [],
+                });
+                setLifecycleData({
+                  activeSection: "",
+                  showButtons: false,
+                  recipients: [],
+                  formData: {
+                    checkboxStates: {
+                      isEvergreen: false,
+                      isRenewalsActive: false,
+                      isNotificationEmailEnabled: false,
+                      isRemindersEnabled: false,
+                    },
+                    dateFields: {
+                      signedOn: "",
+                      startDate: "",
+                      endDate: "",
+                      noticePeriodDate: "",
+                    },
+                    renewalDetails: {
+                      renewalType: "days",
+                      renewalPeriod: 0,
+                    },
+                    notificationDetails: {
+                      notifyOwner: false,
+                      additionalRecipients: [],
+                    },
+                    reminderSettings: {
+                      firstReminder: 0,
+                      daysBetweenReminders: 0,
+                      daysBeforeFinalExpiration: 0,
+                    },
+                  },
+                });
+              }}
+            >
+              <Typography sx={{ color: "text.secondary" }}>{name}</Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      minWidth: 220,
+      field: "with_name",
+      headerName: "Contract with",
+
+      renderCell: ({ row }: { row: any }) => {
+        const { with_name } = row;
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{with_name}</Typography>
+        );
+      },
+    },
+
+    {
+      flex: 0.3,
+      field: "startDate",
+      minWidth: 180,
+      headerName: "Start date",
+      renderCell: ({ row }: any) => {
+        // Extract the date from the row
+        const startDate = row?.startDate;
+
+        // If the startDate is empty or invalid, return a default value
+        if (!startDate || isNaN(new Date(startDate).getTime())) {
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>-</Typography>
+              </Box>
+            </Box>
+          );
+        }
+
+        // Specify the desired time zone, e.g., 'America/New_York'
+        const timeZone = "America/New_York";
+
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(startDate), timeZone);
+
+        // Format the zoned date to the desired output format
+        try {
+          const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {formattedDate}
+                </Typography>
+              </Box>
+            </Box>
+          );
+        } catch (error) {
+          console.error("Error formatting date:", error);
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  Invalid date
+                </Typography>
+              </Box>
+            </Box>
+          );
+        }
+      },
+    },
+
+    {
+      flex: 0.3,
+      field: "endDate",
+      minWidth: 180,
+      headerName: "End date",
+      renderCell: ({ row }: any) => {
+        // Extract the date from the row
+        const endDate = row?.endDate;
+
+        // If the endDate is empty or invalid, return a default value
+        if (!endDate || isNaN(new Date(endDate).getTime())) {
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>-</Typography>
+              </Box>
+            </Box>
+          );
+        }
+
+        // Specify the desired time zone, e.g., 'America/New_York'
+        const timeZone = "America/New_York";
+
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(endDate), timeZone);
+
+        // Format the zoned date to the desired output format
+        try {
+          const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {formattedDate}
+                </Typography>
+              </Box>
+            </Box>
+          );
+        } catch (error) {
+          console.error("Error formatting date:", error);
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  Invalid date
+                </Typography>
+              </Box>
+            </Box>
+          );
+        }
+      },
+    },
+
+    {
+      flex: 0.3,
+      field: "noticePeriodDate",
+      minWidth: 180,
+      headerName: "Notice period",
+      renderCell: ({ row }: any) => {
+        // Extract the date from the row
+        const noticePeriodDate = row?.noticePeriodDate;
+
+        // If the noticePeriodDate is empty or invalid, return a default value
+        if (!noticePeriodDate || isNaN(new Date(noticePeriodDate).getTime())) {
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>-</Typography>
+              </Box>
+            </Box>
+          );
+        }
+
+        // Specify the desired time zone, e.g., 'America/New_York'
+        const timeZone = "America/New_York";
+
+        // Convert UTC date to the specified time zone
+        const zonedDate = utcToZonedTime(new Date(noticePeriodDate), timeZone);
+
+        // Format the zoned date to the desired output format
+        try {
+          const formattedDate = format(zonedDate, "dd-MM-yyyy", { timeZone });
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {formattedDate}
+                </Typography>
+              </Box>
+            </Box>
+          );
+        } catch (error) {
+          console.error("Error formatting date:", error);
+          return (
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ color: "text.secondary" }}>
+                  Invalid date
+                </Typography>
+              </Box>
+            </Box>
+          );
+        }
+      },
+    },
+
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "currency",
+      headerName: "Currency",
+
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{`${
+            row?.currency || "-"
+          }`}</Typography>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "anualValue",
+      headerName: "Annual Value ",
+
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>
+            {row?.anualValue}
+          </Typography>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "category",
+      headerName: "Categories",
+
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{`${
+            row?.category || "-"
+          }`}</Typography>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "subcategory",
+      headerName: "SubCategories",
+
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{`${
+            row?.subcategory || "-"
+          }`}</Typography>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "tags",
+      headerName: "Tags",
+
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{`${
+            row?.tags || "-"
+          }`}</Typography>
+        );
+      },
+    },
+    {
+      flex: 0.3,
+      minWidth: 180,
+      field: "team",
+      headerName: "Team ",
+      renderCell: ({ row }: { row: any }) => {
+        return (
+          <Typography sx={{ color: "text.secondary" }}>{`${
+            row?.overview?.teams?.name || "-"
+          }`}</Typography>
+        );
+      },
+    },
     {
       flex: 0.02,
       minWidth: 100,
@@ -577,7 +633,7 @@ const ContractList = () => {
               },
             }}
           >
-            <MenuItem
+            {/* <MenuItem
               onClick={() => {
                 handleClose();
                 navigate(`/dashboard/editor-dahsbord/${row?._id}`);
@@ -630,15 +686,15 @@ const ContractList = () => {
               }}
             >
               Edit
-            </MenuItem>
-            {/* <MenuItem
-              onClick={() => {
-                handleClose();
-                handleArchive(menuState.row?._id); // Use menuState.row._id
-              }}
-            >
-              Archive
             </MenuItem> */}
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Move
+            </MenuItem>
             <MenuItem
               onClick={() => {
                 handleDelete(row?._id); // Use menuState.row._id
@@ -646,6 +702,30 @@ const ContractList = () => {
               }}
             >
               Delete
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Share to folder
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Download
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Transfer ownership
             </MenuItem>
           </Menu>
         </div>

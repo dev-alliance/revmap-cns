@@ -169,6 +169,8 @@ function SyncFesion() {
         signature: recipients,
         status: "Active",
         wordDocumentData: documentData,
+        createdBy: user.firstName,
+        contractType: "template",
       };
       console.log(payload, "payload");
       let response;
@@ -1263,6 +1265,11 @@ function SyncFesion() {
     //   button.setAttribute("aria-disabled", "true");
     // });
   }, [enabelEditing]);
+  useEffect(() => {
+    if (editMode) {
+      handleClick();
+    }
+  }, [editMode]);
 
   const handleClick = () => {
     setEditMode(true);
@@ -1311,7 +1318,7 @@ function SyncFesion() {
         for (const char of documentName) {
           totalWidth += context.measureText(char).width; // Calculate total width of all characters
         }
-        inputRef.current.style.width = `${Math.max(175, totalWidth)}px`; // Set input width
+        inputRef.current.style.width = `${Math.max(170, totalWidth)}px`; // Set input width
       }
     };
 
@@ -1346,7 +1353,7 @@ function SyncFesion() {
             placeholder="Untitled Document"
             className="input-placeholder-color"
             style={{
-              minWidth: "175px",
+              minWidth: "150px",
               fontSize: "1.3rem",
               color: "#155BE5",
               borderBottom: "1px solid #174B8B",
@@ -2172,7 +2179,7 @@ function SyncFesion() {
                 variant="outlined"
                 color="success"
               >
-                {id ? "Update" : "save"}
+                save
               </Button>
             </>
           )}

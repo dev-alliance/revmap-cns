@@ -105,7 +105,9 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
   useEffect(() => {
     if (user?._id) listData();
   }, [user?._id]);
-
+  useEffect(() => {
+    setTabValue(0);
+  }, [open]);
   return (
     <>
       <Dialog
@@ -148,7 +150,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ height: "30vh", mt: -1 }}>
+        <DialogContent sx={{ height: "45vh", mt: -1 }}>
           <Box
             sx={{
               mb: 2,
