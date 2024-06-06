@@ -170,7 +170,7 @@ function SyncFesion() {
         status: "Active",
         wordDocumentData: documentData,
         createdBy: user.firstName,
-        contractType: "template",
+        contractType: "",
       };
       console.log(payload, "payload");
       let response;
