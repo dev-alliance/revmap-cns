@@ -86,6 +86,7 @@ const ContractList = () => {
     setSidebarExpanded,
     setDucomentName,
     setFormState,
+    setEditMode,
   } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
@@ -295,6 +296,7 @@ const ContractList = () => {
                 handleClose();
                 navigate(`/dashboard/editor-dahsbord/${row?._id}`);
                 setSidebarExpanded(false);
+                setEditMode(true);
                 setDucomentName("");
                 setFormState({
                   name: "",
@@ -717,6 +719,14 @@ const ContractList = () => {
             //   handleClose();
             // }}
             >
+              Share with users
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
               Download
             </MenuItem>
             <MenuItem
@@ -779,6 +789,7 @@ const ContractList = () => {
                 to="/dashboard/create-contract"
                 onClick={() => {
                   setContract(null), setSidebarExpanded(false);
+                  setEditMode(false);
                   setLifecycleData({
                     activeSection: "",
                     showButtons: false,

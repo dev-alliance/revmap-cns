@@ -87,9 +87,11 @@ const TemplateList = () => {
     setSidebarExpanded,
     setDucomentName,
     setFormState,
+    setEditMode,
   } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
+  const [documentType, setDocumentType] = useState<string>("");
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 7,
@@ -441,39 +443,54 @@ const TemplateList = () => {
               component={Link}
               to="/dashboard/editor-dahsbord"
               onClick={() => {
-                setContract(null), setSidebarExpanded(false);
-                setLifecycleData({
-                  activeSection: "",
-                  showButtons: false,
-                  recipients: [],
-                  formData: {
-                    checkboxStates: {
-                      isEvergreen: false,
-                      isRenewalsActive: false,
-                      isNotificationEmailEnabled: false,
-                      isRemindersEnabled: false,
+                setDocumentType("Contract");
+                setContract(null),
+                  setSidebarExpanded(false),
+                  setFormState({
+                    name: "",
+                    with_name: undefined,
+                    currency: undefined,
+                    value: undefined,
+                    tags: undefined,
+                    // branch: "",
+                    teams: undefined,
+                    category: undefined,
+                    subcategory: undefined,
+                    additionalFields: [],
+                  });
+                setDucomentName(""),
+                  setLifecycleData({
+                    activeSection: "",
+                    showButtons: false,
+                    recipients: [],
+                    formData: {
+                      checkboxStates: {
+                        isEvergreen: false,
+                        isRenewalsActive: false,
+                        isNotificationEmailEnabled: false,
+                        isRemindersEnabled: false,
+                      },
+                      dateFields: {
+                        signedOn: "",
+                        startDate: "",
+                        endDate: "",
+                        noticePeriodDate: "",
+                      },
+                      renewalDetails: {
+                        renewalType: "days",
+                        renewalPeriod: 0,
+                      },
+                      notificationDetails: {
+                        notifyOwner: false,
+                        additionalRecipients: [],
+                      },
+                      reminderSettings: {
+                        firstReminder: 0,
+                        daysBetweenReminders: 0,
+                        daysBeforeFinalExpiration: 0,
+                      },
                     },
-                    dateFields: {
-                      signedOn: "",
-                      startDate: "",
-                      endDate: "",
-                      noticePeriodDate: "",
-                    },
-                    renewalDetails: {
-                      renewalType: "days",
-                      renewalPeriod: 0,
-                    },
-                    notificationDetails: {
-                      notifyOwner: false,
-                      additionalRecipients: [],
-                    },
-                    reminderSettings: {
-                      firstReminder: 0,
-                      daysBetweenReminders: 0,
-                      daysBeforeFinalExpiration: 0,
-                    },
-                  },
-                });
+                  });
               }}
             >
               use
@@ -497,6 +514,7 @@ const TemplateList = () => {
                 handleClose();
                 navigate(`/dashboard/editor-dahsbord/${row?._id}`);
                 setSidebarExpanded(false);
+                setEditMode(true);
                 setDucomentName("");
                 setFormState({
                   name: "",
@@ -569,6 +587,14 @@ const TemplateList = () => {
             // }}
             >
               Share to folder
+            </MenuItem>
+            <MenuItem
+            // onClick={() => {
+            //   handleDelete(row?._id); // Use menuState.row._id
+            //   handleClose();
+            // }}
+            >
+              Share with users
             </MenuItem>
             <MenuItem
             // onClick={() => {

@@ -128,30 +128,32 @@ const MyComponent: React.FC = () => {
     setAlertDilog(true);
   };
 
+  // if (location.pathname === "/dashboard/editor-dahsbord/open") {
+  //   setOpenDocoment(true);
+  //   console.log("ok");
+  // }
+
   useEffect(() => {
-    if (location.pathname === "/dashboard/editor-dahsbord/open") {
-      setOpenDocoment(true);
-      console.log("ok");
-    }
     return () => {
       if (window.confirm("Are you sure you want to leave the document")) {
-        setRecipients([]);
-        setCollaborater([]);
-        setApprovers([]);
-        setDucomentName("");
-        setSelectedModule("overview");
-        setFormState({
-          name: "",
-          with_name: undefined,
-          currency: undefined,
-          value: undefined,
-          tags: undefined,
-          // branch: "",
-          teams: undefined,
-          category: undefined,
-          subcategory: undefined,
-          additionalFields: [],
-        });
+        setAlertDilog(true);
+        // setRecipients([]);
+        // setCollaborater([]);
+        // setApprovers([]);
+        // setDucomentName("");
+        // setSelectedModule("overview");
+        // setFormState({
+        //   name: "",
+        //   with_name: undefined,
+        //   currency: undefined,
+        //   value: undefined,
+        //   tags: undefined,
+        //   // branch: "",
+        //   teams: undefined,
+        //   category: undefined,
+        //   subcategory: undefined,
+        //   additionalFields: [],
+        // });
       }
     };
   }, []);

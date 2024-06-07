@@ -66,35 +66,6 @@ const DocumentNameErrorDial: React.FC<DetailDialogProps> = ({
           alignItems: "center",
         }}
       >
-        <DialogTitle
-          sx={{
-            position: "relative",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderBottom: "1px solid #174B8B",
-          }}
-        >
-          <Typography
-            variant="body1"
-            sx={{
-              position: "absolute",
-              left: 16,
-              top: "50%",
-              transform: "translateY(-50%)",
-            }}
-          >
-            Please fill the document title first
-          </Typography>
-          <IconButton
-            onClick={onClose}
-            aria-label="close"
-            sx={{ position: "absolute", top: -4, right: 0 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-
         <DialogContent
           sx={{
             display: "flex",
@@ -102,6 +73,8 @@ const DocumentNameErrorDial: React.FC<DetailDialogProps> = ({
             textAlign: "left",
             lineHeight: "auto",
             maxHeight: "30vh",
+            alignItems: "center",
+
             // height: "30vh",
           }}
         >
@@ -110,17 +83,17 @@ const DocumentNameErrorDial: React.FC<DetailDialogProps> = ({
               display: "flex",
               flexDirection: "column",
 
-              mt: "1rem",
+              mb: "1rem",
             }}
           >
-            Click to add button for fill document Name
+            Please add document name before sharing
           </Typography>
 
           {/* Using another flexbox for laying out button to the right */}
           <div
             style={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "center",
               marginTop: "8px",
               width: "100%",
             }}
@@ -129,6 +102,24 @@ const DocumentNameErrorDial: React.FC<DetailDialogProps> = ({
               sx={{
                 textTransform: "none",
                 mt: "4",
+                height: "26px",
+                fontSize: "10px",
+              }}
+              variant="outlined"
+              color="error"
+              onClick={() => {
+                onClose(); // Assuming onClose is a function that needs to be called here
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              sx={{
+                textTransform: "none",
+                mt: "4",
+                height: "25px",
+                fontSize: "10px",
+                ml: 2,
                 backgroundColor: "#174B8B", // Set the button color to green
                 "&:hover": {
                   backgroundColor: "#2B6EC2", // Darker green on hover
@@ -149,7 +140,7 @@ const DocumentNameErrorDial: React.FC<DetailDialogProps> = ({
                 }, 0);
               }}
             >
-              Add Untitle document
+              Add
             </Button>
           </div>
         </DialogContent>

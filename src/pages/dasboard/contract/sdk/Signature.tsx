@@ -716,6 +716,7 @@ const Signature = () => {
                   <Checkbox
                     checked={siningOrder}
                     onChange={(e) => setSiningOrder(e.target.checked)}
+                    disabled={recipients.some((item: any) => item.ReqOption)}
                     name="siningOrder"
                     color="primary"
                     sx={{

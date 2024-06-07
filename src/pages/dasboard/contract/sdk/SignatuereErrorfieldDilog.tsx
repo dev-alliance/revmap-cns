@@ -87,13 +87,6 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
             Please add signature fields for the signer(s) listed below to send
             the request
           </Typography>
-          <IconButton
-            onClick={onClose}
-            aria-label="close"
-            sx={{ position: "absolute", top: -4, right: 0 }}
-          >
-            <CloseIcon />
-          </IconButton>
         </DialogTitle>
 
         <DialogContent
@@ -146,6 +139,25 @@ const SignatuereErrorfieldDilog: React.FC<DetailDialogProps> = ({
               sx={{
                 textTransform: "none",
                 mt: "4",
+                height: "26px",
+                fontSize: "11px",
+                mr: 2,
+              }}
+              variant="outlined"
+              color="error"
+              onClick={() => {
+                onClose(); // Assuming onClose is a function that needs to be called here
+              }}
+            >
+              Close
+            </Button>
+            <Button
+              sx={{
+                textTransform: "none",
+                mt: "4",
+
+                height: "25px",
+                fontSize: "11px",
                 backgroundColor: "#174B8B", // Set the button color to green
                 "&:hover": {
                   backgroundColor: "#2B6EC2", // Darker green on hover
