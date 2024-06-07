@@ -55,22 +55,6 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
           alignItems: "center",
         }}
       >
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <IconButton
-            onClick={onClose}
-            aria-label="close"
-            sx={{ position: "absolute", top: 8, right: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-
         <DialogContent
           sx={{
             maxHeight: "47vh",
@@ -101,9 +85,9 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
               alt="Logo"
               style={{
                 // maxWidth: isMobile ? "20px" : "50px",
-                width: "18%",
+                width: "22%",
                 // height: "auto",
-                marginTop: "1rem", // Adjust as needed
+                marginTop: "2rem", // Adjust as needed
                 marginBottom: "2rem", // Adjust as needed
               }}
             />
@@ -116,7 +100,7 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
                 width: "15%",
                 // height: "auto",
                 marginTop: "0rem", // Adjust as needed
-                marginBottom: "1rem", // Adjust as needed
+                marginBottom: "2rem", // Adjust as needed
               }}
             />
           )}
@@ -134,6 +118,8 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
               sx={{
                 textTransform: "none",
                 mt: "2",
+                height: "26px",
+                fontSize: "11px",
                 backgroundColor: "#174B8B", // Set the button color to green
                 "&:hover": {
                   backgroundColor: "#2B6EC2", // Darker green on hover

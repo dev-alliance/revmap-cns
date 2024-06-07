@@ -131,13 +131,6 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
             alignItems: "center",
           }}
         >
-          <IconButton
-            onClick={onClose}
-            aria-label="close"
-            sx={{ position: "absolute", top: 8, right: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
           <Typography
             variant="body1"
             sx={{
@@ -150,7 +143,7 @@ const SignatureMultiSendReq: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ height: "45vh", mt: -1 }}>
+        <DialogContent sx={{ height: "41vh", mt: -1 }}>
           <Box
             sx={{
               mb: 2,

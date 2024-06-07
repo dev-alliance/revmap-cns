@@ -60,22 +60,6 @@ const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
           alignItems: "center",
         }}
       >
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <IconButton
-            onClick={onClose}
-            aria-label="close"
-            sx={{ position: "absolute", top: 8, right: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-
         <DialogContent
           sx={{
             display: "flex",
@@ -84,28 +68,20 @@ const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
             lineHeight: "auto",
           }}
         >
-          <DialogTitle
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              mt: "1rem",
-            }}
+          <Typography
+            variant="body1"
+            color="textSecondary"
+            sx={{ fontSize: "15px" }}
           >
-            <Typography
-              variant="body1"
-              color="textSecondary"
-              sx={{ fontSize: "15px" }}
-            >
-              {title}
-            </Typography>
-          </DialogTitle>
+            {title}
+          </Typography>
 
           {/* Using another flexbox for laying out button to the right */}
           <div
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              marginTop: "8px",
+              marginTop: "1.5rem",
               width: "100%",
             }}
           >
@@ -115,6 +91,8 @@ const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
               sx={{
                 textTransform: "none",
                 mt: "4",
+                height: "26px",
+                fontSize: "11px",
               }}
               onClick={onClose}
             >
@@ -128,8 +106,11 @@ const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
               <Button
                 variant="contained"
                 color="primary"
+                size="small"
                 sx={{
                   mt: "4",
+                  height: "25px",
+                  fontSize: "11px",
                   ml: 1,
                   textTransform: "none",
                   backgroundColor: "#174B8B", // Set the button color to green
@@ -139,7 +120,7 @@ const SignatuereErrorDilog: React.FC<DetailDialogProps> = ({
                 }}
                 onClick={onConfirm}
               >
-                Conform
+                Confirm
               </Button>
             )}
           </div>

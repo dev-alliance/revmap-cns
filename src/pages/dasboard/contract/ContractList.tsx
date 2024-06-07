@@ -71,6 +71,7 @@ interface RowType {
   display_name: string;
   description: string;
 }
+type Status = "Draft" | "Review" | "Signing" | "Signed";
 
 // ** Styled components
 
@@ -85,6 +86,8 @@ const ContractList = () => {
     setLifecycleData,
     setSidebarExpanded,
     setDucomentName,
+    setRecipients,
+    setCollaborater,
     setFormState,
     setEditMode,
   } = useContext(ContractContext);
@@ -232,42 +235,46 @@ const ContractList = () => {
           <Chip
             size="small"
             variant="outlined"
-            label={
-              row.status === "Active"
-                ? "Active"
-                : row.status === "Archived"
-                ? "Archived"
-                : "Inactive"
-            }
+            label={row?.status}
             sx={{
               fontSize: "14px",
-              // fontWeight: "bold",
-              backgroundColor:
-                row.status === "Active"
-                  ? "#D3FDE4"
-                  : row.status === "Archived"
-                  ? "#FFF7CB"
-                  : "#FFCBCB",
-              color:
-                row.status === "Active"
-                  ? "#3F9748"
-                  : row.status === "Archived"
-                  ? "#D32F2F"
-                  : "#red",
-              borderColor:
-                row.status === "Active"
-                  ? "#D3FDE4"
-                  : row.status === "Archived"
-                  ? "#FFF7CB"
-                  : "#FFCBCB", // Optional: to match border color with background
+              backgroundColor: (theme) => {
+                const statusColors = {
+                  Draft: "#FFF7CB", // Light yellow for Draft
+                  Review: "#FFCBCB", // Light red for Review
+                  Signing: "#D3FDE4", // Light green for Signing, previously orange
+                  Signed: "#D3FDE4", // Light green for Signed
+                };
+                return statusColors[row.status as Status] || "#FFF7CB"; // Default to light yellow
+              },
+              color: (theme) => {
+                const textColors = {
+                  Draft: "#D32F2F", // Red for Draft
+                  Review: "#D32F2F", // Red for Review
+                  Signing: "#3F9748", // Dark green for Signing, matching light green background
+                  Signed: "#3F9748", // Green for Signed
+                };
+                return textColors[row.status as Status] || "#D32F2F"; // Default to red
+              },
+              borderColor: (theme) => {
+                const borderColors = {
+                  Draft: "#FFF7CB", // Border matches background for Draft
+                  Review: "#FFCBCB", // Border matches background for Review
+                  Signing: "#D3FDE4", // Light green border for Signing
+                  Signed: "#D3FDE4", // Light green border for Signed
+                };
+                return borderColors[row.status as Status] || "#FFF7CB"; // Default to light yellow
+              },
               "& .MuiChip-label": {
-                // This targets the label inside the chip for more specific styling
-                color:
-                  row.status === "Active"
-                    ? "#3F9748"
-                    : row.status === "Archived"
-                    ? "#D36A2F"
-                    : "#D32F2F",
+                color: (theme) => {
+                  const labelColors = {
+                    Draft: "#D32F2F", // Red label text for Draft
+                    Review: "#D32F2F", // Red label text for Review
+                    Signing: "#3F9748", // Dark green label text for Signing
+                    Signed: "#3F9748", // Green label text for Signed
+                  };
+                  return labelColors[row.status as Status] || "#D32F2F"; // Default to red
+                },
               },
             }}
           />
@@ -298,18 +305,20 @@ const ContractList = () => {
                 setSidebarExpanded(false);
                 setEditMode(true);
                 setDucomentName("");
-                setFormState({
-                  name: "",
-                  with_name: undefined,
-                  currency: undefined,
-                  value: undefined,
-                  tags: undefined,
-                  // branch: "",
-                  teams: undefined,
-                  category: undefined,
-                  subcategory: undefined,
-                  additionalFields: [],
-                });
+                setRecipients([]),
+                  setCollaborater([]),
+                  setFormState({
+                    name: "",
+                    with_name: undefined,
+                    currency: undefined,
+                    value: undefined,
+                    tags: undefined,
+                    // branch: "",
+                    teams: undefined,
+                    category: undefined,
+                    subcategory: undefined,
+                    additionalFields: [],
+                  });
                 setLifecycleData({
                   activeSection: "",
                   showButtons: false,
@@ -789,7 +798,10 @@ const ContractList = () => {
                 to="/dashboard/create-contract"
                 onClick={() => {
                   setContract(null), setSidebarExpanded(false);
-                  setEditMode(false);
+                  setRecipients([]),
+                    setCollaborater([]),
+                    setDucomentName(""),
+                    setEditMode(false);
                   setLifecycleData({
                     activeSection: "",
                     showButtons: false,

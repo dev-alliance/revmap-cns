@@ -155,13 +155,6 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
             alignItems: "center",
           }}
         >
-          <IconButton
-            onClick={onClose}
-            aria-label="close"
-            sx={{ position: "absolute", top: 8, right: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
           <Typography
             variant="body1"
             sx={{
@@ -174,7 +167,7 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ height: "30vh" }}>
+        <DialogContent sx={{ height: "41vh" }}>
           <div>
             <div style={{ display: "flex" }}>
               <Box
@@ -465,7 +458,13 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
             <Button
               variant="outlined"
               color="error"
-              sx={{ textTransform: "none", mt: "4", mr: 2 }}
+              sx={{
+                textTransform: "none",
+                mt: "4",
+                mr: 2,
+                height: "26px",
+                fontSize: "11px",
+              }}
               onClick={onClose}
               // onClick={() => setOpenDialog(true)}
             >
@@ -478,6 +477,8 @@ const SignatureSendReq: React.FC<DetailDialogProps> = ({
               sx={{
                 textTransform: "none",
                 mt: "4",
+                height: "26px",
+                fontSize: "11px",
                 backgroundColor: "#174B8B", // Set the button color to green
                 "&:hover": {
                   backgroundColor: "#2B6EC2", // Darker green on hover

@@ -159,6 +159,30 @@ function SyncFesion() {
       //   toast.error("Please enter the start date in life sycle");
       //   return;
       // }
+      let status = "Draft"; // Default status
+
+      const hasReqOption = recipients.some(
+        (recipient: any) => recipient.ReqOption
+      );
+
+      const hasSignature = recipients.some(
+        (recipient: any) => recipient.signature
+      );
+
+      // Determine which step to highlight
+
+      if (recipients.length > 0) {
+        status = "Review";
+      }
+      if (hasReqOption) {
+        status = "Signing";
+        // Update status to 'pending' when there's a ReqOption
+      }
+      if (hasSignature) {
+        status = "Signed";
+        // Update status to 'completed' when all required signatures are present
+      }
+      console.log(status, "payload");
 
       const payload = {
         userId: user._id,
@@ -167,12 +191,13 @@ function SyncFesion() {
         collaburater: collaborater,
         approval: approvers,
         signature: recipients,
-        status: "Active",
+        status: status,
         wordDocumentData: documentData,
         createdBy: user.firstName,
         contractType: "",
       };
       console.log(payload, "payload");
+
       let response;
       if (id) {
         response = await updateDocument(id, payload);
@@ -1156,10 +1181,10 @@ function SyncFesion() {
 
     // Determine which step to highlight
     let highlightStep = "";
-    if (recipients.hasReqOption) {
+    if (recipients.length > 0) {
       highlightStep = "Review";
     }
-    if (recipients.signature) {
+    if (hasReqOption) {
       highlightStep = "Signing";
     }
     if (hasSignature) {
@@ -1171,9 +1196,7 @@ function SyncFesion() {
         <li style={{ color: highlightStep === "" ? "#155BE5" : "black" }}>
           Draft
         </li>
-        <li
-          style={{ color: highlightStep === "Review" ? "#155BE5" : "black" }}
-        ></li>
+
         <li style={{ color: highlightStep === "Review" ? "#155BE5" : "black" }}>
           <span
             style={{
