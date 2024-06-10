@@ -91,6 +91,7 @@ function SyncFesion() {
   const { user } = useAuth();
   const { id } = useParams();
   const [documentData, setDocumentData] = useState<string | null>(null);
+  const [documentReady, setDocumentReady] = useState<boolean>(false);
   const [list, setList] = useState<undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const {
@@ -99,6 +100,7 @@ function SyncFesion() {
     recipients,
     setRecipients,
     uplodTrackFile,
+    setUplodTrackFile,
     documentContent,
     showBlock,
     setShowBlock,
@@ -130,12 +132,18 @@ function SyncFesion() {
     try {
       setIsLoading(true);
       const data = await getcontractById(id);
+
       console.log(data, "singal data");
+      // setUplodTrackFile(data?.pdfData);
+      // setShowBlock("uploadTrack");
+
+      setDocumentData(data?.wordDocumentData);
       setFormState(data?.overview);
       setDucomentName(data?.overview?.name);
       setLifecycleData(data?.lifecycle);
       setApprovers(data?.approval), setCollaborater(data?.collaburater);
       setRecipients(data?.signature);
+
       setList(data);
     } catch (error) {
       console.log(error);
@@ -143,75 +151,57 @@ function SyncFesion() {
       setIsLoading(false);
     }
   };
+
   React.useEffect(() => {
     if (id) listData();
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const editorContainerRef: any = useRef(null);
-  const handleSubmit = async (data: any) => {
+
+  const saveDocumentToState = (): void => {
+    const documentEditor = editorContainerRef.current?.documentEditor;
+    if (documentEditor) {
+      const sfdtData = documentEditor.saveAsBlob("Sfdt");
+      sfdtData
+        .then((blob: any) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            setDocumentData(reader.result as string);
+            setDocumentReady(true); // Set the state indicating document data is ready
+          };
+          reader.onerror = () => {
+            console.error("Failed to read document data");
+          };
+          reader.readAsText(blob);
+        })
+        .catch(() => {
+          console.error("Failed to save document as blob");
+        });
+    } else {
+      console.error("Document editor not found");
+    }
+  };
+  const fileToBase64 = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleSubmit = async () => {
     try {
       if (!documentName) {
         toast.error("Please enter the name of the document");
         return;
       }
-      // if (!lifecycleData.formData.dateFields.startDate) {
-      //   toast.error("Please enter the start date in life sycle");
-      //   return;
-      // }
-      let status = "Draft"; // Default status
 
-      const hasReqOption = recipients.some(
-        (recipient: any) => recipient.ReqOption
-      );
+      setDocumentReady(false); // Reset the document ready state
+      saveDocumentToState(); // Start saving the document to state
 
-      const hasSignature = recipients.some(
-        (recipient: any) => recipient.signature
-      );
-
-      // Determine which step to highlight
-
-      if (recipients.length > 0) {
-        status = "Review";
-      }
-      if (hasReqOption) {
-        status = "Signing";
-        // Update status to 'pending' when there's a ReqOption
-      }
-      if (hasSignature) {
-        status = "Signed";
-        // Update status to 'completed' when all required signatures are present
-      }
-      console.log(status, "payload");
-
-      const payload = {
-        userId: user._id,
-        overview: { ...formState, name: documentName },
-        lifecycle: lifecycleData,
-        collaburater: collaborater,
-        approval: approvers,
-        signature: recipients,
-        status: status,
-        wordDocumentData: documentData,
-        createdBy: user.firstName,
-        contractType: "",
-      };
-      console.log(payload, "payload");
-
-      let response;
-      if (id) {
-        response = await updateDocument(id, payload);
-      } else {
-        response = await create(payload);
-      }
-
-      if (response.ok === true) {
-        toast.success(response.message);
-        navigate("/dashboard/contract-list");
-      } else {
-        const errorMessage = response.message || "An error occurred";
-        toast.error(errorMessage);
-      }
+      // The rest of the logic will be handled in the useEffect hook
     } catch (error: any) {
       console.log(error);
 
@@ -225,10 +215,87 @@ function SyncFesion() {
         errorMessage = error.message;
       }
       toast.error(errorMessage);
-    } finally {
-      // setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!documentReady) return;
+
+    const createPayload = async () => {
+      try {
+        // const pdfBase64 = await fileToBase64(uplodTrackFile);
+        let status = "Draft"; // Default status
+
+        const hasReqOption = recipients.some(
+          (recipient: any) => recipient.ReqOption
+        );
+
+        const hasSignature = recipients.some(
+          (recipient: any) => recipient.signature
+        );
+
+        // Determine which step to highlight
+        if (recipients.length > 0) {
+          status = "Review";
+        }
+        if (hasReqOption) {
+          status = "Signing";
+          // Update status to 'pending' when there's a ReqOption
+        }
+        if (hasSignature) {
+          status = "Signed";
+          // Update status to 'completed' when all required signatures are present
+        }
+        console.log(status, "status");
+
+        const payload = {
+          userId: user._id,
+          overview: { ...formState, name: documentName },
+          lifecycle: lifecycleData,
+          collaburater: collaborater,
+          approval: approvers,
+          signature: recipients,
+          status: status,
+          wordDocumentData: documentData,
+          createdBy: user.firstName,
+          contractType: "",
+          // pdfData: pdfBase64,
+        };
+        console.log(payload, "payload");
+
+        let response;
+        if (id) {
+          response = await updateDocument(id, payload);
+        } else {
+          response = await create(payload);
+        }
+
+        if (response.ok === true) {
+          toast.success(response.message);
+          navigate("/dashboard/contract-list");
+        } else {
+          const errorMessage = response.message || "An error occurred";
+          toast.error(errorMessage);
+        }
+      } catch (error: any) {
+        console.log(error);
+
+        let errorMessage = "Failed to create clause.";
+        if (error.response && error.response.data) {
+          errorMessage =
+            error.response.data.message ||
+            error.response.data ||
+            "An error occurred";
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        toast.error(errorMessage);
+      }
+    };
+
+    createPayload();
+  }, [documentReady]);
+
   const [openDropdowns, setOpenDropdowns] = useState({
     file: false,
     view: false,
@@ -253,22 +320,6 @@ function SyncFesion() {
   };
 
   // To change the font style of selected content
-  function changeFontFamily(args: any) {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontFamily = args.value;
-      documentEditor.focusIn();
-    }
-  }
-
-  // To change the font size of selected content
-  function changeFontSize(args: any) {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontSize = args.value;
-      documentEditor.focusIn();
-    }
-  }
 
   const onToolbarClick = (args: any) => {
     console.log("item clicked : ", args);
@@ -568,60 +619,6 @@ function SyncFesion() {
     }
   };
 
-  // Templates for ColorPicker within ItemDirective
-  const fontColorPickerTemplate = () => (
-    <div className="flex">
-      <ColorPickerComponent
-        showButtons={true}
-        value={fontColor}
-        change={changeFontColor}
-      />
-      <p
-        onClick={() => console.log("Open color picker here")}
-        style={{
-          fontWeight: "bold",
-          color: "#000",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "18px",
-          paddingTop: "1px",
-        }}
-      >
-        A
-      </p>
-    </div>
-  );
-
-  const highlightColorPickerTemplate = () => (
-    <>
-      <div className="w-[60px]">
-        <ColorPickerComponent
-          showButtons={true}
-          value={highlightColor}
-          change={changeHighlightColor}
-        />
-        <button className=" mr-2">
-          {/* <img src={colorPencil} className="h-5 w-5 -mt-3 absolute" /> */}
-          <svg
-            className="absolute -ml-1.5 -mt-[15px]"
-            width="24"
-            height="24"
-            focusable="false"
-          >
-            <g fill-rule="nonzero">
-              <path
-                id="tox-icon-highlight-bg-color__color"
-                d="M3 18h18v3H3z"
-              ></path>
-              <path d="M4,17l2.4-2.4C6.1,14.3,6,14,6,13.6c0-0.4,0.2-0.8,0.5-1l9.1-9.1C15.9,3.1,16.2,3,16.6,3s0.8,0.1,1.1,0.4l1.9,1.9C19.8,5.6,20,6,20,6.4s-0.1,0.8-0.4,1.1l-9.1,9.1c-0.3,0.3-0.7,0.4-1.1,0.4s-0.7-0.1-1-0.4L8,17H4z M13.4,11.5l-1.9-1.9l-4,4l1.9,1.9L13.4,11.5z"></path>
-            </g>
-          </svg>
-        </button>
-      </div>
-    </>
-  );
-
   const itemsss: ItemModel[] = [
     {
       text: "Single",
@@ -637,61 +634,11 @@ function SyncFesion() {
     },
   ];
 
-  function lineHeight1() {
-    return (
-      <div className="w-[50px]">
-        <DropDownButtonComponent
-          items={itemsss}
-          iconCss="e-de-icon-LineSpacing"
-          select={lineSpacingAction}
-        ></DropDownButtonComponent>
-
-        <button className="-ml-10 mt-2 ">
-          <img src={linepng} className="h-3 w-3" />
-        </button>
-      </div>
-    );
-  }
-
   useEffect(() => {
     const documentEditor = editorContainerRef?.current?.documentEditor;
     setEditorRefContext(documentEditor);
   }, []);
 
-  //Change the line spacing of selected or current paragraph
-  function lineSpacingAction(args: any) {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    const text: string = args.item.text;
-    switch (text) {
-      case "Single":
-        documentEditor.selection.paragraphFormat.lineSpacing = 1;
-        break;
-      case "1.15":
-        documentEditor.selection.paragraphFormat.lineSpacing = 1.15;
-        break;
-      case "1.5":
-        documentEditor.selection.paragraphFormat.lineSpacing = 1.5;
-        break;
-      case "Double":
-        documentEditor.selection.paragraphFormat.lineSpacing = 2;
-        break;
-    }
-    setTimeout((): void => {
-      documentEditor.focusIn();
-    }, 30);
-  }
-
-  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-  // tables formatting
-
-  // let documenteditor: DocumentEditorComponent;
-  // React.useEffect(() => {
-  //   ComponentDidMount();
-  // }, []);
-  // function ComponentDidMount() {
-  //   documenteditor.editor.insertTable(2, 2);
-  // }
   const [showTableTools, setShowTableTools] = useState(false);
 
   // Function to update the table tool visibility based on the editor's selection
@@ -710,100 +657,12 @@ function SyncFesion() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Functions to perform table operations
-  const deleteTable = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (isTableSelected) {
-      documentEditor.editor.deleteTable();
-    }
-  };
-
-  const insertRowAbove = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (isTableSelected) {
-      documentEditor.editor.insertRow(true);
-    }
-  };
-  function toolbarButtonClick(arg: any) {
-    console.log("arg table", arg);
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    switch (arg.item.id) {
-      case "table":
-        //Insert table API to add table
-        documentEditor.editor.insertTable(3, 2);
-        break;
-      case "delete_table":
-        // Delete the current table
-        documentEditor.editor.deleteTable();
-        break;
-      case "insert_above":
-        //Insert the specified number of rows to the table above to the row at cursor position
-        documentEditor.editor.insertRow(true, 2);
-        break;
-      case "insert_below":
-        //Insert the specified number of rows to the table below to the row at cursor position
-        documentEditor.editor.insertRow();
-        break;
-      case "insert_left":
-        //Insert the specified number of columns to the table left to the column at cursor position
-        documentEditor.editor.insertColumn(true, 2);
-        break;
-      case "insert_right":
-        //Insert the specified number of columns to the table right to the column at cursor position
-        documentEditor.editor.insertColumn();
-        break;
-      case "delete_rows":
-        //Delete the selected number of rows
-        documentEditor.editor.deleteRow();
-        break;
-      case "delete_columns":
-        //Delete the selected number of columns
-        documentEditor.editor.deleteColumn();
-        break;
-      case "merge_cell":
-        //Merge the selected cells into one (both vertically and horizontally)
-        documentEditor.editor.mergeCells();
-        break;
-      case "table_dialog":
-        //Opens insert table dialog
-        documentEditor.showDialog("Table");
-        break;
-      case "adjust_margins":
-        documentEditor.selection.cellFormat.leftMargin = 5.4;
-        //To change the right margin
-        documentEditor.selection.cellFormat.rightMargin = 5.4;
-        //To change the top margin
-        documentEditor.selection.cellFormat.topMargin = 5.4;
-        //To change the bottom margin
-        documentEditor.selection.cellFormat.bottomMargin = 5.4;
-        break;
-      case "set_border_width":
-        // Open a border width selection dropdown
-        documentEditor.showDialog("TableProperties");
-        break;
-      default:
-        console.warn("Unhandled toolbar item:", arg.item.id);
-    }
-  }
-
-  const addTable = () => {
-    console.log("adding table");
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.showDialog("Table");
-  };
-
   // State for the cell fill color
   const [cellFillColor, setCellFillColor] = useState(""); // Default color
 
   const applyCellFillColor = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     documentEditor.selection.cellFormat.background = cellFillColor;
-  };
-
-  const handleFillColorChange = (args: any) => {
-    console.log(args);
-    setCellFillColor(args.currentValue.hex);
-    applyCellFillColor();
   };
 
   const items: any = [
@@ -854,27 +713,6 @@ function SyncFesion() {
   };
 
   const [isTableSelected, setIsTableSelected] = useState(false);
-
-  // useEffect(() => {
-  //   const documentEditor = editorContainerRef.current?.documentEditor;
-
-  //   if (documentEditor) {
-  //     // Listen to selection changes
-  //     documentEditor.selectionChange = () => {
-  //       // Check if the current selection is within a table
-  //       const isInTable =
-  //         documentEditor?.selection?.contextTypeInternal == "TableText";
-
-  //       setIsTableSelected(isInTable);
-  //     };
-  //   }
-
-  //   // return () => {
-  //   //   if (documentEditor && documentEditor.selectionChange) {
-  //   //     documentEditor.selectionChange = undefined;
-  //   //   }
-  //   // };
-  // }, []);
 
   const save = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -934,38 +772,15 @@ function SyncFesion() {
       }
     }
   };
+
+  // Effect to load document data into the editor
   useEffect(() => {
     const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor) {
-      // Attach an event handler for content changes
-      documentEditor.documentChange = () => {
-        saveDocumentToState();
-      };
+    if (documentEditor && documentData) {
+      console.log(documentData, "documentData");
+      documentEditor.open(documentData, "Sfdt");
     }
-
-    // return () => {
-    //   // Clean up the event handler
-    //   if (documentEditor) {
-    //     documentEditor.documentChange = null;
-    //   }
-    // };
-  }, []);
-  const saveDocumentToState = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor) {
-      // Export the document as SFDT (Syncfusion Document Text) format
-      const sfdtData = documentEditor.saveAsBlob("Sfdt");
-      sfdtData.then((blob: any) => {
-        // Convert blob to text and save in state
-        const reader = new FileReader();
-        reader.onload = () => {
-          setDocumentData(reader.result as string);
-        };
-        reader.readAsText(blob);
-      });
-    }
-  };
-  console.log(documentData, "documentData");
+  }, [documentData]);
 
   useEffect(() => {
     const initializeEditor = () => {
@@ -995,100 +810,6 @@ function SyncFesion() {
 
     initializeEditor();
   }, []);
-
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files ? event.target.files[0] : null;
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       const result = reader.result;
-  //       if (result) {
-  //         const documentEditor = editorContainerRef.current?.documentEditor;
-  //         if (documentEditor) {
-  //           const base64String = result.split(',')[1]; // Ensure this split operation is safe
-  //           documentEditor.open(base64String, 'Base64');
-  //         }
-  //       } else {
-  //         console.error('Failed to read the file.');
-  //       }
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-
-  const convertToBase64 = (file: any, callback: any) => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      callback(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const insertImage = (imageSrc: any) => {
-    console.log("image");
-    const documentEditor = editorContainerRef.current?.documentEditor;
-
-    documentEditor.editor.insertImage(imageSrc);
-  };
-
-  const showHyperlinkDialog = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.showDialog("Hyperlink");
-  };
-
-  const addpagenumber = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.editor.insertPageNumber();
-  };
-
-  const ShowHideOptionsPane = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.showOptionsPane();
-  };
-
-  const addComment = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-
-    // Ensure there's a selection
-    if (documentEditor.selection && !documentEditor.selection.isEmpty) {
-      // Add comment to the selected text
-      //Add new commnt in the document.
-      documentEditor.editor.insertComment("");
-    } else {
-      alert("Please select a text to add comment.");
-    }
-  };
-
-  const toggleTrackChanges = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    // Toggle the track changes state
-    if (documentEditor) {
-      const trackChangesEnabled = documentEditor.enableTrackChanges;
-      documentEditor.enableTrackChanges = !trackChangesEnabled;
-    }
-  };
-
-  // Function to reject the second change
-  // Function to reject all changes
-  const rejectAllChanges = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    const revisions = documentEditor.revisions;
-
-    // While there are revisions, keep rejecting the first one
-    while (revisions.length > 0) {
-      revisions.get(0).reject();
-    }
-  };
-
-  // Function to accept the first change
-  const acceptFirstChange = () => {
-    const revisions = editorContainerRef.current.documentEditor?.revisions;
-    console.log(revisions);
-    if (revisions.length > 0) {
-      revisions.get(0).accept();
-    }
-  };
 
   useEffect(() => {
     const editorContainer = document.getElementById("container");
@@ -1565,7 +1286,7 @@ function SyncFesion() {
                     </li>
                     <li
                       onClick={() => {
-                        saveDocumentToState();
+                        // saveDocumentToState();
                         toggleDropdown("signature");
                       }}
                       className="px-2 py-2 cursor-pointer flex items-center gap-x-2"
@@ -1593,7 +1314,7 @@ function SyncFesion() {
 
                     <li
                       onClick={() => {
-                        saveDocumentToState();
+                        // saveDocumentToState();
                         toggleDropdown("signature");
                       }}
                       className="px-2  py-2 cursor-pointer   flex items-center gap-x-2"
@@ -1648,7 +1369,6 @@ function SyncFesion() {
                     </li>
                     <li
                       onClick={() => {
-                        saveDocumentToState();
                         toggleDropdown("signature");
                       }}
                       className="px-2 py-2   cursor-pointer  flex items-center gap-x-2"
@@ -2069,7 +1789,6 @@ function SyncFesion() {
                     </li>
                     <li
                       onClick={() => {
-                        saveDocumentToState();
                         toggleDropdown("signature");
                       }}
                       className="px-2 py-2  cursor-pointer  flex items-center gap-x-2"
@@ -2198,7 +1917,9 @@ function SyncFesion() {
               </Button>
               <Button
                 sx={{ ml: 2, textTransform: "none" }}
-                onClick={handleSubmit}
+                onClick={() => {
+                  handleSubmit();
+                }}
                 variant="outlined"
                 color="success"
               >
@@ -2249,15 +1970,15 @@ function SyncFesion() {
       {showBlock == "uploadTrack" && uplodTrackFile && (
         <div>
           {
-            uplodTrackFile && uplodTrackFile.type === "application/pdf" && (
-              <div className="  w-full h-[75vh] bg-white overflow-auto  px-4 py-3">
-                <div className="max-w-[930px] w-full mx-auto">
-                  <Worker workerUrl={workerUrl}>
-                    <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
-                  </Worker>
-                </div>
+            // uplodTrackFile && uplodTrackFile.type === "application/pdf" && (
+            <div className="  w-full h-[75vh] bg-white overflow-auto  px-4 py-3">
+              <div className="max-w-[930px] w-full mx-auto">
+                <Worker workerUrl={workerUrl}>
+                  <Viewer fileUrl={URL.createObjectURL(uplodTrackFile)} />
+                </Worker>
               </div>
-            )
+            </div>
+            // )
             // : (
             //   <div className="w-full h-[70vh] bg-white overflow-auto ">
             //     <div className="max-w-[835px] w-full mx-auto px-4 py-4 ">
