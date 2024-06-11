@@ -27,39 +27,36 @@ const PDFUploaderViewer = ({ documentPath }: any) => {
       containerElement.ej2_instances &&
       containerElement.ej2_instances.length > 0
     ) {
-      const viewer = containerElement.ej2_instances[0];
+      // const viewer = containerElement.ej2_instances[0];
       // Now you can use 'viewer' safely here
-
-      viewer.formDesignerModule.addFormField("Textbox", {
-        name: "First Name",
-        bounds: { X: 336, Y: 230, Width: 150, Height: 24 },
-      });
-      viewer.formDesignerModule.addFormField("Textbox", {
-        name: "Middle Name",
-        bounds: { X: 338, Y: 279, Width: 150, Height: 24 },
-      });
-
-      viewer.formDesignerModule.addFormField("RadioButton", {
-        bounds: { X: 338, Y: 310, Width: 18, Height: 18 },
-        name: "Gender",
-        isSelected: false,
-      });
-      viewer.formDesignerModule.addFormField("CheckBox", {
-        name: "Text Message",
-        bounds: { X: 56, Y: 304, Width: 20, Height: 20 },
-        isChecked: false,
-      });
-      viewer.formDesignerModule.addFormField("SignatureField", {
-        name: "Sign",
-        bounds: { X: 338, Y: 343, Width: 200, Height: 43 },
-      });
-
-      viewer.formDesignerModule.updateFormField(
-        viewer.formFieldCollections[0],
-        {
-          backgroundColor: "red",
-        }
-      );
+      // viewer.formDesignerModule.addFormField("Textbox", {
+      //   name: "First Name",
+      //   bounds: { X: 336, Y: 230, Width: 150, Height: 24 },
+      // });
+      // viewer.formDesignerModule.addFormField("Textbox", {
+      //   name: "Middle Name",
+      //   bounds: { X: 338, Y: 279, Width: 150, Height: 24 },
+      // });
+      // viewer.formDesignerModule.addFormField("RadioButton", {
+      //   bounds: { X: 338, Y: 310, Width: 18, Height: 18 },
+      //   name: "Gender",
+      //   isSelected: false,
+      // });
+      // viewer.formDesignerModule.addFormField("CheckBox", {
+      //   name: "Text Message",
+      //   bounds: { X: 56, Y: 304, Width: 20, Height: 20 },
+      //   isChecked: false,
+      // });
+      // viewer.formDesignerModule.addFormField("SignatureField", {
+      //   name: "Sign",
+      //   bounds: { X: 338, Y: 343, Width: 200, Height: 43 },
+      // });
+      // viewer.formDesignerModule.updateFormField(
+      //   viewer.formFieldCollections[0],
+      //   {
+      //     backgroundColor: "red",
+      //   }
+      // );
     }
   }
 

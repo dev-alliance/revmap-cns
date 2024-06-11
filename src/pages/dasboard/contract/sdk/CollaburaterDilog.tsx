@@ -121,7 +121,7 @@ const CollaburaterDilog: React.FC<DetailDialogProps> = ({
             aria-label="close"
             sx={{ position: "absolute", top: 8, right: 8 }}
           >
-            <CloseIcon />
+            {/* <CloseIcon /> */}
           </IconButton>
           <Typography
             variant="body1"

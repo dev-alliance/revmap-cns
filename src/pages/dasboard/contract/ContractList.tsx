@@ -80,7 +80,7 @@ const defaultColumns: GridColDef[] = [];
 const ContractList = () => {
   const navigate = useNavigate();
   // ** State
-  const { contractStatus, setContractStatus } = useContract();
+
   const {
     setContract,
     setLifecycleData,
@@ -90,6 +90,8 @@ const ContractList = () => {
     setCollaborater,
     setFormState,
     setEditMode,
+    setUplodTrackFile,
+    setShowBlock,
   } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
@@ -303,7 +305,9 @@ const ContractList = () => {
                 handleClose();
                 navigate(`/dashboard/editor-dahsbord/${row?._id}`);
                 setSidebarExpanded(false);
-                setEditMode(true);
+                // setEditMode(true);
+                setUplodTrackFile("");
+                setShowBlock("");
                 setDucomentName("");
                 setRecipients([]),
                   setCollaborater([]),

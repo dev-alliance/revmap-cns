@@ -116,20 +116,33 @@ const Discussion = () => {
   };
 
   // Adjust handleAddSignatory to also update the selectedValue
-  const handleAddSignatory = (newSignatoryEmail: string) => {
-    console.log(newSignatoryEmail, "caca");
-
+  const handleAddSignatory = (newSignatory: any) => {
     // Check if the email already exists in the collaborater array
     const emailExists = collaborater.some(
-      (collaborator: any) => collaborator.email === newSignatoryEmail
+      (collaborator: any) => collaborator.email === newSignatory.email
     );
-
-    if (newSignatoryEmail && !emailExists) {
-      setCollaborater((prev: any) => [...prev, { email: newSignatoryEmail }]);
+    if (!emailExists) {
+      setCollaborater((prev: any) => [
+        ...prev,
+        newSignatory.email
+          ? {
+              email: newSignatory.email,
+              label: newSignatory.label,
+              isInternal: true,
+            }
+          : { email: newSignatory, isInternal: false },
+      ]);
       reset(); // Resetting form
       setInputValue(""); // Clearing the input value for Autocomplete
-      setSelectedValue(null); // Resetting selected value
+      setSelectedValue(null);
     }
+    // if (newSignatoryEmail && !emailExists) {
+
+    //   setCollaborater((prev: any) => [...prev, { email: newSignatoryEmail }]);
+    //   reset(); // Resetting form
+    //   setInputValue(""); // Clearing the input value for Autocomplete
+    //   setSelectedValue(null); // Resetting selected value
+    // }
   };
 
   // Function to remove a signatory from the list
@@ -367,7 +380,7 @@ const Discussion = () => {
                     onClick={() => {
                       if (selectedValue || inputValue.trim() !== "") {
                         handleAddSignatory(
-                          selectedValue ? selectedValue?.email : inputValue
+                          selectedValue ? selectedValue : inputValue
                         );
                       }
                       setShowButtons(false);
@@ -380,15 +393,6 @@ const Discussion = () => {
             )}
 
             {collaborater?.map((colb: any, index: any) => {
-              // Check if the colb's email is in the userList
-
-              const userName = userList.find(
-                (user) => user.email === colb.email
-              );
-              const isInternal = userList.some(
-                (user) => user.email === colb.email
-              );
-
               return (
                 <Box
                   key={index}
@@ -406,35 +410,35 @@ const Discussion = () => {
                       alignItems: "center",
                     }}
                   >
-                    {!isLoading && (
-                      <Box
-                        sx={{
-                          width: 25,
-                          height: 25,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "50%",
-                          backgroundColor:
-                            bubbleColors[index % bubbleColors.length],
-                          color: "#FFFFFF",
-                          marginRight: 1,
-                        }}
-                      >
-                        <Typography sx={{ fontSize: "10px" }}>
-                          {!isLoading &&
-                            (isInternal ? (
-                              <>
-                                {" "}
-                                {userName?.firstName?.charAt(0).toUpperCase()}
-                                {userName?.lastName?.charAt(0).toUpperCase()}
-                              </>
-                            ) : (
-                              <> {colb?.email?.charAt(0).toUpperCase()} </>
-                            ))}
-                        </Typography>
-                      </Box>
-                    )}
+                    <Box
+                      sx={{
+                        width: 25,
+                        height: 25,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        backgroundColor:
+                          bubbleColors[index % bubbleColors.length],
+                        color: "#FFFFFF",
+                        marginRight: 1,
+                      }}
+                    >
+                      <Typography sx={{ fontSize: "10px" }}>
+                        {colb?.isInternal ? (
+                          <>
+                            {colb.label
+                              .split(" ")
+                              .filter(Boolean)
+                              .map((name: any) => name[0].toUpperCase())
+                              .join("")}
+                          </>
+                        ) : (
+                          <> {colb?.email?.charAt(0).toUpperCase()} </>
+                        )}
+                      </Typography>
+                    </Box>
+
                     <Typography
                       variant="body2"
                       sx={{
@@ -449,29 +453,28 @@ const Discussion = () => {
                     </Typography>
                   </div>
                   <Box sx={{ display: "flex", mt: 1 }}>
-                    {!isLoading && (
-                      <Button
-                        variant="text"
-                        color="inherit"
-                        sx={{
-                          textTransform: "none",
-                          // backgroundColor: "#DCDCDC",
-                          // "&:hover": {
-                          //   backgroundColor: "#757575",
-                          // },
-                          "&:first-of-type": {
-                            // Only applies margin-left to the first button
-                          },
-                          color: "black",
-                          padding: "0px 5px !important",
-                          height: "25px !important",
-                          fontSize: "0.675rem",
-                          ml: 2.8,
-                        }}
-                      >
-                        {!isInternal ? "External" : "Internal"}
-                      </Button>
-                    )}
+                    <Button
+                      variant="text"
+                      color="inherit"
+                      sx={{
+                        textTransform: "none",
+                        // backgroundColor: "#DCDCDC",
+                        // "&:hover": {
+                        //   backgroundColor: "#757575",
+                        // },
+                        "&:first-of-type": {
+                          // Only applies margin-left to the first button
+                        },
+                        color: "black",
+                        padding: "0px 5px !important",
+                        height: "25px !important",
+                        fontSize: "0.675rem",
+                        ml: 2.6,
+                      }}
+                    >
+                      {colb?.isInternal ? " Internal" : "External"}
+                    </Button>
+
                     <IconButton
                       aria-label="delete" // Providing an accessible label is important for assistive technologies
                       color="error"

@@ -41,13 +41,22 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
   const bubbleColors = ["#FEC85E", "#BC3D89", "green", "#00A7B1"];
   const { setDucomentName, setShowBlock } = useContext(ContractContext);
 
-  const handleFileUpload = (event: any) => {
+  const toBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+  const handleFileUpload = async (event: any) => {
     const file = event.target.files[0];
     if (file && file.type === "application/pdf") {
       const fileName = file.name;
       console.log("Uploaded file name:", fileName);
       setDucomentName(fileName);
-      setDocumentPath(file);
+      const pdfBase64 = await toBase64(file);
+      setDocumentPath(pdfBase64);
       setShowBlock("uploadTrack");
       navigate("/dashboard/editor-dahsbord");
     } else {
@@ -228,7 +237,7 @@ const UplodTrackFileDilog: React.FC<DetailDialogProps> = ({
                 }}
               >
                 <Typography sx={{ fontSize: "13px", marginTop: "0rem" }}>
-                  Upload Word document to manage lifecycle
+                  Upload Word document to manage lifecycleee
                 </Typography>
               </div>
             </Button>

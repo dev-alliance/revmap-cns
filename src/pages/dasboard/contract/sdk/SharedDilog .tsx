@@ -57,7 +57,7 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
       >
         <DialogContent
           sx={{
-            maxHeight: "47vh",
+            maxHeight: "30vh",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -85,9 +85,9 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
               alt="Logo"
               style={{
                 // maxWidth: isMobile ? "20px" : "50px",
-                width: "22%",
+                width: "18%",
                 // height: "auto",
-                marginTop: "2rem", // Adjust as needed
+                marginTop: "1rem", // Adjust as needed
                 marginBottom: "2rem", // Adjust as needed
               }}
             />
@@ -100,7 +100,7 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
                 width: "15%",
                 // height: "auto",
                 marginTop: "0rem", // Adjust as needed
-                marginBottom: "2rem", // Adjust as needed
+                marginBottom: "1rem", // Adjust as needed
               }}
             />
           )}
@@ -118,8 +118,6 @@ const SharedDilog: React.FC<DetailDialogProps> = ({ open, onClose, title }) => {
               sx={{
                 textTransform: "none",
                 mt: "2",
-                height: "26px",
-                fontSize: "11px",
                 backgroundColor: "#174B8B", // Set the button color to green
                 "&:hover": {
                   backgroundColor: "#2B6EC2", // Darker green on hover

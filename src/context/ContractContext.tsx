@@ -130,6 +130,9 @@ interface ContractContextProps {
   formState: any | null;
   setFormState: Dispatch<SetStateAction<any>>;
   inputRef: React.RefObject<HTMLInputElement>;
+
+  isLoading: any | null;
+  setIsLoading: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -210,6 +213,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setSiningOrder: () => {},
   formState: {},
   setFormState: () => {},
+  isLoading: {},
+  setIsLoading: () => {},
   inputRef: { current: null },
 });
 
@@ -217,6 +222,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const inputRef = useRef<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [contract, setContract] = useState<Contract | null>(null);
   const [siningOrder, setSiningOrder] = useState(false);
   const [documentName, setDucomentName] = useState("");
@@ -596,6 +602,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         inputRef,
         formState,
         setFormState,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}
