@@ -92,6 +92,7 @@ const ContractList = () => {
     setEditMode,
     setUplodTrackFile,
     setShowBlock,
+    setIsTemplate,
   } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
@@ -310,6 +311,7 @@ const ContractList = () => {
                 setShowBlock("");
                 setDucomentName("");
                 setRecipients([]),
+                  setIsTemplate(false),
                   setCollaborater([]),
                   setFormState({
                     name: "",
@@ -802,7 +804,8 @@ const ContractList = () => {
                 to="/dashboard/create-contract"
                 onClick={() => {
                   setContract(null), setSidebarExpanded(false);
-                  setRecipients([]),
+                  setIsTemplate(false),
+                    setRecipients([]),
                     setCollaborater([]),
                     setDucomentName(""),
                     setEditMode(false);
