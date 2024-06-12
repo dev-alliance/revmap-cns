@@ -383,7 +383,7 @@ const OverView = () => {
               color: "#000000",
             }}
           >
-            Discription
+            Description
           </Typography>
           <Controller
             name="disription"
