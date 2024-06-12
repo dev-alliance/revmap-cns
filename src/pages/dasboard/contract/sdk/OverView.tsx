@@ -35,6 +35,7 @@ type FormValues = {
   name: string;
   with_name: string;
   currency: string;
+  disription: string;
   value: number;
   category: string;
   tags: string;
@@ -66,6 +67,7 @@ const OverView = () => {
     setContract,
     setDucomentName,
     documentName,
+    IsTemplate,
   } = useContext(ContractContext);
   const { user } = useAuth();
   const [teamData, setTeamData] = useState<Array<any>>([]);
@@ -369,6 +371,80 @@ const OverView = () => {
           )}
         />
       </Box>
+      {IsTemplate && (
+        <Box sx={{ mb: 0 }}>
+          <Typography
+            variant="body1"
+            sx={{
+              minWidth: "75px",
+              mr: 2,
+              mb: 0.8,
+              whiteSpace: "nowrap",
+              color: "#000000",
+            }}
+          >
+            Discription
+          </Typography>
+          <Controller
+            name="disription"
+            control={control}
+            rules={{ required: "This field is required" }}
+            render={({ field }) => (
+              <TextField
+                value={formState.disription}
+                onChange={(e) =>
+                  handleInputChange("disription", e.target.value)
+                }
+                placeholder="Add disription"
+                fullWidth
+                error={!!errors.disription}
+                // helperText={errors.with_name}
+                variant="standard"
+                InputProps={{
+                  disableUnderline: true, // Disables the underline by default
+                  sx: {
+                    "::after": {
+                      borderBottom: "2px solid transparent", // Default state with transparent color
+                    },
+                    "::before": {
+                      borderBottom: "none !important", // Hides the underline
+                    },
+                    ":hover:not(.Mui-disabled)::before": {
+                      borderBottom: "none !important", // Ensures underline stays hidden on hover
+                    },
+                    "input:focus + fieldset": {
+                      border: "none", // Optional: for outlined variant if ever used
+                    },
+                    "::placeholder": {
+                      fontSize: "0.55rem",
+                      color: "gray", // Default placeholder color
+                    },
+                    input: {
+                      fontSize: "0.875rem",
+                      "&:focus": {
+                        borderBottom: "2px solid transparent", // Transparent on focus by default
+                      },
+                      "&:not(:placeholder-shown)": {
+                        // When input has content
+                        "&::placeholder": {
+                          color: "#0F151B !important",
+                        },
+                        "&:focus": {
+                          borderBottom: "1px solid #174B8B", // New underline color when typing
+                        },
+                      },
+                    },
+                  },
+                }}
+                inputProps={{
+                  maxLength: 50, // HTML5 attribute to limit characters directly in the input field
+                }}
+              />
+            )}
+          />
+        </Box>
+      )}
+
       <Box sx={{ mb: 0 }}>
         <Typography
           variant="body1"

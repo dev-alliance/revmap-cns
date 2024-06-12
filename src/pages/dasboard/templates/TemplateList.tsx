@@ -88,6 +88,7 @@ const TemplateList = () => {
     setDucomentName,
     setFormState,
     setEditMode,
+    setIsTemplate,
   } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
@@ -135,7 +136,7 @@ const TemplateList = () => {
         category: `${row?.overview?.category?.name || ""} `,
         subcategory: `${row?.overview?.subcategory || ""} `,
         anualValue: `${row?.overview?.value || ""} `,
-        currency: `${row?.overview?.currency || ""} `,
+        disription: `${row?.overview?.disription || ""} `,
         noticePeriodDate: `${row?.lifecycle?.formData?.dateFields?.noticePeriodDate}`,
         startDate: `${row?.lifecycle?.formData?.dateFields?.startDate}`,
         endDate: `${row?.lifecycle?.formData?.dateFields?.endDate}`,
@@ -284,9 +285,9 @@ const TemplateList = () => {
       headerName: "Description",
 
       renderCell: ({ row }: { row: any }) => {
-        const { with_name } = row;
+        const { disription } = row;
         return (
-          <Typography sx={{ color: "text.secondary" }}>{with_name}</Typography>
+          <Typography sx={{ color: "text.secondary" }}>{disription}</Typography>
         );
       },
     },
@@ -441,10 +442,11 @@ const TemplateList = () => {
               }}
               variant="contained"
               component={Link}
-              to="/dashboard/editor-dahsbord"
+              to={`/dashboard/editor-dahsbord/${row?._id}`}
               onClick={() => {
                 setDocumentType("Contract");
                 setContract(null),
+                  setIsTemplate(false),
                   setSidebarExpanded(false),
                   setFormState({
                     name: "",
@@ -516,18 +518,19 @@ const TemplateList = () => {
                 setSidebarExpanded(false);
                 setEditMode(true);
                 setDucomentName("");
-                setFormState({
-                  name: "",
-                  with_name: undefined,
-                  currency: undefined,
-                  value: undefined,
-                  tags: undefined,
-                  // branch: "",
-                  teams: undefined,
-                  category: undefined,
-                  subcategory: undefined,
-                  additionalFields: [],
-                });
+                setIsTemplate(true),
+                  setFormState({
+                    name: "",
+                    with_name: undefined,
+                    currency: undefined,
+                    value: undefined,
+                    tags: undefined,
+                    // branch: "",
+                    teams: undefined,
+                    category: undefined,
+                    subcategory: undefined,
+                    additionalFields: [],
+                  });
                 setLifecycleData({
                   activeSection: "",
                   showButtons: false,
@@ -738,39 +741,42 @@ const TemplateList = () => {
                 component={Link}
                 to="/dashboard/editor-dahsbord"
                 onClick={() => {
-                  setContract(null), setSidebarExpanded(false);
-                  setLifecycleData({
-                    activeSection: "",
-                    showButtons: false,
-                    recipients: [],
-                    formData: {
-                      checkboxStates: {
-                        isEvergreen: false,
-                        isRenewalsActive: false,
-                        isNotificationEmailEnabled: false,
-                        isRemindersEnabled: false,
+                  setContract(null),
+                    setSidebarExpanded(false),
+                    setDucomentName(""),
+                    setIsTemplate(true),
+                    setLifecycleData({
+                      activeSection: "",
+                      showButtons: false,
+                      recipients: [],
+                      formData: {
+                        checkboxStates: {
+                          isEvergreen: false,
+                          isRenewalsActive: false,
+                          isNotificationEmailEnabled: false,
+                          isRemindersEnabled: false,
+                        },
+                        dateFields: {
+                          signedOn: "",
+                          startDate: "",
+                          endDate: "",
+                          noticePeriodDate: "",
+                        },
+                        renewalDetails: {
+                          renewalType: "days",
+                          renewalPeriod: 0,
+                        },
+                        notificationDetails: {
+                          notifyOwner: false,
+                          additionalRecipients: [],
+                        },
+                        reminderSettings: {
+                          firstReminder: 0,
+                          daysBetweenReminders: 0,
+                          daysBeforeFinalExpiration: 0,
+                        },
                       },
-                      dateFields: {
-                        signedOn: "",
-                        startDate: "",
-                        endDate: "",
-                        noticePeriodDate: "",
-                      },
-                      renewalDetails: {
-                        renewalType: "days",
-                        renewalPeriod: 0,
-                      },
-                      notificationDetails: {
-                        notifyOwner: false,
-                        additionalRecipients: [],
-                      },
-                      reminderSettings: {
-                        firstReminder: 0,
-                        daysBetweenReminders: 0,
-                        daysBeforeFinalExpiration: 0,
-                      },
-                    },
-                  });
+                    });
                 }}
               >
                 <AddIcon /> Create Template

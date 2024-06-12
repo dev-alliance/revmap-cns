@@ -32,7 +32,16 @@ registerLicense(
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
 // other imports...
-import { TextField, Button, Grid, Typography, Paper, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Grid,
+  Typography,
+  Paper,
+  Box,
+  ListItemText,
+  ListItemButton,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import linepng from "../../../../assets/line.png";
@@ -105,6 +114,7 @@ function SyncFesion() {
     documentContent,
     setDocumentContent,
     showBlock,
+    IsTemplate,
     setShowBlock,
     setApprovers,
     formState,
@@ -265,7 +275,7 @@ function SyncFesion() {
           status: status,
 
           createdBy: user.firstName,
-          contractType: "",
+          contractType: IsTemplate ? "template" : "",
           wordDocumentData: showBlock == "" ? documentData : null,
           pdfData: uplodTrackFile,
           uploadedWordData: showBlock === "uploadTrack" ? documentData : null,
@@ -1052,7 +1062,7 @@ function SyncFesion() {
     });
   };
   const handleClickCencel = () => {
-    navigate("/dashboard/contract-list");
+    // navigate("/dashboard/contract-list");
 
     setEditMode(false);
     setEnabelEditing(true);
@@ -1180,12 +1190,45 @@ function SyncFesion() {
               </p>
             </div>
           </Box>
-          {(showBlock === "" || showBlock === "pdf") && (
-            <>
-              <div style={{ marginTop: "12px" }}>
-                <Breadcrumb recipients={recipients} />
-              </div>
-            </>
+          {IsTemplate ? (
+            <ListItemButton
+              sx={{
+                mt: 1,
+                pl: 2, // Adjust padding left value as needed
+                fontSize: "10px",
+              }}
+            >
+              <div
+                style={{
+                  height: "10px",
+                  width: "10px",
+                  backgroundColor: "#FFAA04",
+                  borderRadius: "50%",
+                  marginRight: "10px",
+                  alignSelf: "center",
+                }}
+              />
+              <ListItemText
+                sx={{
+                  fontSize: "10px",
+                  color: "#1976d2",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "16px",
+                  color: "#155be5",
+                }}
+                primary="Template"
+              />
+            </ListItemButton>
+          ) : (
+            (showBlock === "" || showBlock === "pdf") && (
+              <>
+                <div style={{ marginTop: "12px" }}>
+                  <Breadcrumb recipients={recipients} />
+                </div>
+              </>
+            )
           )}
         </div>
 
