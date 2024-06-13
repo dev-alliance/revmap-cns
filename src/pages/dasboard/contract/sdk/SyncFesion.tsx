@@ -45,7 +45,10 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import linepng from "../../../../assets/line.png";
-
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import {
   DocumentEditorComponent,
   Selection,
@@ -96,16 +99,19 @@ DocumentEditorContainerComponent.Inject(Toolbar);
 function SyncFesion() {
   const location = useLocation();
   const navigate = useNavigate();
-  const open = location?.state?.open;
+  const templateOpen = location?.state?.templateOpen;
   const { user } = useAuth();
   const { id } = useParams();
   const [documentData, setDocumentData] = useState<string | null>(null);
   const [documentReady, setDocumentReady] = useState<boolean>(false);
   const [list, setList] = useState<undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
+
   const [newId, setNewId] = useState("");
   const {
     setEditorRefContext,
+    temlatePoupup,
+    setTemlatePoupup,
     dragFields,
     recipients,
     setRecipients,
@@ -2109,6 +2115,73 @@ function SyncFesion() {
             />
           </div>
         )}
+        <Dialog
+          open={temlatePoupup}
+          onClose={() => setTemlatePoupup(false)}
+          maxWidth="sm"
+          fullWidth
+          sx={{
+            "& .MuiPaper-root": {
+              // Targeting the Paper component inside the Dialog
+              border: "1.5px dashed #174B8B", // Customizing the border to dashed
+              borderRadius: "16px", // Adding border radius
+            },
+          }}
+        >
+          <DialogContent
+            sx={{
+              maxHeight: "30vh",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              lineHeight: "auto",
+            }}
+          >
+            <svg
+              width="76"
+              height="80"
+              viewBox="0 0 76 80"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M47.5 0L76 24V72C76 74.1217 74.9991 76.1566 73.2175 77.6569C71.4359 79.1571 69.0196 80 66.5 80H9.5C6.98044 80 4.56408 79.1571 2.78249 77.6569C1.00089 76.1566 0 74.1217 0 72V8C0 5.87827 1.00089 3.84344 2.78249 2.34315C4.56408 0.842854 6.98044 0 9.5 0H47.5ZM66.5 72V28H42.75V8H9.5V72H66.5ZM38 40L57 56H45.125V68H30.875V56H19L38 40Z"
+                fill="#174B8B"
+              />
+            </svg>
+            <Typography variant="subtitle2" color="black" sx={{ my: 2 }}>
+              Browse to openFile
+            </Typography>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                float: "right",
+                marginTop: "8px",
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  mt: "4",
+                  backgroundColor: "#174B8B", // Set the button color to green
+                  "&:hover": {
+                    backgroundColor: "#2B6EC2", // Darker green on hover
+                  },
+                }}
+                onClick={() => {
+                  triggerClick("container_toolbar_open"),
+                    setTemlatePoupup(false);
+                }}
+              >
+                Browse
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <SyncFesionFileDilog
           open={showPopup}

@@ -89,6 +89,7 @@ const TemplateList = () => {
     setFormState,
     setEditMode,
     setIsTemplate,
+    setTemlatePoupup,
   } = useContext(ContractContext);
   const { user } = useAuth();
   const [search, setSearch] = useState<string>("");
@@ -709,6 +710,46 @@ const TemplateList = () => {
             <div style={{ display: "flex" }}>
               <Button
                 size="small"
+                onClick={() => {
+                  navigate(`/dashboard/editor-dahsbord`);
+                  setTemlatePoupup(true);
+                  setContract(null),
+                    setSidebarExpanded(false),
+                    setDucomentName(""),
+                    setIsTemplate(true),
+                    setLifecycleData({
+                      activeSection: "",
+                      showButtons: false,
+                      recipients: [],
+                      formData: {
+                        checkboxStates: {
+                          isEvergreen: false,
+                          isRenewalsActive: false,
+                          isNotificationEmailEnabled: false,
+                          isRemindersEnabled: false,
+                        },
+                        dateFields: {
+                          signedOn: "",
+                          startDate: "",
+                          endDate: "",
+                          noticePeriodDate: "",
+                        },
+                        renewalDetails: {
+                          renewalType: "days",
+                          renewalPeriod: 0,
+                        },
+                        notificationDetails: {
+                          notifyOwner: false,
+                          additionalRecipients: [],
+                        },
+                        reminderSettings: {
+                          firstReminder: 0,
+                          daysBetweenReminders: 0,
+                          daysBeforeFinalExpiration: 0,
+                        },
+                      },
+                    });
+                }}
                 sx={{
                   height: "4.5vh",
                   mr: 1,

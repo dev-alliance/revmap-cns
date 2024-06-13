@@ -32,14 +32,22 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import mammoth from "mammoth";
 import { ContractContext } from "@/context/ContractContext";
 import UplodTrackFileDilog from "@/pages/dasboard/contract/UplodTrackFileDilog";
+import { getListTemlate } from "@/service/api/contract";
 
 const CreateContract = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const {
     setDucomentName,
     setShowBlock,
     setUplodTrackFile,
     setDocumentContent,
+    setContract,
+    setLifecycleData,
+    setSidebarExpanded,
+    setFormState,
+    setEditMode,
+    setIsTemplate,
   } = useContext(ContractContext);
 
   // const workerUrl =
@@ -48,7 +56,7 @@ const CreateContract = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectDocoment, setSelectDocoment] = useState("");
   const [selectionField, setSelectionField] = useState("");
-  const [feildList, setFeildList] = useState<Array<any>>([]);
+  const [TemplateList, setTemplateList] = useState<Array<any>>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<any>("");
   const [inputFocused, setInputFocused] = useState(false);
   const triggerClick = async () => {
@@ -101,9 +109,8 @@ const CreateContract = () => {
   const listFeildData = async () => {
     try {
       setIsLoading(true);
-      const { data } = await getList();
-
-      setFeildList(data);
+      const { data } = await getListTemlate(user?._id);
+      setTemplateList(data);
 
       console.log("data", data);
     } catch (error) {
@@ -122,6 +129,7 @@ const CreateContract = () => {
   const handleBack = () => {
     navigate(-1);
   };
+  console.log(selectedTemplate?._id, "selectedTemplate");
 
   return (
     <>
@@ -666,20 +674,20 @@ const CreateContract = () => {
                   <Autocomplete
                     size="small"
                     fullWidth
-                    options={feildList}
+                    options={TemplateList}
                     value={selectedTemplate}
                     onChange={(event: any, newValue: any) => {
                       setSelectedTemplate(newValue);
                     }}
                     getOptionLabel={(option: any) =>
-                      option ? option.name : ""
+                      option ? option.overview?.name : ""
                     }
                     isOptionEqualToValue={(option: any, value: any) =>
                       option._id === value._id
                     }
                     renderOption={(props: any, option: any) => (
                       <MenuItem {...props} key={option._id} value={option._id}>
-                        {option.name}
+                        {option.overview?.name}
                       </MenuItem>
                     )}
                     renderInput={(params: any) => (
@@ -733,7 +741,57 @@ const CreateContract = () => {
                     >
                       <Button
                         component={Link}
-                        to="/dashboard/editor-dahsbord"
+                        to={`/dashboard/editor-dahsbord/${selectedTemplate._id}`}
+                        onClick={() => {
+                          setContract(null),
+                            setIsTemplate(false),
+                            setSidebarExpanded(false),
+                            setFormState({
+                              name: "",
+                              with_name: undefined,
+                              currency: undefined,
+                              value: undefined,
+                              tags: undefined,
+                              // branch: "",
+                              teams: undefined,
+                              category: undefined,
+                              subcategory: undefined,
+                              additionalFields: [],
+                            });
+                          setDucomentName(""),
+                            setLifecycleData({
+                              activeSection: "",
+                              showButtons: false,
+                              recipients: [],
+                              formData: {
+                                checkboxStates: {
+                                  isEvergreen: false,
+                                  isRenewalsActive: false,
+                                  isNotificationEmailEnabled: false,
+                                  isRemindersEnabled: false,
+                                },
+                                dateFields: {
+                                  signedOn: "",
+                                  startDate: "",
+                                  endDate: "",
+                                  noticePeriodDate: "",
+                                },
+                                renewalDetails: {
+                                  renewalType: "days",
+                                  renewalPeriod: 0,
+                                },
+                                notificationDetails: {
+                                  notifyOwner: false,
+                                  additionalRecipients: [],
+                                },
+                                reminderSettings: {
+                                  firstReminder: 0,
+                                  daysBetweenReminders: 0,
+                                  daysBeforeFinalExpiration: 0,
+                                },
+                              },
+                            });
+                        }}
                         disabled={!selectedTemplate}
                         size="small"
                         sx={{

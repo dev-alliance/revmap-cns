@@ -133,6 +133,8 @@ interface ContractContextProps {
 
   IsTemplate: any | null;
   setIsTemplate: Dispatch<SetStateAction<any>>;
+  temlatePoupup: any | null;
+  setTemlatePoupup: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -215,6 +217,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setFormState: () => {},
   IsTemplate: {},
   setIsTemplate: () => {},
+  temlatePoupup: {},
+  setTemlatePoupup: () => {},
   inputRef: { current: null },
 });
 
@@ -223,6 +227,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const inputRef = useRef<any>(null);
   const [IsTemplate, setIsTemplate] = useState(false);
+  const [temlatePoupup, setTemlatePoupup] = useState(true);
   const [contract, setContract] = useState<Contract | null>(null);
   const [siningOrder, setSiningOrder] = useState(false);
   const [documentName, setDucomentName] = useState("");
@@ -605,6 +610,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setFormState,
         IsTemplate,
         setIsTemplate,
+        temlatePoupup,
+        setTemlatePoupup,
       }}
     >
       {children}
