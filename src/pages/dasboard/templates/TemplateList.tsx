@@ -446,6 +446,7 @@ const TemplateList = () => {
               to={`/dashboard/editor-dahsbord/${row?._id}`}
               onClick={() => {
                 setDocumentType("Contract");
+                setEditMode(false);
                 setContract(null),
                   setIsTemplate(false),
                   setSidebarExpanded(false),
@@ -517,7 +518,7 @@ const TemplateList = () => {
                 handleClose();
                 navigate(`/dashboard/editor-dahsbord/${row?._id}`);
                 setSidebarExpanded(false);
-                setEditMode(true);
+                setEditMode(false);
                 setDucomentName("");
                 setIsTemplate(true),
                   setFormState({
@@ -782,8 +783,8 @@ const TemplateList = () => {
                 component={Link}
                 to="/dashboard/editor-dahsbord"
                 onClick={() => {
-                  setContract(null),
-                    setSidebarExpanded(false),
+                  setContract(null), setEditMode(false);
+                  setSidebarExpanded(false),
                     setDucomentName(""),
                     setIsTemplate(true),
                     setLifecycleData({

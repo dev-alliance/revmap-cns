@@ -304,7 +304,9 @@ function SyncFesion() {
 
         if (response.ok === true) {
           toast.success(response.message);
-          // navigate("/dashboard/contract-list");
+          if (showBlock == "uploadTrack") {
+            navigate("/dashboard/contract-list");
+          }
         } else {
           const errorMessage = response.message || "An error occurred";
           toast.error(errorMessage);
@@ -2012,6 +2014,9 @@ function SyncFesion() {
                   sx={{ ml: 2, textTransform: "none" }}
                   onClick={() => {
                     handleSubmit();
+                    if (showBlock !== "uploadTrack") {
+                      handleClickCencel();
+                    }
                   }}
                   variant="outlined"
                   color="success"
