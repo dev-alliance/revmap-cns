@@ -3,6 +3,7 @@ import { ContractContext } from "@/context/ContractContext";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserListNameID } from "@/service/api/apiMethods";
 import { getfeildList } from "@/service/api/customFeild";
+import useStore from "@/context/ZustandStore";
 import {
   Autocomplete,
   Box,
@@ -37,6 +38,10 @@ import { Link } from "react-router-dom";
 import SignatureMultiSendReq from "./SignatureMultiSendReq";
 import OpenDrawSignature from "./OpenDrawSignature";
 import ClearIcon from "@mui/icons-material/Clear";
+import ReactQuill from "react-quill";
+import { Label } from "@mui/icons-material";
+import { AnyCnameRecord } from "dns";
+
 interface OptionType {
   email: string;
   name: string;
@@ -72,6 +77,8 @@ const Fields = () => {
     setDragFields,
     dragFields,
     editorRefContext,
+    auditTrails,
+    setAuditTrails,
   } = useContext(ContractContext);
 
   const [inputValue, setInputValue] = useState("");
@@ -86,12 +93,10 @@ const Fields = () => {
   const [checked, setChecked] = React.useState(false);
   const [ClickData, setClickData] = useState("");
 
-  const [placeHolder, setPlaceHolder] = useState("");
-  const [placeHolderValue, setPlaceHolderValue] = useState("");
   const [newDragedField, setNewDragedField] = useState("");
+
   const handleGetValue = (e: any) => {
-    setPlaceHolder(e.target.value);
-    setPlaceHolderValue(e.target.value);
+    setTextFields({ ...textFields, placeholder: e.target.value });
   };
 
   const [selectionField, setSelectionField] = useState("");
@@ -99,11 +104,8 @@ const Fields = () => {
   // State to track if the comment is internal or external
   const [selectedEmails, setSelectedEmails] = useState<any | null>(null);
 
-  console.log("selected Emails : ", selectedEmails);
-
   const colors = ["#D3FDE4", "#D3DFFD", "#FFE1CB", "#3F9748"];
   const [backgroundColor, setBackgroundColor] = useState("#d9d9d9");
-
   const [items, setItems] = useState<any[]>([]);
   const [nextOptionNumber, setNextOptionNumber] = useState<number>(2);
 
@@ -124,145 +126,153 @@ const Fields = () => {
     }
   };
 
-  const radioDrag = () => {
-    const documentEditor = editorRefContext;
-
+  const checkBoxDrag = (e: any) => {
     //Insert Checkbox form field
     if (selectedEmails) {
-      documentEditor.editor.insertFormField("RadioButton");
-    }
-
-    //Insert Drop down form field
-  };
-  const checkBoxDrag = () => {
-    const documentEditor = editorRefContext;
-
-    //Insert Checkbox form field
-    if (selectedEmails) {
-      documentEditor.editor.insertFormField("CheckBox");
+      e.dataTransfer.setData("text/plain", "<input type='checkbox' />");
     }
 
     //Insert Drop down form field
   };
 
-  console.log("selection Field new", selectionField);
+  // console.log("selection Field new", selectionField);
 
   useEffect(() => {
-    // Assuming editorRefContext is correctly initialized and has a method exportFormData()
     const documentEditor = editorRefContext;
-
-    // Assuming exportFormData returns an array of FormField objects
-    const formFieldsNames: FormField[] = documentEditor.exportFormData();
-
-    // Find the field by name, handle potential undefined with optional chaining
-    const valis = formFieldsNames.find(
-      (val) => val.fieldName === selectionField
-    );
-
-    // Use optional chaining to handle cases where valis or valis.value might be undefined
-    setPlaceHolder(valis?.value ?? "Default Placeholder");
   }, [selectionField]);
 
   // handle change required
-  useEffect(() => {
-    const documentEditor = editorRefContext;
-    if (selectionField) {
-      documentEditor.editor.insertFormField("Text");
-
-      const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
-        "Text1"
-      ) as TextFormFieldInfo;
-
-      console.log("add starikkkk :", textfieldInfo);
-
-      // textfieldInfo.defaultValue = 'updated with staric *';
-      textfieldInfo.defaultValue = `${
-        placeHolder ? placeHolder : selectionField
-      }${requiredField ? " *" : ""}`;
-
-      // textfieldInfo.format = "Lowercase";
-      textfieldInfo.type = "Text";
-      textfieldInfo.name = selectionField;
-      documentEditor.setFormFieldInfo("Text1", textfieldInfo);
-    }
-  }, [requiredField]);
 
   // handle change value
 
   const handleSetValue = () => {
-    const documentEditor = editorRefContext;
-    if (selectionField) {
-      documentEditor.editor.insertFormField("Text");
-
-      const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
-        "Text1"
-      ) as TextFormFieldInfo;
-
-      console.log("add starikkkk :", textfieldInfo);
-
-      // textfieldInfo.defaultValue = 'updated with staric *';
-      textfieldInfo.defaultValue =
-        placeHolderValue + (requiredField ? " *" : "");
-
-      // textfieldInfo.format = "Lowercase";
-      textfieldInfo.type = "Text";
-      textfieldInfo.name = selectionField;
-      documentEditor.setFormFieldInfo("Text1", textfieldInfo);
+    if (!textFields) {
+      console.error("No textField object provided.");
+      return;
     }
-    setCheckboxes([]);
-    setTimeout(() => {
-      setPlaceHolderValue("");
-    }, 500);
+
+    if (editorRefContext) {
+      const editor = editorRefContext.editor;
+
+      let container: HTMLElement | null | any = null;
+
+      // Find an existing text field container or create a new one
+      let existingContainer = Array.from(
+        editor.scroll.domNode.querySelectorAll(".text-field-container")
+      ).find((container: any) => {
+        const input = container.querySelector('input[type="text"]');
+        return input && input.getAttribute("data-id") === textFields.id;
+      });
+
+      if (existingContainer) {
+        container = existingContainer;
+      } else {
+        // Create a new container if no existing container found
+        const cursorPosition = editor.getLength() - 1;
+        editor.insertEmbed(cursorPosition, "text-field-container", {
+          backgroundColor: backgroundColor,
+          required: requiredCheckbox, // Pass the required attribute here
+          id: textFields.id,
+          placeholder: textFields.placeholder,
+        });
+        container = editor.scroll.domNode.querySelector(
+          ".text-field-container:last-of-type"
+        );
+      }
+
+      // Handle the required attribute and asterisk
+      if (requiredCheckbox) {
+        if (!container.querySelector(".asterisk")) {
+          const asterisk = document.createElement("span");
+          asterisk.innerText = "*";
+          asterisk.classList.add("asterisk");
+          asterisk.style.position = "relative";
+          asterisk.style.top = "5px";
+          asterisk.style.transform = "translateY(-50%)";
+          asterisk.style.right = "10px"; // Adjust right position as needed
+          asterisk.style.color = "red"; // Adjust color as needed
+          asterisk.style.fontSize = "20px"; // Increase font size for larger asterisk
+          asterisk.style.lineHeight = "1"; // Ensure the asterisk is vertically centered
+          asterisk.style.height = "20px"; // Increase height of asterisk
+          asterisk.style.width = "20px"; // Increase width of asterisk for better visibility
+          container.appendChild(asterisk);
+        }
+      } else {
+        const asterisk = container.querySelector(".asterisk");
+        if (asterisk) {
+          asterisk.remove();
+        }
+      }
+
+      // Update or insert text field
+      const textFieldElement = container.querySelector('input[type="text"]');
+      if (textFieldElement) {
+        textFieldElement.placeholder = textFields.placeholder;
+        textFieldElement.setAttribute("data-id", textFields.id);
+      } else {
+        const textFieldNode = document.createElement("div");
+        textFieldNode.innerHTML = `<input type="text" id="${textFields.id}" placeholder="${textFields.placeholder}" data-id="${textFields.id}">`;
+        container!.appendChild(textFieldNode);
+      }
+      // setAuditTrails([
+      //   ...auditTrails,
+      //   {
+      //     user: user.firstName,
+      //     date: new Date(),
+      //     message: `added text-field for ${
+      //       selectedEmails.label || selectedEmails.email
+      //     }`,
+      //   },
+      // ]);
+
+      // Set the selection to the end of the editor content
+      setTextFields({}); // Clear textFields object
+
+      editor.setSelection(editor.getLength(), 0);
+    } else {
+      console.error("Editor reference context is not set.");
+    }
   };
 
   const DraggableField = ({ field }: any) => {
     const handleDragStart = (e: any) => {
-      e.dataTransfer.setData("text/plain", field.placeholder);
-      console.log("fieldstestTop : ", field.placeholder);
-      setShowSidebar(field.placeholder);
-      const documentEditor = editorRefContext;
+      e.dataTransfer.setData("text/plain", `<input type="text" />`);
 
-      if (selectedEmails) {
-        documentEditor.editor.insertFormField("Text");
-      }
+      if (editorRefContext) {
+        const quill = editorRefContext.getEditor();
 
-      const textfieldInfo: TextFormFieldInfo = documentEditor.getFormFieldInfo(
-        "Text1"
-      ) as TextFormFieldInfo;
+        if (quill && selectedEmails) {
+          const selection = quill.getSelection();
+          const cursorPosition = (selection && selection.index) || 0;
+          const textFieldId = `text_field_${Date.now()}_${Math.random()
+            .toString(36)
+            .substr(2, 9)}`;
 
-      console.log("text fielf info :", textfieldInfo);
+          const textField = {
+            id: textFieldId,
+            placeholder: "TextField",
+            required: requiredCheckbox,
+            backgroundColor,
+          };
 
-      textfieldInfo.defaultValue = field?.label + (requiredField ? " *" : "");
-      // textfieldInfo.format = "Lowercase";
-      textfieldInfo.type = "Text";
-      textfieldInfo.name = field?.label;
-      documentEditor.setFormFieldInfo("Text1", textfieldInfo);
-      setDragFields(dragFields + 1);
+          quill.insertEmbed(cursorPosition, "text-field-container", textField);
 
-      setRecipients((prev: any) => {
-        const updated = prev.map((user: any) => {
-          const matches =
-            user.email.trim().toLowerCase() ===
-            selectedEmails?.email.trim().toLowerCase();
+          setTextFields(textField);
 
-          if (matches) {
-            return { ...user, field: dragFields + 1 };
+          // Get the updated document length after insertion
+          const updatedLength = quill.getLength();
+
+          // Ensure the new cursor position is within the document bounds
+          if (cursorPosition + 1 <= updatedLength) {
+            quill.setSelection(cursorPosition + 1);
+          } else {
+            console.error("The new cursor position is out of bounds.");
           }
-          return user;
-        });
-        // console.log("Updated recipients:", updated); // Log the full updated array
-        return updated;
-      });
+        }
+      } else {
+        console.error("Editor reference context is not set.");
+      }
     };
-
-    // const handleDragStartCheckbox = (e: any) => {
-    //   e.dataTransfer.setData("text/plain", field.placeholder);
-    //   const documentEditor = editorRefContext;
-    //   if (selectedEmails) {
-    //     documentEditor.editor.insertFormField("CheckBox");
-    //   }
-    // };
-    // console.log("recipients :", recipients);
 
     return (
       <>
@@ -382,34 +392,63 @@ const Fields = () => {
     };
 
     const handleDragStartCheckbox = (e: any) => {
-      e.dataTransfer.setData("text/plain", field.placeholder);
-      console.log("fieldstestTop : ", field.placeholder);
-      setShowSidebar(field.placeholder);
-      const documentEditor = editorRefContext;
-      if (selectedEmails) {
-        documentEditor.editor.insertFormField("CheckBox");
-        const checkboxFieldInfo = documentEditor.getFormFieldInfo(
-          "Check1"
-        ) as CheckBoxFormFieldInfo;
-        documentEditor.editor.insertText("Option 1", { x: 50, y: 50 });
-        documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
+      e.dataTransfer.setData("text/plain", `<input type="checkbox" />`);
+
+      if (editorRefContext) {
+        const quill = editorRefContext.getEditor();
+
+        if (quill && selectedEmails) {
+          const selection = quill.getSelection();
+          const cursorPosition = (selection && selection.index) || 0;
+          const checkboxId = `checkbox_${Date.now()}_${Math.random()
+            .toString(36)
+            .substr(2, 9)}`;
+
+          const checkbox = {
+            label: "OptionCheckBox",
+            checked: false,
+            id: checkboxId,
+            backgroundColor,
+          };
+          quill.insertEmbed(cursorPosition, "checkbox-container", checkbox);
+
+          setCheckboxes([checkbox]);
+
+          quill.setSelection(cursorPosition + 1);
+        }
+      } else {
+        console.error("Editor reference context is not set.");
       }
     };
+
     const handleDragStartRadioButton = (e: any) => {
-      e.dataTransfer.setData("text/plain", field.placeholder);
-      console.log("fieldstestTop : ", field.placeholder);
-      // setShowSidebar(field.placeholder);
-      const documentEditor = editorRefContext;
-      if (selectedEmails) {
-        documentEditor.editor.insertFormField("RadioButton");
-        const checkboxFieldInfo = documentEditor.getFormFieldInfo(
-          "Check1"
-        ) as CheckBoxFormFieldInfo;
-        documentEditor.editor.insertText("Option 1", { x: 50, y: 50 });
-        documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
+      const radioId = `radio${Date.now()}_${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+
+      const radioData = {
+        label: "Option",
+        id: radioId,
+        backgroundColor,
+      };
+
+      setSelectionField("");
+
+      e.dataTransfer.setData("text/plain", JSON.stringify(radioData));
+
+      if (editorRefContext) {
+        const quill = editorRefContext.getEditor();
+
+        if (quill && selectedEmails) {
+          const selection = quill.getSelection();
+          const cursorPosition = (selection && selection.index) || 0;
+
+          quill.insertEmbed(cursorPosition, "radio-container", radioData); // Pass the radioData
+          setRadios([radioData]);
+          quill.setSelection(cursorPosition + 1);
+        }
       }
     };
-    // console.log("recipients :", recipients);
 
     return (
       <>
@@ -434,7 +473,7 @@ const Fields = () => {
         )}
         {field?.id == "RadioButton" && (
           <div
-            onClick={radioDrag}
+            // onClick={radioDrag}
             className={`text-[#888888] flex items-center gap-x-2 text-[12px] h-6 w-full my-2 pl-2`}
             draggable={selectedEmails ? true : false}
             onDragEnd={handleDragStartRadioButton}
@@ -497,185 +536,357 @@ const Fields = () => {
 
   const [OpenDrawSignatures, setOpenDrawSignatures] = useState(false);
 
-  // const handleCloseDialog = () => {
-  //   setOpenSignatureDialog(false);
-  // };
-
   console.log("requiredField : ", requiredField);
 
   const handleCloseDrawSigDialog = () => {
     setOpenDrawSignatures(false);
   };
 
-  useEffect(() => {
-    const documentEditor = editorRefContext;
+  // @ts-ignore
+  const {
+    checkboxes,
+    setCheckboxes,
+    updateCheckboxLabel,
+    addCheckboxs,
+    emptyCheckboxes,
+    deleteCheckboxs,
+    requiredCheckbox,
+    setRequiredCheckbox,
+    radios,
+    setRadios,
+    addRadioss,
+    updateRadioLabel,
+    deleteRadios,
+    emptyRadios,
+    setTextFields,
+    textFields,
+  } = useStore();
 
-    if (documentEditor) {
-      // Listen to selection changes
-      documentEditor.selectionChange = () => {
-        // Check if the current selection is within a table
-        const isInTable =
-          documentEditor?.selection?.contextTypeInternal == "TableText";
-
-        console.log("current selection ", documentEditor?.selection);
-
-        // Get the start text position of the selection
-        const startPosition = documentEditor.selection.start;
-
-        // Get the page number of the start position
-        const page = startPosition.pageIndex;
-
-        // Get the location (x, y) of the start position in points; assuming 'viewer' is defined
-        // You might need to convert these coordinates to suit where you want the text box to appear
-        const x = startPosition.location.x;
-        const y = startPosition.location.y;
-
-        console.log("x :", x, "and y :", y);
-
-        // Get the start and end positions of the selection
-        // const startOffset = documentEditor.selection.startOffset;
-        // const endOffset = documentEditor.selection.endOffset;
-
-        // console.log(`Start Offset: ${startOffset}, End Offset: ${endOffset}`);
-        console.log(documentEditor?.selection?.bookmarks[0], "shahbaz1");
-
-        setSelectionField(documentEditor?.selection?.bookmarks[0]);
-      };
-    }
-
-    return () => {
-      if (documentEditor) {
-        // Cleanup the event listener when the component unmounts
-        documentEditor.selectionChange = undefined;
-      }
-    };
-  }, []);
-
-  // const setValueToField = (value: any) => {
-  //   const documentEditor = editorRefContext;
-  //   if (documentEditor) {
-  //     let selection = documentEditor.selection;
-  //     if (selection && selection.isFormField()) {
-  //       const formField = selection.getCurrentFormField();
-  //       const formFieldInfo = documentEditor.getFormFieldInfo(formField.name);
-  //       formFieldInfo.defaultValue = value; // Set the new value
-  //       documentEditor.setFormFieldInfo(formField.name, formFieldInfo);
-  //     }
-  //   }
-  // };
-  // const toggleRequiredField = () => {
-  //   const documentEditor = editorRefContext;
-  //   if (documentEditor) {
-  //     let selection = documentEditor.selection;
-  //     if (selection && selection.isFormField()) {
-  //       const formField = selection.getCurrentFormField();
-  //       const formFieldInfo = documentEditor.getFormFieldInfo(formField.name);
-  //       formFieldInfo.isRequired = !formFieldInfo.isRequired; // Toggle required status
-  //       documentEditor.setFormFieldInfo(formField.name, formFieldInfo);
-  //     }
-  //   }
-  // };
-
-  // const removeField = () => {
-  //   const documentEditor = editorRefContext;
-
-  //   let selection = documentEditor.selection;
-  //   if (selection && selection.isFormField()) {
-  //     documentEditor.editor.removeFormField(selection.getCurrentFormField());
-  //   }
-
-  // };
-
-  console.log(dragFields, "dragFields");
-
-  const [checkboxes, setCheckboxes] = useState<Checkbox[]>([]);
+  console.log("TextFields", Object.values(textFields).length > 0);
 
   const addCheckbox = () => {
-    const newIndex = checkboxes.length + 1;
-    const newCheckbox = {
-      id: `Checkbox ${newIndex}`,
-      label: `Checkbox${newIndex}`,
-    };
-
-    // Debug: Check what's currently in the checkboxes array
-    console.log("Current Checkboxes:", checkboxes);
-    console.log("Adding new Checkbox:", newCheckbox);
-
-    setCheckboxes([...checkboxes, newCheckbox]);
+    addCheckboxs();
   };
 
   const handleSaveCheckboxes = () => {
-    const documentEditor = editorRefContext;
-    console.log("Document Editor:", documentEditor);
-    console.log("Checkboxes:", checkboxes);
+    if (editorRefContext) {
+      const editor = editorRefContext.editor;
+      let container: HTMLElement | null | any = null;
+      const allCheckboxIds = checkboxes.map((checkbox) => checkbox.id);
 
-    if (documentEditor && checkboxes.length) {
-      checkboxes.forEach((checkbox, index) => {
-        documentEditor.editor.insertText("\n");
-        documentEditor.editor.insertFormField("CheckBox");
+      if (delCheckboxes && delCheckboxes.length > 0) {
+        delCheckboxes.forEach((delCheckbox: any) => {
+          const delElem = document.getElementById(delCheckbox.id);
+          if (delElem) {
+            const parentDiv = delElem.parentNode;
+            if (parentDiv && parentDiv.parentNode) {
+              parentDiv.parentNode.removeChild(parentDiv);
+            }
+          }
+        });
+        setDelCheckboxes([]);
+      }
 
-        const checkboxFieldInfo = documentEditor.getFormFieldInfo(
-          "Check1"
-        ) as CheckBoxFormFieldInfo;
-        documentEditor.editor.insertText(checkbox.label, { x: 50, y: 50 });
-        documentEditor.setFormFieldInfo("Check1", checkboxFieldInfo);
-
-        documentEditor.editor.insertText("\n");
+      // Find an existing checkbox container or create a new one
+      let existingContainer = Array.from(
+        editor.scroll.domNode.querySelectorAll(".checkbox-container")
+      ).find((container: any) => {
+        const inputs = container.querySelectorAll('input[type="checkbox"]');
+        return Array.from(inputs).some((input: any) =>
+          allCheckboxIds.includes(input.id)
+        );
       });
+
+      if (existingContainer) {
+        container = existingContainer;
+      } else {
+        // Create a new container if no existing container found
+        const cursorPosition = editor.getLength() - 1;
+        editor.insertEmbed(cursorPosition, "checkbox-container", {
+          backgroundColor: backgroundColor,
+          required: requiredCheckbox, // Pass the required attribute here
+        });
+        container = editor.scroll.domNode.querySelector(
+          ".checkbox-container:last-of-type"
+        );
+      }
+
+      // Handle the required attribute and asterisk
+      if (requiredCheckbox) {
+        if (!container.querySelector(".asterisk")) {
+          const asterisk = document.createElement("span");
+          asterisk.innerText = "*";
+          asterisk.classList.add("asterisk");
+          asterisk.style.position = "absolute";
+          asterisk.style.top = "50%";
+          asterisk.style.transform = "translateY(-50%)";
+          asterisk.style.right = "10px"; // Adjust right position as needed
+          asterisk.style.color = "red"; // Adjust color as needed
+          asterisk.style.fontSize = "20px"; // Increase font size for larger asterisk
+          asterisk.style.lineHeight = "1"; // Ensure the asterisk is vertically centered
+          asterisk.style.height = "20px"; // Increase height of asterisk
+          asterisk.style.width = "20px"; // Increase width of asterisk for better visibility
+          container.appendChild(asterisk);
+        }
+      } else {
+        const asterisk = container.querySelector(".asterisk");
+        if (asterisk) {
+          asterisk.remove();
+        }
+      }
+
+      checkboxes.forEach((checkbox) => {
+        const getInp = document.getElementById(checkbox.id);
+        console.log("getInp", getInp);
+
+        if (getInp) {
+          // Update the label text
+          const labelNode = getInp.nextSibling;
+          if (labelNode) {
+            labelNode.nodeValue = ` ${checkbox.label}`;
+          }
+
+          // Ensure the existing checkbox is within the container
+          if (getInp.parentNode !== container) {
+            container!.appendChild(getInp.parentNode!);
+          }
+        } else {
+          // Insert new checkbox into the container
+          const checkboxNode = document.createElement("div");
+          checkboxNode.innerHTML = `<input type="checkbox" id="${checkbox.id
+            }" ${checkbox.checked ? "checked" : ""} data-id="${checkbox.id}"> ${checkbox.label
+            }`;
+          container!.appendChild(checkboxNode);
+        }
+      });
+
+      setAuditTrails([
+        ...auditTrails,
+        {
+          user: user.firstName,
+          date: new Date(),
+          message: `added checkbox for ${selectedEmails.label || selectedEmails.email
+            }`,
+        },
+      ]);
+      // Set the selection to the end of the editor content
+      editor.setSelection(editor.getLength(), 0);
+      setShowSidebar("");
+      emptyCheckboxes();
+    } else {
+      console.error(
+        "Editor reference context is not set or no checkboxes to save."
+      );
     }
   };
 
   const handleLabelChange2 = (e: any, index: any) => {
     const newLabel = e.target.value;
-    setCheckboxes((checkboxes) =>
-      checkboxes.map((checkbox, idx) => {
-        if (idx === index) {
-          return { ...checkbox, label: newLabel };
-        }
-        return checkbox;
-      })
-    );
+    updateCheckboxLabel(index, newLabel);
   };
+
+  const [delCheckboxes, setDelCheckboxes] = useState<any>([]);
+  const [delRadios, setDelRadios] = useState<any>([]);
+
   const deleteCheckbox = (index: number) => {
-    setCheckboxes((prevCheckboxes) =>
-      prevCheckboxes.filter((_, idx) => idx !== index)
-    );
+    deleteCheckboxs(index);
+    const ids: any = checkboxes[index];
+    setDelCheckboxes([...delCheckboxes, ids]);
+  };
+
+  const addRadio = () => {
+    addRadioss();
+  };
+
+  const handleSaveRadios = () => {
+    if (editorRefContext) {
+      const randomName = `radioo${Date.now()}_${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+      const editor = editorRefContext.editor;
+      let container: HTMLElement | null | any = null;
+      const allRadioIds = radios?.map((radio) => radio.id);
+
+      // Handle deletion of radios if any in delRadios
+      if (delRadios && delRadios?.length > 0) {
+        delRadios.forEach((delRadio: any) => {
+          const delElem = document.getElementById(delRadio.id);
+          if (delElem) {
+            const parentDiv = delElem.parentNode;
+            if (parentDiv && parentDiv.parentNode) {
+              parentDiv.parentNode.removeChild(parentDiv);
+            }
+          }
+        });
+        setDelRadios([]);
+      }
+
+      // Find an existing radio container or create a new one
+      let existingContainer = Array.from(
+        editor.scroll.domNode.querySelectorAll(".radio-container")
+      ).find((container: any) => {
+        const inputs = container.querySelectorAll('input[type="radio"]');
+        return Array.from(inputs).some((input: any) =>
+          allRadioIds.includes(input.getAttribute("data-id"))
+        );
+      });
+
+      if (existingContainer) {
+        container = existingContainer;
+      } else {
+        // Create a new container if no existing container found
+        const cursorPosition = editor.getLength() - 1;
+        editor.insertEmbed(cursorPosition, "radio-container", {
+          backgroundColor: backgroundColor,
+          required: requiredCheckbox,
+        }); // Pass the required attribute here
+        container = editor.scroll.domNode.querySelector(
+          ".radio-container:last-of-type"
+        );
+      }
+
+      // Handle asterisk for required radios
+      if (requiredCheckbox) {
+        if (!container.querySelector(".asterisk")) {
+          const asterisk = document.createElement("span");
+          asterisk.innerText = "*";
+          asterisk.classList.add("asterisk");
+          asterisk.style.position = "absolute";
+          asterisk.style.top = "50%";
+          asterisk.style.transform = "translateY(-50%)";
+          asterisk.style.right = "10px"; // Adjust right position as needed
+          asterisk.style.color = "red"; // Adjust color as needed
+          asterisk.style.fontSize = "20px"; // Increase font size for larger asterisk
+          asterisk.style.lineHeight = "1"; // Ensure the asterisk is vertically centered
+          asterisk.style.height = "20px"; // Increase height of asterisk
+          asterisk.style.width = "20px"; // Increase width of asterisk for better visibility
+          container.appendChild(asterisk);
+        }
+      } else {
+        const asterisk = container.querySelector(".asterisk");
+        if (asterisk) {
+          asterisk.remove();
+        }
+      }
+
+      // Update radios within the container
+      radios?.forEach((radio: any) => {
+        const getInp: any = document.querySelector(
+          `input[type="radio"][data-id="${radio.id}"]`
+        );
+        if (getInp) {
+          getInp.name = randomName;
+          // Update existing radio button's label
+          const parentNode: any = getInp.parentNode;
+          if (parentNode) {
+            const labelNode = parentNode.childNodes[1]; // Assuming label is the second child
+            if (labelNode) {
+              labelNode.nodeValue = ` ${radio.label}`; // Update the label text
+            }
+          }
+
+          // Ensure the existing radio button is within the container
+          if (
+            parentNode &&
+            parentNode.closest(".radio-container") !== container
+          ) {
+            container.appendChild(parentNode);
+          }
+        } else {
+          // Insert new radio button into the container
+          if (container) {
+            const radioNode = document.createElement("div");
+            radioNode.innerHTML = `<input type="radio" name="${randomName}"  id="${radio.id}" data-id="${radio.id}"> ${radio.label}`;
+            container.appendChild(radioNode);
+          }
+        }
+      });
+
+      // Remove the container if it has no radios left
+      const radiosInContainer = container.querySelectorAll(
+        'input[type="radio"]'
+      );
+      if (radiosInContainer.length === 0) {
+        container.remove();
+      }
+      setAuditTrails([
+        ...auditTrails,
+        {
+          user: user.firstName,
+          date: new Date(),
+          message: `added radio for ${selectedEmails.label || selectedEmails.email
+            }`,
+        },
+      ]);
+      emptyRadios();
+      setShowSidebar("");
+      editor.setSelection(editor.getLength(), 0);
+    } else {
+      console.error(
+        "Editor reference context is not set or no radios to save."
+      );
+    }
+  };
+
+  const handleLabelChangeRadio = (e: any, index: any) => {
+    const newLabel = e.target.value;
+    updateRadioLabel(index, newLabel);
+  };
+
+  const deleteRadio = (index: number) => {
+    deleteRadios(index);
+    const ids: any = radios[index];
+    setDelRadios([...delRadios, ids]);
+  };
+
+  const handleRemoveElements = (
+    elements: any[],
+    setElements: (elements: any[]) => void
+  ) => {
+    elements.forEach((element: any) => {
+      const delElem = document.getElementById(element.id);
+      if (delElem) {
+        const container = delElem?.closest(
+          ".radio-container, .checkbox-container"
+        ); // Adjust to match your class names
+        if (container) {
+          container?.remove();
+        }
+      }
+    });
+    setElements([]);
+  };
+
+  const handleRemoveRadios = () => {
+    handleRemoveElements(radios, setRadios);
+  };
+
+  const handleRemoveCheckboxes = () => {
+    handleRemoveElements(checkboxes, setCheckboxes);
+  };
+
+  const handleRemoveTextFields = () => {
+    const delElem = document.getElementById(textFields.id);
+    if (delElem) {
+      const container = delElem?.closest(".text-field-container"); // Adjust to match your class names
+      if (container) {
+        container?.remove();
+      }
+      setTextFields({});
+    }
   };
 
   return (
     <>
       <div>
-        {/* <SignatureMultiSendReq
-          open={openMultiDialog}
-          onClose={handleClosMultieDialog}
-          ClickData={ClickData}
-        /> */}
         <Typography variant="body1" color="#155be5" sx={{ fontSize: "14px" }}>
           Fields
         </Typography>
-        {/* <button onClick={removeField}>Remove Field</button>
-        <button onClick={toggleRequiredField}>Toggle Required</button>
-        <button onClick={() => setValueToField("New Value")}>Set Value</button> */}
         <p className="text-[#8A8A8A] text-[10px] pt-1">
           Drag and drop to assign signature fields for the signer to sign or add
           custom fields to get additional information.
         </p>
-        {/* <div>
-          <button onClick={addCheckbox}>Add Checkbox</button> <br /> <br />
-          <button onClick={handleSaveCheckboxes}>
-            Save Checkboxes
-          </button> <br /> <br />
-          {checkboxes.map((checkbox, index) => (
-            <div key={checkbox.id}>
-              <input
-                type="text"
-                placeholder="Enter label"
-                value={checkbox.label}
-                onChange={(e) => handleLabelChange2(e, index)}
-              />
-            </div>
-          ))}
-        </div> */}
+
         <Divider sx={{ mt: 1, mb: 0.5 }} />
         <Box
           sx={{
@@ -683,8 +894,6 @@ const Fields = () => {
             mb: 2,
             mt: 2,
             fontSize: "14px",
-            // borderBottom: 1,
-            // borderColor: "divider",
           }}
         >
           <Autocomplete
@@ -702,9 +911,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                      options.findIndex(
-                        (opt: any) => opt?.email === selectedEmails?.email
-                      ) % colors?.length
+                    options.findIndex(
+                      (opt: any) => opt?.email === selectedEmails?.email
+                    ) % colors?.length
                     ],
                 }}
               />
@@ -718,7 +927,13 @@ const Fields = () => {
           />
         </Box>
 
-        {selectionField || showSidebar ? (
+        {selectionField ||
+          showSidebar ||
+          checkboxes.length > 0 ||
+          delCheckboxes.length > 0 ||
+          radios.length > 0 ||
+          Object.values(textFields).length > 0 ||
+          delRadios.length > 0 ? (
           <>
             <Typography variant="body2" sx={{ fontSize: "14px" }}>
               {selectionField}
@@ -732,8 +947,8 @@ const Fields = () => {
               }}
               control={
                 <Checkbox
-                  checked={requiredField}
-                  onChange={(e) => setRequiredField(e.target.checked)}
+                  checked={requiredCheckbox}
+                  onChange={(e) => setRequiredCheckbox(e.target.checked)}
                   name="requiredField"
                   color="primary"
                   sx={{
@@ -749,10 +964,11 @@ const Fields = () => {
             />
             <Divider style={{ margin: "10px 0" }} />
             {/* for short abswer */}
-            {showSidebar == "[ Text ]" && (
+
+            {Object.values(textFields).length > 0 && (
               <TextField
                 label="Placeholder" // Label text
-                value={placeHolder}
+                value={textFields.placeholder}
                 onChange={(e: any) => handleGetValue(e)} // Handle input changes
                 fullWidth
                 size="small"
@@ -786,73 +1002,143 @@ const Fields = () => {
               />
             )}
 
-            <>
-              <div style={{ display: "flex" }}>
-                <IconButton color="secondary" sx={{ ml: -1.3 }}>
-                  <img src={checkIcon} alt="Check Icon" />
-                </IconButton>{" "}
-                <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
-                  CheckBox
-                </Typography>
-              </div>
+            {radios?.length > 0 && (
               <div>
-                <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
-                  Value
-                </Typography>
-                {checkboxes.map((checkbox, index) => (
-                  <div
-                    key={checkbox.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginBottom: "8px",
+                <div style={{ display: "flex" }}>
+                  <IconButton color="secondary" sx={{ ml: -1.3 }}>
+                    <img src={radioIcon} alt="Check Icon" />
+                  </IconButton>{" "}
+                  <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
+                    Radio
+                  </Typography>
+                </div>
+                <div>
+                  <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
+                    Value
+                  </Typography>
+                  {radios?.map((radio, index) => (
+                    <div
+                      key={radio.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <TextField
+                        value={radio.label}
+                        onChange={(e) => handleLabelChangeRadio(e, index)}
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                      />
+                      <IconButton
+                        onClick={() => deleteRadio(index)}
+                        aria-label="delete"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </div>
+                  ))}
+                  <Button
+                    onClick={addRadio}
+                    sx={{
+                      mt: 0.5,
+                      ml: -1,
+                      fontSize: "12px",
+                      textTransform: "none !important",
+                      borderRadius: 0,
+                      color:
+                        activeSection === "collaborate"
+                          ? "primary.main"
+                          : "black",
+                      fontWeight: "bold",
+                      "&:hover": {
+                        borderBottom: 2,
+                        borderColor: "primary.main",
+                        backgroundColor: "transparent",
+                      },
+                      borderColor:
+                        activeSection === "collaborate"
+                          ? "primary.main"
+                          : "transparent",
                     }}
                   >
-                    <TextField
-                      value={checkbox.label}
-                      onChange={(e) => handleLabelChange2(e, index)}
-                      // value={item.label}
-                      // onChange={(e) => handleLabelChange(index, e.target.value)}
-                      fullWidth
-                      size="small"
-                      variant="standard"
-                    />
-                    <IconButton
-                      onClick={() => deleteCheckbox(index)}
-                      aria-label="delete"
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </div>
-                ))}
-                <Button
-                  onClick={addCheckbox}
-                  sx={{
-                    mt: 0.5,
-                    ml: -1,
-                    fontSize: "12px",
-                    textTransform: "none !important",
-                    borderRadius: 0,
-                    color:
-                      activeSection === "collaborate"
-                        ? "primary.main"
-                        : "black",
-                    fontWeight: "bold",
-                    "&:hover": {
-                      borderBottom: 2,
-                      borderColor: "primary.main",
-                      backgroundColor: "transparent",
-                    },
-                    borderColor:
-                      activeSection === "collaborate"
-                        ? "primary.main"
-                        : "transparent",
-                  }}
-                >
-                  + Add value
-                </Button>
+                    + Add new Radio
+                  </Button>
+                </div>
               </div>
-            </>
+            )}
+
+            {checkboxes?.length > 0 && (
+              <div>
+                <div style={{ display: "flex" }}>
+                  <IconButton color="secondary" sx={{ ml: -1.3 }}>
+                    <img src={checkIcon} alt="Check Icon" />
+                  </IconButton>{" "}
+                  <Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
+                    CheckBox
+                  </Typography>
+                </div>
+                <div>
+                  <Typography variant="body1" sx={{ mt: 1, mb: 1 }}>
+                    Value
+                  </Typography>
+                  {checkboxes?.map((checkbox, index) => (
+                    <div
+                      key={checkbox.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <TextField
+                        value={checkbox.label}
+                        onChange={(e) => handleLabelChange2(e, index)}
+                        // value={item.label}
+                        // onChange={(e) => handleLabelChange(index, e.target.value)}
+                        fullWidth
+                        size="small"
+                        variant="standard"
+                      />
+                      <IconButton
+                        onClick={() => deleteCheckbox(index)}
+                        aria-label="delete"
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </div>
+                  ))}
+                  <Button
+                    onClick={addCheckbox}
+                    sx={{
+                      mt: 0.5,
+                      ml: -1,
+                      fontSize: "12px",
+                      textTransform: "none !important",
+                      borderRadius: 0,
+                      color:
+                        activeSection === "collaborate"
+                          ? "primary.main"
+                          : "black",
+                      fontWeight: "bold",
+                      "&:hover": {
+                        borderBottom: 2,
+                        borderColor: "primary.main",
+                        backgroundColor: "transparent",
+                      },
+                      borderColor:
+                        activeSection === "collaborate"
+                          ? "primary.main"
+                          : "transparent",
+                    }}
+                  >
+                    + Add value
+                  </Button>
+                </div>
+              </div>
+            )}
 
             <Divider style={{ margin: "10px 0" }} />
             <div style={{ flex: 1, textAlign: "right", marginTop: "0px" }}>
@@ -872,9 +1158,17 @@ const Fields = () => {
                   fontSize: "0.675rem",
                 }}
                 onClick={() => {
-                  setSelectionField("");
-                  setCheckboxes([]);
-                  setShowSidebar("");
+                  {
+                    radios.length > 0 && handleRemoveRadios();
+                  }
+                  {
+                    checkboxes.length > 0 && handleRemoveCheckboxes();
+                  }
+
+                  {
+                    Object.values(textFields).length > 0 &&
+                      handleRemoveTextFields();
+                  }
                 }}
               >
                 Remove
@@ -903,14 +1197,19 @@ const Fields = () => {
                   // } else if (inputValue.trim() !== "") {
                   //   handleAddSignatory(inputValue.trim());
                   // }
-                  {
-                    (showSidebar == "[ Radio Button ]" ||
-                      showSidebar == "[ Checkbox ]") &&
-                      handleSaveCheckboxes();
+                  if (
+                    showSidebar === "[ Checkbox ]" ||
+                    checkboxes.length > 0 ||
+                    delCheckboxes.length > 0
+                  ) {
+                    handleSaveCheckboxes();
                   }
-                  // setShowButtons(false);
-                  handleSetValue();
-                  setShowSidebar("");
+                  if (radios.length > 0 || delRadios.length > 0) {
+                    handleSaveRadios();
+                  }
+                  {
+                    Object.values(textFields).length > 0 && handleSetValue();
+                  }
                 }}
               >
                 Save & Close

@@ -135,6 +135,10 @@ interface ContractContextProps {
   setIsTemplate: Dispatch<SetStateAction<any>>;
   temlatePoupup: any | null;
   setTemlatePoupup: Dispatch<SetStateAction<any>>;
+  auditTrails:any[];
+  setAuditTrails: Dispatch<SetStateAction<any>>;
+  trackChanges:any[];
+  setTrackChanges: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -220,6 +224,10 @@ export const ContractContext = createContext<ContractContextProps>({
   temlatePoupup: {},
   setTemlatePoupup: () => {},
   inputRef: { current: null },
+  auditTrails:[],
+  setAuditTrails:()=>{},
+  trackChanges:[],
+  setTrackChanges:()=>{}
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -322,6 +330,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     status: "",
     expire: "",
   });
+
 
   const updateContractOverview = (overview: any) => {
     if (contract !== null) {
@@ -527,6 +536,9 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [contract, comments, collaborater, attachments]);
 
+  const [auditTrails,setAuditTrails] = useState<any>([])
+
+  const [trackChanges,setTrackChanges] = useState<any>([])
   return (
     <ContractContext.Provider
       value={{
@@ -611,7 +623,11 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         IsTemplate,
         setIsTemplate,
         temlatePoupup,
-        setTemlatePoupup,
+        setTemlatePoupup,  
+        auditTrails,
+        setAuditTrails,
+        trackChanges,
+        setTrackChanges
       }}
     >
       {children}

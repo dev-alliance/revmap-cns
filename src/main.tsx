@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css"
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -12,6 +13,7 @@ import { registerLicense } from "@syncfusion/ej2-base";
 registerLicense(
   "Ngo9BigBOggjHTQxAR8/V1NBaF1cWGhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdEFjXH1acHBVTmBYVkRxXg=="
 );
+import 'react-quill/dist/quill.snow.css';
 const theme = createTheme({
   typography: {
     fontFamily: ["Nunito Sans", "sans-serif"].join(","),

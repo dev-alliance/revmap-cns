@@ -1,6 +1,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 /* for now  */
 /* Works on Chrome, Edge, and Safari */
@@ -729,3 +730,217 @@ body {
 .e-de-blink-cursor {
   border-left: 1px solid rgb(0, 136, 255) !important;
 } */
+
+
+.b-r{
+  border-right: 1px solid #cccccc;
+  padding-right: 10px;
+}
+
+.b-s{
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.ql-formats {
+  position: relative;
+  /* display: inline-block; */
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 4px;
+  padding: 4px; /* Add padding to create space inside the dropdown */
+}
+
+.d-flex {
+  display: flex; /* Use flexbox for inline layout */
+  align-items: center; /* Center-align items vertically */
+}
+
+.d-flex button {
+  padding: 8px 16px;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  text-align: center; /* Center-align text */
+  border-left: 1px solid #ccc; /* Optional: add a border between buttons */
+}
+
+.d-flex button:first-child {
+  border-left: none; /* Remove border from the first button */
+}
+
+.d-flex button:hover {
+  background-color: #f1f1f1;
+}
+
+/* #5280ff */
+.input-comment{
+  border-bottom:"1px solid #c8c8c8";
+  width:90%;
+  background-color:"#e4ebff";
+}
+
+/* .input-comment:focus{
+  border-bottom: #5280ff;
+  background-color: red;
+} */
+
+/* Example of integrating fonts */
+
+/* Define your font classes */
+.ql-font-arial {
+  font-family: 'Arial', sans-serif; /* Ensure 'Arial' is available on client */
+}
+
+.ql-font-comic-sans {
+  font-family: 'Comic Sans MS', cursive; /* Ensure 'Comic Sans MS' is available on client */
+}
+
+.ql-font-courier-new{
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.ql-editor .ql-font-arial {
+  font-family: 'Arial', sans-serif; /* Ensure 'Arial' is available on client */
+}
+
+.ql-editor .ql-font-comic-sans {
+  font-family: 'Comic Sans MS', cursive; /* Ensure 'Comic Sans MS' is available on client */
+}
+
+.ql-font-georgia{
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.ql-font-helvetica{
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.ql-font-lucida{
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.css-1ms7hib-MuiTimelineItem-root::before{
+  display: none;
+}
+
+
+.css-1ms7hib-MuiTimelineItem-root{
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+}
+
+
+.ql-container.ql-snow{
+  min-height: 375px;
+}
+
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill{
+ fill: #737373; 
+}
+
+.ql-snow .ql-stroke{
+  fill: none;
+  stroke: #737373;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+/* Hide default numbering on ordered lists */
+.ql-editor ol[data-list="upper-alpha"],
+.ql-editor ol[data-list="lower-alpha"] {
+  list-style-type: none;
+  counter-reset: list-item;
+}
+
+/* Custom styles for ordered list items */
+.ql-editor li[data-list="upper-alpha"] {
+  list-style-type: none;
+  counter-increment: list-item;
+  margin-left: 20px;
+}
+
+.ql-editor li[data-list="upper-alpha"]::before {
+  content: counter(list-item, upper-alpha) '. ';
+  color: black; /* Adjust color as needed */
+}
+
+.ql-editor li[data-list="lower-alpha"] {
+  list-style-type: none;
+  counter-increment: list-item;
+  margin-left: 20px;
+}
+
+.ql-editor li[data-list="lower-alpha"]::before {
+  content: counter(list-item, lower-alpha) '. ';
+  color: black; /* Adjust color as needed */
+}
+
+
+.ql-editor li[data-list="lower-greek"] {
+  list-style-type: none;
+  counter-increment: list-item;
+  margin-left: 20px;
+}
+
+.ql-editor li[data-list="lower-greek"]::before {
+  content: counter(list-item, lower-greek) '. ';
+  color: black; /* Adjust color as needed */
+}
+
+
+.ql-editor li[data-list="upper-roman"] {
+  list-style-type: none;
+  counter-increment: list-item;
+  margin-left: 20px;
+}
+
+.ql-editor li[data-list="upper-roman"]::before {
+  content: counter(list-item, upper-roman) '. ';
+  color: black; /* Adjust color as needed */
+}
+
+.ql-editor li[data-list="lower-roman"] {
+  list-style-type: none;
+  counter-increment: list-item;
+  margin-left: 20px;
+}
+
+.ql-editor li[data-list="lower-roman"]::before {
+  content: counter(list-item, lower-roman) '. ';
+  color: black; /* Adjust color as needed */
+}
+
+.ql-editor li[data-list="default"] {
+  list-style-type: none;
+  counter-increment: list-item;
+  margin-left: 20px;
+}
+
+.ql-editor li[data-list="default"]::before {
+  content: counter(list-item, ordered) '. ';
+  color: black; /* Adjust color as needed */
+}
+
+
+ql-editor li[data-list="bullet"] {
+  list-style-type: none;
+  counter-increment: list-item;
+  margin-left: 20px;
+}
+
+.ql-editor li[data-list="bullet"]::before {
+  content: counter(list-item, disc) '. ';
+  color: black; /* Adjust color as needed */
+}

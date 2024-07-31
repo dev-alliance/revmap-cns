@@ -45,3 +45,18 @@
 .read-the-docs {
   color: #888;
 }
+
+
+#toolbar {
+  display: flex;
+  align-items: center;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-weight: bold;
+  padding: 0 5px; /* Adjust the padding to control spacing around the separator */
+  user-select: none;
+}

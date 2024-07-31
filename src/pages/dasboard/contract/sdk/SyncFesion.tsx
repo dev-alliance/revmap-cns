@@ -41,6 +41,7 @@ import {
   Box,
   ListItemText,
   ListItemButton,
+  Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
@@ -85,7 +86,15 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-
+import ReactQuill from "react-quill";
+import QuillToolbar, { formats, modules } from "./QuillToolbar";
+import TrackChanges from "./TrackChanges";
+import DiffMatchPatch, {
+  DIFF_INSERT,
+  DIFF_DELETE,
+  DIFF_EQUAL,
+  // @ts-ignore
+} from "diff-match-patch";
 DocumentEditorComponent.Inject(
   Selection,
   Editor,
@@ -139,6 +148,10 @@ function SyncFesion() {
     setLeftSidebarExpanded,
     setFormState,
     inputRef,
+    auditTrails,
+    setAuditTrails,
+    trackChanges,
+    setTrackChanges,
     // setIsLoading,
     // isLoading,
   } = useContext(ContractContext);
@@ -190,6 +203,13 @@ function SyncFesion() {
 
   const editorContainerRef: any = useRef(null);
 
+  useEffect(() => {
+    if (editorContainerRef) {
+      const document = editorContainerRef?.current;
+      setEditorRefContext(document);
+    }
+  }, []);
+
   const saveDocumentToState = (): void => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor) {
@@ -220,9 +240,18 @@ function SyncFesion() {
         toast.error("Please enter the name of the document");
         return;
       }
-
+      console.log(user);
+      setAuditTrails([
+        ...(auditTrails || []),
+        {
+          user: user?.firstName,
+          date: new Date(),
+          message: "has added the new version",
+        },
+      ]);
+      console.log(auditTrails);
       setDocumentReady(false); // Reset the document ready state
-      saveDocumentToState(); // Start saving the document to state
+      // saveDocumentToState(); // Start saving the document to state
       if (uplodTrackFile) {
         setDocumentReady(true);
       }
@@ -329,7 +358,7 @@ function SyncFesion() {
 
     createPayload();
   }, [documentReady]);
-  console.log(showBlock), "block show";
+  // console.log(showBlock), "block show";
 
   const [openDropdowns, setOpenDropdowns] = useState({
     file: false,
@@ -445,6 +474,7 @@ function SyncFesion() {
       case "strikethrough":
         // Toggles the strikethrough of selected content
         documentEditor.editor.toggleStrikethrough();
+        documentReady;
         break;
       case "subscript":
         // Toggles the subscript of selected content
@@ -668,10 +698,19 @@ function SyncFesion() {
       text: "Double",
     },
   ];
-
   useEffect(() => {
-    const documentEditor = editorContainerRef?.current?.documentEditor;
-    setEditorRefContext(documentEditor);
+    const editorContainer = editorContainerRef.current;
+    if (editorContainer) {
+      editorContainer.getEditor().on("selection-change", handleChangeSelection);
+    }
+
+    return () => {
+      if (editorContainer) {
+        editorContainer
+          .getEditor()
+          .off("selection-change", handleChangeSelection);
+      }
+    };
   }, []);
 
   const [showTableTools, setShowTableTools] = useState(false);
@@ -1054,7 +1093,7 @@ function SyncFesion() {
     setEditMode(true);
     setEnabelEditing(false);
     const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.focusIn(); // Focusing the editor
+    // documentEditor.focusIn(); // Focusing the editor
     const buttons = document.querySelectorAll(".e-tbar-btn");
     const items = document.querySelectorAll(".e-toolbar-item");
     items.forEach((item) => {
@@ -1075,7 +1114,7 @@ function SyncFesion() {
     setEditMode(false);
     setEnabelEditing(true);
     const documentEditor = editorContainerRef.current?.documentEditor;
-    documentEditor.focusIn(); // Focusing the editor
+    // documentEditor.focusIn(); // Focusing the editor
     const buttons = document.querySelectorAll(".e-tbar-btn");
     const items = document.querySelectorAll(".e-toolbar-item");
     items.forEach((item) => {
@@ -1104,6 +1143,325 @@ function SyncFesion() {
     calculateWidth(); // Call on mount and documentName change
   }, [documentName]);
 
+  const initialText =
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium minima doloremque pariatur?";
+
+  const [editorHtml, setEditorHtml] = useState<any>(initialText);
+  const [addedString, setAddedString] = useState("");
+  const [deletedString, setDeletedString] = useState("");
+  const stripHtml = (html: any) => {
+    return html.replace(/<\/?[^>]+(>|$)/g, "");
+  };
+
+  // const getTextPositions = (text: any) => {
+  //   // Function to get the positions of each line or text block
+  //   const lines: any = text.split('\n');
+  //   return lines.map((line: any, index: number) => ({
+  //     line,
+  //     position: index
+  //   }));
+  // };
+
+  const dmp = new DiffMatchPatch();
+
+  const handleChange = (html: string) => {
+    const newText = html;
+    const oldText = editorHtml;
+
+    // Compute differences between old and new text
+    const diffs = dmp.diff_main(oldText, newText);
+    dmp.diff_cleanupSemantic(diffs);
+
+    let addedContent = "";
+    let deletedContent = "";
+    let position = 0; // Track position in the text
+
+    // Process differences
+    diffs.forEach((diff: any) => {
+      if (diff[0] === 1) {
+        // DIFF_INSERT
+        addedContent += diff[1];
+        position += diff[1].length; // Update position
+      } else if (diff[0] === -1) {
+        // DIFF_DELETE
+        deletedContent += diff[1];
+      }
+    });
+
+    // Handle added content
+    if (addedContent) {
+      setAddedString((prev) => {
+        const updatedAddedString = prev + addedContent;
+
+        // Update track changes for insertion with position
+        setTrackChanges((prevTrackChanges: any) => [
+          ...prevTrackChanges.filter(
+            (change: any) => change.action !== "INSERTED"
+          ),
+          {
+            user: user?.firstName,
+            changes: updatedAddedString,
+            action: "INSERTED",
+            date: new Date(),
+            position: position, // Track position
+          },
+        ]);
+
+        return updatedAddedString;
+      });
+    }
+
+    // Handle deleted content
+    if (deletedContent) {
+      setAddedString((prevAdded) => {
+        const updatedAddedString = prevAdded.replace(deletedContent, "");
+        setTrackChanges((prevTrackChanges: any) => [
+          ...prevTrackChanges.filter(
+            (change: any) => change.action !== "INSERTED"
+          ),
+          {
+            user: user?.firstName,
+            changes: updatedAddedString,
+            action: "INSERTED",
+            date: new Date(),
+            position: position, // Track position
+          },
+        ]);
+        return updatedAddedString;
+      });
+
+      setDeletedString((prev) => {
+        const updatedDeletedString = prev + deletedContent;
+
+        // Update track changes for deletion with position
+        setTrackChanges((prevTrackChanges: any) => [
+          ...prevTrackChanges.filter(
+            (change: any) => change.action !== "DELETED"
+          ),
+          {
+            user: user?.firstName,
+            changes: updatedDeletedString,
+            action: "DELETED",
+            date: new Date(),
+            position: position, // Track position
+          },
+        ]);
+
+        return updatedDeletedString;
+      });
+    }
+
+    // Clean up track changes
+    if (
+      !addedString ||
+      addedString.trim().replace(/<\/?p>/g, "").length === 0
+    ) {
+      setTrackChanges((prev: any) =>
+        prev.filter((a: any) => a.action !== "INSERTED")
+      );
+    }
+    if (!deletedContent) {
+      setTrackChanges((prev: any) =>
+        prev.filter((a: any) => a.action !== "DELETED")
+      );
+    }
+    // Update editorHtml state
+    setEditorHtml(html);
+  };
+
+  const rejectChange = (changeToReject: any) => {
+    const { action, changes } = changeToReject;
+
+    if (action === "INSERTED") {
+      // Remove inserted content from the editor
+      let updatedHtml = editorHtml;
+
+      // Use a regex to remove all occurrences of the changes text
+      updatedHtml = updatedHtml.replace(new RegExp(changes, "g"), "");
+
+      // Update state
+      setEditorHtml(updatedHtml);
+
+      // Update track changes
+      setTrackChanges((prev: any) =>
+        prev.filter((change: any) => change !== changeToReject)
+      );
+    } else if (action === "DELETED") {
+      // Add deleted content back to the editor
+      const updatedHtml = editorHtml + changes;
+
+      // Update state
+      setEditorHtml(updatedHtml);
+
+      // Update track changes
+      setTrackChanges((prev: any) =>
+        prev.filter((change: any) => change !== changeToReject)
+      );
+    }
+  };
+
+  const [selection, setSelection] = useState<any>(null);
+  const [comment, setComment] = useState("");
+  const [selectionBounds, setSelectionBounds] = useState<any>(null);
+  const [commentButtonStyle, setCommentButtonStyle] = useState({});
+  const [comments, setComments] = useState<any>([]);
+  const selectionRef = useRef(null);
+
+  useEffect(() => {
+    const editor = editorContainerRef.current.getEditor();
+    if (editor && selection) {
+      const bounds = editor.getBounds(selection.index);
+      setButtonPosition({ top: bounds.bottom - 10 });
+    }
+  }, [selection]);
+
+  const handleChangeSelection = (range: any) => {
+    if (range && range.length > 0) {
+      setSelection(range);
+      selectionRef.current = range; // Store the selection in the ref
+      const existingComment = comments.find(
+        (comment: any) =>
+          comment.range.index === range.index &&
+          comment.range.length === range.length
+      );
+      if (existingComment) {
+        setCurrentComment(existingComment.text);
+      } else {
+        setCurrentComment("");
+      }
+      // SetOpenComment(true);
+    } else {
+      setSelection(null);
+    }
+  };
+
+  const [buttonPosition, setButtonPosition] = useState<any>({
+    top: 0,
+    left: 0,
+  });
+
+  const handleCommentChange = (e: any) => {
+    setComment(e.target.value);
+  };
+
+  const [openComment, SetOpenComment] = useState<boolean>(false);
+  const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [isInternal, setIsInternal] = useState<boolean>(false);
+  const [currentComment, setCurrentComment] = useState("");
+
+  const addComment = () => {
+    console.log(recipients);
+    if (editComment) {
+      const updatedComments = comments.map((comment: any) => {
+        if (comment.range.index === editCommentIndex) {
+          // Ensure you are checking the correct condition here
+          return {
+            ...comment,
+            text: currentComment,
+            date: new Date(),
+            user: user?.firstName,
+          };
+        }
+        return comment;
+      });
+      setComments(updatedComments);
+      setEditComment(false);
+      SetOpenComment(false);
+      setCurrentComment("");
+    } else {
+      // Add new comment
+      if (selection && currentComment) {
+        const newComment = {
+          range: selection,
+          text: currentComment,
+          style: {
+            top: buttonPosition.top, // No need to add "px"
+          },
+          access: isInternal ? "Internal" : "Public",
+          date: new Date(),
+          user: user?.firstName,
+        };
+
+        const newComments = [...comments, newComment];
+        setComments(newComments);
+        SetOpenComment(false);
+        setCurrentComment("");
+        setEditComment(false);
+      }
+    }
+  };
+
+  const handleReply = (index: number) => {
+    if (reply.length > 0) {
+      setComments((prevComments: any) => {
+        const updatedComments = [...prevComments];
+        if (!updatedComments[index].replies) {
+          updatedComments[index].replies = [];
+        }
+        updatedComments[index].replies.push({
+          text: reply,
+          date: new Date(),
+          user: user?.firstName,
+        });
+
+        return updatedComments;
+      });
+    }
+    setCurrentComment("");
+    setReply("");
+    SetOpenComment(false);
+    setEditComment(false);
+    setAddReply(false);
+  };
+
+  const [editComment, setEditComment] = useState<boolean>(false);
+  const [editCommentIndex, setEditCommmentIndex] = useState<number>(0);
+  const [addReply, setAddReply] = useState<boolean>(false);
+  const [reply, setReply] = useState<string>("");
+
+  const [addSigns, setAddSigns] = useState<boolean>(true);
+  const handleClickSignatures = () => {
+    setAddSigns(!addSigns);
+    if (addSigns) {
+      setAuditTrails([
+        ...auditTrails,
+        {
+          user: user.firstName,
+          date: new Date(),
+          message: "enabled the pre-set signature block",
+        },
+      ]);
+      if (editorContainerRef && editorContainerRef.current) {
+        const quill = editorContainerRef.current.getEditor();
+        const length = quill.getLength(); // Get the length of the editor content
+
+        // Clear existing signature content by removing the last signature-blot
+        const root = quill.root;
+        const existingBlots = root.querySelectorAll(".main-signature");
+        existingBlots.forEach((blot: any) => blot.remove());
+
+        // Insert new signature blot
+        quill.insertEmbed(length - 1, "signature-blot", { recipients });
+      }
+    } else {
+      if (editorContainerRef && editorContainerRef.current) {
+        setAuditTrails([
+          ...auditTrails,
+          {
+            user: user.firstName,
+            date: new Date(),
+            message: "disabled the pre-set signature block",
+          },
+        ]);
+        const quill = editorContainerRef.current.getEditor();
+        const root = quill.root;
+        const existingBlots = root.querySelectorAll(".main-signature");
+        existingBlots.forEach((blot: any) => blot.remove());
+      }
+    }
+  };
+
   return (
     <>
       {isLoading && (
@@ -1124,7 +1482,7 @@ function SyncFesion() {
       <div
         style={{
           width: "100%",
-          height: "100vh",
+          // height: "100vh",
           opacity: isLoading ? "0%" : "100%",
         }}
       >
@@ -1176,6 +1534,8 @@ function SyncFesion() {
               style={{
                 border: "1px solid #174B8B",
                 borderRadius: "4px",
+                display: "flex",
+                alignItems: "center",
               }}
             >
               <svg
@@ -1193,9 +1553,9 @@ function SyncFesion() {
                 />
               </svg>
 
-              <p className="text-[#155be5] text-[15px] leading-[28px] ">
+              <span className="text-[#155be5] text-[15px] leading-[28px] ">
                 Manage Folder
-              </p>
+              </span>
             </div>
           </Box>
           {IsTemplate ? (
@@ -1299,16 +1659,15 @@ function SyncFesion() {
               <>
                 <div className="relative  ">
                   <button
-                    className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${
-                      showBlock == "uploadTrack"
-                        ? "text-gray-300"
-                        : "text-black hover:text-gray-700"
-                    }`}
+                    className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${showBlock == "uploadTrack"
+                      ? "text-gray-300"
+                      : "text-black hover:text-gray-700"
+                      }`}
                     disabled={showBlock == "uploadTrack"}
                     onClick={() => toggleDropdown("signature")}
-                    // onMouseEnter={() => {
-                    //   toggleDropdown("signature");
-                    // }}
+                  // onMouseEnter={() => {
+                  //   toggleDropdown("signature");
+                  // }}
                   >
                     Manage Document
                     <span
@@ -1559,12 +1918,12 @@ function SyncFesion() {
                         }}
                         className="px-2 py-2   flex items-center gap-x-2"
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            !recipients.some(
-                              (recipient: any) => recipient.signature
-                            )
-                              ? "inherit"
-                              : "#E4EDF8")
+                        (e.currentTarget.style.backgroundColor =
+                          !recipients.some(
+                            (recipient: any) => recipient.signature
+                          )
+                            ? "inherit"
+                            : "#E4EDF8")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.backgroundColor = "initial")
@@ -1613,12 +1972,12 @@ function SyncFesion() {
                           reverToReview(), toggleDropdown("signature");
                         }}
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            !recipients.some(
-                              (recipient: any) => recipient.signature
-                            )
-                              ? "inherit"
-                              : "#E4EDF8")
+                        (e.currentTarget.style.backgroundColor =
+                          !recipients.some(
+                            (recipient: any) => recipient.signature
+                          )
+                            ? "inherit"
+                            : "#E4EDF8")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.backgroundColor = "initial")
@@ -1911,7 +2270,7 @@ function SyncFesion() {
                     </ul>
                   )}
                 </div>
-                <p className="text-[14px] font-regular flex whitespace-nowrap ">
+                <span className="text-[14px] font-regular flex whitespace-nowrap ">
                   Approvals:{" "}
                   {
                     approvers.filter((recipient: any) => recipient.signature)
@@ -1927,9 +2286,9 @@ function SyncFesion() {
                   >
                     Manage{" "}
                   </span>{" "}
-                </p>
+                </span>
 
-                <p className="text-[14px] font-regular flex whitespace-nowrap">
+                <span className="text-[14px] font-regular flex whitespace-nowrap">
                   Signers:{" "}
                   {
                     recipients.filter((recipient: any) => recipient.signature)
@@ -1945,9 +2304,9 @@ function SyncFesion() {
                   >
                     Manage{" "}
                   </span>{" "}
-                </p>
+                </span>
 
-                <p className="text-[14px] font-regular flex whitespace-nowrap">
+                <span className="text-[14px] font-regular flex whitespace-nowrap">
                   Collaborators:{" "}
                   {collaborater?.filter((dt: any) => dt.permission).length}/
                   {collaborater?.length}
@@ -1963,9 +2322,9 @@ function SyncFesion() {
                   >
                     Manage{" "}
                   </span>{" "}
-                </p>
+                </span>
 
-                <p className="text-[14px] font-regular flex whitespace-nowrap">
+                <span className="text-[14px] font-regular flex whitespace-nowrap">
                   Fields: 0/0{" "}
                   <span
                     style={{
@@ -1978,7 +2337,7 @@ function SyncFesion() {
                   >
                     Manage{" "}
                   </span>{" "}
-                </p>
+                </span>
               </>
             )}
           </div>
@@ -2099,13 +2458,14 @@ function SyncFesion() {
         {(showBlock === "" || documentContent == "word") && (
           <div
             style={{
-              display: "flex",
-              width: "100%",
-              height: "100vh",
+              // display: "flex",
+              width: "",
               borderTop: "1px solid #174b8b",
+              height: "100%",
+              // overflow:"auto"
             }}
           >
-            <DocumentEditorContainerComponent
+            {/* <DocumentEditorContainerComponent
               ref={editorContainerRef}
               id="container"
               height="88vh"
@@ -2117,7 +2477,815 @@ function SyncFesion() {
                 searchHighlightColor: "red",
               }}
               created={onCreated}
-            />
+            /> */}
+            <div
+              style={{
+                backgroundColor: "#fefefe",
+              }}
+            >
+              <QuillToolbar />
+            </div>
+
+            <div
+              style={{
+                height: "78vh",
+                overflowX: "auto",
+              }}
+            >
+              <Grid
+                container
+                spacing={2}
+                // justifyContent="center"
+                // alignItems="center"
+                style={{
+                  height: "100%",
+                  padding: "20px 0px",
+                  overflowX: "auto",
+                }}
+              >
+                <Grid
+                  item
+                  xs={8}
+                  style={{
+                    height: "100%",
+                    position: "relative",
+                    // alignSelf: "center",
+                  }}
+                >
+                  <ReactQuill
+                    ref={editorContainerRef}
+                    modules={modules}
+                    formats={formats}
+                    value={editorHtml} // Replace with your editor content state
+                    onChange={handleChange} // Replace with your onChange handler
+                    onChangeSelection={handleChangeSelection}
+                    style={{
+                      border: "1px solid #f2f2f2",
+                      borderRadius: "5px",
+                      background: "#fefefe",
+                      width: comments.length > 0 ? "70%" : "100%",
+                      minHeight: 375,
+                      height: "100%",
+                    }}
+                    onFocus={() => {
+                      setAddReply(false);
+                    }}
+                  />
+                  {selection && (
+                    <Tooltip title="Add Commment">
+                      <button
+                        onClick={() => SetOpenComment(true)}
+                        style={{
+                          position: "absolute",
+                          top: `${buttonPosition.top}px`,
+                          left: `97%`,
+                          padding: "8px 12px",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <svg
+                          width="30px"
+                          height="30px"
+                          viewBox="0 0 1024 1024"
+                          className="icon"
+                          version="1.1"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z"
+                            fill="#4CAF50"
+                          />
+                          <path
+                            d="M448 298.666667h128v426.666666h-128z"
+                            fill="#FFFFFF"
+                          />
+                          <path
+                            d="M298.666667 448h426.666666v128H298.666667z"
+                            fill="#FFFFFF"
+                          />
+                        </svg>
+                      </button>
+                    </Tooltip>
+                  )}
+                  {openComment && (
+                    <div
+                      style={{
+                        background: "white",
+                        width: 282,
+                        position: "absolute",
+                        top: `${buttonPosition.top}px`,
+                        left: `90%`,
+                        border: "1px solid #fefefe",
+                        boxShadow: "rgba(60,64,67,.15) 0 1px 3px 1px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          padding: 10,
+                          alignItems: "center",
+                        }}
+                      >
+                        <div style={{ padding: 10 }}>
+                          <svg
+                            width="20px"
+                            height="20px"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <circle
+                              cx="12"
+                              cy="6"
+                              r="4"
+                              stroke="#1C274C"
+                              stroke-width="1.5"
+                            />
+                            <path
+                              d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
+                              stroke="#1C274C"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                            />
+                          </svg>
+                        </div>
+                        <div style={{ padding: 0 }}>
+                          <b style={{ fontSize: 14 }}>{user?.firstName}</b>
+                          <div style={{ fontSize: 14 }}>
+                            {isInternal ? (
+                              <span style={{ display: "flex" }}>
+                                <svg
+                                  width="18px"
+                                  height="18px"
+                                  viewBox="0 0 512 512"
+                                  version="1.1"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <g
+                                    id="Page-1"
+                                    stroke="none"
+                                    stroke-width="1"
+                                    fill="none"
+                                    fill-rule="evenodd"
+                                  >
+                                    <g
+                                      id="icon"
+                                      fill="#000000"
+                                      transform="translate(42.666667, 64.000000)"
+                                    >
+                                      <path
+                                        d="M234.666667,1.42108547e-14 L234.666667,341.333333 L362.666667,341.333333 L362.666667,128 L277.333333,128 L277.333333,85.3333333 L405.333333,85.3333333 L405.333,341.333 L426.666667,341.333333 L426.666667,384 L234.666667,384 L234.666667,384 L21.3333333,384 L21.333,383.999 L3.55271368e-14,384 L3.55271368e-14,341.333333 L21.333,341.333 L21.3333333,1.42108547e-14 L234.666667,1.42108547e-14 Z M192,42.6666667 L64,42.6666667 L64,341.333333 L106.666667,341.333333 L106.666667,277.333333 L149.333333,277.333333 L149.333333,341.333333 L192,341.333333 L192,42.6666667 Z M320,256 L320,298.666667 L277.333333,298.666667 L277.333333,256 L320,256 Z M149.333333,170.666667 L149.333333,213.333333 L106.666667,213.333333 L106.666667,170.666667 L149.333333,170.666667 Z M320,170.666667 L320,213.333333 L277.333333,213.333333 L277.333333,170.666667 L320,170.666667 Z M149.333333,85.3333333 L149.333333,128 L106.666667,128 L106.666667,85.3333333 L149.333333,85.3333333 Z"
+                                        id="Combined-Shape"
+                                      ></path>
+                                    </g>
+                                  </g>
+                                </svg>{" "}
+                                Internal
+                              </span>
+                            ) : (
+                              <span style={{ display: "flex" }}>
+                                <svg
+                                  fill="#000000"
+                                  width="18px"
+                                  height="18px"
+                                  viewBox="0 -8 72 72"
+                                  id="Layer_1"
+                                  data-name="Layer 1"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <title>world</title>
+                                  <path d="M59.25,12.42l-.83.27L54,13.08l-1.27,2-.91-.29L48.23,11.6l-.52-1.66L47,8.16l-2.23-2-2.63-.51-.06,1.2,2.58,2.52,1.26,1.48-1.42.75-1.15-.34-1.73-.73,0-1.39L39.42,8.2l-.75,3.29L36.38,12l.23,1.84,3,.57.52-2.93,2.46.37,1.14.67h1.84L46.8,15l3.34,3.38-.25,1.32-2.69-.34-4.64,2.34-3.34,4-.43,1.78H37.58l-2.23-1-2.17,1,.54,2.29.94-1.09,1.67,0-.12,2,1.38.4L39,32.67,41.2,32l2.57.4,3,.8,1.48.18,2.52,2.86,4.87,2.86-3.15,6-3.32,1.54-1.26,3.44-4.81,3.21-.51,1.85A28,28,0,0,0,59.25,12.42Z" />
+                                  <path d="M39.22,42.63l-2-3.78L39.05,35l-1.87-.56-2.1-2.11-4.66-1L28.88,28v1.92H28.2l-4-5.44V20l-2.94-4.78-4.67.83H13.43l-1.59-1,2-1.6-2,.46A28,28,0,0,0,36,56a29,29,0,0,0,3.51-.25l-.29-3.39s1.29-5,1.29-5.2S39.22,42.63,39.22,42.63Z" />
+                                  <path d="M18.41,9l5-.7,2.29-1.25,2.58.74,4.12-.23,1.42-2.22,2.05.34,5-.47,1.38-1.52,2-1.29,2.74.41,1-.15a27.91,27.91,0,0,0-33.51,7.49h0ZM37.18,2.78,40,1.21l1.84,1.06-2.66,2-2.54.26-1.14-.74ZM28.71,3,30,3.54,31.63,3l.9,1.56-3.82,1L26.88,4.5S28.67,3.35,28.71,3Z" />
+                                </svg>{" "}
+                                Public
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <textarea
+                          name="comment"
+                          placeholder="Enter Comment"
+                          rows={1}
+                          value={currentComment}
+                          onChange={(e) => setCurrentComment(e.target.value)}
+                          style={{
+                            borderBottom: isFocusedInput
+                              ? "1px solid #5280ff"
+                              : "1px solid #c8c8c8",
+                            background: "#f4f4f4",
+                            width: "90%",
+                            outline: "none",
+                          }}
+                          onFocus={() => {
+                            setIsFocusedInput(true);
+                            if (selectionRef.current) {
+                              setSelection(selectionRef.current); // Restore the selection
+                              SetOpenComment(true);
+                            }
+                          }}
+                          onBlur={() => setIsFocusedInput(false)}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          padding: 10,
+                        }}
+                      >
+                        <Tooltip title="Visible by everyone including external users">
+                          <div
+                            style={{
+                              display: "flex",
+                              marginLeft: 3,
+                              background: isPublic ? "#e4ebff" : "",
+                              alignItems: "center",
+                              padding: 2,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              setIsPublic(true);
+                              setIsInternal(false);
+                            }}
+                          >
+                            <span>
+                              <svg
+                                fill="#000000"
+                                width="18px"
+                                height="18px"
+                                viewBox="0 -8 72 72"
+                                id="Layer_1"
+                                data-name="Layer 1"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <title>world</title>
+                                <path d="M59.25,12.42l-.83.27L54,13.08l-1.27,2-.91-.29L48.23,11.6l-.52-1.66L47,8.16l-2.23-2-2.63-.51-.06,1.2,2.58,2.52,1.26,1.48-1.42.75-1.15-.34-1.73-.73,0-1.39L39.42,8.2l-.75,3.29L36.38,12l.23,1.84,3,.57.52-2.93,2.46.37,1.14.67h1.84L46.8,15l3.34,3.38-.25,1.32-2.69-.34-4.64,2.34-3.34,4-.43,1.78H37.58l-2.23-1-2.17,1,.54,2.29.94-1.09,1.67,0-.12,2,1.38.4L39,32.67,41.2,32l2.57.4,3,.8,1.48.18,2.52,2.86,4.87,2.86-3.15,6-3.32,1.54-1.26,3.44-4.81,3.21-.51,1.85A28,28,0,0,0,59.25,12.42Z" />
+                                <path d="M39.22,42.63l-2-3.78L39.05,35l-1.87-.56-2.1-2.11-4.66-1L28.88,28v1.92H28.2l-4-5.44V20l-2.94-4.78-4.67.83H13.43l-1.59-1,2-1.6-2,.46A28,28,0,0,0,36,56a29,29,0,0,0,3.51-.25l-.29-3.39s1.29-5,1.29-5.2S39.22,42.63,39.22,42.63Z" />
+                                <path d="M18.41,9l5-.7,2.29-1.25,2.58.74,4.12-.23,1.42-2.22,2.05.34,5-.47,1.38-1.52,2-1.29,2.74.41,1-.15a27.91,27.91,0,0,0-33.51,7.49h0ZM37.18,2.78,40,1.21l1.84,1.06-2.66,2-2.54.26-1.14-.74ZM28.71,3,30,3.54,31.63,3l.9,1.56-3.82,1L26.88,4.5S28.67,3.35,28.71,3Z" />
+                              </svg>
+                            </span>
+                            <span style={{ fontSize: 14 }}>Public</span>
+                          </div>
+                        </Tooltip>
+                        <Tooltip title="Only visible by you and your company's users">
+                          <div
+                            style={{
+                              display: "flex",
+                              marginLeft: 6,
+                              background: isInternal ? "#e4ebff" : "",
+                              alignItems: "center",
+                              padding: 2,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              setIsPublic(false);
+                              setIsInternal(true);
+                            }}
+                          >
+                            <span>
+                              <svg
+                                width="18px"
+                                height="18px"
+                                viewBox="0 0 512 512"
+                                version="1.1"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <g
+                                  id="Page-1"
+                                  stroke="none"
+                                  stroke-width="1"
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                >
+                                  <g
+                                    id="icon"
+                                    fill="#000000"
+                                    transform="translate(42.666667, 64.000000)"
+                                  >
+                                    <path
+                                      d="M234.666667,1.42108547e-14 L234.666667,341.333333 L362.666667,341.333333 L362.666667,128 L277.333333,128 L277.333333,85.3333333 L405.333333,85.3333333 L405.333,341.333 L426.666667,341.333333 L426.666667,384 L234.666667,384 L234.666667,384 L21.3333333,384 L21.333,383.999 L3.55271368e-14,384 L3.55271368e-14,341.333333 L21.333,341.333 L21.3333333,1.42108547e-14 L234.666667,1.42108547e-14 Z M192,42.6666667 L64,42.6666667 L64,341.333333 L106.666667,341.333333 L106.666667,277.333333 L149.333333,277.333333 L149.333333,341.333333 L192,341.333333 L192,42.6666667 Z M320,256 L320,298.666667 L277.333333,298.666667 L277.333333,256 L320,256 Z M149.333333,170.666667 L149.333333,213.333333 L106.666667,213.333333 L106.666667,170.666667 L149.333333,170.666667 Z M320,170.666667 L320,213.333333 L277.333333,213.333333 L277.333333,170.666667 L320,170.666667 Z M149.333333,85.3333333 L149.333333,128 L106.666667,128 L106.666667,85.3333333 L149.333333,85.3333333 Z"
+                                      id="Combined-Shape"
+                                    ></path>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                            <span style={{ fontSize: 14 }}>Internal</span>
+                          </div>
+                        </Tooltip>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "end",
+                            width: "100%",
+                          }}
+                        >
+                          <button
+                            style={{
+                              backgroundColor: "#5280ff",
+                              border: "1px solid #5280ff",
+                              color: "white",
+                              borderRadius: 4,
+                              padding: 1,
+                              fontSize: 13,
+                            }}
+                            onClick={addComment}
+                          >
+                            <b>Comment</b>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {comments?.map((e: any, index: number) => {
+                    const isInternal = e.access === "Internal";
+                    if (isInternal && recipients.length === 0) {
+                      return null;
+                    }
+
+                    return (
+                      <div
+                        style={{
+                          background: "#fffceb",
+                          width: 300,
+                          position: "absolute",
+                          top: `${e?.style?.top}px`,
+                          left: `72%`,
+                          border: "1px solid #fefefe",
+                          boxShadow: "rgba(60,64,67,.15) 0 1px 3px 1px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            padding: 10,
+                            // alignItems: "center",
+                          }}
+                        >
+                          <div style={{ padding: 10 }}>
+                            <svg
+                              width="20px"
+                              height="20px"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle
+                                cx="12"
+                                cy="6"
+                                r="4"
+                                stroke="#1C274C"
+                                stroke-width="1.5"
+                              />
+                              <path
+                                d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
+                                stroke="#1C274C"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                              />
+                            </svg>
+                          </div>
+                          <div style={{ padding: 0 }}>
+                            <b style={{ fontSize: 14 }}>{e.user?.firstName}</b>
+                            <div style={{ fontSize: 14, display: "flex" }}>
+                              {e.access === "Internal" ? (
+                                <span style={{ display: "flex" }}>
+                                  <svg
+                                    width="18px"
+                                    height="18px"
+                                    viewBox="0 0 512 512"
+                                    version="1.1"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <g
+                                      id="Page-1"
+                                      stroke="none"
+                                      stroke-width="1"
+                                      fill="none"
+                                      fill-rule="evenodd"
+                                    >
+                                      <g
+                                        id="icon"
+                                        fill="#000000"
+                                        transform="translate(42.666667, 64.000000)"
+                                      >
+                                        <path
+                                          d="M234.666667,1.42108547e-14 L234.666667,341.333333 L362.666667,341.333333 L362.666667,128 L277.333333,128 L277.333333,85.3333333 L405.333333,85.3333333 L405.333,341.333 L426.666667,341.333333 L426.666667,384 L234.666667,384 L234.666667,384 L21.3333333,384 L21.333,383.999 L3.55271368e-14,384 L3.55271368e-14,341.333333 L21.333,341.333 L21.3333333,1.42108547e-14 L234.666667,1.42108547e-14 Z M192,42.6666667 L64,42.6666667 L64,341.333333 L106.666667,341.333333 L106.666667,277.333333 L149.333333,277.333333 L149.333333,341.333333 L192,341.333333 L192,42.6666667 Z M320,256 L320,298.666667 L277.333333,298.666667 L277.333333,256 L320,256 Z M149.333333,170.666667 L149.333333,213.333333 L106.666667,213.333333 L106.666667,170.666667 L149.333333,170.666667 Z M320,170.666667 L320,213.333333 L277.333333,213.333333 L277.333333,170.666667 L320,170.666667 Z M149.333333,85.3333333 L149.333333,128 L106.666667,128 L106.666667,85.3333333 L149.333333,85.3333333 Z"
+                                          id="Combined-Shape"
+                                        ></path>
+                                      </g>
+                                    </g>
+                                  </svg>{" "}
+                                  Internal
+                                </span>
+                              ) : (
+                                <span style={{ display: "flex" }}>
+                                  <svg
+                                    fill="#000000"
+                                    width="18px"
+                                    height="18px"
+                                    viewBox="0 -8 72 72"
+                                    id="Layer_1"
+                                    data-name="Layer 1"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <title>world</title>
+                                    <path d="M59.25,12.42l-.83.27L54,13.08l-1.27,2-.91-.29L48.23,11.6l-.52-1.66L47,8.16l-2.23-2-2.63-.51-.06,1.2,2.58,2.52,1.26,1.48-1.42.75-1.15-.34-1.73-.73,0-1.39L39.42,8.2l-.75,3.29L36.38,12l.23,1.84,3,.57.52-2.93,2.46.37,1.14.67h1.84L46.8,15l3.34,3.38-.25,1.32-2.69-.34-4.64,2.34-3.34,4-.43,1.78H37.58l-2.23-1-2.17,1,.54,2.29.94-1.09,1.67,0-.12,2,1.38.4L39,32.67,41.2,32l2.57.4,3,.8,1.48.18,2.52,2.86,4.87,2.86-3.15,6-3.32,1.54-1.26,3.44-4.81,3.21-.51,1.85A28,28,0,0,0,59.25,12.42Z" />
+                                    <path d="M39.22,42.63l-2-3.78L39.05,35l-1.87-.56-2.1-2.11-4.66-1L28.88,28v1.92H28.2l-4-5.44V20l-2.94-4.78-4.67.83H13.43l-1.59-1,2-1.6-2,.46A28,28,0,0,0,36,56a29,29,0,0,0,3.51-.25l-.29-3.39s1.29-5,1.29-5.2S39.22,42.63,39.22,42.63Z" />
+                                    <path d="M18.41,9l5-.7,2.29-1.25,2.58.74,4.12-.23,1.42-2.22,2.05.34,5-.47,1.38-1.52,2-1.29,2.74.41,1-.15a27.91,27.91,0,0,0-33.51,7.49h0ZM37.18,2.78,40,1.21l1.84,1.06-2.66,2-2.54.26-1.14-.74ZM28.71,3,30,3.54,31.63,3l.9,1.56-3.82,1L26.88,4.5S28.67,3.35,28.71,3Z" />
+                                  </svg>{" "}
+                                  Public
+                                </span>
+                              )}
+                              <span style={{ marginLeft: 10 }}>
+                                {new Date(e.date).toDateString() ===
+                                  new Date().toDateString()
+                                  ? new Date(e.date).getTime() ===
+                                    new Date().getTime()
+                                    ? "Just now"
+                                    : `Today ${new Date(
+                                      e.date
+                                    ).toLocaleTimeString()}`
+                                  : `${new Date(
+                                    e.date
+                                  ).toDateString()} ${new Date(
+                                    e.date
+                                  ).toLocaleTimeString()}`}
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            style={{ marginLeft: 3 }}
+                            onClick={() => {
+                              setEditComment(true);
+                              setEditCommmentIndex(index);
+                              setCurrentComment(e.text);
+                            }}
+                          >
+                            <svg
+                              width="18px"
+                              height="18px"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                              <g
+                                id="SVGRepo_tracerCarrier"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                              <g id="SVGRepo_iconCarrier">
+                                {" "}
+                                <path
+                                  fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M20.8477 1.87868C19.6761 0.707109 17.7766 0.707105 16.605 1.87868L2.44744 16.0363C2.02864 16.4551 1.74317 16.9885 1.62702 17.5692L1.03995 20.5046C0.760062 21.904 1.9939 23.1379 3.39334 22.858L6.32868 22.2709C6.90945 22.1548 7.44285 21.8693 7.86165 21.4505L22.0192 7.29289C23.1908 6.12132 23.1908 4.22183 22.0192 3.05025L20.8477 1.87868ZM18.0192 3.29289C18.4098 2.90237 19.0429 2.90237 19.4335 3.29289L20.605 4.46447C20.9956 4.85499 20.9956 5.48815 20.605 5.87868L17.9334 8.55027L15.3477 5.96448L18.0192 3.29289ZM13.9334 7.3787L3.86165 17.4505C3.72205 17.5901 3.6269 17.7679 3.58818 17.9615L3.00111 20.8968L5.93645 20.3097C6.13004 20.271 6.30784 20.1759 6.44744 20.0363L16.5192 9.96448L13.9334 7.3787Z"
+                                  fill="#505050"
+                                />{" "}
+                              </g>
+                            </svg>
+                          </div>
+                          <div
+                            onClick={() => {
+                              setComments((prevComment: any) =>
+                                prevComment.filter(
+                                  (_: any, i: number) => i !== index
+                                )
+                              );
+                            }}
+                          >
+                            <svg
+                              width="20px"
+                              height="20px"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="#000000"
+                            >
+                              <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+                              <g
+                                id="SVGRepo_tracerCarrier"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+
+                              <g id="SVGRepo_iconCarrier">
+                                {" "}
+                                <title />{" "}
+                                <g id="Complete">
+                                  {" "}
+                                  <g id="tick">
+                                    {" "}
+                                    <polyline
+                                      fill="none"
+                                      points="3.7 14.3 9.6 19 20.3 5"
+                                      stroke="#505050"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                    />{" "}
+                                  </g>{" "}
+                                </g>{" "}
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                        {editComment && (
+                          <>
+                            <div style={{ textAlign: "center" }}>
+                              <textarea
+                                name="comment"
+                                placeholder="Enter Comment"
+                                rows={1}
+                                value={currentComment}
+                                onChange={(e) =>
+                                  setCurrentComment(e.target.value)
+                                }
+                                style={{
+                                  borderBottom: isFocusedInput
+                                    ? "1px solid #5280ff"
+                                    : "1px solid #c8c8c8",
+                                  background: "#f4f4f4",
+                                  width: "90%",
+                                  outline: "none",
+                                }}
+                                onFocus={() => {
+                                  setIsFocusedInput(true);
+                                  if (selectionRef.current) {
+                                    setSelection(selectionRef.current); // Restore the selection
+                                    SetOpenComment(true);
+                                  }
+                                }}
+                                onBlur={() => setIsFocusedInput(false)}
+                              />
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                padding: 10,
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "end",
+                                  width: "100%",
+                                }}
+                              >
+                                <button
+                                  style={{
+                                    backgroundColor: "#5280ff",
+                                    border: "1px solid #5280ff",
+                                    color: "white",
+                                    borderRadius: 4,
+                                    padding: 1,
+                                    fontSize: 13,
+                                  }}
+                                  onClick={addComment}
+                                >
+                                  <b>Update</b>
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                        {editComment === false ? (
+                          <div
+                            style={{ padding: "0 20px", paddingBottom: 10 }}
+                            onClick={() => {
+                              setAddReply(true);
+                            }}
+                          >
+                            <p
+                              style={{
+                                wordBreak: "break-word",
+                                whiteSpace: "pre-wrap",
+                              }}
+                            >
+                              {e.text}
+                            </p>
+                          </div>
+                        ) : null}
+                        {e?.replies &&
+                          e?.replies?.map((reply: any, index: any) => {
+                            return (
+                              <div
+                                style={{
+                                  borderTop: "1px solid red",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    padding: 10,
+                                    // alignItems: "center",
+                                  }}
+                                >
+                                  <div style={{ padding: 10 }}>
+                                    <svg
+                                      width="20px"
+                                      height="20px"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <circle
+                                        cx="12"
+                                        cy="6"
+                                        r="4"
+                                        stroke="#1C274C"
+                                        stroke-width="1.5"
+                                      />
+                                      <path
+                                        d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
+                                        stroke="#1C274C"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                      />
+                                    </svg>
+                                  </div>
+                                  <div style={{ padding: 0 }}>
+                                    <b style={{ fontSize: 14 }}>
+                                      {e.user?.firstName}
+                                    </b>
+                                    <div
+                                      style={{ fontSize: 14, display: "flex" }}
+                                    >
+                                      {e.access === "Internal" ? (
+                                        <span style={{ display: "flex" }}>
+                                          <svg
+                                            width="18px"
+                                            height="18px"
+                                            viewBox="0 0 512 512"
+                                            version="1.1"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                          >
+                                            <g
+                                              id="Page-1"
+                                              stroke="none"
+                                              stroke-width="1"
+                                              fill="none"
+                                              fill-rule="evenodd"
+                                            >
+                                              <g
+                                                id="icon"
+                                                fill="#000000"
+                                                transform="translate(42.666667, 64.000000)"
+                                              >
+                                                <path
+                                                  d="M234.666667,1.42108547e-14 L234.666667,341.333333 L362.666667,341.333333 L362.666667,128 L277.333333,128 L277.333333,85.3333333 L405.333333,85.3333333 L405.333,341.333 L426.666667,341.333333 L426.666667,384 L234.666667,384 L234.666667,384 L21.3333333,384 L21.333,383.999 L3.55271368e-14,384 L3.55271368e-14,341.333333 L21.333,341.333 L21.3333333,1.42108547e-14 L234.666667,1.42108547e-14 Z M192,42.6666667 L64,42.6666667 L64,341.333333 L106.666667,341.333333 L106.666667,277.333333 L149.333333,277.333333 L149.333333,341.333333 L192,341.333333 L192,42.6666667 Z M320,256 L320,298.666667 L277.333333,298.666667 L277.333333,256 L320,256 Z M149.333333,170.666667 L149.333333,213.333333 L106.666667,213.333333 L106.666667,170.666667 L149.333333,170.666667 Z M320,170.666667 L320,213.333333 L277.333333,213.333333 L277.333333,170.666667 L320,170.666667 Z M149.333333,85.3333333 L149.333333,128 L106.666667,128 L106.666667,85.3333333 L149.333333,85.3333333 Z"
+                                                  id="Combined-Shape"
+                                                ></path>
+                                              </g>
+                                            </g>
+                                          </svg>{" "}
+                                          Internal
+                                        </span>
+                                      ) : (
+                                        <span style={{ display: "flex" }}>
+                                          <svg
+                                            fill="#000000"
+                                            width="18px"
+                                            height="18px"
+                                            viewBox="0 -8 72 72"
+                                            id="Layer_1"
+                                            data-name="Layer 1"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                          >
+                                            <title>world</title>
+                                            <path d="M59.25,12.42l-.83.27L54,13.08l-1.27,2-.91-.29L48.23,11.6l-.52-1.66L47,8.16l-2.23-2-2.63-.51-.06,1.2,2.58,2.52,1.26,1.48-1.42.75-1.15-.34-1.73-.73,0-1.39L39.42,8.2l-.75,3.29L36.38,12l.23,1.84,3,.57.52-2.93,2.46.37,1.14.67h1.84L46.8,15l3.34,3.38-.25,1.32-2.69-.34-4.64,2.34-3.34,4-.43,1.78H37.58l-2.23-1-2.17,1,.54,2.29.94-1.09,1.67,0-.12,2,1.38.4L39,32.67,41.2,32l2.57.4,3,.8,1.48.18,2.52,2.86,4.87,2.86-3.15,6-3.32,1.54-1.26,3.44-4.81,3.21-.51,1.85A28,28,0,0,0,59.25,12.42Z" />
+                                            <path d="M39.22,42.63l-2-3.78L39.05,35l-1.87-.56-2.1-2.11-4.66-1L28.88,28v1.92H28.2l-4-5.44V20l-2.94-4.78-4.67.83H13.43l-1.59-1,2-1.6-2,.46A28,28,0,0,0,36,56a29,29,0,0,0,3.51-.25l-.29-3.39s1.29-5,1.29-5.2S39.22,42.63,39.22,42.63Z" />
+                                            <path d="M18.41,9l5-.7,2.29-1.25,2.58.74,4.12-.23,1.42-2.22,2.05.34,5-.47,1.38-1.52,2-1.29,2.74.41,1-.15a27.91,27.91,0,0,0-33.51,7.49h0ZM37.18,2.78,40,1.21l1.84,1.06-2.66,2-2.54.26-1.14-.74ZM28.71,3,30,3.54,31.63,3l.9,1.56-3.82,1L26.88,4.5S28.67,3.35,28.71,3Z" />
+                                          </svg>{" "}
+                                          Public
+                                        </span>
+                                      )}
+                                      <span style={{ marginLeft: 10 }}>
+                                        {new Date(reply.date).toDateString() ===
+                                          new Date().toDateString()
+                                          ? new Date(reply.date).getTime() ===
+                                            new Date().getTime()
+                                            ? "Just now"
+                                            : `Today ${new Date(
+                                              reply.date
+                                            ).toLocaleTimeString()}`
+                                          : `${new Date(
+                                            reply.date
+                                          ).toDateString()} ${new Date(
+                                            reply.date
+                                          ).toLocaleTimeString()}`}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div
+                                  style={{
+                                    padding: "0 20px",
+                                    paddingBottom: 10,
+                                  }}
+                                  onClick={() => {
+                                    setAddReply(true);
+                                  }}
+                                >
+                                  <p
+                                    style={{
+                                      wordBreak: "break-word",
+                                      whiteSpace: "pre-wrap",
+                                    }}
+                                  >
+                                    {reply?.text}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        {addReply && (
+                          <div
+                            style={{
+                              borderTop: "1px solid red",
+                              padding: 20,
+                            }}
+                          >
+                            <div
+                              style={{
+                                textAlign: "center",
+                              }}
+                            >
+                              <textarea
+                                name="comment"
+                                placeholder="Reply"
+                                rows={1}
+                                value={reply}
+                                onChange={(e) => setReply(e.target.value)}
+                                style={{
+                                  borderBottom: isFocusedInput
+                                    ? "1px solid #5280ff"
+                                    : "1px solid #c8c8c8",
+                                  background: "#f4f4f4",
+                                  width: "90%",
+                                  outline: "none",
+                                }}
+                                onFocus={() => {
+                                  setIsFocusedInput(true);
+                                }}
+                                onBlur={() => setIsFocusedInput(false)}
+                              />
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "end",
+                                  width: "100%",
+                                  padding: 10,
+                                }}
+                              >
+                                <button
+                                  style={{
+                                    backgroundColor: "#5280ff",
+                                    border: "1px solid #5280ff",
+                                    color: "white",
+                                    borderRadius: 4,
+                                    padding: 1,
+                                    fontSize: 13,
+                                  }}
+                                  onClick={() => handleReply(index)}
+                                >
+                                  <b>Comment</b>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {/* <div className="form-check form-switch py-2">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      id="flexSwitchCheckChecked"
+                      onClick={handleClickSignatures}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexSwitchCheckChecked"
+                    >
+                      Use pre-set signature block
+                    </label>
+                  </div> */}
+                  {" "}
+                </Grid>
+                <Grid item xs={4}>
+                  {/* <TrackChanges rejectChange={rejectChange} /> */}
+                </Grid>
+              </Grid>
+            </div>
           </div>
         )}
         <Dialog
