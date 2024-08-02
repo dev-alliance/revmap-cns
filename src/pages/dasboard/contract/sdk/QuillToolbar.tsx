@@ -3,7 +3,7 @@ import useStore from "@/context/ZustandStore";
 import { MenuItem, Select, Tooltip } from "@mui/material";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Quill } from "react-quill";
-// @ts-ignore
+
 const CustomUndo = () => (
   <svg viewBox="0 0 18 18">
     <polygon className="ql-fill ql-stroke" points="6 10 4 12 2 10 6 10" />
@@ -46,9 +46,8 @@ class CheckboxContainerBlot extends BlockEmbed {
 
     let node = super.create();
     node.setAttribute("contenteditable", "false");
-    node.innerHTML = `<input type="checkbox" id="${value.id}" name="${
-      value.name
-    }" ${value.checked ? "checked" : ""} data-id="${value.id}"> ${value.label}`;
+    node.innerHTML = `<input type="checkbox" id="${value.id}" name="${value.name
+      }" ${value.checked ? "checked" : ""} data-id="${value.id}"> ${value.label}`;
     node.classList.add("checkbox-container");
     node.setAttribute("draggable", "true");
 
@@ -311,21 +310,19 @@ class SignatureBlot extends BlockEmbed {
     recipients.forEach((recipient: any, index: number) => {
       const initials = recipient.label
         ? recipient.label
-            .split(" ")
-            .map((word: any) => word.charAt(0))
-            .join("")
-            .substring(0, 2)
+          .split(" ")
+          .map((word: any) => word.charAt(0))
+          .join("")
+          .substring(0, 2)
         : recipient.email
-        ? recipient.email.charAt(0)
-        : "P";
+          ? recipient.email.charAt(0)
+          : "P";
 
       const child = document.createElement("div");
       child.className = "col-6";
-      child.innerHTML = ` <div style="background-color: ${
-        bubbleColors[index % bubbleColors.length]
-      }; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-align: center; margin-left:50%">${initials.toUpperCase()}</div>    <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Full Name</label> <input type="text" value=${
-        recipient.label || recipient.email
-      } /> </div>  <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Company</label> <input type="text"/> </div> <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;" className='px-2'>Title</label> <input type="text" /> </div> `;
+      child.innerHTML = ` <div style="background-color: ${bubbleColors[index % bubbleColors.length]
+        }; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-align: center; margin-left:50%">${initials.toUpperCase()}</div>    <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Full Name</label> <input type="text" value=${recipient.label || recipient.email
+        } /> </div>  <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Company</label> <input type="text"/> </div> <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;" className='px-2'>Title</label> <input type="text" /> </div> `;
       rowDiv.appendChild(child);
     });
     node.appendChild(outerDiv);
@@ -353,6 +350,8 @@ Quill.register(SignatureBlot);
 // Add sizes to whitelist and register them
 const SizeStyle = Quill.import("attributors/style/size");
 SizeStyle.whitelist = [
+  "8px",
+  "10px",
   "12px",
   "14px",
   "16px",
@@ -447,7 +446,12 @@ class AlphabetListItem extends ListItem {
     if (
       value === "upper-alpha" ||
       value === "lower-alpha" ||
-      value === undefined
+      value === undefined ||
+      value === "upper-roman" ||
+      value === "lower-roman" ||
+      value === "lower-greek" ||
+      value === "default" ||
+      value === "bullet"
     ) {
       const valueFromStorage = localStorage.getItem("list")
       node.setAttribute("data-list", valueFromStorage);
@@ -463,15 +467,14 @@ class AlphabetListItem extends ListItem {
   }
 
   format(name: any, value: any) {
-    console.log("value",value)
     if (
       name === "list" &&
       (value === "upper-alpha" || value === "lower-alpha" || value === "lower-greek"
-        ||value === "upper-roman" || value === "default" || value ==="lower-roman"
-        ||value === "bullet"
+        || value === "upper-roman" || value === "default" || value === "lower-roman"
+        || value === "bullet"
       )
     ) {
-      this.domNode.setAttribute("data-list", value);
+      this.domNode.setAttribute("data-list", localStorage.getItem("list"));
     } else {
       super.format(name, value);
     }
@@ -634,18 +637,34 @@ export default function QuillToolbar() {
       </div>
     );
   };
+  const [open, setOpen] = useState(false);
 
-  const handleListChange = (event: any) => {
-    const value = event.target.value;
 
-    localStorage.setItem("list",value)
-    // console.log(value);
+  const handleListClick = (value: string) => {
+    localStorage.setItem("list", value)
     if (editorRefContext) {
       if (value === "default") {
-        editorRefContext.getEditor()?.format("list","ordered"); // Remove list formatting
+        editorRefContext.getEditor()?.format("list", "ordered");
       } else {
-        editorRefContext.getEditor()?.format("list",value); // Remove list formatting
+        editorRefContext.getEditor()?.format("list", value);
       }
+    }
+    setOpen(false)
+
+  }
+  const selectRef: any = useRef(null);
+
+  const handleMouseEnter = () => {
+    if (selectRef.current) {
+      selectRef.current.size = selectRef.current.options;
+      selectRef.current.className = "ql-lineHeight"
+      console.log(selectRef.current.className)
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (selectRef.current) {
+      selectRef.current.size = 1;
     }
   };
   return (
@@ -663,7 +682,7 @@ export default function QuillToolbar() {
         </Tooltip>
       </span>
       <span className="ql-formats b-r">
-        <Tooltip title="Select Font">
+        <Tooltip title="Select Font" placement="top">
           <span className="ql-formats">
             <select className="ql-font b-r" defaultValue="arial">
               <option value="arial">Arial</option>
@@ -675,7 +694,7 @@ export default function QuillToolbar() {
             </select>
           </span>
         </Tooltip>
-        <Tooltip title="Select Headers" placement="bottom">
+        <Tooltip title="Select Headers" placement="top">
           <span className="ql-formats">
             <select
               className="ql-header"
@@ -690,9 +709,15 @@ export default function QuillToolbar() {
             </select>
           </span>
         </Tooltip>
-        <Tooltip title="Select Font Size">
+        <Tooltip title="Select Font Size" placement="top">
           <span className="ql-formats">
-            <select className="ql-size" defaultValue="16px">
+            <select className="ql-size" defaultValue="14px"
+              ref={selectRef}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <option value="8px">8px</option>
+              <option value="10px">10px</option>
               <option value="12px">12px</option>
               <option value="14px">14px</option>
               <option value="16px">16px</option>
@@ -732,69 +757,81 @@ export default function QuillToolbar() {
           display: width <= 855 ? "none" : "",
         }}
       >
-   
+
         <Select
-          className="ql-formats "
+          className="ql-formats select-list"
           renderValue={() => <ListSlectImage />}
-          onChange={handleListChange}
-          value="bullet"
+          ref={selectRef}
+          onMouseEnter={() => {
+            setOpen(true)
+          }}
+          onBlur={()=>setOpen(false)}
+          value="default"
           style={{
             height: 20,
             border: "none",
             outline: "none",
           }}
+          onMouseLeave={()=>setOpen(false)}
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
         >
-          <MenuItem
-            value="default"
-            className="d-flex align-items-center "
-            style={{ height: 32 }}
-          >
-            <DefaultList />
-            <div className="px-2">Default</div>
-          </MenuItem>
-          <MenuItem
-            value="lower-alpha"
-            className="d-flex align-items-center"
-            style={{ height: 32 }}
-          >
-            <LowerAlpha />
-            <div className="px-2">Lower Alpha</div>
-          </MenuItem>
-          <MenuItem
-            value="lower-greek"
-            className="d-flex align-items-center"
-            style={{ height: 32 }}
-          >
-            <LowerGreek />
-            <div className="px-2 ">Lower Greek</div>
-          </MenuItem>
-          <MenuItem
-            value="lower-roman"
-            className="d-flex align-items-center"
-            style={{ height: 32 }}
-          >
-            <LowerRoman />
-            <div className="px-2">Lower Roman</div>
-          </MenuItem>
-          <MenuItem
-            value="upper-alpha"
-            className="d-flex align-items-center"
-            style={{ height: 32 }}
-          >
-            <UpperAlpha />
-            <div className="px-2">Upper Alpha</div>
-          </MenuItem>
-          <MenuItem
-            value="upper-roman"
-            className="d-flex align-items-center"
-            style={{ height: 32 }}
-          >
-            <UpperRoman />
-            <div className="px-2">Upper Roman</div>
-          </MenuItem>
+          <div className="d-flex">
+            <MenuItem
+              value="default"
+              className="mx-1 border-menu"
+              style={{ height: 32 }}
+              onClick={() => handleListClick("default")}
+            >
+              <DefaultList />
+            </MenuItem>
+            <MenuItem
+              value="lower-alpha"
+              className="mx-1 border-menu"
+              style={{ height: 32 }}
+              onClick={() => handleListClick("lower-alpha")}
+            >
+              <LowerAlpha />
+            </MenuItem>
+            <MenuItem
+              value="lower-greek"
+              className="mx-1 border-menu"
+              style={{ height: 32 }}
+              onClick={() => handleListClick("lower-greek")}
+            >
+              <LowerGreek />
+            </MenuItem>
+          </div>
+          <div className="d-flex py-2" >
+            <MenuItem
+              value="lower-roman"
+              className="mx-1 border-menu"
+              style={{ height: 32 }}
+              onClick={() => handleListClick("lower-roman")}
+            >
+              <LowerRoman />
+            </MenuItem>
+            <MenuItem
+              value="upper-alpha"
+              className="mx-1 border-menu"
+              style={{ height: 32 }}
+              onClick={() => handleListClick("upper-alpha")}
+            >
+              <UpperAlpha />
+            </MenuItem>
+            <MenuItem
+              value="upper-roman"
+              className="mx-1 border-menu"
+              onClick={() => handleListClick("upper-roman")}
+              style={{ height: 32 }}
+            >
+              <UpperRoman />
+            </MenuItem>
+          </div>
         </Select>
 
-        <button className="ql-list" value="bullet" onClick={()=>localStorage.setItem("list","bullet")}></button>
+        <button className="ql-list" value="bullet" onClick={() => localStorage.setItem("list", "bullet")}></button>
         <Tooltip title="Increase indent">
           <button className="ql-indent" value="-1" />
         </Tooltip>
@@ -855,10 +892,11 @@ export default function QuillToolbar() {
       </span>
 
       <span className="ql-formats">
-        <button onClick={() => setShow(!show)}>⋮</button>
+        <button onMouseEnter={() => setShow(true)} onClick={() => setShow(!show)}>⋮</button>
         <span
-          className="dropdown-menu"
+          className="dropdown-menu-toolbar"
           style={{ display: show ? "block" : "none" }}
+          onMouseLeave={()=>setShow(false)}
         >
           <span className="ql-formats d-flex" style={{ display: "flex" }}>
             <span

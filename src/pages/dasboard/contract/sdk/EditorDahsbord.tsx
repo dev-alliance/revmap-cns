@@ -637,8 +637,8 @@ const MyComponent: React.FC = () => {
                           stroke: modules[key].isDisabled
                             ? "#656565" // Stroke color when the module is disabled
                             : selectedModule === key
-                              ? "#174B8B" // Stroke color when the module is the selected one
-                              : "white", // Default stroke color
+                            ? "#174B8B" // Stroke color when the module is the selected one
+                            : "white", // Default stroke color
                         },
                         "&:hover": {
                           backgroundColor:
@@ -758,7 +758,7 @@ const MyComponent: React.FC = () => {
         </Box>
       </Box>
       <SignatureDialog open={openDialog} onClosePre={handleCloseDialog} />
-      {/* <OpenSignatureDialog /> */}
+      <OpenSignatureDialog />
       <AlertBackDilog open={alertDilog} onClose={() => setAlertDilog(false)} />
     </>
   );

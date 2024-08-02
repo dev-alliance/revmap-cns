@@ -214,16 +214,16 @@ const Fields = () => {
         textFieldNode.innerHTML = `<input type="text" id="${textFields.id}" placeholder="${textFields.placeholder}" data-id="${textFields.id}">`;
         container!.appendChild(textFieldNode);
       }
-      // setAuditTrails([
-      //   ...auditTrails,
-      //   {
-      //     user: user.firstName,
-      //     date: new Date(),
-      //     message: `added text-field for ${
-      //       selectedEmails.label || selectedEmails.email
-      //     }`,
-      //   },
-      // ]);
+      setAuditTrails([
+        ...auditTrails,
+        {
+          user: user.firstName,
+          date: new Date(),
+          message: `added text-field for ${
+            selectedEmails.label || selectedEmails.email
+          }`,
+        },
+      ]);
 
       // Set the selection to the end of the editor content
       setTextFields({}); // Clear textFields object
@@ -653,9 +653,11 @@ const Fields = () => {
         } else {
           // Insert new checkbox into the container
           const checkboxNode = document.createElement("div");
-          checkboxNode.innerHTML = `<input type="checkbox" id="${checkbox.id
-            }" ${checkbox.checked ? "checked" : ""} data-id="${checkbox.id}"> ${checkbox.label
-            }`;
+          checkboxNode.innerHTML = `<input type="checkbox" id="${
+            checkbox.id
+          }" ${checkbox.checked ? "checked" : ""} data-id="${checkbox.id}"> ${
+            checkbox.label
+          }`;
           container!.appendChild(checkboxNode);
         }
       });
@@ -665,8 +667,9 @@ const Fields = () => {
         {
           user: user.firstName,
           date: new Date(),
-          message: `added checkbox for ${selectedEmails.label || selectedEmails.email
-            }`,
+          message: `added checkbox for ${
+            selectedEmails.label || selectedEmails.email
+          }`,
         },
       ]);
       // Set the selection to the end of the editor content
@@ -814,8 +817,9 @@ const Fields = () => {
         {
           user: user.firstName,
           date: new Date(),
-          message: `added radio for ${selectedEmails.label || selectedEmails.email
-            }`,
+          message: `added radio for ${
+            selectedEmails.label || selectedEmails.email
+          }`,
         },
       ]);
       emptyRadios();
@@ -911,9 +915,9 @@ const Fields = () => {
                 style={{
                   backgroundColor:
                     colors[
-                    options.findIndex(
-                      (opt: any) => opt?.email === selectedEmails?.email
-                    ) % colors?.length
+                      options.findIndex(
+                        (opt: any) => opt?.email === selectedEmails?.email
+                      ) % colors?.length
                     ],
                 }}
               />
@@ -928,12 +932,12 @@ const Fields = () => {
         </Box>
 
         {selectionField ||
-          showSidebar ||
-          checkboxes.length > 0 ||
-          delCheckboxes.length > 0 ||
-          radios.length > 0 ||
-          Object.values(textFields).length > 0 ||
-          delRadios.length > 0 ? (
+        showSidebar ||
+        checkboxes.length > 0 ||
+        delCheckboxes.length > 0 ||
+        radios.length > 0 ||
+        Object.values(textFields).length > 0 ||
+        delRadios.length > 0 ? (
           <>
             <Typography variant="body2" sx={{ fontSize: "14px" }}>
               {selectionField}

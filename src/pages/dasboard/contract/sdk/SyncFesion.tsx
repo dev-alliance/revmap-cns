@@ -25,7 +25,7 @@ import {
   PdfBitmap,
   SizeF,
 } from "@syncfusion/ej2-pdf-export";
-import { registerLicense } from "@syncfusion/ej2-base";
+import { registerLicense, select } from "@syncfusion/ej2-base";
 registerLicense(
   "ORg4AjUWIQA/Gnt2UVhiQlJPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSX1Tc0ViWHZcd3dVRWQ="
 );
@@ -643,23 +643,7 @@ function SyncFesion() {
     }
   };
 
-  // const addComment = (commentText: any, author: any) => {
-  //   const documentEditor = editorContainerRef.current?.documentEditor;
-  //   if (!documentEditor || !documentEditor.editor) {
-  //     console.error("Document Editor is not initialized yet.");
-  //     return;
-  //   }
-
-  //   // Check if any text is selected
-  //   if (documentEditor.selection && documentEditor.selection.text !== '') {
-  //     // Adds a comment to the selected text
-  //     documentEditor.editor.addComment(commentText, author);
-  //   } else {
-  //     alert('Please select text to comment on.');
-  //   }
-  // };
-
-  // text color highlight
+  //
   const [fontColor, setFontColor] = useState("#000000"); // Default font color
 
   // Function to change the font color
@@ -1301,12 +1285,10 @@ function SyncFesion() {
   };
 
   const [selection, setSelection] = useState<any>(null);
-  const [comment, setComment] = useState("");
-  const [selectionBounds, setSelectionBounds] = useState<any>(null);
-  const [commentButtonStyle, setCommentButtonStyle] = useState({});
   const [comments, setComments] = useState<any>([]);
-  const selectionRef = useRef(null);
+  const selectionRef = useRef<any>(null);
 
+  const [selectedRange, setSelectedRange] = useState<any>(null)
   useEffect(() => {
     const editor = editorContainerRef.current.getEditor();
     if (editor && selection) {
@@ -1318,8 +1300,11 @@ function SyncFesion() {
   const handleChangeSelection = (range: any) => {
     if (range && range.length > 0) {
       setSelection(range);
-      selectionRef.current = range; // Store the selection in the ref
-      const existingComment = comments.find(
+      selectionRef.current = range;
+      console.log(selection)
+      console.log(selectionRef.current)
+
+      const existingComment = comments?.find(
         (comment: any) =>
           comment.range.index === range.index &&
           comment.range.length === range.length
@@ -1329,7 +1314,6 @@ function SyncFesion() {
       } else {
         setCurrentComment("");
       }
-      // SetOpenComment(true);
     } else {
       setSelection(null);
     }
@@ -1340,9 +1324,7 @@ function SyncFesion() {
     left: 0,
   });
 
-  const handleCommentChange = (e: any) => {
-    setComment(e.target.value);
-  };
+
 
   const [openComment, SetOpenComment] = useState<boolean>(false);
   const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
@@ -1350,17 +1332,25 @@ function SyncFesion() {
   const [isInternal, setIsInternal] = useState<boolean>(false);
   const [currentComment, setCurrentComment] = useState("");
 
+  const commentInputRef: any = useRef(null)
+
+
+  useEffect(() => {
+    if (openComment && inputRef.current) {
+      commentInputRef.current.focus();
+    }
+  }, [openComment]);
+
+
   const addComment = () => {
-    console.log(recipients);
     if (editComment) {
-      const updatedComments = comments.map((comment: any) => {
-        if (comment.range.index === editCommentIndex) {
-          // Ensure you are checking the correct condition here
+      const updatedComments = comments.map((comment: any, index: number) => {
+        if (index === editCommentIndex) {
           return {
             ...comment,
             text: currentComment,
             date: new Date(),
-            user: user?.firstName,
+            user: user?.firstName || user?.email
           };
         }
         return comment;
@@ -1370,17 +1360,16 @@ function SyncFesion() {
       SetOpenComment(false);
       setCurrentComment("");
     } else {
-      // Add new comment
-      if (selection && currentComment) {
+      if (currentComment) {
         const newComment = {
-          range: selection,
+          range: selectionRef.current,
           text: currentComment,
           style: {
-            top: buttonPosition.top, // No need to add "px"
+            top: buttonPosition.top,
           },
           access: isInternal ? "Internal" : "Public",
           date: new Date(),
-          user: user?.firstName,
+          user: user?.firstName || user?.email
         };
 
         const newComments = [...comments, newComment];
@@ -1388,9 +1377,24 @@ function SyncFesion() {
         SetOpenComment(false);
         setCurrentComment("");
         setEditComment(false);
+
+        if (editorContainerRef) {
+          const editor = editorContainerRef.current.getEditor();
+          const { index, length } = selectionRef.current;
+          editor.formatText(index, length, { background: '#fde9ae' });
+
+          const remainingIndex = index + length;
+          const remainingLength = editor.getLength() - remainingIndex;
+          if (remainingLength > 0) {
+            editor.formatText(remainingIndex, remainingLength, { background: '' });
+          }
+        }
       }
     }
+    setSelection(null)
+    selectionRef.current = null;
   };
+
 
   const handleReply = (index: number) => {
     if (reply.length > 0) {
@@ -1402,7 +1406,7 @@ function SyncFesion() {
         updatedComments[index].replies.push({
           text: reply,
           date: new Date(),
-          user: user?.firstName,
+          user: user?.firstName || user?.email,
         });
 
         return updatedComments;
@@ -1461,6 +1465,7 @@ function SyncFesion() {
       }
     }
   };
+
 
   return (
     <>
@@ -2462,7 +2467,7 @@ function SyncFesion() {
               width: "",
               borderTop: "1px solid #174b8b",
               height: "100%",
-              // overflow:"auto"
+              overflow: "auto",
             }}
           >
             {/* <DocumentEditorContainerComponent
@@ -2491,21 +2496,30 @@ function SyncFesion() {
                 height: "78vh",
                 overflowX: "auto",
               }}
+              onClick={() => {
+                setAddReply(false)
+                SetOpenComment(false)
+                if (editorContainerRef) {
+                  const editor = editorContainerRef.current.getEditor();
+                  const { index, length } = selectionRef.current;
+                  editor.formatText(index, length, { background: "#fefefe" })
+                }
+              }}
             >
               <Grid
                 container
                 spacing={2}
                 // justifyContent="center"
-                // alignItems="center"
+                alignItems="center"
                 style={{
                   height: "100%",
-                  padding: "20px 0px",
+                  padding: "20px 20px",
                   overflowX: "auto",
                 }}
               >
                 <Grid
                   item
-                  xs={8}
+                  xs={10}
                   style={{
                     height: "100%",
                     position: "relative",
@@ -2534,11 +2548,20 @@ function SyncFesion() {
                   {selection && (
                     <Tooltip title="Add Commment">
                       <button
-                        onClick={() => SetOpenComment(true)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (editorContainerRef) {
+                            const editor = editorContainerRef.current.getEditor();
+                            const range = editor.getSelection();
+                            editor.formatText(range.index, range.length, { background: '#c8c8c8' });
+                          }
+                          SetOpenComment(true)
+                        }
+                        }
                         style={{
                           position: "absolute",
                           top: `${buttonPosition.top}px`,
-                          left: `97%`,
+                          left: comments.length > 0 ? `70%` : `97%`,
                           padding: "8px 12px",
                           color: "#fff",
                           border: "none",
@@ -2570,8 +2593,9 @@ function SyncFesion() {
                       </button>
                     </Tooltip>
                   )}
-                  {openComment && (
+                  {openComment === true && (
                     <div
+                      onClick={(e) => e.stopPropagation()}
                       style={{
                         background: "white",
                         width: 282,
@@ -2589,32 +2613,34 @@ function SyncFesion() {
                           alignItems: "center",
                         }}
                       >
-                        <div style={{ padding: 10 }}>
-                          <svg
-                            width="20px"
-                            height="20px"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle
-                              cx="12"
-                              cy="6"
-                              r="4"
-                              stroke="#1C274C"
-                              stroke-width="1.5"
-                            />
-                            <path
-                              d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
-                              stroke="#1C274C"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                            />
-                          </svg>
+                        <div
+                          className="icon mx-2"
+                          style={{
+                            height: 25,
+                            width: 25,
+                            borderRadius: "50%",
+                            background: "#b5082e",
+                            textAlign: "center",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            color: "white",
+                          }}
+                        >
+                          {user?.firstName
+                            ? user.firstName.split(" ").map((name: string) => name.charAt(0)).slice(0, 2).join("").toUpperCase()
+                            : user?.email
+                              ?.split(" ")
+                              .map((e: string) => e.charAt(0))
+                              .join("")
+                              .substring(0, 2)
+                              .toUpperCase()}
                         </div>
                         <div style={{ padding: 0 }}>
-                          <b style={{ fontSize: 14 }}>{user?.firstName}</b>
-                          <div style={{ fontSize: 14 }}>
+                          <b style={{ fontSize: user?.firstName ? 14 : user?.email ? 11 : '' }}>
+                            {user?.firstName || user?.email}
+                          </b>
+                          <div style={{ fontSize: 13, margin: 0 - 2 }}>
                             {isInternal ? (
                               <span style={{ display: "flex" }}>
                                 <svg
@@ -2672,6 +2698,7 @@ function SyncFesion() {
                           name="comment"
                           placeholder="Enter Comment"
                           rows={1}
+                          ref={commentInputRef}
                           value={currentComment}
                           onChange={(e) => setCurrentComment(e.target.value)}
                           style={{
@@ -2684,10 +2711,7 @@ function SyncFesion() {
                           }}
                           onFocus={() => {
                             setIsFocusedInput(true);
-                            if (selectionRef.current) {
-                              setSelection(selectionRef.current); // Restore the selection
-                              SetOpenComment(true);
-                            }
+
                           }}
                           onBlur={() => setIsFocusedInput(false)}
                         />
@@ -2807,7 +2831,6 @@ function SyncFesion() {
                     if (isInternal && recipients.length === 0) {
                       return null;
                     }
-
                     return (
                       <div
                         style={{
@@ -2824,176 +2847,195 @@ function SyncFesion() {
                           style={{
                             display: "flex",
                             padding: 10,
-                            // alignItems: "center",
+                            alignItems: "center",
+                            justifyContent: "space-between"
                           }}
                         >
-                          <div style={{ padding: 10 }}>
-                            <svg
-                              width="20px"
-                              height="20px"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
+                          <div className="d-flex">
+                            <div
+                              className="icon mx-2"
+                              style={{
+                                height: 30,
+                                width: 30,
+                                borderRadius: "50%",
+                                background: "#b5082e",
+                                textAlign: "center",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                color: "white",
+                              }}
                             >
-                              <circle
-                                cx="12"
-                                cy="6"
-                                r="4"
-                                stroke="#1C274C"
-                                stroke-width="1.5"
-                              />
-                              <path
-                                d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
-                                stroke="#1C274C"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                              />
-                            </svg>
-                          </div>
-                          <div style={{ padding: 0 }}>
-                            <b style={{ fontSize: 14 }}>{e.user?.firstName}</b>
-                            <div style={{ fontSize: 14, display: "flex" }}>
-                              {e.access === "Internal" ? (
-                                <span style={{ display: "flex" }}>
-                                  <svg
-                                    width="18px"
-                                    height="18px"
-                                    viewBox="0 0 512 512"
-                                    version="1.1"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <g
-                                      id="Page-1"
-                                      stroke="none"
-                                      stroke-width="1"
-                                      fill="none"
-                                      fill-rule="evenodd"
+                              {e.user
+                                ?.split(" ")
+                                .map((e: any) => e.charAt(0))
+                                .join("")
+                                .substring(0, 2)
+                                .toUpperCase()}
+                            </div>
+                            <div style={{ padding: 0 }}>
+                              <b
+                                style={{
+                                  fontSize: e.user?.includes("@") ? 10 : 14
+                                }}
+                              >
+                                {e.user}
+                              </b>
+                              <div style={{ fontSize: 14, display: "flex", margin: 0 - 3 }}
+                                className="py-1"
+                              >
+                                {e.access === "Internal" ? (
+                                  <span style={{ display: "flex" }}>
+                                    <svg
+                                      width="18px"
+                                      height="18px"
+                                      viewBox="0 0 512 512"
+                                      version="1.1"
+                                      xmlns="http://www.w3.org/2000/svg"
                                     >
                                       <g
-                                        id="icon"
-                                        fill="#000000"
-                                        transform="translate(42.666667, 64.000000)"
+                                        id="Page-1"
+                                        stroke="none"
+                                        stroke-width="1"
+                                        fill="none"
+                                        fill-rule="evenodd"
                                       >
-                                        <path
-                                          d="M234.666667,1.42108547e-14 L234.666667,341.333333 L362.666667,341.333333 L362.666667,128 L277.333333,128 L277.333333,85.3333333 L405.333333,85.3333333 L405.333,341.333 L426.666667,341.333333 L426.666667,384 L234.666667,384 L234.666667,384 L21.3333333,384 L21.333,383.999 L3.55271368e-14,384 L3.55271368e-14,341.333333 L21.333,341.333 L21.3333333,1.42108547e-14 L234.666667,1.42108547e-14 Z M192,42.6666667 L64,42.6666667 L64,341.333333 L106.666667,341.333333 L106.666667,277.333333 L149.333333,277.333333 L149.333333,341.333333 L192,341.333333 L192,42.6666667 Z M320,256 L320,298.666667 L277.333333,298.666667 L277.333333,256 L320,256 Z M149.333333,170.666667 L149.333333,213.333333 L106.666667,213.333333 L106.666667,170.666667 L149.333333,170.666667 Z M320,170.666667 L320,213.333333 L277.333333,213.333333 L277.333333,170.666667 L320,170.666667 Z M149.333333,85.3333333 L149.333333,128 L106.666667,128 L106.666667,85.3333333 L149.333333,85.3333333 Z"
-                                          id="Combined-Shape"
-                                        ></path>
+                                        <g
+                                          id="icon"
+                                          fill="#000000"
+                                          transform="translate(42.666667, 64.000000)"
+                                        >
+                                          <path
+                                            d="M234.666667,1.42108547e-14 L234.666667,341.333333 L362.666667,341.333333 L362.666667,128 L277.333333,128 L277.333333,85.3333333 L405.333333,85.3333333 L405.333,341.333 L426.666667,341.333333 L426.666667,384 L234.666667,384 L234.666667,384 L21.3333333,384 L21.333,383.999 L3.55271368e-14,384 L3.55271368e-14,341.333333 L21.333,341.333 L21.3333333,1.42108547e-14 L234.666667,1.42108547e-14 Z M192,42.6666667 L64,42.6666667 L64,341.333333 L106.666667,341.333333 L106.666667,277.333333 L149.333333,277.333333 L149.333333,341.333333 L192,341.333333 L192,42.6666667 Z M320,256 L320,298.666667 L277.333333,298.666667 L277.333333,256 L320,256 Z M149.333333,170.666667 L149.333333,213.333333 L106.666667,213.333333 L106.666667,170.666667 L149.333333,170.666667 Z M320,170.666667 L320,213.333333 L277.333333,213.333333 L277.333333,170.666667 L320,170.666667 Z M149.333333,85.3333333 L149.333333,128 L106.666667,128 L106.666667,85.3333333 L149.333333,85.3333333 Z"
+                                            id="Combined-Shape"
+                                          ></path>
+                                        </g>
                                       </g>
-                                    </g>
-                                  </svg>{" "}
-                                  Internal
-                                </span>
-                              ) : (
-                                <span style={{ display: "flex" }}>
-                                  <svg
-                                    fill="#000000"
-                                    width="18px"
-                                    height="18px"
-                                    viewBox="0 -8 72 72"
-                                    id="Layer_1"
-                                    data-name="Layer 1"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <title>world</title>
-                                    <path d="M59.25,12.42l-.83.27L54,13.08l-1.27,2-.91-.29L48.23,11.6l-.52-1.66L47,8.16l-2.23-2-2.63-.51-.06,1.2,2.58,2.52,1.26,1.48-1.42.75-1.15-.34-1.73-.73,0-1.39L39.42,8.2l-.75,3.29L36.38,12l.23,1.84,3,.57.52-2.93,2.46.37,1.14.67h1.84L46.8,15l3.34,3.38-.25,1.32-2.69-.34-4.64,2.34-3.34,4-.43,1.78H37.58l-2.23-1-2.17,1,.54,2.29.94-1.09,1.67,0-.12,2,1.38.4L39,32.67,41.2,32l2.57.4,3,.8,1.48.18,2.52,2.86,4.87,2.86-3.15,6-3.32,1.54-1.26,3.44-4.81,3.21-.51,1.85A28,28,0,0,0,59.25,12.42Z" />
-                                    <path d="M39.22,42.63l-2-3.78L39.05,35l-1.87-.56-2.1-2.11-4.66-1L28.88,28v1.92H28.2l-4-5.44V20l-2.94-4.78-4.67.83H13.43l-1.59-1,2-1.6-2,.46A28,28,0,0,0,36,56a29,29,0,0,0,3.51-.25l-.29-3.39s1.29-5,1.29-5.2S39.22,42.63,39.22,42.63Z" />
-                                    <path d="M18.41,9l5-.7,2.29-1.25,2.58.74,4.12-.23,1.42-2.22,2.05.34,5-.47,1.38-1.52,2-1.29,2.74.41,1-.15a27.91,27.91,0,0,0-33.51,7.49h0ZM37.18,2.78,40,1.21l1.84,1.06-2.66,2-2.54.26-1.14-.74ZM28.71,3,30,3.54,31.63,3l.9,1.56-3.82,1L26.88,4.5S28.67,3.35,28.71,3Z" />
-                                  </svg>{" "}
-                                  Public
-                                </span>
-                              )}
-                              <span style={{ marginLeft: 10 }}>
-                                {new Date(e.date).toDateString() ===
-                                  new Date().toDateString()
-                                  ? new Date(e.date).getTime() ===
-                                    new Date().getTime()
-                                    ? "Just now"
-                                    : `Today ${new Date(
+                                    </svg>{" "}
+                                    Internal
+                                  </span>
+                                ) : (
+                                  <span style={{ display: "flex" }}>
+                                    <svg
+                                      fill="#000000"
+                                      width="18px"
+                                      height="18px"
+                                      viewBox="0 -8 72 72"
+                                      id="Layer_1"
+                                      data-name="Layer 1"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <title>world</title>
+                                      <path d="M59.25,12.42l-.83.27L54,13.08l-1.27,2-.91-.29L48.23,11.6l-.52-1.66L47,8.16l-2.23-2-2.63-.51-.06,1.2,2.58,2.52,1.26,1.48-1.42.75-1.15-.34-1.73-.73,0-1.39L39.42,8.2l-.75,3.29L36.38,12l.23,1.84,3,.57.52-2.93,2.46.37,1.14.67h1.84L46.8,15l3.34,3.38-.25,1.32-2.69-.34-4.64,2.34-3.34,4-.43,1.78H37.58l-2.23-1-2.17,1,.54,2.29.94-1.09,1.67,0-.12,2,1.38.4L39,32.67,41.2,32l2.57.4,3,.8,1.48.18,2.52,2.86,4.87,2.86-3.15,6-3.32,1.54-1.26,3.44-4.81,3.21-.51,1.85A28,28,0,0,0,59.25,12.42Z" />
+                                      <path d="M39.22,42.63l-2-3.78L39.05,35l-1.87-.56-2.1-2.11-4.66-1L28.88,28v1.92H28.2l-4-5.44V20l-2.94-4.78-4.67.83H13.43l-1.59-1,2-1.6-2,.46A28,28,0,0,0,36,56a29,29,0,0,0,3.51-.25l-.29-3.39s1.29-5,1.29-5.2S39.22,42.63,39.22,42.63Z" />
+                                      <path d="M18.41,9l5-.7,2.29-1.25,2.58.74,4.12-.23,1.42-2.22,2.05.34,5-.47,1.38-1.52,2-1.29,2.74.41,1-.15a27.91,27.91,0,0,0-33.51,7.49h0ZM37.18,2.78,40,1.21l1.84,1.06-2.66,2-2.54.26-1.14-.74ZM28.71,3,30,3.54,31.63,3l.9,1.56-3.82,1L26.88,4.5S28.67,3.35,28.71,3Z" />
+                                    </svg>{" "}
+                                    Public
+                                  </span>
+                                )}
+                                <span style={{ marginLeft: 10 }}>
+                                  {new Date(e.date).toDateString() ===
+                                    new Date().toDateString()
+                                    ? new Date(e.date).getTime() ===
+                                      new Date().getTime()
+                                      ? "Just now"
+                                      : `Today ${new Date(
+                                        e.date
+                                      ).toLocaleTimeString()}`
+                                    : `${new Date(
                                       e.date
-                                    ).toLocaleTimeString()}`
-                                  : `${new Date(
-                                    e.date
-                                  ).toDateString()} ${new Date(
-                                    e.date
-                                  ).toLocaleTimeString()}`}
-                              </span>
+                                    ).toDateString()} ${new Date(
+                                      e.date
+                                    ).toLocaleTimeString()}`}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                          <div
-                            style={{ marginLeft: 3 }}
-                            onClick={() => {
-                              setEditComment(true);
-                              setEditCommmentIndex(index);
-                              setCurrentComment(e.text);
-                            }}
-                          >
-                            <svg
-                              width="18px"
-                              height="18px"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
+                          <div className="d-flex align-self-start">
+                            <div
+                              style={{ marginLeft: 3, alignSelf: "start" }}
+                              onClick={() => {
+                                setEditComment(true);
+                                setEditCommmentIndex(index);
+                                setCurrentComment(e.text);
+                              }}
                             >
-                              <g id="SVGRepo_bgCarrier" stroke-width="0" />
-                              <g
-                                id="SVGRepo_tracerCarrier"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              />
-                              <g id="SVGRepo_iconCarrier">
-                                {" "}
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M20.8477 1.87868C19.6761 0.707109 17.7766 0.707105 16.605 1.87868L2.44744 16.0363C2.02864 16.4551 1.74317 16.9885 1.62702 17.5692L1.03995 20.5046C0.760062 21.904 1.9939 23.1379 3.39334 22.858L6.32868 22.2709C6.90945 22.1548 7.44285 21.8693 7.86165 21.4505L22.0192 7.29289C23.1908 6.12132 23.1908 4.22183 22.0192 3.05025L20.8477 1.87868ZM18.0192 3.29289C18.4098 2.90237 19.0429 2.90237 19.4335 3.29289L20.605 4.46447C20.9956 4.85499 20.9956 5.48815 20.605 5.87868L17.9334 8.55027L15.3477 5.96448L18.0192 3.29289ZM13.9334 7.3787L3.86165 17.4505C3.72205 17.5901 3.6269 17.7679 3.58818 17.9615L3.00111 20.8968L5.93645 20.3097C6.13004 20.271 6.30784 20.1759 6.44744 20.0363L16.5192 9.96448L13.9334 7.3787Z"
-                                  fill="#505050"
-                                />{" "}
-                              </g>
-                            </svg>
-                          </div>
-                          <div
-                            onClick={() => {
-                              setComments((prevComment: any) =>
-                                prevComment.filter(
-                                  (_: any, i: number) => i !== index
-                                )
-                              );
-                            }}
-                          >
-                            <svg
-                              width="20px"
-                              height="20px"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="#000000"
-                            >
-                              <g id="SVGRepo_bgCarrier" stroke-width="0" />
-
-                              <g
-                                id="SVGRepo_tracerCarrier"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              />
-
-                              <g id="SVGRepo_iconCarrier">
-                                {" "}
-                                <title />{" "}
-                                <g id="Complete">
+                              <svg
+                                width="18px"
+                                height="18px"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                                <g
+                                  id="SVGRepo_tracerCarrier"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                                <g id="SVGRepo_iconCarrier">
                                   {" "}
-                                  <g id="tick">
+                                  <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M20.8477 1.87868C19.6761 0.707109 17.7766 0.707105 16.605 1.87868L2.44744 16.0363C2.02864 16.4551 1.74317 16.9885 1.62702 17.5692L1.03995 20.5046C0.760062 21.904 1.9939 23.1379 3.39334 22.858L6.32868 22.2709C6.90945 22.1548 7.44285 21.8693 7.86165 21.4505L22.0192 7.29289C23.1908 6.12132 23.1908 4.22183 22.0192 3.05025L20.8477 1.87868ZM18.0192 3.29289C18.4098 2.90237 19.0429 2.90237 19.4335 3.29289L20.605 4.46447C20.9956 4.85499 20.9956 5.48815 20.605 5.87868L17.9334 8.55027L15.3477 5.96448L18.0192 3.29289ZM13.9334 7.3787L3.86165 17.4505C3.72205 17.5901 3.6269 17.7679 3.58818 17.9615L3.00111 20.8968L5.93645 20.3097C6.13004 20.271 6.30784 20.1759 6.44744 20.0363L16.5192 9.96448L13.9334 7.3787Z"
+                                    fill="#505050"
+                                  />{" "}
+                                </g>
+                              </svg>
+                            </div>
+                            <div
+                              onClick={() => {
+                                setComments((prevComment: any) =>
+                                  prevComment.filter(
+                                    (_: any, i: number) => i !== index
+                                  )
+                                );
+                                if (comments.length > 1 && editorContainerRef) {
+                                  const editor = editorContainerRef.current.getEditor();
+                                  editor.formatText(e.range.index, e.range.length, { background: "#fefefe" })
+                                }
+                                else if (comments.length === 1) {
+                                  const editor = editorContainerRef.current.getEditor();
+                                  editor.formatText(0, editor.getLength(), { background: "#fefefe" });
+                                }
+                              }}
+                            >
+                              <svg
+                                width="20px"
+                                height="20px"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="#000000"
+                              >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+                                <g
+                                  id="SVGRepo_tracerCarrier"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+
+                                <g id="SVGRepo_iconCarrier">
+                                  {" "}
+                                  <title />{" "}
+                                  <g id="Complete">
                                     {" "}
-                                    <polyline
-                                      fill="none"
-                                      points="3.7 14.3 9.6 19 20.3 5"
-                                      stroke="#505050"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                    />{" "}
+                                    <g id="tick">
+                                      {" "}
+                                      <polyline
+                                        fill="none"
+                                        points="3.7 14.3 9.6 19 20.3 5"
+                                        stroke="#505050"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                      />{" "}
+                                    </g>{" "}
                                   </g>{" "}
-                                </g>{" "}
-                              </g>
-                            </svg>
+                                </g>
+                              </svg>
+                            </div>
                           </div>
                         </div>
                         {editComment && (
@@ -3017,10 +3059,7 @@ function SyncFesion() {
                                 }}
                                 onFocus={() => {
                                   setIsFocusedInput(true);
-                                  if (selectionRef.current) {
-                                    setSelection(selectionRef.current); // Restore the selection
-                                    SetOpenComment(true);
-                                  }
+
                                 }}
                                 onBlur={() => setIsFocusedInput(false)}
                               />
@@ -3058,7 +3097,8 @@ function SyncFesion() {
                         {editComment === false ? (
                           <div
                             style={{ padding: "0 20px", paddingBottom: 10 }}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation()
                               setAddReply(true);
                             }}
                           >
@@ -3076,46 +3116,46 @@ function SyncFesion() {
                           e?.replies?.map((reply: any, index: any) => {
                             return (
                               <div
+                                onClick={(e) => e.stopPropagation()}
                                 style={{
-                                  borderTop: "1px solid red",
+                                  borderTop: "1px solid #deddd7",
                                 }}
                               >
                                 <div
                                   style={{
                                     display: "flex",
                                     padding: 10,
-                                    // alignItems: "center",
+                                    alignItems: "center",
                                   }}
                                 >
-                                  <div style={{ padding: 10 }}>
-                                    <svg
-                                      width="20px"
-                                      height="20px"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <circle
-                                        cx="12"
-                                        cy="6"
-                                        r="4"
-                                        stroke="#1C274C"
-                                        stroke-width="1.5"
-                                      />
-                                      <path
-                                        d="M19.9975 18C20 17.8358 20 17.669 20 17.5C20 15.0147 16.4183 13 12 13C7.58172 13 4 15.0147 4 17.5C4 19.9853 4 22 12 22C14.231 22 15.8398 21.8433 17 21.5634"
-                                        stroke="#1C274C"
-                                        stroke-width="1.5"
-                                        stroke-linecap="round"
-                                      />
-                                    </svg>
+                                  <div
+                                    className="icon mx-2"
+                                    style={{
+                                      height: 30,
+                                      width: 30,
+                                      borderRadius: "50%",
+                                      background: "#b5082e",
+                                      textAlign: "center",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      color: "white",
+                                    }}
+                                  >
+                                    {reply.user
+                                      ?.split(" ")
+                                      .map((e: any) => e.charAt(0))
+                                      .join("")
+                                      .substring(0, 2)
+                                      .toUpperCase()}
                                   </div>
                                   <div style={{ padding: 0 }}>
-                                    <b style={{ fontSize: 14 }}>
-                                      {e.user?.firstName}
+                                    <b style={{ fontSize: reply.user.includes("@") ? 11 : 14 }}>
+                                      {reply.user}
                                     </b>
                                     <div
-                                      style={{ fontSize: 14, display: "flex" }}
+                                      className="py-1"
+                                      style={{ fontSize: 14, display: "flex", margin: 0 - 3 }}
                                     >
                                       {e.access === "Internal" ? (
                                         <span style={{ display: "flex" }}>
@@ -3207,6 +3247,7 @@ function SyncFesion() {
                           })}
                         {addReply && (
                           <div
+                            onClick={(e) => e.stopPropagation()}
                             style={{
                               borderTop: "1px solid red",
                               padding: 20,
@@ -3278,12 +3319,11 @@ function SyncFesion() {
                     >
                       Use pre-set signature block
                     </label>
-                  </div> */}
-                  {" "}
+                  </div>{" "} */}
                 </Grid>
-                <Grid item xs={4}>
-                  {/* <TrackChanges rejectChange={rejectChange} /> */}
-                </Grid>
+                {/* <Grid item xs={3.8}>
+                  <TrackChanges rejectChange={rejectChange} />
+                </Grid> */}
               </Grid>
             </div>
           </div>

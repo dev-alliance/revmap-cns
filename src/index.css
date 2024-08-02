@@ -733,7 +733,7 @@ body {
 
 
 .b-r{
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #cccccc !important;
   padding-right: 10px;
 }
 
@@ -746,7 +746,7 @@ body {
   /* display: inline-block; */
 }
 
-.dropdown-menu {
+.dropdown-menu-toolbar {
   position: absolute;
   top: 100%;
   right: 0;
@@ -942,5 +942,17 @@ ql-editor li[data-list="bullet"] {
 
 .ql-editor li[data-list="bullet"]::before {
   content: counter(list-item, disc) '. ';
-  color: black; /* Adjust color as needed */
+  color: black; 
 }
+
+.css-6hp17o-MuiList-root-MuiMenu-list{
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.border-menu{
+  border: 1px solid #cccccc !important;
+}
+
