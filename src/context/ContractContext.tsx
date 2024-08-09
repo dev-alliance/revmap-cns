@@ -120,6 +120,13 @@ interface ContractContextProps {
   documentName: any | null;
   setDucomentName: Dispatch<SetStateAction<any>>;
 
+  documentPageSize: any | null;
+  setDocumentPageSize: Dispatch<SetStateAction<any>>;
+
+
+  documentPageMargins: any | null;
+  setDocumentPageMargins: Dispatch<SetStateAction<any>>;
+
   leftsidebarExpanded: any | null;
   setLeftSidebarExpanded: Dispatch<SetStateAction<any>>;
 
@@ -135,99 +142,103 @@ interface ContractContextProps {
   setIsTemplate: Dispatch<SetStateAction<any>>;
   temlatePoupup: any | null;
   setTemlatePoupup: Dispatch<SetStateAction<any>>;
-  auditTrails:any[];
+  auditTrails: any[];
   setAuditTrails: Dispatch<SetStateAction<any>>;
-  trackChanges:any[];
+  trackChanges: any[];
   setTrackChanges: Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
   contract: null,
-  setContract: () => {},
+  setContract: () => { },
   contractStatus: { status: "", expire: "" },
-  setContractStatus: () => {},
-  updateContractOverview: () => {},
+  setContractStatus: () => { },
+  updateContractOverview: () => { },
   signatories: [],
-  setSignatories: () => {},
+  setSignatories: () => { },
   openDocoment: [],
-  setOpenDocoment: () => {},
+  setOpenDocoment: () => { },
   selectedModule: {},
-  setSelectedModule: () => {},
+  setSelectedModule: () => { },
   sidebarExpanded: {},
-  setSidebarExpanded: () => {},
+  setSidebarExpanded: () => { },
   showCompanySelect: {},
-  setShowCompanySelect: () => {},
+  setShowCompanySelect: () => { },
   showConditionalSelect: {},
-  setShowConditionalSelect: () => {},
+  setShowConditionalSelect: () => { },
   showSignatories: {},
-  setShowSignatories: () => {},
+  setShowSignatories: () => { },
   selectedApproval: {},
-  setSelectedApproval: () => {},
+  setSelectedApproval: () => { },
   approvers: {},
-  setApprovers: () => {},
+  setApprovers: () => { },
   selectedUserApproval: {},
-  setSelectedUserApproval: () => {},
+  setSelectedUserApproval: () => { },
   userApproval: {},
-  setUserApproval: () => {},
+  setUserApproval: () => { },
   selectedConditionalApproval: {},
-  setSelectedConditionalApproval: () => {},
+  setSelectedConditionalApproval: () => { },
   userConditionalApproval: {},
-  setUserConditionalApproval: () => {},
+  setUserConditionalApproval: () => { },
   conditions: [],
-  setConditions: () => {},
+  setConditions: () => { },
   selectedFeild: [],
-  setSeletedFeild: () => {},
+  setSeletedFeild: () => { },
   type: {},
-  setType: () => {},
+  setType: () => { },
   viewUser: {},
-  setViewUser: () => {},
+  setViewUser: () => { },
   collaborater: {},
-  setCollaborater: () => {},
+  setCollaborater: () => { },
   showButtons: {},
-  setShowButtons: () => {},
+  setShowButtons: () => { },
   activeSection: {},
-  setActiveSection: () => {},
+  setActiveSection: () => { },
   comments: {},
-  setComments: () => {},
+  setComments: () => { },
   recipients: {},
-  setRecipients: () => {},
+  setRecipients: () => { },
   openMultiDialog: {},
-  setOpenMultiDialog: () => {},
+  setOpenMultiDialog: () => { },
   dragFields: {},
-  setDragFields: () => {},
+  setDragFields: () => { },
   editorRefContext: {},
-  setEditorRefContext: () => {},
+  setEditorRefContext: () => { },
   Drawsignature: {},
-  setDrawSignature: () => {},
+  setDrawSignature: () => { },
   uplodTrackFile: {},
-  setUplodTrackFile: () => {},
+  setUplodTrackFile: () => { },
   documentContent: {},
-  setDocumentContent: () => {},
+  setDocumentContent: () => { },
   showBlock: {},
-  setShowBlock: () => {},
+  setShowBlock: () => { },
   editMode: {},
-  setEditMode: () => {},
+  setEditMode: () => { },
   lifecycleData: {},
-  setLifecycleData: () => {},
+  setLifecycleData: () => { },
   documentName: {},
-  setDucomentName: () => {},
+  setDucomentName: () => { },
   leftsidebarExpanded: {},
-  setLeftSidebarExpanded: () => {},
+  setLeftSidebarExpanded: () => { },
   attachments: {},
-  setAttachments: () => {},
+  setAttachments: () => { },
   siningOrder: {},
-  setSiningOrder: () => {},
+  setSiningOrder: () => { },
   formState: {},
-  setFormState: () => {},
+  setFormState: () => { },
   IsTemplate: {},
-  setIsTemplate: () => {},
+  setIsTemplate: () => { },
   temlatePoupup: {},
-  setTemlatePoupup: () => {},
+  setTemlatePoupup: () => { },
   inputRef: { current: null },
-  auditTrails:[],
-  setAuditTrails:()=>{},
-  trackChanges:[],
-  setTrackChanges:()=>{}
+  auditTrails: [],
+  setAuditTrails: () => { },
+  trackChanges: [],
+  setTrackChanges: () => { },
+  documentPageSize: {},
+  setDocumentPageSize: () => { },
+  documentPageMargins:{},
+  setDocumentPageMargins:()=>{}
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -330,7 +341,6 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     status: "",
     expire: "",
   });
-
 
   const updateContractOverview = (overview: any) => {
     if (contract !== null) {
@@ -536,9 +546,26 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [contract, comments, collaborater, attachments]);
 
-  const [auditTrails,setAuditTrails] = useState<any>([])
+  const [auditTrails, setAuditTrails] = useState<any>([]);
 
-  const [trackChanges,setTrackChanges] = useState<any>([])
+  const [trackChanges, setTrackChanges] = useState<any>([]);
+
+  const [documentPageSize, setDocumentPageSize] = useState({
+    title: "A4",
+    desc: "21 cm x 29.7 cm",
+    width: "21cm",
+    height: "29.7cm",
+  });
+
+  const [documentPageMargins, setDocumentPageMargins] = useState({
+    title: "Standard",
+    top:"2.54cm",
+    left:"2.54cm",
+    right:"2.54cm",
+    bottom:"2.54cm"
+  });
+
+  
   return (
     <ContractContext.Provider
       value={{
@@ -623,11 +650,15 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         IsTemplate,
         setIsTemplate,
         temlatePoupup,
-        setTemlatePoupup,  
+        setTemlatePoupup,
         auditTrails,
         setAuditTrails,
         trackChanges,
-        setTrackChanges
+        setTrackChanges,
+        documentPageSize,
+        setDocumentPageSize,
+        documentPageMargins,
+        setDocumentPageMargins
       }}
     >
       {children}

@@ -1,8 +1,11 @@
 import { ContractContext } from "@/context/ContractContext";
 import useStore from "@/context/ZustandStore";
-import { MenuItem, Select, Tooltip } from "@mui/material";
-import { useContext, useEffect, useRef, useState } from "react";
+import { Menu, MenuItem, Select, Tooltip } from "@mui/material";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Quill } from "react-quill";
+import UndoImage from "../../../../assets/undo.png";
+import RedoImage from "../../../../assets/redo.png";
+import DropdownBarImage from "../../../../assets/shape.png";
 
 const CustomUndo = () => (
   <svg viewBox="0 0 18 18">
@@ -373,13 +376,26 @@ Quill.register(SizeStyle, true);
 // Add fonts to whitelist and register them
 const Font = Quill.import("formats/font");
 Font.whitelist = [
+  "algerian",
   "arial",
+  "calibri",
+  "cambria",
+  "cambria-math",
+  "candara",
   "comic-sans",
   "courier-new",
   "georgia",
   "helvetica",
+  "impact",
+  "segoe-print",
+  "segoe-script",
+  "segoe-ui",
   "lucida",
+  "times-new-roman",
+  "verdana",
+  "wingdings",
 ];
+
 Quill.register(Font, true);
 
 const listHandler = function (value: any) {
@@ -439,22 +455,14 @@ export const formats = [
 ];
 
 const ListItem = Quill.import("formats/list/item");
-
 class AlphabetListItem extends ListItem {
   static create(value: any) {
     let node = super.create();
-    if (
-      value === "upper-alpha" ||
-      value === "lower-alpha" ||
-      value === undefined ||
-      value === "upper-roman" ||
-      value === "lower-roman" ||
-      value === "lower-greek" ||
-      value === "default" ||
-      value === "bullet"
-    ) {
-      const valueFromStorage = localStorage.getItem("list")
-      node.setAttribute("data-list", valueFromStorage);
+    if (value || value === undefined) {
+      const valueFromStorage = localStorage.getItem("list");
+      if (valueFromStorage) {
+        node.setAttribute("data-list", valueFromStorage);
+      }
     }
     return node;
   }
@@ -467,14 +475,13 @@ class AlphabetListItem extends ListItem {
   }
 
   format(name: any, value: any) {
-    if (
-      name === "list" &&
-      (value === "upper-alpha" || value === "lower-alpha" || value === "lower-greek"
-        || value === "upper-roman" || value === "default" || value === "lower-roman"
-        || value === "bullet"
-      )
-    ) {
-      this.domNode.setAttribute("data-list", localStorage.getItem("list"));
+    if (name === "list") {
+      if (value) {
+        this.domNode.setAttribute("data-list", localStorage.getItem("list"));
+      } else {
+        this.domNode.removeAttribute("data-list");
+        super.format(name, false); // Remove the list formatting
+      }
     } else {
       super.format(name, value);
     }
@@ -485,484 +492,2039 @@ class AlphabetListItem extends ListItem {
 Quill.register({
   "formats/alphabet-list-item": AlphabetListItem,
 });
-// Quill Toolbar component
-export default function QuillToolbar() {
-  const { editorRefContext } = useContext(ContractContext);
-  const [show, setShow] = useState<boolean>(false);
 
-  const [width, setWidth] = useState(window.innerWidth);
-  const [componentWidth, setComponentWidth] = useState(0); // State to hold component width
+export default function QuillToolbar() {
+  const { editorRefContext, setDocumentPageSize, documentPageSize ,documentPageMargins,setDocumentPageMargins } =
+    useContext(ContractContext);
+
   const toolbarRef: any = useRef(null);
 
-  useEffect(() => {
-    const updateComponentWidth = () => {
-      if (toolbarRef.current) {
-        const width = toolbarRef.current.offsetWidth;
-        setComponentWidth(width);
-      }
-    };
-
-    // Initial width update
-    updateComponentWidth();
-
-    // Event listener for window resize
-    const handleResize = () => {
-      updateComponentWidth();
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    // Use MutationObserver to watch for changes in the DOM
-    const observer = new MutationObserver(updateComponentWidth);
-
-    // Start observing the document or a higher-level container for changes
-    if (document.body) {
-      observer.observe(document.body, {
-        attributes: true,
-        childList: true,
-        subtree: true,
-      });
-    }
-
-    // Cleanup function to remove event listener and disconnect observer
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      observer.disconnect();
-    };
-  }, []);
-
-  const DefaultList = () => {
-    return (
-      <svg width="30" height="50" focusable="false">
-        <g fill-rule="evenodd">
-          <path
-            opacity=".2"
-            d="M18 12h22v4H18zM18 22h22v4H18zM18 32h22v4H18z"
-          ></path>
-          <path d="M10 17v-4.8l-1.5 1v-1.1l1.6-1h1.2V17h-1.2Zm3.6.1c-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7.5 0 .7.3.7.7 0 .4-.2.7-.7.7Zm-5 5.7c0-1.2.8-2 2.1-2s2.1.8 2.1 1.8c0 .7-.3 1.2-1.4 2.2l-1.1 1v.2h2.6v1H8.6v-.9l2-1.9c.8-.8 1-1.1 1-1.5 0-.5-.4-.8-1-.8-.5 0-.9.3-.9.9H8.5Zm6.3 4.3c-.5 0-.7-.3-.7-.7 0-.4.2-.7.7-.7.4 0 .7.3.7.7 0 .4-.3.7-.7.7ZM10 34.4v-1h.7c.6 0 1-.3 1-.8 0-.4-.4-.7-1-.7s-1 .3-1 .8H8.6c0-1.1 1-1.8 2.2-1.8 1.3 0 2.1.6 2.1 1.6 0 .7-.4 1.2-1 1.3v.1c.8.1 1.3.7 1.3 1.4 0 1-1 1.9-2.4 1.9-1.3 0-2.2-.8-2.3-2h1.2c0 .6.5 1 1.1 1 .7 0 1-.4 1-1 0-.5-.3-.8-1-.8h-.7Zm4.7 2.7c-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7.5 0 .8.3.8.7 0 .4-.3.7-.8.7Z"></path>
-        </g>
-      </svg>
-    );
-  };
-
-  const LowerAlpha = () => {
-    return (
-      <svg width="30" height="48" focusable="false">
-        <g fill-rule="evenodd">
-          <path
-            opacity=".2"
-            d="M18 12h22v4H18zM18 22h22v4H18zM18 32h22v4H18z"
-          ></path>
-          <path d="M10.3 15.2c.5 0 1-.4 1-.9V14h-1c-.5.1-.8.3-.8.6 0 .4.3.6.8.6Zm-.4.9c-1 0-1.5-.6-1.5-1.4 0-.8.6-1.3 1.7-1.4h1.1v-.4c0-.4-.2-.6-.7-.6-.5 0-.8.1-.9.4h-1c0-.8.8-1.4 2-1.4 1.1 0 1.8.6 1.8 1.6V16h-1.1v-.6h-.1c-.2.4-.7.7-1.3.7Zm4.6 0c-.5 0-.7-.3-.7-.7 0-.4.2-.7.7-.7.4 0 .7.3.7.7 0 .4-.3.7-.7.7Zm-3.2 10c-.6 0-1.2-.3-1.4-.8v.7H8.5v-6.3H10v2.5c.3-.5.8-.9 1.4-.9 1.2 0 1.9 1 1.9 2.4 0 1.5-.7 2.4-1.9 2.4Zm-.4-3.7c-.7 0-1 .5-1 1.3s.3 1.4 1 1.4c.6 0 1-.6 1-1.4 0-.8-.4-1.3-1-1.3Zm4 3.7c-.5 0-.7-.3-.7-.7 0-.4.2-.7.7-.7.4 0 .7.3.7.7 0 .4-.3.7-.7.7Zm-2.2 7h-1.2c0-.5-.4-.8-.9-.8-.6 0-1 .5-1 1.4 0 1 .4 1.4 1 1.4.5 0 .8-.2 1-.7h1c0 1-.8 1.7-2 1.7-1.4 0-2.2-.9-2.2-2.4s.8-2.4 2.2-2.4c1.2 0 2 .7 2 1.7Zm1.8 3c-.5 0-.8-.3-.8-.7 0-.4.3-.7.8-.7.4 0 .7.3.7.7 0 .4-.3.7-.7.7Z"></path>
-        </g>
-      </svg>
-    );
-  };
-
-  const LowerGreek = () => {
-    return (
-      <svg width="30" height="48" focusable="false">
-        <g fill-rule="evenodd">
-          <path
-            opacity=".2"
-            d="M18 12h22v4H18zM18 22h22v4H18zM18 32h22v4H18z"
-          ></path>
-          <path d="M10.5 15c.7 0 1-.5 1-1.3s-.3-1.3-1-1.3c-.5 0-.9.5-.9 1.3s.4 1.4 1 1.4Zm-.3 1c-1.1 0-1.8-.8-1.8-2.3 0-1.5.7-2.4 1.8-2.4.7 0 1.1.4 1.3 1h.1v-.9h1.2v3.2c0 .4.1.5.4.5h.2v.9h-.6c-.6 0-1-.2-1.1-.7h-.1c-.2.4-.7.8-1.4.8Zm5 .1c-.5 0-.8-.3-.8-.7 0-.4.3-.7.7-.7.5 0 .8.3.8.7 0 .4-.3.7-.8.7Zm-4.9 7v-1h.3c.6 0 1-.2 1-.7 0-.5-.4-.8-1-.8-.5 0-.8.3-.8 1v2.2c0 .8.4 1.3 1.1 1.3.6 0 1-.4 1-1s-.5-1-1.3-1h-.3ZM8.6 22c0-1.5.7-2.3 2-2.3 1.2 0 2 .6 2 1.6 0 .6-.3 1-.8 1.3.8.3 1.3.8 1.3 1.7 0 1.2-.8 1.9-1.9 1.9-.6 0-1.1-.3-1.3-.8v2.2H8.5V22Zm6.2 4.2c-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7.5 0 .7.3.7.7 0 .4-.2.7-.7.7Zm-4.5 8.5L8 30h1.4l1.7 3.5 1.7-3.5h1.1l-2.2 4.6v.1c.5.8.7 1.4.7 1.8 0 .4-.1.8-.4 1-.2.2-.6.3-1 .3-.9 0-1.3-.4-1.3-1.2 0-.5.2-1 .5-1.7l.1-.2Zm.7 1a2 2 0 0 0-.4.9c0 .3.1.4.4.4.3 0 .4-.1.4-.4 0-.2-.1-.6-.4-1Zm4.5.5c-.5 0-.8-.3-.8-.7 0-.4.3-.7.8-.7.4 0 .7.3.7.7 0 .4-.3.7-.7.7Z"></path>
-        </g>
-      </svg>
-    );
-  };
-
-  const LowerRoman = () => {
-    return (
-      <svg width="30" height="48" focusable="false">
-        <g fill-rule="evenodd">
-          <path
-            opacity=".2"
-            d="M18 12h22v4H18zM18 22h22v4H18zM18 32h22v4H18z"
-          ></path>
-          <path d="M15.1 16v-1.2h1.3V16H15Zm0 10v-1.2h1.3V26H15Zm0 10v-1.2h1.3V36H15Z"></path>
-          <path
-            fill-rule="nonzero"
-            d="M12 21h1.5v5H12zM12 31h1.5v5H12zM9 21h1.5v5H9zM9 31h1.5v5H9zM6 31h1.5v5H6zM12 11h1.5v5H12zM12 19h1.5v1H12zM12 29h1.5v1H12zM9 19h1.5v1H9zM9 29h1.5v1H9zM6 29h1.5v1H6zM12 9h1.5v1H12z"
-          ></path>
-        </g>
-      </svg>
-    );
-  };
-
-  const UpperAlpha = () => {
-    return (
-      <svg width="30" height="48" focusable="false">
-        <g fill-rule="evenodd">
-          <path
-            opacity=".2"
-            d="M18 12h22v4H18zM18 22h22v4H18zM18 32h22v4H18z"
-          ></path>
-          <path d="m12.6 17-.5-1.4h-2L9.5 17H8.3l2-6H12l2 6h-1.3ZM11 12.3l-.7 2.3h1.6l-.8-2.3Zm4.7 4.8c-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7.5 0 .7.3.7.7 0 .4-.2.7-.7.7ZM11.4 27H8.7v-6h2.6c1.2 0 1.9.6 1.9 1.5 0 .6-.5 1.2-1 1.3.7.1 1.3.7 1.3 1.5 0 1-.8 1.7-2 1.7ZM10 22v1.5h1c.6 0 1-.3 1-.8 0-.4-.4-.7-1-.7h-1Zm0 4H11c.7 0 1.1-.3 1.1-.8 0-.6-.4-.9-1.1-.9H10V26Zm5.4 1.1c-.5 0-.8-.3-.8-.7 0-.4.3-.7.8-.7.4 0 .7.3.7.7 0 .4-.3.7-.7.7Zm-4.1 10c-1.8 0-2.8-1.1-2.8-3.1s1-3.1 2.8-3.1c1.4 0 2.5.9 2.6 2.2h-1.3c0-.7-.6-1.1-1.3-1.1-1 0-1.6.7-1.6 2s.6 2 1.6 2c.7 0 1.2-.4 1.4-1h1.2c-.1 1.3-1.2 2.2-2.6 2.2Zm4.5 0c-.5 0-.8-.3-.8-.7 0-.4.3-.7.8-.7.4 0 .7.3.7.7 0 .4-.3.7-.7.7Z"></path>
-        </g>
-      </svg>
-    );
-  };
-
-  const UpperRoman = () => {
-    return (
-      <svg width="30" height="48" focusable="false">
-        <g fill-rule="evenodd">
-          <path
-            opacity=".2"
-            d="M18 12h22v4H18zM18 22h22v4H18zM18 32h22v4H18z"
-          ></path>
-          <path d="M15.1 17v-1.2h1.3V17H15Zm0 10v-1.2h1.3V27H15Zm0 10v-1.2h1.3V37H15Z"></path>
-          <path
-            fill-rule="nonzero"
-            d="M12 20h1.5v7H12zM12 30h1.5v7H12zM9 20h1.5v7H9zM9 30h1.5v7H9zM6 30h1.5v7H6zM12 10h1.5v7H12z"
-          ></path>
-        </g>
-      </svg>
-    );
-  };
-
-  const ListSlectImage = () => {
-    return (
-      <div
-        style={{
-          position: "relative",
-          bottom: "1rem",
-        }}
-      >
-        <svg width="20" height="48" focusable="false">
-          <path d="M2.1748 12.75H3.6748V13.125H2.9248V13.875H3.6748V14.25H2.1748V15H4.4248V12H2.1748V12.75ZM2.9248 6H3.6748V3H2.1748V3.75H2.9248V6ZM2.1748 8.25H3.5248L2.1748 9.825V10.5H4.4248V9.75H3.0748L4.4248 8.175V7.5H2.1748V8.25ZM5.9248 3.75V5.25H16.4248V3.75H5.9248ZM5.9248 14.25H16.4248V12.75H5.9248V14.25ZM5.9248 9.75H16.4248V8.25H5.9248V9.75Z"></path>
-        </svg>
-      </div>
-    );
-  };
-  const [open, setOpen] = useState(false);
-
-
   const handleListClick = (value: string) => {
-    localStorage.setItem("list", value)
-    if (editorRefContext) {
-      if (value === "default") {
-        editorRefContext.getEditor()?.format("list", "ordered");
-      } else {
-        editorRefContext.getEditor()?.format("list", value);
+    if (value === "none") {
+      localStorage.removeItem("list");
+      if (editorRefContext) {
+        editorRefContext.getEditor()?.format("list", false);
+      }
+    } else {
+      localStorage.setItem("list", value);
+      if (editorRefContext) {
+        if (value === "default") {
+          editorRefContext.getEditor()?.format("list", "ordered");
+        } else {
+          editorRefContext.getEditor()?.format("list", value);
+        }
       }
     }
-    setOpen(false)
+    setAnchorEl2(null);
+    setAnchorEl(null);
+  };
 
-  }
-  const selectRef: any = useRef(null);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [selectOpen, setSelectOpen] = useState(false);
 
-  const handleMouseEnter = () => {
-    if (selectRef.current) {
-      selectRef.current.size = selectRef.current.options;
-      selectRef.current.className = "ql-lineHeight"
-      console.log(selectRef.current.className)
+  const [tooltipOpenSize, setTooltipOpenSize] = useState(false);
+
+  const [tooltipOpenHeader, setTooltipOpenHeader] = useState(false);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open1 = Boolean(anchorEl);
+
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
+  const open = Boolean(anchorEl2);
+
+  const [anchorElMargins, setAnchorElMargins] = React.useState(null);
+  const openMargins = Boolean(anchorElMargins);
+
+  const [anchorElOrientation, setAnchorElOrientation] = React.useState(null);
+  const openOrientation = Boolean(anchorElOrientation);
+
+  const [anchorElSize, setAnchorElSize] = React.useState(null);
+  const openSize = Boolean(anchorElSize);
+
+  const [anchorElColumns, setAnchorElColumns] = React.useState(null);
+  const openColumns = Boolean(anchorElColumns);
+
+  const handleClick2 = (event: any) => {
+    setAnchorEl2(event.currentTarget);
+  };
+  const handleClose2 = () => {
+    setAnchorEl2(null);
+  };
+  const handleClick = (event: any) => {
+    setAnchorEl(event.currentTarget);
+    setTooltipOpenNumbering(false);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    setTooltipOpenNumbering(false);
+  };
+
+  const handleOpenMargins = (event: any) => {
+    setAnchorElMargins(event.currentTarget);
+  };
+  const handleCloseMargins = () => {
+    setAnchorElMargins(null);
+  };
+
+  const handleOpenOrientation = (event: any) => {
+    setAnchorElOrientation(event.currentTarget);
+  };
+  const handleCloseOrientation = () => {
+    setAnchorElOrientation(null);
+  };
+
+  const handleOpenSize = (event: any) => {
+    setAnchorElSize(event.currentTarget);
+  };
+
+  const handleCloseSize = (event: any) => {
+    setAnchorElSize(null);
+  };
+
+  const handleOpenColumns = (event: any) => {
+    setAnchorElColumns(event.currentTarget);
+  };
+
+  const handleCloseColumns = (event: any) => {
+    setAnchorElColumns(null);
+  };
+
+  const scrollLeft = () => {
+    toolbarRef.current.scrollBy({ left: -400, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    toolbarRef.current.scrollBy({ left: 400, behavior: "smooth" });
+  };
+
+  const handleFontChange = (event: any) => {
+    const font = event.target.value;
+    const quill = editorRefContext.getEditor();
+    if (quill) {
+      const selection = quill.getSelection();
+      if (selection) {
+        // Apply the font to the selected text
+        quill.formatText(selection.index, selection.length, "font", font);
+      }
+      quill.format("font", false);
+
+      // Apply the font to the entire text or future text
+      quill.format("font", font);
+
+      setTimeout(() => {
+        quill.focus(); // Focus the editor
+      }, 0);
+    } else {
+      console.error("Quill editor instance not found");
     }
   };
 
-  const handleMouseLeave = () => {
-    if (selectRef.current) {
-      selectRef.current.size = 1;
+  const handleFontSizeChange = (event: any) => {
+    const fontSize = event.target.value;
+    const quill = editorRefContext.getEditor();
+
+    if (quill) {
+      const selection = quill.getSelection();
+
+      if (selection) {
+        quill.formatText(
+          selection.index,
+          selection.length,
+          { size: fontSize },
+          "user"
+        );
+      }
+      quill.format("size", fontSize);
+
+      setTimeout(() => {
+        quill.focus();
+      }, 0);
+    } else {
+      console.error("Quill editor instance not found");
     }
   };
+
+  const handleHeaderChange = (event: any) => {
+    const headerLevel = event.target.value;
+    const quill = editorRefContext.getEditor(); // Get the Quill editor instance
+
+    if (quill) {
+      const selection = quill.getSelection();
+      if (selection) {
+        quill.format("header", headerLevel);
+      } else {
+        // Apply the header format to the entire text or future text
+        quill.format("header", headerLevel);
+      }
+
+      setTimeout(() => {
+        quill.focus();
+      }, 0);
+    } else {
+      console.error("Quill editor instance not found");
+    }
+  };
+
+  const [tooltipOpenNumbering, setTooltipOpenNumbering] = useState(false);
+
+  const handleSelectOrientation = (value: any) => {
+    handleCloseOrientation();
+  };
+
+  const handleSelectMargins = (value: any) => {
+    setDocumentPageMargins(value)
+    handleCloseMargins();
+    
+  };
+
+  const [canUndo, setCanUndo] = useState(false);
+
+  const [canRedo, setCanRedo] = useState(false);
+
+  useEffect(() => {
+    const checkHistory = () => {
+      if (editorRefContext) {
+        const quill = editorRefContext.getEditor();
+        const undoStack = quill.history.stack.undo;
+        const redoStack = quill.history.stack.redo;
+
+        setCanUndo(undoStack.length > 0);
+        setCanRedo(redoStack.length > 0);
+      }
+    };
+
+    if (editorRefContext) {
+      const quill = editorRefContext.getEditor();
+
+      quill.on("text-change", checkHistory);
+      quill.on("selection-change", checkHistory);
+
+      checkHistory(); // Initial check
+
+      return () => {
+        quill.off("text-change", checkHistory);
+        quill.off("selection-change", checkHistory);
+      };
+    }
+  }, [editorRefContext]);
+
+  const handleSelectSize = (value: any) => {
+    setAnchorElSize(null);
+    setDocumentPageSize(value);
+  };
+
+  const pageSizes = [
+    {
+      title: "A3",
+      desc: "29.7 cm x 42 cm",
+      width: "29.7cm",
+      height: "42cm",
+    },
+    {
+      title: "A4",
+      desc: "21 cm x 29.7 cm",
+      width: "21cm",
+      height: "29.7cm",
+    },
+    {
+      title: "A5",
+      desc: "14.8 cm x 21 cm",
+      width: "14.8cm",
+      height: "21cm",
+    },
+    {
+      title: "A6",
+      desc: "10.5 cm x 14.8 cm",
+      width: "10.5cm",
+      height: "14.8cm"
+    },
+    {
+      title: "JIS B5",
+      desc: "18.2 cm x 25.7 cm",
+      width: "18.2cm",
+      height: "25.7cm"
+    },
+    {
+      title: "JIS B6",
+      desc: "12.8 cm x 18.2 cm",
+      width: "12.8cm",
+      height: "18.2cm"
+    },
+    {
+      title: "US Letter",
+      desc: "21.59 cm x 27.94 cm",
+      width: "21.59cm",
+      height: "27.94cm"
+    },
+    {
+      title: "US Legal",
+      desc: "21.59 cm x 35.56 cm",
+      width: "21.59cm",
+      height: "35.56cm"
+    },
+    {
+      title: "Indian Legal",
+      desc: "21.5 cm x 34.5 cm",
+      width: "21.5cm",
+      height: "35.56cm"
+    },
+  ];
   return (
-    <div id="toolbar" ref={toolbarRef}>
-      <span className="ql-formats b-r">
-        <Tooltip title="Undo" placement="bottom">
-          <button className="ql-undo">
-            <CustomUndo />
-          </button>
-        </Tooltip>
-        <Tooltip title="Redo" placement="bottom">
-          <button className="ql-redo">
-            <CustomRedo />
-          </button>
-        </Tooltip>
-      </span>
-      <span className="ql-formats b-r">
-        <Tooltip title="Select Font" placement="top">
-          <span className="ql-formats">
-            <select className="ql-font b-r" defaultValue="arial">
-              <option value="arial">Arial</option>
-              <option value="comic-sans">Comic Sans</option>
-              <option value="courier-new">Courier New</option>
-              <option value="georgia">Georgia</option>
-              <option value="helvetica">Helvetica</option>
-              <option value="lucida">Lucida</option>
-            </select>
-          </span>
-        </Tooltip>
-        <Tooltip title="Select Headers" placement="top">
-          <span className="ql-formats">
-            <select
-              className="ql-header"
-              style={{ borderRight: "1px solid #cccccc" }}
-              defaultValue="0"
-            >
-              <option value="0">Paragraph</option>
-              <option value="1">Heading 1</option>
-              <option value="2">Heading 2</option>
-              <option value="3">Heading 3</option>
-              <option value="4">Heading 4</option>
-            </select>
-          </span>
-        </Tooltip>
-        <Tooltip title="Select Font Size" placement="top">
-          <span className="ql-formats">
-            <select className="ql-size" defaultValue="14px"
-              ref={selectRef}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              <option value="8px">8px</option>
-              <option value="10px">10px</option>
-              <option value="12px">12px</option>
-              <option value="14px">14px</option>
-              <option value="16px">16px</option>
-              <option value="18px">18px</option>
-              <option value="20px">20px</option>
-              <option value="24px">24px</option>
-              <option value="28px">28px</option>
-              <option value="32px">32px</option>
-              <option value="36px">36px</option>
-              <option value="40px">40px</option>
-              <option value="44px">44px</option>
-              <option value="48px">48px</option>
-              <option value="54px">54px</option>
-              <option value="60px">60px</option>
-              <option value="72px">72px</option>
-            </select>
-          </span>
-        </Tooltip>
-      </span>
-      <span className="ql-formats b-r">
-        <Tooltip title="Bold" placement="bottom">
-          <button className="ql-bold" />
-        </Tooltip>
-        <Tooltip title="Italic" placement="bottom">
-          <button className="ql-italic" />
-        </Tooltip>
-        <Tooltip title="Underline" placement="bottom">
-          <button className="ql-underline" />
-        </Tooltip>
-        <Tooltip title="Strike through" placement="bottom">
-          <button className="ql-strike" />
-        </Tooltip>
-      </span>
-      <span
-        className="ql-formats b-r"
+    <div className="d-flex">
+      <button onClick={scrollLeft} className="btn-slider">
+        {"<"}
+      </button>
+      <div
+        id="toolbar"
+        ref={toolbarRef}
+        className="toolbar"
         style={{
-          display: width <= 855 ? "none" : "",
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          scrollbarWidth: "none",
+          overflowY: "hidden",
         }}
       >
-
-        <Select
-          className="ql-formats select-list"
-          renderValue={() => <ListSlectImage />}
-          ref={selectRef}
-          onMouseEnter={() => {
-            setOpen(true)
-          }}
-          onBlur={()=>setOpen(false)}
-          value="default"
-          style={{
-            height: 20,
-            border: "none",
-            outline: "none",
-          }}
-          onMouseLeave={()=>setOpen(false)}
-          open={open}
-          onOpen={() => setOpen(true)}
-          onClose={() => setOpen(false)}
-        >
-          <div className="d-flex">
-            <MenuItem
-              value="default"
-              className="mx-1 border-menu"
-              style={{ height: 32 }}
-              onClick={() => handleListClick("default")}
-            >
-              <DefaultList />
-            </MenuItem>
-            <MenuItem
-              value="lower-alpha"
-              className="mx-1 border-menu"
-              style={{ height: 32 }}
-              onClick={() => handleListClick("lower-alpha")}
-            >
-              <LowerAlpha />
-            </MenuItem>
-            <MenuItem
-              value="lower-greek"
-              className="mx-1 border-menu"
-              style={{ height: 32 }}
-              onClick={() => handleListClick("lower-greek")}
-            >
-              <LowerGreek />
-            </MenuItem>
-          </div>
-          <div className="d-flex py-2" >
-            <MenuItem
-              value="lower-roman"
-              className="mx-1 border-menu"
-              style={{ height: 32 }}
-              onClick={() => handleListClick("lower-roman")}
-            >
-              <LowerRoman />
-            </MenuItem>
-            <MenuItem
-              value="upper-alpha"
-              className="mx-1 border-menu"
-              style={{ height: 32 }}
-              onClick={() => handleListClick("upper-alpha")}
-            >
-              <UpperAlpha />
-            </MenuItem>
-            <MenuItem
-              value="upper-roman"
-              className="mx-1 border-menu"
-              onClick={() => handleListClick("upper-roman")}
-              style={{ height: 32 }}
-            >
-              <UpperRoman />
-            </MenuItem>
-          </div>
-        </Select>
-
-        <button className="ql-list" value="bullet" onClick={() => localStorage.setItem("list", "bullet")}></button>
-        <Tooltip title="Increase indent">
-          <button className="ql-indent" value="-1" />
-        </Tooltip>
-        <Tooltip title="Decrease indent">
-          <button className="ql-indent" value="+1" />
-        </Tooltip>
-      </span>
-      <span
-        className="ql-formats b-r"
-        style={{
-          display: componentWidth <= 992 ? "none" : "",
-        }}
-      >
-        <Tooltip title="Superscript">
-          <button className="ql-script" value="super" />
-        </Tooltip>
-        <Tooltip title="Subscript">
-          <button className="ql-script" value="sub" />
-        </Tooltip>
-        <Tooltip title="Blockquote">
-          <button className="ql-blockquote" />
-        </Tooltip>
-      </span>
-      <span
-        className="ql-formats b-r"
-        style={{
-          display: componentWidth <= 1106 ? "none" : "",
-        }}
-      >
-        <Tooltip title="Alignment" placement="bottom">
-          <span className="ql-formats" style={{ margin: 0 }}>
-            <select className="ql-align" />
-          </span>
-        </Tooltip>
-        <Tooltip title="Text Color" placement="bottom">
-          <span className="ql-formats" style={{ margin: 0 }}>
-            <select className="ql-color" />
-          </span>
-        </Tooltip>
-        <Tooltip title="Bg color" placement="bottom">
-          <span className="ql-formats" style={{ margin: 0 }}>
-            <select className="ql-background" />
-          </span>
-        </Tooltip>
-      </span>
-      <span
-        className="ql-formats b-r"
-        style={{
-          display: componentWidth <= 1106 ? "none" : "",
-        }}
-      >
-        <Tooltip title="Insert Image">
-          <button className="ql-image" />
-        </Tooltip>
-        <Tooltip title="Insert Video">
-          <button className="ql-video" />
-        </Tooltip>
-      </span>
-
-      <span className="ql-formats">
-        <button onMouseEnter={() => setShow(true)} onClick={() => setShow(!show)}>⋮</button>
-        <span
-          className="dropdown-menu-toolbar"
-          style={{ display: show ? "block" : "none" }}
-          onMouseLeave={()=>setShow(false)}
-        >
-          <span className="ql-formats d-flex" style={{ display: "flex" }}>
-            <span
-              className="b-r"
+        <span className="ql-formats b-r">
+          <Tooltip title="Undo" placement="bottom">
+            <button
+              className="ql-undo btn-undo"
               style={{
-                display: "flex",
+                cursor: canUndo ? "pointer" : "default",
               }}
             >
-              <Tooltip title="Formula">
-                <button className="ql-formula" />
-              </Tooltip>
-              <Tooltip title="Source code">
-                <button className="ql-code-block" />
-              </Tooltip>
-              <Tooltip title="Clean">
-                <button className="ql-clean" />
-              </Tooltip>
-            </span>
-            <span
-              className="b-r"
-              style={{ display: componentWidth <= 1106 ? "" : "none" }}
+              <svg
+                width="21"
+                height="9"
+                viewBox="0 0 21 9"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10.5 1C7.85 1 5.45 2 3.6 3.6L0 0V9H9L5.38 5.38C6.77 4.22 8.54 3.5 10.5 3.5C14.04 3.5 17.05 5.81 18.1 9L20.47 8.22C19.08 4.03 15.15 1 10.5 1Z"
+                  fill={canUndo ? "black" : "#b8b8b8"}
+                />
+              </svg>
+            </button>
+          </Tooltip>
+          <Tooltip title="Redo" placement="bottom">
+            <button
+              className="ql-redo btn-undo ml-2"
+              style={{
+                cursor: canRedo ? "pointer" : "default",
+              }}
             >
-              <span style={{ display: "flex" }}>
-                <Tooltip title="Insert Image">
-                  <button className="ql-image" />
-                </Tooltip>
-                <Tooltip title="Insert Video">
-                  <button className="ql-video" />
-                </Tooltip>
-              </span>
-            </span>
-            <span style={{ display: componentWidth <= 1106 ? "" : "none" }}>
-              <span className="b-r" style={{ display: "flex" }}>
-                <Tooltip title="Alignment" placement="bottom-end">
-                  <span className="ql-">
-                    <select className="ql-align" />
-                  </span>
-                </Tooltip>
-                <Tooltip title="Text Color">
-                  <span className="ql-">
-                    <select className="ql-color" />
-                  </span>
-                </Tooltip>
-                <Tooltip title="Bg color">
-                  <span className="ql-">
-                    <select className="ql-background" />
-                  </span>
-                </Tooltip>
-              </span>
-            </span>
-            <span style={{ display: componentWidth <= 992 ? "" : "none" }}>
-              <span style={{ display: "flex" }}>
-                <Tooltip title="Superscript">
-                  <button className="ql-script" value="super" />
-                </Tooltip>
-                <Tooltip title="Subscript">
-                  <button className="ql-script" value="sub" />
-                </Tooltip>
-                <Tooltip title="Blockquote">
-                  <button className="ql-blockquote" />
-                </Tooltip>
-              </span>
-            </span>
-          </span>
+              <svg
+                width="21"
+                height="9"
+                viewBox="0 0 21 9"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M16.86 3.6C15.01 2 12.61 1 9.96 1C5.31 1 1.38 4.03 0 8.22L2.36 9C3.41 5.81 6.41 3.5 9.96 3.5C11.91 3.5 13.69 4.22 15.08 5.38L11.46 9H20.46V0L16.86 3.6Z"
+                  fill={canRedo ? "black" : "#b8b8b8"}
+                />
+              </svg>
+            </button>
+          </Tooltip>
         </span>
-      </span>
+        <span className="ql-formats b-r">
+          <Tooltip title="Font" placement="bottom" open={tooltipOpen}>
+            <span className="ql-formats">
+              <Select
+                className="ql-font b-r"
+                defaultValue="arial"
+                onMouseLeave={() => {
+                  setTooltipOpen(false);
+                }}
+                onMouseEnter={() => {
+                  setTooltipOpen(true);
+                }}
+                style={{
+                  height: 33,
+                  width: 147,
+                  borderColor: "#D9D9D9",
+                  borderRadius: 5,
+                }}
+                onOpen={() => {
+                  setTooltipOpen(false);
+                }}
+                onClose={() => {
+                  setTooltipOpen(false);
+                }}
+                onChange={(e) => {
+                  handleFontChange(e);
+                  setTooltipOpen(false);
+                }}
+                onFocus={() => {
+                  setTooltipOpen(false);
+                }}
+              >
+                {Font.whitelist.map((font: any) => (
+                  <MenuItem
+                    className={`ql-font-${font}`}
+                    key={font}
+                    value={font}
+                  >
+                    {font.charAt(0).toUpperCase() +
+                      font.slice(1).replace("-", " ")}
+                  </MenuItem>
+                ))}
+              </Select>
+            </span>
+          </Tooltip>
+
+          <Tooltip title="Font Size" placement="bottom" open={tooltipOpenSize}>
+            <span className="ql-formats">
+              <Select
+                style={{
+                  width: 83,
+                  height: 33,
+                  borderColor: "#D9D9D9",
+                  borderRadius: 5,
+                }}
+                className="ql-size"
+                defaultValue="10px"
+                onMouseLeave={() => {
+                  setTooltipOpenSize(false);
+                }}
+                onOpen={() => {
+                  setTooltipOpenSize(false);
+                }}
+                onMouseEnter={() => {
+                  setTooltipOpenSize(true);
+                }}
+                onChange={(e) => {
+                  handleFontSizeChange(e);
+                  setTooltipOpenSize(false);
+                }}
+                onFocus={() => {
+                  setTooltipOpenSize(false);
+                }}
+              >
+                {SizeStyle.whitelist.map((size: any) => (
+                  <MenuItem key={size} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </span>
+          </Tooltip>
+          <Tooltip title="Headers" placement="bottom" open={tooltipOpenHeader}>
+            <span className="">
+              <Select
+                className="text-center"
+                style={{
+                  height: 33,
+                  width: 147,
+                  borderColor: "#D9D9D9",
+                  borderRadius: 5,
+                }}
+                defaultValue="0"
+                onMouseLeave={() => {
+                  setTooltipOpenHeader(false);
+                }}
+                onOpen={() => {
+                  setTooltipOpenHeader(false);
+                }}
+                onMouseEnter={() => {
+                  setTooltipOpenHeader(true);
+                }}
+                onChange={(e) => {
+                  handleHeaderChange(e);
+                  setTooltipOpenHeader(false);
+                }}
+                onFocus={() => {
+                  setTooltipOpenHeader(false);
+                }}
+              >
+                <MenuItem value="0" style={{ fontSize: "14px" }}>
+                  Paragraph
+                </MenuItem>
+                <MenuItem
+                  value="1"
+                  style={{ fontSize: "18px", fontWeight: "bold" }}
+                >
+                  Heading 1
+                </MenuItem>
+                <MenuItem
+                  value="2"
+                  style={{ fontSize: "16px", fontWeight: "bold" }}
+                >
+                  Heading 2
+                </MenuItem>
+                <MenuItem
+                  value="3"
+                  style={{ fontSize: "14px", fontWeight: "bold" }}
+                >
+                  Heading 3
+                </MenuItem>
+                <MenuItem
+                  value="4"
+                  style={{ fontSize: "12px", fontWeight: "bold" }}
+                >
+                  Heading 4
+                </MenuItem>
+              </Select>
+            </span>
+          </Tooltip>
+        </span>
+
+        <span className="ql-formats ">
+          <Tooltip title="Text Highlight Color" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 21 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 14L6.15426 11.3494L6.13076 11.3301C5.67641 10.7614 5.67641 9.84578 6.13076 9.28675L9.84393 4.71807L13.1654 8.80482L9.45224 13.3735C9.00572 13.9325 8.27719 13.9325 7.815 13.3928L7.32148 14H4ZM13.3299 0.419277C13.7921 -0.139759 14.5363 -0.139759 14.9907 0.419277L16.6592 2.46265C17.1136 3.03133 17.1136 3.94699 16.6592 4.51566L14.0741 7.68675L10.7526 3.6L13.3299 0.419277Z"
+                    fill="black"
+                  />
+                  <line
+                    y1="18.5"
+                    x2="21"
+                    y2="18.5"
+                    stroke="#D9D9D9"
+                    stroke-opacity="0.25"
+                    stroke-width="5"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  borderLeft: "1px solid #D9D9D9",
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+
+        <span className="ql-formats">
+          <Tooltip title="Font Color" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 21 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8.12 9L10.5 2.67L12.87 9H8.12ZM9.5 0L4 14H6.25L7.37 11H13.62L14.75 14H17L11.5 0H9.5Z"
+                    fill="black"
+                  />
+                  <line
+                    y1="18.5"
+                    x2="21"
+                    y2="18.5"
+                    stroke="black"
+                    stroke-width="5"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  borderLeft: "1px solid #D9D9D9",
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Shading" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 21 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.5558 9.47059C15.5558 9.47059 14.1115 11.2576 14.1115 12.3529C14.1115 12.7898 14.2637 13.2087 14.5345 13.5176C14.8054 13.8265 15.1727 14 15.5558 14C15.9388 14 16.3061 13.8265 16.577 13.5176C16.8478 13.2087 17 12.7898 17 12.3529C17 11.2576 15.5558 9.47059 15.5558 9.47059ZM5.59769 8.23529L9.05666 4.29059L12.5156 8.23529H5.59769ZM13.7938 7.36235L7.33801 0L6.31982 1.16118L8.03847 3.12118L4.31954 7.36235C3.89349 7.82353 3.89349 8.62235 4.31954 9.10824L8.29121 13.6376C8.50062 13.8765 8.78225 14 9.05666 14C9.33106 14 9.61269 13.8765 9.82211 13.6376L13.7938 9.10824C14.2198 8.62235 14.2198 7.82353 13.7938 7.36235Z"
+                    fill="black"
+                  />
+                  <line
+                    y1="18.5"
+                    x2="21"
+                    y2="18.5"
+                    stroke="#D9D9D9"
+                    stroke-opacity="0.25"
+                    stroke-width="5"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  borderLeft: "1px solid #D9D9D9",
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats b-r">
+          <Tooltip title="Change Case" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M22.1435 21.7105C22.0702 21.403 21.9603 20.8783 21.8992 20.1003C21.0809 21.3668 20.0916 22 18.9557 22C17.942 22 17.0992 21.5658 16.4519 20.7155C15.8046 19.9013 15.4748 18.7977 15.4748 17.477C15.4748 15.8849 15.8779 14.6546 16.6962 13.7681C17.5145 12.8816 18.6626 12.4474 20.1527 12.4474H21.8626V11.2895C21.8626 10.403 21.6794 9.69737 21.313 9.1727C20.9466 8.64803 20.3969 8.39474 19.6885 8.39474C19.0534 8.39474 18.5282 8.61184 18.1008 9.04605C17.6733 9.49835 17.4656 10.023 17.4656 10.6563H15.6824C15.6824 9.87829 15.8656 9.13651 16.2321 8.41283C16.574 7.68914 17.0992 7.12829 17.7221 6.71217C18.345 6.33224 19.0168 6.07895 19.7863 6.07895C20.9832 6.07895 21.9114 6.51316 22.5832 7.39967C23.255 8.28618 23.6092 9.49835 23.6336 11.0543V18.0921C23.6336 19.5395 23.7557 20.6612 24 21.4934V21.7105H22.1435ZM19.2122 19.6842C19.7618 19.6842 20.287 19.4852 20.7878 19.1053C21.2763 18.7253 21.6427 18.2188 21.8626 17.6036V14.7632H20.4824C18.3206 14.7632 17.2336 15.6135 17.2336 17.3141C17.2336 18.0921 17.4168 18.6349 17.7954 19.051C18.1618 19.4671 18.626 19.6842 19.2122 19.6842ZM4.31145 13.949H9.28244L6.80305 4.14309L4.31145 13.949ZM5.75267 0H7.85344L13.6061 21.7105H11.2489L10.0641 17.0609H3.52977L2.35725 21.7105H0L5.75267 0Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  borderLeft: "1px solid #D9D9D9",
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats b-r">
+          <Tooltip title="Bold" placement="bottom">
+            <button className="btn-undo ql-bold"></button>
+          </Tooltip>
+          <Tooltip title="Italic" placement="bottom">
+            <button className="btn-undo ml-2 ql-italic"></button>
+          </Tooltip>
+          <Tooltip title="Underline" placement="bottom">
+            <button className="btn-undo mx-2 ql-underline"></button>
+          </Tooltip>
+          <Tooltip title="Strikethrough" placement="bottom">
+            <button className="btn-undo ql-strike"></button>
+          </Tooltip>
+        </span>
+        <span className="ql-formats b-r">
+          <Tooltip title="Superscript">
+            <button className="btn-undo ql-script" value="super"></button>
+          </Tooltip>
+          <Tooltip title="Subscript">
+            <button className="btn-undo ql-script mx-2" value="sub" />
+          </Tooltip>
+          <Tooltip title="Show/Hide formatting marks">
+            <button className="btn-undo ql-blockquote" />
+          </Tooltip>
+        </span>
+
+        <span className="ql-formats ">
+          <Tooltip
+            title="Numbering"
+            placement="bottom"
+            open={false}
+            onOpen={() => setTooltipOpenNumbering(true)}
+            onClose={() => setTooltipOpenNumbering(false)}
+          >
+            <span
+              className="d-flex"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+              // onMouseEnter={() => setTooltipOpenNumbering(true)}
+              onMouseLeave={() => setTooltipOpenNumbering(false)}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  onClick={() => handleListClick("default")}
+                  width="24"
+                  height="22"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.31579 12.375V9.625H24V12.375H6.31579ZM6.31579 20.625V17.875H24V20.625H6.31579ZM6.31579 4.125V1.375H24V4.125H6.31579ZM1.26316 5.5V1.375H0V0H2.52632V5.5H1.26316ZM0 17.875V16.5H3.78947V22H0V20.625H2.52632V19.9375H1.26316V18.5625H2.52632V17.875H0ZM2.84211 8.25C3.09336 8.25 3.33433 8.35865 3.512 8.55205C3.68966 8.74544 3.78947 9.00775 3.78947 9.28125C3.78947 9.55625 3.68842 9.8175 3.52421 9.99625L1.41474 12.375H3.78947V13.75H0V12.485L2.52632 9.625H0V8.25H2.84211Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  borderLeft: "1px solid #D9D9D9",
+                  height: 33,
+                  cursor: "pointer",
+                }}
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+                onMouseMove={(e) => {
+                  e.stopPropagation();
+                  setTooltipOpenNumbering(false);
+                }}
+                onMouseLeave={(e) => {
+                  setTooltipOpenNumbering(false);
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open1}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTooltipOpenNumbering(false);
+                }}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  setTooltipOpenNumbering(false);
+                }}
+                onMouseEnter={(e) => {
+                  e.stopPropagation();
+                  setTooltipOpenNumbering(false);
+                }}
+              >
+                <div className="d-flex">
+                  <MenuItem
+                    value="none"
+                    className="mx-1 border-menu"
+                    style={{ height: 50, width: 60, padding: 4 }}
+                    onClick={() => {
+                      handleListClick("none");
+                    }}
+                  >
+                    <div
+                      className="e-de-list-header-presetmenu"
+                      style={{
+                        position: "relative",
+                        left: 11,
+                        color: "black",
+                      }}
+                    >
+                      <div>
+                        <span className="e-de-bullets">None</span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 50, width: 60, padding: 4 }}
+                    onClick={() => {
+                      handleListClick("default");
+                    }}
+                  >
+                    <div className="e-de-list-header-presetmenu">
+                      <div>
+                        1.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        2.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        3.<span className="e-de-list-line"> </span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    value="lower-alpha"
+                    className="mx-1 border-menu"
+                    style={{
+                      height: 50,
+                      width: 60,
+                      padding: 4,
+                      color: "black",
+                    }}
+                    onClick={() => handleListClick("lower-alpha")}
+                  >
+                    <div className="e-de-list-header-presetmenu">
+                      <div>
+                        a.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        b.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        c.<span className="e-de-list-line"> </span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                </div>
+                <div className="d-flex py-2">
+                  <MenuItem
+                    value="upper-alpha"
+                    className="mx-1 border-menu"
+                    style={{
+                      height: 50,
+                      width: 60,
+                      padding: 4,
+                      color: "black",
+                    }}
+                    onClick={() => handleListClick("upper-alpha")}
+                  >
+                    <div className="e-de-list-header-presetmenu">
+                      <div>
+                        A.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        B.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        C.<span className="e-de-list-line"> </span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    value="lower-roman"
+                    className="mx-1 border-menu"
+                    style={{ height: 50, width: 60, padding: 4 }}
+                    onClick={() => handleListClick("lower-roman")}
+                  >
+                    <div className="e-de-list-header-presetmenu">
+                      <div>
+                        i.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        ii.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        iii.<span className="e-de-list-line"> </span>
+                      </div>
+                    </div>{" "}
+                  </MenuItem>
+
+                  <MenuItem
+                    value="upper-roman"
+                    className="mx-1 border-menu"
+                    style={{ height: 50, width: 60, padding: 4 }}
+                    onClick={() => handleListClick("upper-roman")}
+                  >
+                    <div className="e-de-list-header-presetmenu">
+                      <div>
+                        I.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        II.<span className="e-de-list-line"></span>
+                      </div>
+                      <div>
+                        III.<span className="e-de-list-line"> </span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                </div>
+              </Menu>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats ">
+          <Tooltip title="Bullets" placement="bottom" open={false}>
+            <span
+              className="d-flex "
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  onClick={() => handleListClick("bullet-dot")}
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.83784 0.733333H24V3.66667H5.83784V0.733333ZM5.83784 12.4667V9.53333H24V12.4667H5.83784ZM1.94595 0C2.46204 0 2.957 0.231785 3.32194 0.644365C3.68687 1.05694 3.89189 1.61652 3.89189 2.2C3.89189 2.78348 3.68687 3.34306 3.32194 3.75564C2.957 4.16822 2.46204 4.4 1.94595 4.4C1.42985 4.4 0.93489 4.16822 0.569954 3.75564C0.205019 3.34306 0 2.78348 0 2.2C0 1.61652 0.205019 1.05694 0.569954 0.644365C0.93489 0.231785 1.42985 0 1.94595 0ZM1.94595 8.8C2.46204 8.8 2.957 9.03179 3.32194 9.44436C3.68687 9.85695 3.89189 10.4165 3.89189 11C3.89189 11.5835 3.68687 12.1431 3.32194 12.5556C2.957 12.9682 2.46204 13.2 1.94595 13.2C1.42985 13.2 0.93489 12.9682 0.569954 12.5556C0.205019 12.1431 0 11.5835 0 11C0 10.4165 0.205019 9.85695 0.569954 9.44436C0.93489 9.03179 1.42985 8.8 1.94595 8.8ZM5.83784 21.2667V18.3333H24V21.2667H5.83784ZM1.94595 17.6C2.46204 17.6 2.957 17.8318 3.32194 18.2444C3.68687 18.6569 3.89189 19.2165 3.89189 19.8C3.89189 20.3835 3.68687 20.9431 3.32194 21.3556C2.957 21.7682 2.46204 22 1.94595 22C1.42985 22 0.93489 21.7682 0.569954 21.3556C0.205019 20.9431 0 20.3835 0 19.8C0 19.2165 0.205019 18.6569 0.569954 18.2444C0.93489 17.8318 1.42985 17.6 1.94595 17.6Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  borderLeft: "1px solid #D9D9D9",
+                  height: 33,
+                  cursor: "pointer",
+                }}
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick2}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl2}
+                open={open}
+                onClose={handleClose2}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <div className="d-flex">
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 38, width: 38 }}
+                    onClick={() => handleListClick("none")}
+                  >
+                    <div
+                      className="e-de-list-header-presetmenu"
+                      style={{
+                        position: "relative",
+                        left: "-0.6rem",
+                        color: "black",
+                      }}
+                    >
+                      <div>
+                        <span className="e-de-bullets">None</span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 38, width: 38 }}
+                    onClick={() => handleListClick("bullet-dot")}
+                  >
+                    <div className="e-de-bullet-list-header-presetmenu">
+                      <div>
+                        <span className="e-de-ctnr-bullet-dot e-icons e-de-ctnr-list"></span>
+                      </div>
+                    </div>{" "}
+                  </MenuItem>
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 38, width: 38 }}
+                    onClick={() => handleListClick("bullet-circle")}
+                  >
+                    <div className="e-de-bullet-list-header-presetmenu">
+                      <div>
+                        <span className="e-de-ctnr-bullet-circle e-icons e-de-ctnr-list"></span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 38, width: 38 }}
+                    onClick={() => handleListClick("bullet-square")}
+                  >
+                    <div className="e-de-bullet-list-header-presetmenu">
+                      <div>
+                        <span className="e-de-ctnr-bullet-square e-icons e-de-ctnr-list"></span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                </div>
+                <div className="d-flex py-2">
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 38, width: 38 }}
+                    onClick={() => handleListClick("bullet-flower")}
+                  >
+                    <div className="e-de-bullet-list-header-presetmenu">
+                      <div>
+                        <span className="e-de-ctnr-bullet-flower e-icons e-de-ctnr-list"></span>
+                      </div>
+                    </div>
+                  </MenuItem>
+
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 38, width: 38 }}
+                    onClick={() => handleListClick("bullet-arrow")}
+                  >
+                    <div className="e-de-bullet-list-header-presetmenu">
+                      <div>
+                        <span className="e-de-ctnr-bullet-arrow e-icons e-de-ctnr-list"></span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    value="default"
+                    className="mx-1 border-menu"
+                    style={{ height: 38, width: 38 }}
+                    onClick={() => handleListClick("bullet-tick")}
+                  >
+                    <div className="e-de-bullet-list-header-presetmenu">
+                      <div>
+                        <span className="e-de-ctnr-bullet-tick e-icons e-de-ctnr-list"></span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                </div>
+              </Menu>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Line Spacing" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.8 0L9.6 4.88889H6V17.1111H9.6L4.8 22L0 17.1111H3.6V4.88889H0L4.8 0ZM24 2.44444V4.88889H12V2.44444H24ZM24 9.77778V12.2222H12V9.77778H24ZM24 17.1111V19.5556H12V17.1111H24Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats b-r">
+          <Tooltip title="Alignment" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M0 0H24V2.44444H0V0ZM0 4.88889H16V7.33333H0V4.88889ZM0 9.77778H24V12.2222H0V9.77778ZM0 14.6667H16V17.1111H0V14.6667ZM0 19.5556H24V22H0V19.5556Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Increase indent">
+            <button className="ql-indent btn-undo mr-2" value="-1" />
+          </Tooltip>
+          <Tooltip title="Decrease indent">
+            <button className="ql-indent btn-undo" value="+1" />
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Page Break" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 34, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M14.6667 14.1574H22L14.6667 10.2361V14.1574ZM2.66667 9.16669H16L24 13.4445V20.5741C24 20.9523 23.719 21.315 23.219 21.5824C22.7189 21.8498 22.0406 22 21.3333 22H2.66667C1.18667 22 0 21.3584 0 20.5741V10.5926C0 9.80122 1.18667 9.16669 2.66667 9.16669ZM2.66667 10.5926V20.5741H21.3333V15.5834H12V10.5926H2.66667Z"
+                    fill="black"
+                  />
+                  <path
+                    d="M0 0H2.4V4.58333H21.6V0H24V4.58333C24 5.06956 23.7471 5.53588 23.2971 5.87969C22.847 6.22351 22.2365 6.41667 21.6 6.41667H2.4C1.76348 6.41667 1.15303 6.22351 0.702944 5.87969C0.252856 5.53588 0 5.06956 0 4.58333V0Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Margins" placement="bottom" open={false}>
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 26 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.36364 1V23M20.6364 1V23M1 5H25M1 19H25M2 23H24C24.5523 23 25 22.5523 25 22V2C25 1.44772 24.5523 1 24 1H2C1.44772 1 1 1.44772 1 2V22C1 22.5523 1.44772 23 2 23Z"
+                    stroke="black"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                  cursor: "pointer",
+                }}
+                id="margins-button" // Changed ID to avoid conflict
+                aria-controls={openMargins ? "margins-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openMargins ? "true" : undefined}
+                onClick={handleOpenMargins}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+              <Menu
+                id="margins-menu"
+                anchorEl={anchorElMargins}
+                open={openMargins}
+                onClose={handleCloseMargins}
+                MenuListProps={{
+                  "aria-labelledby": "margins-button", // Updated aria-labelledby
+                }}
+              >
+                <MenuItem
+                 style={{
+                  background:documentPageMargins.title == "Standard" ? "#edf4fb":""
+                }}
+                onClick={() => handleSelectMargins({
+                  title:"Standard",
+                  top:"2.54cm",
+                  bottom:"2.54cm",
+                  left:"2.54cm",
+                  right:"2.54cm",
+                  
+                })}>
+                  <div className="d-flex align-items-center justify-content-center">
+                    <div>
+                      <svg
+                        width="34"
+                        height="34"
+                        viewBox="0 0 26 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M5.36364 1V23M20.6364 1V23M1 5H25M1 19H25M2 23H24C24.5523 23 25 22.5523 25 22V2C25 1.44772 24.5523 1 24 1H2C1.44772 1 1 1.44772 1 2V22C1 22.5523 1.44772 23 2 23Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className=" ml-2"
+                      style={{
+                        alignSelf: "center",
+                        fontSize: "21px",
+                        fontWeight: "550",
+                      }}
+                    >
+                      <div>Standard</div>
+                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                        Top: 2.54 cm, Bottom: 2.54 cm, Left: 2.54 cm, Right:
+                        2.54 cm
+                      </div>
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem 
+                   onClick={() => handleSelectMargins({
+                    title:"Narrow",
+                    top:"1.27cm",
+                    bottom:"1.27cm",
+                    left:"1.27cm",
+                    right:"1.27cm",
+                    
+                  })}
+                style={{
+                  background:documentPageMargins.title == "Narrow" ? "#edf4fb":""
+                }}
+                >
+                  <div className="d-flex align-items-center justify-content-center">
+                    <div>
+                      <svg
+                        width="34"
+                        height="34"
+                        viewBox="0 0 26 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3.5 1V23M22.5 1V23M1 3.5H25M1 20.5H25M2 23H24C24.5523 23 25 22.5523 25 22V2C25 1.44772 24.5523 1 24 1H2C1.44772 1 1 1.44772 1 2V22C1 22.5523 1.44772 23 2 23Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className=" ml-2"
+                      style={{
+                        alignSelf: "center",
+                        fontSize: "21px",
+                        fontWeight: "550",
+                      }}
+                    >
+                      <div>Narrow</div>
+                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                        Top: 1.27 cm, Bottom: 1.27 cm, Left: 1.27 cm, Right:
+                        1.27 cm{" "}
+                      </div>
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleSelectMargins({
+                    title:"Moderate",
+                    top:"2.54cm",
+                    bottom:"2.54cm",
+                    left:"1.91cm",
+                    right:"1.91cm",
+                    
+                  })}
+                style={{
+                  background:documentPageMargins.title == "Moderate" ? "#edf4fb":""
+                }}
+                >
+                  <div className="d-flex align-items-center justify-content-center">
+                    <div>
+                      <svg
+                        width="34"
+                        height="34"
+                        viewBox="0 0 26 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4 1V23M22 1V23M1 5H25M1 19H25M2 23H24C24.5523 23 25 22.5523 25 22V2C25 1.44772 24.5523 1 24 1H2C1.44772 1 1 1.44772 1 2V22C1 22.5523 1.44772 23 2 23Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className=" ml-2"
+                      style={{
+                        alignSelf: "center",
+                        fontSize: "21px",
+                        fontWeight: "550",
+                      }}
+                    >
+                      <div>Moderate</div>
+                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                        Top: 2.54 cm, Bottom: 2.54 cm, Left: 1.91 cm, Right:
+                        1.91 cm
+                      </div>
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => handleSelectMargins({
+                    title:"Wide",
+                    top:"2.54cm",
+                    bottom:"2.54cm",
+                    left:"5.08cm",
+                    right:"5.08cm",
+                    
+                  })}
+                style={{
+                  background:documentPageMargins.title == "Wide" ? "#edf4fb":""
+                }}
+                >
+                  <div className="d-flex align-items-center justify-content-center">
+                    <div>
+                      <svg
+                        width="34"
+                        height="34"
+                        viewBox="0 0 26 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7.5 1V23M18.5 1V23M1 5H25M1 19H25M2 23H24C24.5523 23 25 22.5523 25 22V2C25 1.44772 24.5523 1 24 1H2C1.44772 1 1 1.44772 1 2V22C1 22.5523 1.44772 23 2 23Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className=" ml-2"
+                      style={{
+                        alignSelf: "center",
+                        fontSize: "21px",
+                        fontWeight: "550",
+                      }}
+                    >
+                      <div>Wide</div>
+                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                        Top: 2.54 cm, Bottom: 2.54 cm, Left: 5.08 cm, Right:
+                        5.08 cm
+                      </div>
+                    </div>
+                  </div>
+                </MenuItem>
+              </Menu>
+            </span>
+          </Tooltip>
+        </span>
+
+        <span className="ql-formats">
+          <Tooltip title="Orientation" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M24 13.3611V19.4722C24 19.8774 23.8055 20.266 23.4593 20.5525C23.1131 20.839 22.6435 21 22.1538 21H7.38462C6.89499 21 6.42541 20.839 6.07919 20.5525C5.73297 20.266 5.53846 19.8774 5.53846 19.4722V10.3056C5.53846 9.90036 5.73297 9.51177 6.07919 9.22525C6.42541 8.93874 6.89499 8.77778 7.38462 8.77778H18.4615L24 13.3611ZM7.38462 10.3056V19.4722H22.1538V14.125H17.5385V10.3056H7.38462Z"
+                    fill="black"
+                  />
+                  <path
+                    d="M9.23077 0.62963L1.84615 0.62963C1.35652 0.62963 0.886947 0.801322 0.540726 1.10694C0.194505 1.41255 0 1.82705 0 2.25926V15.2963C0 15.7285 0.194505 16.143 0.540726 16.4486C0.886947 16.7542 1.35652 16.9259 1.84615 16.9259H12.9231C13.4127 16.9259 13.8823 16.7542 14.2285 16.4486C14.5747 16.143 14.7692 15.7285 14.7692 15.2963V5.51852L9.23077 0.62963ZM12.9231 15.2963H1.84615V2.25926H8.30769V6.33333H12.9231V15.2963Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                  cursor: "pointer",
+                }}
+                id="orientation-button"
+                aria-controls={openOrientation ? "orientation-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openOrientation ? "true" : undefined}
+                onClick={handleOpenOrientation}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+              <Menu
+                id="orientation-menu" // Updated ID to avoid conflict
+                anchorEl={anchorElOrientation}
+                open={openOrientation}
+                onClose={handleCloseOrientation}
+                MenuListProps={{
+                  "aria-labelledby": "orientation-button", // Updated aria-labelledby
+                }}
+              >
+                <MenuItem onClick={() => handleSelectOrientation("potrait")}>
+                  <div className="d-flex align-items-center justify-content-center">
+                    <div>
+                      <svg
+                        width="21"
+                        height="21"
+                        viewBox="0 0 18 22"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2 0C0.89 0 0 1.15156 0 2.58778V20.7022C0 22.1255 0.89 21.9961 2 21.9961H16C17.11 21.9961 18 22.1384 18 20.7022V7.76333L12 0H2ZM17 21H1V1H10V10.3511H17V21ZM11 9.05722V1L14 5.17555L17 9.05722H11Z"
+                          fill="black"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className="ml-2"
+                      style={{
+                        alignSelf: "center",
+                        fontSize: "calc(1.275rem + .3vw)",
+                      }}
+                    >
+                      Portrait
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem onClick={() => handleSelectOrientation("landscape")}>
+                  <div className="d-flex align-items-center justify-content-center">
+                    <div>
+                      <svg
+                        width="22"
+                        height="18"
+                        viewBox="0 0 22 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M22 2C22 0.89 20.8484 0 19.4122 0L1.29778 0C-0.125494 0 0.00389481 0.89 0.00389481 2V16C0.00389481 17.11 -0.138433 18 1.29778 18H14.2367L22 12V2ZM1 17V1L21 1V10H11.6489L11.6489 17H1ZM12.9428 11H21L16.8244 14L12.9428 17L12.9428 11Z"
+                          fill="black"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className="ml-2"
+                      style={{
+                        alignSelf: "center",
+                        fontSize: "calc(1.275rem + .3vw)",
+                      }}
+                    >
+                      Landscape
+                    </div>
+                  </div>
+                </MenuItem>
+              </Menu>
+            </span>
+          </Tooltip>
+        </span>
+
+        <span className="ql-formats">
+          <Tooltip title="Size" placement="bottom" open={false}>
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 23"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M16 2.04761H5.33332C4.62608 2.04761 3.9478 2.26836 3.4477 2.66129C2.94761 3.05422 2.66666 3.58715 2.66666 4.14285V20.9048C2.66666 21.4604 2.94761 21.9934 3.4477 22.3863C3.9478 22.7792 4.62608 23 5.33332 23H21.3333C22.0406 23 22.7188 22.7792 23.2189 22.3863C23.719 21.9934 24 21.4604 24 20.9048V8.33332L16 2.04761ZM21.3333 20.9048H5.33332V4.14285H14.6667V9.38094H21.3333V20.9048Z"
+                    fill="black"
+                  />
+                  <line x1="2.66666" y1="0.5" x2="24" y2="0.5" stroke="black" />
+                  <line
+                    x1="0.5"
+                    y1="4.14288"
+                    x2="0.5"
+                    y2="20.9048"
+                    stroke="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                  cursor: "pointer",
+                }}
+                onClick={handleOpenSize}
+                id="openSize-button"
+                aria-controls={openSize ? "openSize-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openSize ? "true" : undefined}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+              <Menu
+                id="openSize-menu"
+                anchorEl={anchorElSize}
+                open={openSize}
+                onClose={handleCloseSize}
+                MenuListProps={{
+                  "aria-labelledby": "openSize-button",
+                }}
+              >
+                {pageSizes.map((size, index) => {
+                  return (
+                    <MenuItem
+                      key={index}
+                      onClick={() => handleSelectSize(size)}
+                      style={{
+                        background:documentPageSize.title == size.title ? "#edf4fb":""
+                      }}
+                    >
+                      <div className="container">
+                        <div
+                          style={{
+                            fontSize: "1.25rem",
+                          }}
+                        >
+                          {size.title}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: "#00000080",
+                          }}
+                        >
+                          {size.desc}
+                        </div>
+                      </div>
+                    </MenuItem>
+                  );
+                })}
+              </Menu>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Columns" placement="bottom" open={false}>
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 26 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 6H10M16 6H21M5 10H10M16 10H21M5 14H10M16 14H21M5 18H10M16 18H21M2.09091 23H23.9091C24.5116 23 25 22.5116 25 21.9091V2.09091C25 1.48842 24.5116 1 23.9091 1H2.09091C1.48842 1 1 1.48842 1 2.09091V21.9091C1 22.5116 1.48842 23 2.09091 23Z"
+                    stroke="black"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                  cursor: "pointer",
+                }}
+                onClick={handleOpenColumns}
+                id="openColumns-button"
+                aria-controls={openColumns ? "openColumns-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openColumns ? "true" : undefined}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+              <Menu
+                id="openColumns-menu"
+                anchorEl={anchorElColumns}
+                open={openColumns}
+                onClose={handleCloseColumns}
+                MenuListProps={{
+                  "aria-labelledby": "openColumns-button",
+                }}
+              >
+                <MenuItem
+                  style={{
+                    width: 136,
+                  }}
+                >
+                  <div className="d-flex">
+                    <div>
+                      <svg
+                        width="26"
+                        height="30"
+                        viewBox="0 0 26 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 5.5H21.5M4.5 8.5H21.5M4.5 11.5H21.5M4.5 14.5H21.5M4.5 17.5H21.5M4.5 20.5H21.5M4.5 23.5H21.5M2.09091 29H23.9091C24.5116 29 25 28.3784 25 27.6116V2.38843C25 1.62162 24.5116 1 23.9091 1H2.09091C1.48842 1 1 1.62162 1 2.38843V27.6116C1 28.3784 1.48842 29 2.09091 29Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className="mx-2"
+                      style={{
+                        fontSize: "1.2rem",
+                      }}
+                    >
+                      One
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  style={{
+                    width: 136,
+                  }}
+                >
+                  <div className="d-flex">
+                    <div>
+                      <svg
+                        width="26"
+                        height="30"
+                        viewBox="0 0 26 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 5.5H11.5M14.5 5.5H21.5M4.5 8.5H11.5M14.5 8.5H21.5M4.5 11.5H11.5M14.5 11.5H21.5M4.5 14.5H11.5M14.5 14.5H21.5M4.5 17.5H11.5M4.5 20.5H11.5M4.5 23.5H11.5M14.5 17.5H21.5M14.5 20.5H21.5M14.5 23.5H21.5M2.09091 29H23.9091C24.5116 29 25 28.3784 25 27.6116V2.38843C25 1.62162 24.5116 1 23.9091 1H2.09091C1.48842 1 1 1.62162 1 2.38843V27.6116C1 28.3784 1.48842 29 2.09091 29Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className="mx-2"
+                      style={{
+                        fontSize: "1.2rem",
+                      }}
+                    >
+                      Two
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  style={{
+                    width: 136,
+                  }}
+                >
+                  <div className="d-flex">
+                    <div>
+                      <svg
+                        width="26"
+                        height="30"
+                        viewBox="0 0 26 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M11 5.5H15M17.5 5.5H21.5M4.5 5.5H8.5M4.5 8.5H8.5M4.5 11.5H8.5M4.5 14.5H8.5M4.5 17.5H8.5M4.5 20.5H8.5M4.5 23.5H8.5M11 8.5H15M17.5 8.5H21.5M17.5 11.5H21.5M11 11.5H15M11 14.5H15M11 17.5H15M11 20.5H15M11 23.5H15M17.5 14.5H21.5M17.5 17.5H21.5M17.5 20.5H21.5M17.5 23.5H21.5M2.09091 29H23.9091C24.5116 29 25 28.3784 25 27.6116V2.38843C25 1.62162 24.5116 1 23.9091 1H2.09091C1.48842 1 1 1.62162 1 2.38843V27.6116C1 28.3784 1.48842 29 2.09091 29Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className="mx-2"
+                      style={{
+                        fontSize: "1.2rem",
+                      }}
+                    >
+                      Three
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  style={{
+                    width: 136,
+                  }}
+                >
+                  <div className="d-flex">
+                    <div>
+                      <svg
+                        width="26"
+                        height="30"
+                        viewBox="0 0 26 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 5.5H9M11.5 5.5H21.5M4.5 8.5H9M11.5 8.5H21.5M4.5 11.5H9M11.5 11.5H21.5M4.5 14.5H9M11.5 14.5H21.5M4.5 17.5H9M4.5 20.5H9M4.5 23.5H9M11.5 17.5H21.5M11.5 20.5H21.5M11.5 23.5H21.5M2.09091 29H23.9091C24.5116 29 25 28.3784 25 27.6116V2.38843C25 1.62162 24.5116 1 23.9091 1H2.09091C1.48842 1 1 1.62162 1 2.38843V27.6116C1 28.3784 1.48842 29 2.09091 29Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className="mx-2"
+                      style={{
+                        fontSize: "1.2rem",
+                      }}
+                    >
+                      Left
+                    </div>
+                  </div>
+                </MenuItem>
+                <MenuItem
+                  style={{
+                    width: 136,
+                  }}
+                >
+                  <div className="d-flex">
+                    <div>
+                      <svg
+                        width="26"
+                        height="30"
+                        viewBox="0 0 26 30"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4.5 5.5H14M16.5 5.5H21.5M4.5 8.5H14M16.5 11.5H21.5M4.5 11.5H14M16.5 14.5H21.5M4.5 14.5H14M16.5 17.5455H21.5M4.5 17.5455H14M4.5 20.5H14M4.5 23.5H14M16.5 8.5H21.5M16.5 20.5H21.5M16.5 23.5H21.5M2.09091 29H23.9091C24.5116 29 25 28.3784 25 27.6116V2.38843C25 1.62162 24.5116 1 23.9091 1H2.09091C1.48842 1 1 1.62162 1 2.38843V27.6116C1 28.3784 1.48842 29 2.09091 29Z"
+                          stroke="black"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      className="mx-2"
+                      style={{
+                        fontSize: "1.2rem",
+                      }}
+                    >
+                      Right
+                    </div>
+                  </div>
+                </MenuItem>
+              </Menu>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats b-r">
+          <Tooltip title="Track Changes" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 34, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M18.156 10.4211L19.668 8.9621C20.196 8.45263 20.868 8.17474 21.6 8.10526V6.94737L14.4 0H2.4C1.068 0 0 1.03053 0 2.31579V18.5263C0 19.8 1.068 20.8421 2.4 20.8421H9.6V18.6768L9.756 18.5263H2.4V2.31579H10.8V10.4211H18.156ZM13.2 1.73684L19.8 8.10526H13.2V1.73684ZM19.356 12.54L21.804 14.9021L14.448 22H12V19.6379L19.356 12.54ZM23.82 12.9568L22.644 14.0916L20.196 11.7295L21.372 10.5947C21.6 10.3632 21.996 10.3632 22.236 10.5947L23.82 12.1232C24.06 12.3547 24.06 12.7368 23.82 12.9568Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Table" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2.66667 0H21.3333C22.0406 0 22.7189 0.289731 23.219 0.805456C23.719 1.32118 24 2.02065 24 2.75V19.25C24 19.9793 23.719 20.6788 23.219 21.1945C22.7189 21.7103 22.0406 22 21.3333 22H2.66667C1.95942 22 1.28115 21.7103 0.781048 21.1945C0.280951 20.6788 0 19.9793 0 19.25V2.75C0 2.02065 0.280951 1.32118 0.781048 0.805456C1.28115 0.289731 1.95942 0 2.66667 0ZM2.66667 5.5V11H10.6667V5.5H2.66667ZM13.3333 5.5V11H21.3333V5.5H13.3333ZM2.66667 13.75V19.25H10.6667V13.75H2.66667ZM13.3333 13.75V19.25H21.3333V13.75H13.3333Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Add a Link" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 34, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.1693 12.6781C10.7017 13.1423 10.7017 13.904 10.1693 14.3681C9.66297 14.8323 8.83203 14.8323 8.32567 14.3681C5.79389 12.0473 5.79389 8.27455 8.32567 5.95375L12.9218 1.7406C15.4536 -0.5802 19.5694 -0.5802 22.1012 1.7406C24.6329 4.0614 24.6329 7.83419 22.1012 10.155L20.1666 11.9283C20.1796 10.9524 20.0108 9.97647 19.6473 9.04815L20.2575 8.47687C21.7896 7.08439 21.7896 4.8231 20.2575 3.43062C18.7384 2.02624 16.2716 2.02624 14.7525 3.43062L10.1693 7.63186C8.63727 9.02434 8.63727 11.2856 10.1693 12.6781ZM13.8307 7.63186C14.337 7.1677 15.168 7.1677 15.6743 7.63186C18.2061 9.95267 18.2061 13.7255 15.6743 16.0463L11.0782 20.2594C8.54639 22.5802 4.43062 22.5802 1.89884 20.2594C-0.632946 17.9386 -0.632946 14.1658 1.89884 11.845L3.83338 10.0717C3.8204 11.0476 3.98918 12.0235 4.35272 12.9638L3.74249 13.5231C2.21044 14.9156 2.21044 17.1769 3.74249 18.5694C5.26156 19.9738 7.72843 19.9738 9.2475 18.5694L13.8307 14.3681C15.3627 12.9757 15.3627 10.7144 13.8307 9.32188C13.2983 8.85772 13.2983 8.09602 13.8307 7.63186Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Insert Picture" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21.3333 19.5556H2.66667V2.44444H21.3333V19.5556ZM21.3333 0H2.66667C1.95942 0 1.28115 0.257539 0.781048 0.715961C0.280951 1.17438 0 1.79614 0 2.44444V19.5556C0 20.2039 0.280951 20.8256 0.781048 21.284C1.28115 21.7425 1.95942 22 2.66667 22H21.3333C22.0406 22 22.7189 21.7425 23.219 21.284C23.719 20.8256 24 20.2039 24 19.5556V2.44444C24 1.79614 23.719 1.17438 23.219 0.715961C22.7189 0.257539 22.0406 0 21.3333 0ZM14.6133 11.3544L10.9467 15.6811L8.33333 12.7967L4.66667 17.1111H19.3333L14.6133 11.3544Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats b-r">
+          <Tooltip title="Media" placement="bottom">
+            <span
+              className="d-flex ql-color"
+              style={{
+                height: 33,
+                border: "1px solid #D9D9D9",
+                borderRadius: 5,
+              }}
+            >
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{ width: 32, height: 33 }}
+              >
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 20 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M17.5 7.33333H15V4.88889H17.5V7.33333ZM17.5 12.2222H15V9.77778H17.5V12.2222ZM17.5 17.1111H15V14.6667H17.5V17.1111ZM5 7.33333H2.5V4.88889H5V7.33333ZM5 12.2222H2.5V9.77778H5V12.2222ZM5 17.1111H2.5V14.6667H5V17.1111ZM17.5 0V2.44444H15V0H5V2.44444H2.5V0H0V22H2.5V19.5556H5V22H15V19.5556H17.5V22H20V0H17.5Z"
+                    fill="black"
+                  />
+                </svg>
+              </span>
+              <span
+                className="d-flex justify-content-center align-items-center"
+                style={{
+                  width: 19,
+                  height: 33,
+                }}
+              >
+                <img src={DropdownBarImage} alt="Bar" />
+              </span>
+            </span>
+          </Tooltip>
+        </span>
+        <span className="ql-formats">
+          <Tooltip title="Formula">
+            <button className="ql-formula btn-undo mr-2" />
+          </Tooltip>
+          <Tooltip title="Source code">
+            <button className="ql-code-block btn-undo mr-2" />
+          </Tooltip>
+          <Tooltip title="Clean">
+            <button className="ql-clean btn-undo" />
+          </Tooltip>
+        </span>
+      </div>
+      <button className="btn-slider" onClick={scrollRight}>
+        {">"}
+      </button>
     </div>
   );
 }
