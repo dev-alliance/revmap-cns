@@ -153,8 +153,12 @@ function SyncFesion() {
     trackChanges,
     setTrackChanges,
     documentPageSize,
-    documentPageMargins
+    documentPageMargins,
+    bgColor,
+    fontColor
   } = useContext(ContractContext);
+
+  console.log(bgColor)
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
@@ -645,17 +649,7 @@ function SyncFesion() {
   };
 
   //
-  const [fontColor, setFontColor] = useState("#000000"); // Default font color
-
-  // Function to change the font color
-  const changeFontColor = (args: any) => {
-    const color = args.currentValue.hex;
-    setFontColor(color);
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    if (documentEditor && documentEditor.selection) {
-      documentEditor.selection.characterFormat.fontColor = color;
-    }
-  };
+ 
 
   const [highlightColor, setHighlightColor] = useState("#FFFF00"); // Default highlight color
   // Function to change the highlight color
@@ -1129,7 +1123,7 @@ function SyncFesion() {
   }, [documentName]);
 
   const initialText =
-    "";
+    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium minima doloremque pariatur?";
 
   const [editorHtml, setEditorHtml] = useState<any>(initialText);
   const [addedString, setAddedString] = useState("");
@@ -1488,39 +1482,28 @@ function SyncFesion() {
     }
   };
 
-  // No Bg Color after commented Text
+
   useEffect(() => {
     const quill = editorContainerRef.current.getEditor();
 
-    // Function to handle text changes
-    const handleTextChange = (delta: any, oldDelta: any, source: any) => {
-      if (source === "user") {
-        const range = quill.getSelection(true);
-        if (range && delta.ops) {
-          delta.ops.forEach((op: any) => {
-            if (op.insert) {
-              const startIndex = range.index - op.insert.length;
-              const endIndex = range.index;
+    if (quill) {
 
-              quill.formatText(
-                startIndex,
-                op.insert.length,
-                { background: "#fefefe" },
-                "user"
-              );
-            }
-          });
-        }
+      console.log("SADDDdd")
+
+      const handleTextChange = () => {
+        quill.format("background",bgColor)
+        quill.format("color",fontColor)
       }
-    };
 
-    quill.on("text-change", handleTextChange);
+      quill.on('text-change', handleTextChange);
 
-    return () => {
-      quill.off("text-change", handleTextChange);
-    };
-  }, []);
-
+      return () => {
+        quill.off('text-change', handleTextChange);
+      };
+    }
+  }, [bgColor, fontColor]); 
+  
+  
   useEffect(() => {
     if (addReply.open && addReply.id !== null) {
       // Example: Auto-focus the textarea when it opens
@@ -1732,8 +1715,8 @@ function SyncFesion() {
                 <div className="relative  ">
                   <button
                     className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${showBlock == "uploadTrack"
-                      ? "text-gray-300"
-                      : "text-black hover:text-gray-700"
+                        ? "text-gray-300"
+                        : "text-black hover:text-gray-700"
                       }`}
                     disabled={showBlock == "uploadTrack"}
                     onClick={() => toggleDropdown("signature")}
@@ -2570,6 +2553,7 @@ function SyncFesion() {
                 if (editorContainerRef && selectionRef.current) {
                   const editor = editorContainerRef.current.getEditor();
                   const { index, length } = selectionRef.current;
+                  const formats = editor.getFormat(index, length);
 
                   const isOverlap = comments.some(
                     (comment: any) =>
@@ -2578,7 +2562,7 @@ function SyncFesion() {
                   );
 
                   if (!isOverlap) {
-                    editor.formatText(index, length, { background: "#fefefe" });
+                    // editor.formatText(index, length, { background: "#fefefe" });
                   }
                 }
               }}
@@ -2596,11 +2580,9 @@ function SyncFesion() {
               >
                 <Grid
                   item
-                  xs={7.5}
                   style={{
                     height: "100%",
                     position: "relative",
-                    // alignSelf: "center",
                   }}
                 >
                   <ReactQuill
@@ -2626,10 +2608,9 @@ function SyncFesion() {
                       .ql-container.ql-snow {
                          min-height: 375px;
                          padding-top: ${documentPageMargins.top} !important;
-                         padding-bottom: ${documentPageMargins.top} !important;
-                         padding-left: ${documentPageMargins.top} !important;
-                         padding-right: ${documentPageMargins.top} !important;
-                         
+                         padding-bottom: ${documentPageMargins.bottom} !important;
+                         padding-left: ${documentPageMargins.left} !important;
+                         padding-right: ${documentPageMargins.right} !important;
                       } 
                       `}
                   </style>
@@ -3453,7 +3434,7 @@ function SyncFesion() {
                       );
                     })}
                   </div>
-                  {/* <div className="form-check form-switch py-2">
+                  <div className="form-check form-switch py-2">
                     <input
                       className="form-check-input"
                       type="checkbox"
@@ -3467,7 +3448,7 @@ function SyncFesion() {
                     >
                       Use pre-set signature block
                     </label>
-                  </div>{" "} */}
+                  </div>{" "}
                 </Grid>
                 {/* <Grid item xs={3.8}>
                   <TrackChanges rejectChange={rejectChange} />

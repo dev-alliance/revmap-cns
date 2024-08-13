@@ -585,7 +585,7 @@ const MyComponent: React.FC = () => {
         <Box
           sx={{
             flexGrow: 1,
-            height: "calc(107vh - 64px)",
+            height: "100%",
             overflow: "hidden",
           }}
         >

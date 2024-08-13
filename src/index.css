@@ -1065,10 +1065,19 @@ body {
 
 .ql-editor li[data-list="bullet-dot"]::before {
   content: "•";
-  /* Bullet character */
   color: black;
-  /* Adjust color as needed */
   font-size: 10px;
+}
+
+.ql-editor li[data-list="bullet-dot-large"] {
+  list-style-type: none;
+
+}
+
+.ql-editor li[data-list="bullet-dot-large"]::before {
+  content: "•";
+  color: black;
+  font-weight: bolder;
 
 }
 
@@ -1078,9 +1087,10 @@ body {
 }
 
 .ql-editor li[data-list="bullet-circle"]::before {
-  content: "◯";
+  content: "○";
   color: black;
-  font-size: 10px;
+  font-size: 12px;
+  border-radius: 50px;
 }
 
 .ql-editor li[data-list="bullet-square"] {
@@ -1099,44 +1109,58 @@ body {
 
 .ql-editor li[data-list="bullet-flower"] {
   list-style-type: none;
+  margin-left: 0.6rem;
+
 }
 
 .ql-editor li[data-list="bullet-flower"]::before {
-  content: "✿";
-  /* Flower character */
-  color: black;
-  /* Adjust color as needed */
-  font-size: 10px;
-
+  content: "";
+  display: inline-block;
+  width: 8px; /* Adjust size as needed */
+  height: 8px;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="5" fill="black"><path d="M2.5 0C2.37503 0 2.25006 0.047494 2.14759 0.147482L1.32279 0.969879L2.5 2.14473L3.67721 0.969879L2.85241 0.147482C2.74994 0.047494 2.62497 0 2.5 0ZM0.970382 1.32233L0.148088 2.14723C-0.0493627 2.34221 -0.0493627 2.65717 0.148088 2.85214L0.970382 3.67704L2.14509 2.49969L0.970382 1.32233ZM4.02962 1.32233L2.85491 2.49969L4.02962 3.67704L4.85191 2.85214C5.04936 2.65717 5.04936 2.34221 4.85191 2.14723L4.02962 1.32233ZM2.5 2.85464L1.32279 4.0295L2.14759 4.85189C2.34254 5.04937 2.65746 5.04937 2.85241 4.85189L3.67721 4.0295L2.5 2.85464Z"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
 }
+
 
 .ql-editor li[data-list="bullet-arrow"] {
   list-style-type: none;
+  margin-left: 0.6rem;
 
 }
 
 .ql-editor li[data-list="bullet-arrow"]::before {
-  content: "→";
-  /* Arrow character */
-  color: black;
-  /* Adjust color as needed */
-  font-size: 13px;
-
+  content: "";
+  display: inline-block;
+  width: 8px; /* Adjust size as needed */
+  height: 8px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 5" fill="none"><path d="M3.5 2.5L1.5 2.5L1 1L3.5 2.5ZM5 2.5L0 0L0.789474 2.5L0 5L5 2.5Z" fill="black"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 5px; /* Adjust spacing between bullet and text */
 }
+
 
 .ql-editor li[data-list="bullet-tick"] {
   list-style-type: none;
-
+  margin-left: 0.6rem;
 }
 
 .ql-editor li[data-list="bullet-tick"]::before {
-  content: "✔";
-  /* Checkmark character */
-  color: black;
-  /* Adjust color as needed */
-  font-size: 10px;
-
+  content: "";
+  display: inline-block;
+  width: 8px; /* Adjust size as needed */
+  height: 8px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 5" fill="none"><path d="M1.96934 5L0 3.00193L0.897463 2.09138L1.96934 3.18211L5.10254 0L6 0.910553L1.96934 5Z" fill="black"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  margin-right: 5px; /* Adjust spacing between bullet and text */
 }
+
 
 
 .css-6hp17o-MuiList-root-MuiMenu-list {
@@ -1218,9 +1242,12 @@ body {
 .btn-undo {
   height: 33px !important;
   border: 1px solid #D9D9D9 !important;
-  width: 33px !important;
+  width: 30px !important;
   border-radius: 5px !important;
   text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .ql-bold::before,
@@ -1248,10 +1275,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
+  height: 53px;
   font-weight: lighter;
-  border: none !important;
   width: 2.5rem !important;
+  border-bottom: 1px solid #ccc !important;
+  border-left: none !important;
   padding: 0.3rem !important;
 }
 
@@ -1283,5 +1311,48 @@ body {
   border-bottom: 1px solid black !important;
   margin-left: 5px !important;
   width: 100% !important;
+}
+
+
+.underline-highlight {
+  text-decoration: underline;
+  text-decoration-color: inherit;
+  text-underline-offset: 3px; /* Adjust the space between text and underline */
+  text-decoration-thickness: 2px; /* Adjust the thickness of the underline */
+}
+
+.ql-snow.ql-toolbar button, .ql-snow .ql-toolbar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex !important; 
+  float: left;
+  height: 33px !important;
+  padding: 3px 5px;
+  width: 35px !important;
+}
+
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+  fill: black !important;
+}
+
+.ql-snow .ql-stroke{
+  stroke: black !important;
+}
+
+.ql-column[data-columns='one'] {
+  column-count: 2;
+}
+
+.ql-column[data-columns='two'] {
+  column-count: 2;
+}
+
+.ql-column[data-columns='three'] {
+  column-count: 3;
+}
+
+.ql-editor{
+  height: 100% !important;
 }
 

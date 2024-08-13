@@ -3,32 +3,9 @@ import useStore from "@/context/ZustandStore";
 import { Menu, MenuItem, Select, Tooltip } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Quill } from "react-quill";
-import UndoImage from "../../../../assets/undo.png";
-import RedoImage from "../../../../assets/redo.png";
 import DropdownBarImage from "../../../../assets/shape.png";
+import { Sketch } from "@uiw/react-color";
 
-const CustomUndo = () => (
-  <svg viewBox="0 0 18 18">
-    <polygon className="ql-fill ql-stroke" points="6 10 4 12 2 10 6 10" />
-    <path
-      className="ql-stroke"
-      d="M8.09,13.91A4.6,4.6,0,0,0,9,14,5,5,0,1,0,4,9"
-    />
-  </svg>
-);
-
-// Redo button icon component for Quill editor
-const CustomRedo = () => (
-  <svg viewBox="0 0 18 18">
-    <polygon className="ql-fill ql-stroke" points="12 10 14 12 16 10 12 10" />
-    <path
-      className="ql-stroke"
-      d="M9.91,13.91A4.6,4.6,0,0,1,9,14a5,5,0,1,1,5-5"
-    />
-  </svg>
-);
-
-// Undo and redo functions for Custom Toolbar
 function undoChange() {
   // @ts-ignore
   this.quill.history.undo();
@@ -451,10 +428,12 @@ export const formats = [
   "checkbox-container",
   "text-field-container",
   "signature-blot",
-  "alphabet-list-item", // Include custom format
+  "alphabet-list-item",
+  "underlineHighlight",
 ];
 
 const ListItem = Quill.import("formats/list/item");
+
 class AlphabetListItem extends ListItem {
   static create(value: any) {
     let node = super.create();
@@ -488,14 +467,45 @@ class AlphabetListItem extends ListItem {
   }
 }
 
+const CustomUnderline = Quill.import("blots/inline");
+
+class UnderlineBlot extends CustomUnderline {
+  static create(value: any) {
+    let node = super.create();
+    node.setAttribute(
+      "style",
+      `text-decoration: underline; text-decoration-color: ${value}`
+    );
+    return node;
+  }
+
+  static formats(node: any) {
+    return node.style.textDecorationColor;
+  }
+}
+
+UnderlineBlot.blotName = "underlineHighlight";
+UnderlineBlot.tagName = "span";
+Quill.register(UnderlineBlot);
+
 // Register custom format
 Quill.register({
   "formats/alphabet-list-item": AlphabetListItem,
 });
 
 export default function QuillToolbar() {
-  const { editorRefContext, setDocumentPageSize, documentPageSize ,documentPageMargins,setDocumentPageMargins } =
-    useContext(ContractContext);
+  const {
+    editorRefContext,
+    setDocumentPageSize,
+    documentPageSize,
+    documentPageMargins,
+    setDocumentPageMargins,
+    setBgColor,
+    setShadeColor,
+    setFontColor,
+    fontColor,
+    bgColor,shadeColor
+  } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
 
@@ -523,8 +533,22 @@ export default function QuillToolbar() {
   const [selectOpen, setSelectOpen] = useState(false);
 
   const [tooltipOpenSize, setTooltipOpenSize] = useState(false);
+  const [tooltipOpenColumns, setTooltipOpenColumns] = useState(false);
+
 
   const [tooltipOpenHeader, setTooltipOpenHeader] = useState(false);
+  const [tooltipOpenHighlight, setTooltipOpenHighlight] = useState(false);
+
+  const [tooltipOpenColor, setTooltipOpenColor] = useState(false);
+  const [tooltipOpenShading, setTooltipOpenShading] = useState(false);
+
+  const [tooltipOpenCase, setTooltipOpenCase] = useState(false);
+
+  const [tooltipOpenMargins, setTooltipOpenMargins] = useState(false);
+
+  const [tooltipOpenOrientation, setTooltipOpenOrientation] = useState(false);
+
+  
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open1 = Boolean(anchorEl);
@@ -538,11 +562,24 @@ export default function QuillToolbar() {
   const [anchorElOrientation, setAnchorElOrientation] = React.useState(null);
   const openOrientation = Boolean(anchorElOrientation);
 
+  const [anchorElTextColr, setAnchorElTextColor] = React.useState(null);
+  const openTextColor = Boolean(anchorElTextColr);
+
+  const [anchorElFontColor, setAnchorElFontColor] = React.useState(null);
+  const openFontColor = Boolean(anchorElFontColor);
+
+  const [anchorElBgColor, setAnchorElBgColor] = React.useState(null);
+  const openBgColor = Boolean(anchorElBgColor);
+
   const [anchorElSize, setAnchorElSize] = React.useState(null);
   const openSize = Boolean(anchorElSize);
 
   const [anchorElColumns, setAnchorElColumns] = React.useState(null);
   const openColumns = Boolean(anchorElColumns);
+
+
+  const [anchorElCase, setAnchorElCase] = React.useState(null);
+  const openCase = Boolean(anchorElCase);
 
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
@@ -573,6 +610,27 @@ export default function QuillToolbar() {
     setAnchorElOrientation(null);
   };
 
+  const handleOpenTextColor = (event: any) => {
+    setAnchorElTextColor(event.currentTarget);
+  };
+  const handleCloseTextColor = () => {
+    setAnchorElTextColor(null);
+  };
+
+  const handleOpenFontColor = (event: any) => {
+    setAnchorElFontColor(event.currentTarget);
+  };
+  const handleCloseFontColor = () => {
+    setAnchorElFontColor(null);
+  };
+
+  const handleOpenBgColor = (event: any) => {
+    setAnchorElBgColor(event.currentTarget);
+  };
+  const handleCloseBgColor = () => {
+    setAnchorElBgColor(null);
+  };
+
   const handleOpenSize = (event: any) => {
     setAnchorElSize(event.currentTarget);
   };
@@ -585,16 +643,34 @@ export default function QuillToolbar() {
     setAnchorElColumns(event.currentTarget);
   };
 
-  const handleCloseColumns = (event: any) => {
+  const handleCloseColumns = () => {
     setAnchorElColumns(null);
   };
 
+  const handleOpenCase = (event: any) => {
+    const editor = editorRefContext.getEditor();
+    const savedSelection = editor.getSelection();
+    setAnchorElCase(event.currentTarget);
+    editor.focus();
+    if (savedSelection) {
+      editor.setSelection(savedSelection);
+    }
+    setTooltipOpenCase(false)
+  };
+
+  const handleCloseCase = () => {
+    setAnchorElCase(null);
+    setTooltipOpenCase(false)
+  };
+  
+
+
   const scrollLeft = () => {
-    toolbarRef.current.scrollBy({ left: -400, behavior: "smooth" });
+    toolbarRef.current.scrollBy({ left: -1000, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    toolbarRef.current.scrollBy({ left: 400, behavior: "smooth" });
+    toolbarRef.current.scrollBy({ left: 1000, behavior: "smooth" });
   };
 
   const handleFontChange = (event: any) => {
@@ -666,15 +742,16 @@ export default function QuillToolbar() {
   };
 
   const [tooltipOpenNumbering, setTooltipOpenNumbering] = useState(false);
+  const [tooltipOpenBullets, setTooltipOpenBullets] = useState(false);
+
 
   const handleSelectOrientation = (value: any) => {
     handleCloseOrientation();
   };
 
   const handleSelectMargins = (value: any) => {
-    setDocumentPageMargins(value)
+    setDocumentPageMargins(value);
     handleCloseMargins();
-    
   };
 
   const [canUndo, setCanUndo] = useState(false);
@@ -736,39 +813,218 @@ export default function QuillToolbar() {
       title: "A6",
       desc: "10.5 cm x 14.8 cm",
       width: "10.5cm",
-      height: "14.8cm"
+      height: "14.8cm",
     },
     {
       title: "JIS B5",
       desc: "18.2 cm x 25.7 cm",
       width: "18.2cm",
-      height: "25.7cm"
+      height: "25.7cm",
     },
     {
       title: "JIS B6",
       desc: "12.8 cm x 18.2 cm",
       width: "12.8cm",
-      height: "18.2cm"
+      height: "18.2cm",
     },
     {
       title: "US Letter",
       desc: "21.59 cm x 27.94 cm",
       width: "21.59cm",
-      height: "27.94cm"
+      height: "27.94cm",
     },
     {
       title: "US Legal",
       desc: "21.59 cm x 35.56 cm",
       width: "21.59cm",
-      height: "35.56cm"
+      height: "35.56cm",
     },
     {
       title: "Indian Legal",
       desc: "21.5 cm x 34.5 cm",
       width: "21.5cm",
-      height: "35.56cm"
+      height: "35.56cm",
     },
   ];
+
+
+  const handleTextHighlightColorChange = (color: any) => {
+    setBgColor(color.hex);
+  };
+
+  const handleTextHighlight = () => {
+    const editor = editorRefContext.getEditor();
+    setBgColor(bgColor)
+
+    setTimeout(() => {
+        editor.focus();
+      }, 0);
+  
+  };
+
+  const handleFontColorChange = (color: any) => {
+    setFontColor(color.hex);
+  };
+
+
+  const handleBgColorChange = (color: any) => {
+    setBgColor(color.hex);
+  };
+
+  const handleFontColor = () => {
+    const editor = editorRefContext.getEditor()
+    setFontColor(fontColor)
+    setTimeout(() => {
+      editor.focus();
+    }, 0);
+  };
+
+  const [bgCount, setBgCount] = useState(0);
+  const [isBg, setIsBg] = useState(false);
+
+  const handleBgColor = () => {
+    const editor = editorRefContext.getEditor();
+
+    const newCount = bgCount + 1;
+
+    if (isBg) {
+      editor.format("background", bgColor);
+      setIsBg(false);
+      setBgCount(1);
+
+      setTimeout(() => {
+        editor.focus();
+      }, 0);
+
+      return;
+    }
+
+    if (newCount % 2 === 0) {
+      editor.format("background", false);
+    } else {
+      editor.format("background", bgColor);
+    }
+
+    setBgCount(newCount);
+
+    setTimeout(() => {
+      editor.focus();
+    }, 0);
+  };
+
+
+  const toSentenceCase = (text: any) => {
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  };
+
+  const toLowerCase = (text: any) => {
+    return text.toLowerCase();
+  };
+
+  const toUpperCase = (text: any) => {
+    return text.toUpperCase();
+  };
+
+  const toCapitalizeEachWord = (text: any) => {
+    return text.replace(/\w\S*/g, (word: any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+  };
+
+  const toToggleCase = (text: any) => {
+    return text
+      .split('')
+      .map((char: any) =>
+        char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
+      )
+      .join('');
+  };
+
+
+  const handleTextTransformation = (transformationFunction: Function) => {
+    const editor = editorRefContext.getEditor();
+    const selection = editor.getSelection();
+
+    if (selection && selection.length > 0) {
+      const selectedText = editor.getText(selection.index, selection.length);
+      const transformedText = transformationFunction(selectedText);
+      editor.deleteText(selection.index, selection.length);
+      editor.insertText(selection.index, transformedText);
+      editor.setSelection(selection.index, selection.length);
+    }
+    handleCloseCase()
+  };
+
+  const [selectedColumn, setSelectedColumn] = useState("one")
+
+  const handleClickColumns = (value: string) => {
+    const editorContainer = editorRefContext.editor?.root;
+
+    if (!editorContainer) {
+      console.error("Editor container not found");
+      return;
+    }
+
+    setSelectedColumn(value)
+
+    switch (value) {
+      case 'one':
+        editorContainer.style.columnCount = '1';
+        editorContainer.style.columnGap = '0';
+        break;
+      case 'two':
+        editorContainer.style.columnCount = '2';
+        editorContainer.style.columnGap = '20px';
+        break;
+      case 'three':
+        editorContainer.style.columnCount = '3';
+        editorContainer.style.columnGap = '20px';
+        break;
+      case 'left':
+        editorContainer.style.columnCount = '2';
+        editorContainer.style.columnGap = '20px';
+        editorContainer.style.columnWidth = '25%';
+        break;
+      case 'right':
+        editorContainer.style.columnCount = '2';
+        editorContainer.style.columnGap = '20px';
+        editorContainer.style.columnWidth = '75%';
+        break;
+      default:
+        editorContainer.style.columnCount = '1';
+        editorContainer.style.columnGap = '0';
+    }
+    handleCloseColumns()
+  };
+
+
+  const [showFormattingMarks, setShowFormattingMarks] = useState(false);
+
+  const toggleFormattingMarks = () => {
+    setShowFormattingMarks(!showFormattingMarks);
+  };
+
+  useEffect(() => {
+    if (!editorRefContext) return;
+    const editor = editorRefContext.getEditor();
+    const editorContainer = editor.root;
+
+    const paragraphs = editorContainer.querySelectorAll('p');
+    
+    paragraphs.forEach((p:any) => {
+      // Remove existing formatting marks
+      p.querySelectorAll('.formatting-mark').forEach((mark:any) => mark.remove());
+
+      const lineText = p.innerText.trim();
+      if (lineText === '' || lineText.length < 95) { 
+        if (showFormattingMarks) {
+          const mark = document.createElement('span');
+          mark.className = "formatting-mark";
+          mark.innerHTML = "¶"; 
+          p.appendChild(mark);
+        }
+      }
+    });
+  }, [showFormattingMarks]);
+
   return (
     <div className="d-flex">
       <button onClick={scrollLeft} className="btn-slider">
@@ -783,6 +1039,7 @@ export default function QuillToolbar() {
           whiteSpace: "nowrap",
           scrollbarWidth: "none",
           overflowY: "hidden",
+          height: 53,
         }}
       >
         <span className="ql-formats b-r">
@@ -794,7 +1051,7 @@ export default function QuillToolbar() {
               }}
             >
               <svg
-                width="21"
+                width="20.47"
                 height="9"
                 viewBox="0 0 21 9"
                 fill="none"
@@ -815,7 +1072,7 @@ export default function QuillToolbar() {
               }}
             >
               <svg
-                width="21"
+                width="20.47"
                 height="9"
                 viewBox="0 0 21 9"
                 fill="none"
@@ -972,18 +1229,21 @@ export default function QuillToolbar() {
         </span>
 
         <span className="ql-formats ">
-          <Tooltip title="Text Highlight Color" placement="bottom">
+          <Tooltip title="Text Highlight Color" placement="bottom" open={tooltipOpenHighlight}>
             <span
-              className="d-flex ql-color"
+              className="d-flex"
               style={{
                 height: 33,
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseEnter={()=>setTooltipOpenHighlight(true)}
+              onMouseLeave={()=>setTooltipOpenHighlight(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
-                style={{ width: 32, height: 33 }}
+                style={{ width: 32, height: 33, cursor: "pointer" }}
+                onClick={handleTextHighlight}
               >
                 <svg
                   width="21"
@@ -1000,8 +1260,7 @@ export default function QuillToolbar() {
                     y1="18.5"
                     x2="21"
                     y2="18.5"
-                    stroke="#D9D9D9"
-                    stroke-opacity="0.25"
+                    stroke={bgColor}
                     stroke-width="5"
                   />
                 </svg>
@@ -1010,29 +1269,56 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{
                   width: 19,
-                  borderLeft: "1px solid #D9D9D9",
                   height: 33,
+                  cursor: "pointer",
+                }}
+                id="openTextColor-button"
+                aria-controls={openTextColor ? "openTextColor-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openTextColor ? "true" : undefined}
+                onClick={(e)=>{
+                  handleOpenTextColor(e)
+                  setTooltipOpenHighlight(false)
                 }}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
+              <Menu
+                id="openTextColor-menu" // Updated ID to avoid conflict
+                anchorEl={anchorElTextColr}
+                open={openTextColor}
+                onClose={handleCloseTextColor}
+                MenuListProps={{
+                  "aria-labelledby": "openTextColor-button", // Updated aria-labelledby
+                }}
+                className="text-center"
+              >
+                <Sketch
+                  color="#9b9b9b"
+                  onChange={handleTextHighlightColorChange}
+                />
+             
+              </Menu>
             </span>
           </Tooltip>
         </span>
 
         <span className="ql-formats">
-          <Tooltip title="Font Color" placement="bottom">
+          <Tooltip title="Font Color" placement="bottom" open={tooltipOpenColor}>
             <span
-              className="d-flex ql-color"
+              className="d-flex "
               style={{
                 height: 33,
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseEnter={()=>setTooltipOpenColor(true)}
+              onMouseLeave={()=>setTooltipOpenColor(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
-                style={{ width: 32, height: 33 }}
+                style={{ width: 32, height: 33, cursor: "pointer" }}
+                onClick={handleFontColor}
               >
                 <svg
                   width="21"
@@ -1049,7 +1335,7 @@ export default function QuillToolbar() {
                     y1="18.5"
                     x2="21"
                     y2="18.5"
-                    stroke="black"
+                    stroke={fontColor}
                     stroke-width="5"
                   />
                 </svg>
@@ -1058,17 +1344,38 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{
                   width: 19,
-                  borderLeft: "1px solid #D9D9D9",
                   height: 33,
+                  cursor: "pointer",
+                }}
+                id="openFontColor-button"
+                aria-controls={openFontColor ? "openFontColor-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openFontColor ? "true" : undefined}
+                onClick={(e)=>{
+                  handleOpenFontColor(e)
+                  setTooltipOpenColor(false)
                 }}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
+              <Menu
+                id="openTextColor-menu" // Updated ID to avoid conflict
+                anchorEl={anchorElFontColor}
+                open={openFontColor}
+                onClose={handleCloseFontColor}
+                MenuListProps={{
+                  "aria-labelledby": "openFontColor-button", // Updated aria-labelledby
+                }}
+                className="text-center"
+              >
+                <Sketch color="#9b9b9b" onChange={handleFontColorChange} />
+      
+              </Menu>
             </span>
           </Tooltip>
         </span>
         <span className="ql-formats">
-          <Tooltip title="Shading" placement="bottom">
+          <Tooltip title="Shading" placement="bottom" open={tooltipOpenShading}>
             <span
               className="d-flex ql-color"
               style={{
@@ -1076,10 +1383,13 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseEnter={()=>setTooltipOpenShading(true)}
+              onMouseLeave={()=>setTooltipOpenShading(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
-                style={{ width: 32, height: 33 }}
+                style={{ width: 32, height: 33, cursor: "pointer" }}
+                onClick={handleBgColor}
               >
                 <svg
                   width="21"
@@ -1096,8 +1406,7 @@ export default function QuillToolbar() {
                     y1="18.5"
                     x2="21"
                     y2="18.5"
-                    stroke="#D9D9D9"
-                    stroke-opacity="0.25"
+                    stroke={bgColor}
                     stroke-width="5"
                   />
                 </svg>
@@ -1106,24 +1415,52 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{
                   width: 19,
-                  borderLeft: "1px solid #D9D9D9",
                   height: 33,
+                  cursor: "pointer",
+                }}
+                id="openBgColor-button"
+                aria-controls={openBgColor ? "openBgColor-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openBgColor ? "true" : undefined}
+                onClick={(e)=>{
+                  handleOpenBgColor(e)
+                  setTooltipOpenShading(false)
                 }}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
+              <Menu
+                id="openTextColor-menu" // Updated ID to avoid conflict
+                anchorEl={anchorElBgColor}
+                open={openBgColor}
+                onClose={handleCloseBgColor}
+                MenuListProps={{
+                  "aria-labelledby": "openBgColor-button", // Updated aria-labelledby
+                }}
+                className="text-center"
+              >
+                <Sketch color="#9b9b9b" onChange={handleBgColorChange} />
+             
+              </Menu>
             </span>
           </Tooltip>
         </span>
         <span className="ql-formats b-r">
-          <Tooltip title="Change Case" placement="bottom">
+          <Tooltip title="Change Case" placement="bottom" open={tooltipOpenCase}>
             <span
-              className="d-flex ql-color"
+              className="d-flex "
               style={{
                 height: 33,
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseOver={()=>{
+                setTooltipOpenCase(!openCase)
+                console.log(tooltipOpenCase)
+                console.log("Mouse Moved")
+              }}
+              onMouseLeave={()=>setTooltipOpenCase(false)}
+              onFocus={()=>setTooltipOpenCase(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -1146,12 +1483,47 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{
                   width: 19,
-                  borderLeft: "1px solid #D9D9D9",
                   height: 33,
+                  cursor: "pointer",
                 }}
+                onClick={(e)=>{
+                  handleOpenCase(e)
+                  setTooltipOpenCase(false)
+                }}
+                id="openCase-button"
+                aria-controls={openCase ? "openCase-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openCase ? "true" : undefined}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
+              <Menu
+                id="openCase-menu"
+                anchorEl={anchorElCase}
+                open={openCase}
+                onClose={handleCloseCase}
+                MenuListProps={{
+                  "aria-labelledby": "openCase-button",
+                }}
+                onMouseMove={()=>setTooltipOpenCase(false)}
+                onChange={()=>setTooltipOpenCase(false)}
+              >
+                <MenuItem onClick={() => handleTextTransformation(toSentenceCase)}>
+                  Sentence case
+                </MenuItem>
+                <MenuItem onClick={() => handleTextTransformation(toLowerCase)}>
+                  lowercase
+                </MenuItem>
+                <MenuItem onClick={() => handleTextTransformation(toUpperCase)}>
+                  UPPERCASE
+                </MenuItem>
+                <MenuItem onClick={() => handleTextTransformation(toCapitalizeEachWord)}>
+                  Capitalize Each Word
+                </MenuItem>
+                <MenuItem onClick={() => handleTextTransformation(toToggleCase)}>
+                  tOGGLE cASE
+                </MenuItem>
+              </Menu>
             </span>
           </Tooltip>
         </span>
@@ -1177,7 +1549,12 @@ export default function QuillToolbar() {
             <button className="btn-undo ql-script mx-2" value="sub" />
           </Tooltip>
           <Tooltip title="Show/Hide formatting marks">
-            <button className="btn-undo ql-blockquote" />
+            <button className="btn-undo" onClick={toggleFormattingMarks}>
+              <svg width="16" height="28" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.33333 9.77778C3.91885 9.77778 2.56229 9.2627 1.5621 8.34586C0.561903 7.42901 0 6.1855 0 4.88889C0 3.59227 0.561903 2.34877 1.5621 1.43192C2.56229 0.515078 3.91885 0 5.33333 0H16V2.44444H13.3333V22H10.6667V2.44444H8V22H5.33333V9.77778Z" fill="black" />
+              </svg>
+
+            </button>
           </Tooltip>
         </span>
 
@@ -1185,9 +1562,7 @@ export default function QuillToolbar() {
           <Tooltip
             title="Numbering"
             placement="bottom"
-            open={false}
-            onOpen={() => setTooltipOpenNumbering(true)}
-            onClose={() => setTooltipOpenNumbering(false)}
+            open={tooltipOpenNumbering}
           >
             <span
               className="d-flex"
@@ -1195,8 +1570,9 @@ export default function QuillToolbar() {
                 height: 33,
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
+                cursor:"pointer"
               }}
-              // onMouseEnter={() => setTooltipOpenNumbering(true)}
+              onMouseEnter={() => setTooltipOpenNumbering(!open1)}
               onMouseLeave={() => setTooltipOpenNumbering(false)}
             >
               <span
@@ -1229,13 +1605,9 @@ export default function QuillToolbar() {
                 aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-                onMouseMove={(e) => {
-                  e.stopPropagation();
-                  setTooltipOpenNumbering(false);
-                }}
-                onMouseLeave={(e) => {
-                  setTooltipOpenNumbering(false);
+                onClick={(e)=>{
+                  handleClick(e)
+                  setTooltipOpenNumbering(false)
                 }}
               >
                 <img src={DropdownBarImage} alt="Bar" />
@@ -1248,18 +1620,8 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setTooltipOpenNumbering(false);
-                }}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  setTooltipOpenNumbering(false);
-                }}
-                onMouseEnter={(e) => {
-                  e.stopPropagation();
-                  setTooltipOpenNumbering(false);
-                }}
+            
+                onMouseMove={()=>setTooltipOpenNumbering(false)}
               >
                 <div className="d-flex">
                   <MenuItem
@@ -1394,7 +1756,7 @@ export default function QuillToolbar() {
           </Tooltip>
         </span>
         <span className="ql-formats ">
-          <Tooltip title="Bullets" placement="bottom" open={false}>
+          <Tooltip title="Bullets" placement="bottom" open={tooltipOpenBullets}>
             <span
               className="d-flex "
               style={{
@@ -1402,15 +1764,17 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseEnter={() => setTooltipOpenBullets(!open)}
+              onMouseLeave={() => setTooltipOpenBullets(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
-                style={{ width: 32, height: 33 }}
+                style={{ width: 32, height: 33 ,cursor:"pointer"}}
               >
                 <svg
                   onClick={() => handleListClick("bullet-dot")}
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1434,7 +1798,10 @@ export default function QuillToolbar() {
                 aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
-                onClick={handleClick2}
+                onClick={(e)=>{
+                  handleClick2(e)
+                  setTooltipOpenBullets(false)
+                }}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
@@ -1446,6 +1813,7 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}
+                onMouseMove={()=>setTooltipOpenBullets(false)}
               >
                 <div className="d-flex">
                   <MenuItem
@@ -1471,7 +1839,7 @@ export default function QuillToolbar() {
                     value="default"
                     className="mx-1 border-menu"
                     style={{ height: 38, width: 38 }}
-                    onClick={() => handleListClick("bullet-dot")}
+                    onClick={() => handleListClick("bullet-dot-large")}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -1562,8 +1930,8 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1601,8 +1969,8 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1648,8 +2016,8 @@ export default function QuillToolbar() {
                 style={{ width: 34, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1668,7 +2036,7 @@ export default function QuillToolbar() {
           </Tooltip>
         </span>
         <span className="ql-formats">
-          <Tooltip title="Margins" placement="bottom" open={false}>
+          <Tooltip title="Margins" placement="bottom" open={tooltipOpenMargins}>
             <span
               className="d-flex ql-color"
               style={{
@@ -1676,14 +2044,16 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseOver={()=>setTooltipOpenMargins(!openMargins)}
+              onMouseLeave={()=>setTooltipOpenMargins(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 26 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1708,7 +2078,10 @@ export default function QuillToolbar() {
                 aria-controls={openMargins ? "margins-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openMargins ? "true" : undefined}
-                onClick={handleOpenMargins}
+                onClick={(e)=>{
+                  handleOpenMargins(e)
+                  setTooltipOpenMargins(false)
+                }}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
@@ -1720,24 +2093,30 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "margins-button", // Updated aria-labelledby
                 }}
+                onMouseMove={()=>{
+                  setTooltipOpenMargins(false)
+                }}
               >
                 <MenuItem
-                 style={{
-                  background:documentPageMargins.title == "Standard" ? "#edf4fb":""
-                }}
-                onClick={() => handleSelectMargins({
-                  title:"Standard",
-                  top:"2.54cm",
-                  bottom:"2.54cm",
-                  left:"2.54cm",
-                  right:"2.54cm",
-                  
-                })}>
+                  style={{
+                    background:
+                      documentPageMargins.title == "Standard" ? "#edf4fb" : "",
+                  }}
+                  onClick={() =>
+                    handleSelectMargins({
+                      title: "Standard",
+                      top: "2.54cm",
+                      bottom: "2.54cm",
+                      left: "2.54cm",
+                      right: "2.54cm",
+                    })
+                  }
+                >
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
-                        width="34"
-                        height="34"
+                        width="37"
+                        height="37"
                         viewBox="0 0 26 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -1754,36 +2133,46 @@ export default function QuillToolbar() {
                       className=" ml-2"
                       style={{
                         alignSelf: "center",
-                        fontSize: "21px",
-                        fontWeight: "550",
+                        fontSize: "10px",
                       }}
                     >
-                      <div>Standard</div>
-                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                      <div
+                        style={{
+                          fontWeight: 550,
+                          fontSize:14,
+                          position:"relative",
+                          top:2
+                        }}
+                      >
+                        Standard
+                      </div>
+                      <div style={{ fontSize: 12, color: "#00000080",position:"relative",bottom:2 }}>
                         Top: 2.54 cm, Bottom: 2.54 cm, Left: 2.54 cm, Right:
                         2.54 cm
                       </div>
                     </div>
                   </div>
                 </MenuItem>
-                <MenuItem 
-                   onClick={() => handleSelectMargins({
-                    title:"Narrow",
-                    top:"1.27cm",
-                    bottom:"1.27cm",
-                    left:"1.27cm",
-                    right:"1.27cm",
-                    
-                  })}
-                style={{
-                  background:documentPageMargins.title == "Narrow" ? "#edf4fb":""
-                }}
+                <MenuItem
+                  onClick={() =>
+                    handleSelectMargins({
+                      title: "Narrow",
+                      top: "1.27cm",
+                      bottom: "1.27cm",
+                      left: "1.27cm",
+                      right: "1.27cm",
+                    })
+                  }
+                  style={{
+                    background:
+                      documentPageMargins.title == "Narrow" ? "#edf4fb" : "",
+                  }}
                 >
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
-                        width="34"
-                        height="34"
+                        width="37"
+                        height="37"
                         viewBox="0 0 26 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -1800,36 +2189,45 @@ export default function QuillToolbar() {
                       className=" ml-2"
                       style={{
                         alignSelf: "center",
-                        fontSize: "21px",
-                        fontWeight: "550",
                       }}
                     >
-                      <div>Narrow</div>
-                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                      <div
+                        style={{
+                          fontWeight: "550",
+                          fontSize:14,
+                          position:"relative",
+                          top:2
+                        }}
+                      >
+                        Narrow
+                      </div>
+                      <div style={{ fontSize: 12, color: "#00000080" ,position:"relative",bottom:2}}>
                         Top: 1.27 cm, Bottom: 1.27 cm, Left: 1.27 cm, Right:
                         1.27 cm{" "}
                       </div>
                     </div>
                   </div>
                 </MenuItem>
-                <MenuItem 
-                  onClick={() => handleSelectMargins({
-                    title:"Moderate",
-                    top:"2.54cm",
-                    bottom:"2.54cm",
-                    left:"1.91cm",
-                    right:"1.91cm",
-                    
-                  })}
-                style={{
-                  background:documentPageMargins.title == "Moderate" ? "#edf4fb":""
-                }}
+                <MenuItem
+                  onClick={() =>
+                    handleSelectMargins({
+                      title: "Moderate",
+                      top: "2.54cm",
+                      bottom: "2.54cm",
+                      left: "1.91cm",
+                      right: "1.91cm",
+                    })
+                  }
+                  style={{
+                    background:
+                      documentPageMargins.title == "Moderate" ? "#edf4fb" : "",
+                  }}
                 >
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
-                        width="34"
-                        height="34"
+                        width="37"
+                        height="37"
                         viewBox="0 0 26 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -1846,36 +2244,47 @@ export default function QuillToolbar() {
                       className=" ml-2"
                       style={{
                         alignSelf: "center",
-                        fontSize: "21px",
-                        fontWeight: "550",
+                        fontSize: "10px",
                       }}
                     >
-                      <div>Moderate</div>
-                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                      <div
+                        style={{
+                          fontWeight: "550",
+                          fontSize:14,
+                          position:"relative",
+                          top:2
+                        }}
+                      >
+                        Moderate
+                      </div>
+                      <div style={{ fontSize: 12, color: "#00000080",   position:"relative",
+                          bottom:2 }}>
                         Top: 2.54 cm, Bottom: 2.54 cm, Left: 1.91 cm, Right:
                         1.91 cm
                       </div>
                     </div>
                   </div>
                 </MenuItem>
-                <MenuItem 
-                  onClick={() => handleSelectMargins({
-                    title:"Wide",
-                    top:"2.54cm",
-                    bottom:"2.54cm",
-                    left:"5.08cm",
-                    right:"5.08cm",
-                    
-                  })}
-                style={{
-                  background:documentPageMargins.title == "Wide" ? "#edf4fb":""
-                }}
+                <MenuItem
+                  onClick={() =>
+                    handleSelectMargins({
+                      title: "Wide",
+                      top: "2.54cm",
+                      bottom: "2.54cm",
+                      left: "5.08cm",
+                      right: "5.08cm",
+                    })
+                  }
+                  style={{
+                    background:
+                      documentPageMargins.title == "Wide" ? "#edf4fb" : "",
+                  }}
                 >
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
-                        width="34"
-                        height="34"
+                        width="37"
+                        height="37"
                         viewBox="0 0 26 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -1892,12 +2301,20 @@ export default function QuillToolbar() {
                       className=" ml-2"
                       style={{
                         alignSelf: "center",
-                        fontSize: "21px",
-                        fontWeight: "550",
                       }}
                     >
-                      <div>Wide</div>
-                      <div style={{ fontSize: 10, color: "#00000080" }}>
+                      <div
+                        style={{
+                          fontWeight: "550",
+                          fontSize:14,
+                          position:"relative",
+                          top:2
+                        }}
+                      >
+                        Wide
+                      </div>
+                      <div style={{ fontSize: 12, color: "#00000080",   position:"relative",
+                          bottom:2 }}>
                         Top: 2.54 cm, Bottom: 2.54 cm, Left: 5.08 cm, Right:
                         5.08 cm
                       </div>
@@ -1910,7 +2327,7 @@ export default function QuillToolbar() {
         </span>
 
         <span className="ql-formats">
-          <Tooltip title="Orientation" placement="bottom">
+          <Tooltip title="Orientation" placement="bottom" open={tooltipOpenOrientation}> 
             <span
               className="d-flex ql-color"
               style={{
@@ -1918,14 +2335,16 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseOver={()=>setTooltipOpenOrientation(!openOrientation)}
+              onMouseLeave={()=>setTooltipOpenOrientation(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 21"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -1951,7 +2370,10 @@ export default function QuillToolbar() {
                 aria-controls={openOrientation ? "orientation-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openOrientation ? "true" : undefined}
-                onClick={handleOpenOrientation}
+                onClick={(e)=>{
+                  handleOpenOrientation(e)
+                  setTooltipOpenOrientation(false)
+                }}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
@@ -1963,13 +2385,14 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "orientation-button", // Updated aria-labelledby
                 }}
+                onMouseMove={()=>setTooltipOpenOrientation(false)}
               >
                 <MenuItem onClick={() => handleSelectOrientation("potrait")}>
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
-                        width="21"
-                        height="21"
+                        width="18"
+                        height="22"
                         viewBox="0 0 18 22"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -1984,7 +2407,7 @@ export default function QuillToolbar() {
                       className="ml-2"
                       style={{
                         alignSelf: "center",
-                        fontSize: "calc(1.275rem + .3vw)",
+                        fontSize: "14px",
                       }}
                     >
                       Portrait
@@ -1995,8 +2418,8 @@ export default function QuillToolbar() {
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
-                        width="22"
-                        height="18"
+                        width="18"
+                        height="22"
                         viewBox="0 0 22 18"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -2011,7 +2434,7 @@ export default function QuillToolbar() {
                       className="ml-2"
                       style={{
                         alignSelf: "center",
-                        fontSize: "calc(1.275rem + .3vw)",
+                        fontSize: "14px",
                       }}
                     >
                       Landscape
@@ -2024,7 +2447,7 @@ export default function QuillToolbar() {
         </span>
 
         <span className="ql-formats">
-          <Tooltip title="Size" placement="bottom" open={false}>
+          <Tooltip title="Size" placement="bottom" open={tooltipOpenSize}>
             <span
               className="d-flex ql-color"
               style={{
@@ -2032,14 +2455,16 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseEnter={()=>setTooltipOpenSize(!openSize)}
+              onMouseLeave={()=>setTooltipOpenSize(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 23"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -2065,7 +2490,10 @@ export default function QuillToolbar() {
                   height: 33,
                   cursor: "pointer",
                 }}
-                onClick={handleOpenSize}
+                onClick={(e)=>{
+                  handleOpenSize(e)
+                  setTooltipOpenSize(false)
+                }}
                 id="openSize-button"
                 aria-controls={openSize ? "openSize-menu" : undefined}
                 aria-haspopup="true"
@@ -2081,6 +2509,7 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "openSize-button",
                 }}
+                onMouseMove={()=>setTooltipOpenSize(false)}
               >
                 {pageSizes.map((size, index) => {
                   return (
@@ -2088,13 +2517,15 @@ export default function QuillToolbar() {
                       key={index}
                       onClick={() => handleSelectSize(size)}
                       style={{
-                        background:documentPageSize.title == size.title ? "#edf4fb":""
+                        background:
+                          documentPageSize.title == size.title ? "#edf4fb" : "",
                       }}
                     >
                       <div className="container">
                         <div
                           style={{
-                            fontSize: "1.25rem",
+                            fontSize: "14px",
+                            fontWeight:550
                           }}
                         >
                           {size.title}
@@ -2116,7 +2547,7 @@ export default function QuillToolbar() {
           </Tooltip>
         </span>
         <span className="ql-formats">
-          <Tooltip title="Columns" placement="bottom" open={false}>
+          <Tooltip title="Columns" placement="bottom" open={tooltipOpenColumns}>
             <span
               className="d-flex ql-color"
               style={{
@@ -2124,14 +2555,16 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseEnter={()=>setTooltipOpenColumns(!openColumns)}
+              onMouseLeave={()=>setTooltipOpenColumns(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 26 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -2152,7 +2585,10 @@ export default function QuillToolbar() {
                   height: 33,
                   cursor: "pointer",
                 }}
-                onClick={handleOpenColumns}
+                onClick={(e)=>{
+                  handleOpenColumns(e)
+                  setTooltipOpenColumns(false)
+                }}
                 id="openColumns-button"
                 aria-controls={openColumns ? "openColumns-menu" : undefined}
                 aria-haspopup="true"
@@ -2168,17 +2604,21 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "openColumns-button",
                 }}
+                onMouseMove={()=>setTooltipOpenColumns(false)}
               >
                 <MenuItem
                   style={{
                     width: 136,
+                    background:
+                      selectedColumn === "one" ? "#edf4fb" : "",
                   }}
+                  onClick={() => handleClickColumns("one")}
                 >
                   <div className="d-flex">
                     <div>
                       <svg
-                        width="26"
-                        height="30"
+                        width="24"
+                        height="28"
                         viewBox="0 0 26 30"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -2194,7 +2634,7 @@ export default function QuillToolbar() {
                     <div
                       className="mx-2"
                       style={{
-                        fontSize: "1.2rem",
+                        fontSize: "14px",
                       }}
                     >
                       One
@@ -2204,13 +2644,16 @@ export default function QuillToolbar() {
                 <MenuItem
                   style={{
                     width: 136,
+                    background:
+                      selectedColumn === "two" ? "#edf4fb" : "",
                   }}
+                  onClick={() => handleClickColumns("two")}
                 >
                   <div className="d-flex">
                     <div>
                       <svg
-                        width="26"
-                        height="30"
+                        width="24"
+                        height="28"
                         viewBox="0 0 26 30"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -2226,7 +2669,7 @@ export default function QuillToolbar() {
                     <div
                       className="mx-2"
                       style={{
-                        fontSize: "1.2rem",
+                        fontSize: "14px",
                       }}
                     >
                       Two
@@ -2236,13 +2679,16 @@ export default function QuillToolbar() {
                 <MenuItem
                   style={{
                     width: 136,
+                    background:
+                      selectedColumn === "three" ? "#edf4fb" : "",
                   }}
+                  onClick={() => handleClickColumns("three")}
                 >
                   <div className="d-flex">
                     <div>
                       <svg
-                        width="26"
-                        height="30"
+                        width="24"
+                        height="28"
                         viewBox="0 0 26 30"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -2258,7 +2704,7 @@ export default function QuillToolbar() {
                     <div
                       className="mx-2"
                       style={{
-                        fontSize: "1.2rem",
+                        fontSize: "14px",
                       }}
                     >
                       Three
@@ -2268,13 +2714,17 @@ export default function QuillToolbar() {
                 <MenuItem
                   style={{
                     width: 136,
+                    background:
+                      selectedColumn === "left" ? "#edf4fb" : "",
                   }}
+                  onClick={() => handleClickColumns("left")}
+
                 >
                   <div className="d-flex">
                     <div>
                       <svg
-                        width="26"
-                        height="30"
+                        width="24"
+                        height="28"
                         viewBox="0 0 26 30"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -2290,7 +2740,7 @@ export default function QuillToolbar() {
                     <div
                       className="mx-2"
                       style={{
-                        fontSize: "1.2rem",
+                        fontSize: "14px",
                       }}
                     >
                       Left
@@ -2301,12 +2751,13 @@ export default function QuillToolbar() {
                   style={{
                     width: 136,
                   }}
+                  onClick={() => handleClickColumns("right")}
                 >
                   <div className="d-flex">
                     <div>
                       <svg
-                        width="26"
-                        height="30"
+                        width="24"
+                        height="28"
                         viewBox="0 0 26 30"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -2322,7 +2773,7 @@ export default function QuillToolbar() {
                     <div
                       className="mx-2"
                       style={{
-                        fontSize: "1.2rem",
+                        fontSize: "14px",
                       }}
                     >
                       Right
@@ -2348,8 +2799,8 @@ export default function QuillToolbar() {
                 style={{ width: 34, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -2378,8 +2829,8 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -2417,8 +2868,8 @@ export default function QuillToolbar() {
                 style={{ width: 34, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -2447,8 +2898,8 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 24 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -2486,8 +2937,8 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="21"
-                  height="21"
+                  width="24"
+                  height="22"
                   viewBox="0 0 20 22"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"

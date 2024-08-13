@@ -119,6 +119,15 @@ interface ContractContextProps {
 
   documentName: any | null;
   setDucomentName: Dispatch<SetStateAction<any>>;
+  
+  bgColor: any | null;
+  setBgColor: Dispatch<SetStateAction<any>>;
+
+  fontColor: any | null;
+  setFontColor: Dispatch<SetStateAction<any>>;
+
+  shadeColor: any | null;
+  setShadeColor: Dispatch<SetStateAction<any>>;
 
   documentPageSize: any | null;
   setDocumentPageSize: Dispatch<SetStateAction<any>>;
@@ -238,7 +247,13 @@ export const ContractContext = createContext<ContractContextProps>({
   documentPageSize: {},
   setDocumentPageSize: () => { },
   documentPageMargins:{},
-  setDocumentPageMargins:()=>{}
+  setDocumentPageMargins:()=>{},
+  bgColor:{},
+  setBgColor:()=>{},
+  shadeColor:{},
+  setShadeColor:()=>{},
+  fontColor:{},
+  setFontColor:()=>{}
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -565,6 +580,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
     bottom:"2.54cm"
   });
 
+  const [bgColor,setBgColor] = useState("#fefefe")
+  const [shadeColor,setShadeColor] = useState("")
+  const [fontColor,setFontColor] = useState("black")
+ 
   
   return (
     <ContractContext.Provider
@@ -658,7 +677,13 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         documentPageSize,
         setDocumentPageSize,
         documentPageMargins,
-        setDocumentPageMargins
+        setDocumentPageMargins,
+        bgColor,
+        setBgColor,
+        fontColor,
+        setFontColor,
+        shadeColor,
+        setShadeColor
       }}
     >
       {children}

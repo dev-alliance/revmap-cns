@@ -37,6 +37,7 @@
     "@types/lodash": "^4.14.202",
     "@types/react-dropzone": "^5.1.0",
     "@types/react-router-dom": "^5.3.3",
+    "@uiw/react-color": "^2.3.0",
     "axios": "^1.6.0",
     "bootstrap": "^5.3.3",
     "country-state-city": "^3.2.1",

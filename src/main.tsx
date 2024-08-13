@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
@@ -7,8 +6,6 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Components } from "@mui/material/styles/components";
-import { DataGrid } from "@mui/x-data-grid";
 import { registerLicense } from "@syncfusion/ej2-base";
 registerLicense(
   "Ngo9BigBOggjHTQxAR8/V1NBaF1cWGhIfEx1RHxQdld5ZFRHallYTnNWUj0eQnxTdEFjXH1acHBVTmBYVkRxXg=="
@@ -48,8 +45,8 @@ const theme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          backgroundColor: "#FFC107",
-          color: "white", // Optional: Changes the text color to white
+          backgroundColor: "#b1f8fe",
+          color: "black",
         },
       },
     },
