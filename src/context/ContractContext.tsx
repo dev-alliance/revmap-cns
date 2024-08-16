@@ -129,6 +129,15 @@ interface ContractContextProps {
   shadeColor: any | null;
   setShadeColor: Dispatch<SetStateAction<any>>;
 
+  bgColorSvg: any | null;
+  setBgColorSvg: Dispatch<SetStateAction<any>>;
+
+  fontColorSvg: any | null;
+  setFontColorSvg: Dispatch<SetStateAction<any>>;
+
+  shadeColorSvg: any | null;
+  setShadeColorSvg: Dispatch<SetStateAction<any>>;
+
   documentPageSize: any | null;
   setDocumentPageSize: Dispatch<SetStateAction<any>>;
 
@@ -146,6 +155,8 @@ interface ContractContextProps {
   formState: any | null;
   setFormState: Dispatch<SetStateAction<any>>;
   inputRef: React.RefObject<HTMLInputElement>;
+  selectionRef: any | null;
+
 
   IsTemplate: any | null;
   setIsTemplate: Dispatch<SetStateAction<any>>;
@@ -253,7 +264,14 @@ export const ContractContext = createContext<ContractContextProps>({
   shadeColor:{},
   setShadeColor:()=>{},
   fontColor:{},
-  setFontColor:()=>{}
+  setFontColor:()=>{},
+  fontColorSvg:{},
+  setFontColorSvg:()=>{},
+  bgColorSvg:{},
+  setBgColorSvg:()=>{},
+  setShadeColorSvg:()=>{},
+  shadeColorSvg:{},
+  selectionRef:{current:null}
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -585,6 +603,12 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [fontColor,setFontColor] = useState("black")
  
   
+  const [bgColorSvg,setBgColorSvg] = useState("#D9D9D940")
+  const [shadeColorSvg,setShadeColorSvg] = useState("")
+  const [fontColorSvg,setFontColorSvg] = useState("black")
+
+  const selectionRef:any = useRef()
+
   return (
     <ContractContext.Provider
       value={{
@@ -683,7 +707,14 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         fontColor,
         setFontColor,
         shadeColor,
-        setShadeColor
+        setShadeColor,
+        fontColorSvg,
+        setBgColorSvg,
+        bgColorSvg,
+        shadeColorSvg,
+        setShadeColorSvg,
+        setFontColorSvg,
+        selectionRef
       }}
     >
       {children}

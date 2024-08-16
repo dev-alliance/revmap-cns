@@ -429,7 +429,7 @@ export const formats = [
   "text-field-container",
   "signature-blot",
   "alphabet-list-item",
-  "underlineHighlight",
+  "lineHeight"
 ];
 
 const ListItem = Quill.import("formats/list/item");
@@ -459,7 +459,7 @@ class AlphabetListItem extends ListItem {
         this.domNode.setAttribute("data-list", localStorage.getItem("list"));
       } else {
         this.domNode.removeAttribute("data-list");
-        super.format(name, false); // Remove the list formatting
+        super.format(name, false);
       }
     } else {
       super.format(name, value);
@@ -467,26 +467,13 @@ class AlphabetListItem extends ListItem {
   }
 }
 
-const CustomUnderline = Quill.import("blots/inline");
-
-class UnderlineBlot extends CustomUnderline {
-  static create(value: any) {
-    let node = super.create();
-    node.setAttribute(
-      "style",
-      `text-decoration: underline; text-decoration-color: ${value}`
-    );
-    return node;
-  }
-
-  static formats(node: any) {
-    return node.style.textDecorationColor;
-  }
-}
-
-UnderlineBlot.blotName = "underlineHighlight";
-UnderlineBlot.tagName = "span";
-Quill.register(UnderlineBlot);
+const Parchment = Quill.import('parchment');
+const lineHeightConfig = {
+  scope: Parchment.Scope.BLOCK,
+  whitelist: ['1', '1.15', '1.5', '2', '2.5', '3'],
+};
+const LineHeightStyle = new Parchment.Attributor.Style('lineHeight', 'line-height', lineHeightConfig);
+Quill.register(LineHeightStyle, true);
 
 // Register custom format
 Quill.register({
@@ -504,7 +491,12 @@ export default function QuillToolbar() {
     setShadeColor,
     setFontColor,
     fontColor,
-    bgColor,shadeColor
+    bgColor,
+    bgColorSvg,
+    setBgColorSvg,
+    fontColorSvg,
+    setFontColorSvg,
+    selectionRef
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
@@ -533,6 +525,7 @@ export default function QuillToolbar() {
   const [selectOpen, setSelectOpen] = useState(false);
 
   const [tooltipOpenSize, setTooltipOpenSize] = useState(false);
+  const [tooltipOpenSpacing, setTooltipOpenSpacing] = useState(false);
   const [tooltipOpenColumns, setTooltipOpenColumns] = useState(false);
 
 
@@ -548,7 +541,7 @@ export default function QuillToolbar() {
 
   const [tooltipOpenOrientation, setTooltipOpenOrientation] = useState(false);
 
-  
+
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open1 = Boolean(anchorEl);
@@ -573,6 +566,10 @@ export default function QuillToolbar() {
 
   const [anchorElSize, setAnchorElSize] = React.useState(null);
   const openSize = Boolean(anchorElSize);
+
+
+  const [anchorElSpacing, setAnchorElSpacing] = React.useState(null);
+  const openSpacing = Boolean(anchorElSpacing);
 
   const [anchorElColumns, setAnchorElColumns] = React.useState(null);
   const openColumns = Boolean(anchorElColumns);
@@ -613,16 +610,56 @@ export default function QuillToolbar() {
   const handleOpenTextColor = (event: any) => {
     setAnchorElTextColor(event.currentTarget);
   };
+
   const handleCloseTextColor = () => {
+    const editor = editorRefContext.getEditor();
+    setTimeout(() => {
+      editor.focus()
+    }, 0);
+    setAnchorElTextColor(null);
+  };
+
+  const handleSaveTextColor = () => {
+    const editor = editorRefContext.getEditor();
+    setBgColor(highlightColor)
+    setBgColorSvg(highlightColor)
+    setTimeout(() => {
+      editor.focus()
+    }, 0);
     setAnchorElTextColor(null);
   };
 
   const handleOpenFontColor = (event: any) => {
     setAnchorElFontColor(event.currentTarget);
   };
+
   const handleCloseFontColor = () => {
+    const editor = editorRefContext.getEditor();
+    setTimeout(() => {
+      editor.focus()
+    }, 0);
     setAnchorElFontColor(null);
   };
+
+  const handleSaveFontColor = () => {
+    const editor = editorRefContext.getEditor();
+    setFontColor(textColor)
+    setFontColorSvg(textColor)
+    setTimeout(() => {
+      editor.focus()
+    }, 0);
+    setAnchorElFontColor(null);
+  };
+
+  const handleCancelFontColor = () => {
+    const editor = editorRefContext.getEditor();
+    setTimeout(() => {
+      editor.focus()
+    }, 0);
+    setAnchorElFontColor(null);
+  };
+
+
 
   const handleOpenBgColor = (event: any) => {
     setAnchorElBgColor(event.currentTarget);
@@ -647,6 +684,15 @@ export default function QuillToolbar() {
     setAnchorElColumns(null);
   };
 
+  const handleOpenSpacing = (event: any) => {
+    setAnchorElSpacing(event.currentTarget);
+  };
+
+  const handleCloseSpacing = () => {
+    setAnchorElSpacing(null);
+  };
+
+
   const handleOpenCase = (event: any) => {
     const editor = editorRefContext.getEditor();
     const savedSelection = editor.getSelection();
@@ -662,7 +708,7 @@ export default function QuillToolbar() {
     setAnchorElCase(null);
     setTooltipOpenCase(false)
   };
-  
+
 
 
   const scrollLeft = () => {
@@ -746,6 +792,22 @@ export default function QuillToolbar() {
 
 
   const handleSelectOrientation = (value: any) => {
+    if (value === "landscape") {
+      setDocumentPageSize({
+        width: "100%",
+        height: "100%",
+        title: "Landscape",
+        desc: "Landscape"
+      })
+    }
+    else {
+      setDocumentPageSize({
+        title: "A4",
+        desc: "21 cm x 29.7 cm",
+        width: "21cm",
+        height: "29.7cm",
+      })
+    }
     handleCloseOrientation();
   };
 
@@ -847,33 +909,63 @@ export default function QuillToolbar() {
     },
   ];
 
+  const lineSpacing = [
+    {
+      value: "1"
+    },
+    {
+      value: "1.15"
+    },
+    {
+      value: "1.5"
+    },
+    {
+      value: "2"
+    },
+    {
+      value: "2.5"
+    },
+    {
+      value: "3"
+    },
+  ]
+
+  const [highlightColor, setHighlightColor] = useState("")
 
   const handleTextHighlightColorChange = (color: any) => {
-    setBgColor(color.hex);
+    setHighlightColor(color.hex)
   };
 
   const handleTextHighlight = () => {
     const editor = editorRefContext.getEditor();
     setBgColor(bgColor)
+    setBgColorSvg(bgColor)
 
     setTimeout(() => {
-        editor.focus();
-      }, 0);
-  
+      editor.focus();
+    }, 0);
+
   };
 
+
+
+  const [textColor, setTextColor] = useState("")
+
+
   const handleFontColorChange = (color: any) => {
-    setFontColor(color.hex);
+    setTextColor(color.hex)
   };
 
 
   const handleBgColorChange = (color: any) => {
     setBgColor(color.hex);
+    setBgColorSvg(color.hex)
   };
 
   const handleFontColor = () => {
     const editor = editorRefContext.getEditor()
     setFontColor(fontColor)
+    setFontColorSvg(fontColor)
     setTimeout(() => {
       editor.focus();
     }, 0);
@@ -1007,24 +1099,55 @@ export default function QuillToolbar() {
     const editor = editorRefContext.getEditor();
     const editorContainer = editor.root;
 
+    // Get all paragraphs
     const paragraphs = editorContainer.querySelectorAll('p');
-    
-    paragraphs.forEach((p:any) => {
-      // Remove existing formatting marks
-      p.querySelectorAll('.formatting-mark').forEach((mark:any) => mark.remove());
+    console.log("Paragraphs:", paragraphs);
 
+    paragraphs.forEach((p: HTMLElement) => {
+      // Remove text nodes containing '¶'
+      const childNodes = Array.from(p.childNodes);
+      childNodes.forEach((node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE && node.textContent?.includes('¶')) {
+          node.textContent = node.textContent.replace(/¶/g, '');
+        }
+      });
+
+      // If showFormattingMarks is true, add new formatting mark
       const lineText = p.innerText.trim();
-      if (lineText === '' || lineText.length < 95) { 
+      if (lineText === '' || lineText.length < 95) {
         if (showFormattingMarks) {
+          // Create and append new formatting mark
           const mark = document.createElement('span');
-          mark.className = "formatting-mark";
-          mark.innerHTML = "¶"; 
+          mark.className = 'formatting-mark';
+          mark.innerHTML = '¶';
+
+          // Append the new mark at the end of the paragraph
           p.appendChild(mark);
         }
       }
     });
   }, [showFormattingMarks]);
 
+
+  const handleSelectSpacing = (value: any) => {
+    setSpacing(value); // Update the selected spacing
+    setAnchorElSpacing(null); // Close the spacing menu
+
+    const quillEditor = editorRefContext.getEditor(); // Get the Quill editor instance
+
+    if (quillEditor) {
+      const savedRange = quillEditor.getSelection(true)
+      if (savedRange && savedRange.length > 0) {
+        console.log("I am")
+        quillEditor.formatLine(savedRange.index, savedRange.length, { lineHeight: value });
+      } else {
+        console.log("OTHER")
+        quillEditor.format('lineHeight', value);
+      }
+    }
+  };
+
+  const [spacing, setSpacing] = useState("1")
   return (
     <div className="d-flex">
       <button onClick={scrollLeft} className="btn-slider">
@@ -1237,8 +1360,8 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseEnter={()=>setTooltipOpenHighlight(true)}
-              onMouseLeave={()=>setTooltipOpenHighlight(false)}
+              onMouseEnter={() => setTooltipOpenHighlight(true)}
+              onMouseLeave={() => setTooltipOpenHighlight(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -1260,7 +1383,7 @@ export default function QuillToolbar() {
                     y1="18.5"
                     x2="21"
                     y2="18.5"
-                    stroke={bgColor}
+                    stroke={bgColorSvg === "#ffffff" || bgColor === "#fefefe" ? "#D9D9D940" : bgColorSvg}
                     stroke-width="5"
                   />
                 </svg>
@@ -1276,7 +1399,7 @@ export default function QuillToolbar() {
                 aria-controls={openTextColor ? "openTextColor-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openTextColor ? "true" : undefined}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenTextColor(e)
                   setTooltipOpenHighlight(false)
                 }}
@@ -1297,7 +1420,14 @@ export default function QuillToolbar() {
                   color="#9b9b9b"
                   onChange={handleTextHighlightColorChange}
                 />
-             
+                <div className="d-flex justify-content-between pt-2">
+                  <button className="btn btn-success mx-2" style={{ padding: '5px 10px', fontSize: '10px' }} onClick={() => handleSaveTextColor()}>Save</button>
+                  <button className="btn btn-danger" style={{ padding: '5px 10px', fontSize: '10px' }} onClick={() => {
+                    handleCloseTextColor()
+                  }}>Cancel</button>
+
+                </div>
+
               </Menu>
             </span>
           </Tooltip>
@@ -1312,8 +1442,8 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseEnter={()=>setTooltipOpenColor(true)}
-              onMouseLeave={()=>setTooltipOpenColor(false)}
+              onMouseEnter={() => setTooltipOpenColor(true)}
+              onMouseLeave={() => setTooltipOpenColor(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -1335,7 +1465,7 @@ export default function QuillToolbar() {
                     y1="18.5"
                     x2="21"
                     y2="18.5"
-                    stroke={fontColor}
+                    stroke={fontColorSvg}
                     stroke-width="5"
                   />
                 </svg>
@@ -1351,7 +1481,7 @@ export default function QuillToolbar() {
                 aria-controls={openFontColor ? "openFontColor-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openFontColor ? "true" : undefined}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenFontColor(e)
                   setTooltipOpenColor(false)
                 }}
@@ -1369,7 +1499,13 @@ export default function QuillToolbar() {
                 className="text-center"
               >
                 <Sketch color="#9b9b9b" onChange={handleFontColorChange} />
-      
+                <div className="d-flex justify-content-between pt-2">
+                  <button className="btn btn-success mx-2" style={{ padding: '5px 10px', fontSize: '10px' }} onClick={() => handleSaveFontColor()}>Save</button>
+                  <button className="btn btn-danger" style={{ padding: '5px 10px', fontSize: '10px' }} onClick={() => {
+                    handleCancelFontColor()
+                  }}>Cancel</button>
+
+                </div>
               </Menu>
             </span>
           </Tooltip>
@@ -1383,8 +1519,8 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseEnter={()=>setTooltipOpenShading(true)}
-              onMouseLeave={()=>setTooltipOpenShading(false)}
+              onMouseEnter={() => setTooltipOpenShading(true)}
+              onMouseLeave={() => setTooltipOpenShading(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -1422,7 +1558,7 @@ export default function QuillToolbar() {
                 aria-controls={openBgColor ? "openBgColor-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openBgColor ? "true" : undefined}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenBgColor(e)
                   setTooltipOpenShading(false)
                 }}
@@ -1440,7 +1576,7 @@ export default function QuillToolbar() {
                 className="text-center"
               >
                 <Sketch color="#9b9b9b" onChange={handleBgColorChange} />
-             
+
               </Menu>
             </span>
           </Tooltip>
@@ -1454,13 +1590,13 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseOver={()=>{
+              onMouseOver={() => {
                 setTooltipOpenCase(!openCase)
                 console.log(tooltipOpenCase)
                 console.log("Mouse Moved")
               }}
-              onMouseLeave={()=>setTooltipOpenCase(false)}
-              onFocus={()=>setTooltipOpenCase(false)}
+              onMouseLeave={() => setTooltipOpenCase(false)}
+              onFocus={() => setTooltipOpenCase(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -1486,7 +1622,7 @@ export default function QuillToolbar() {
                   height: 33,
                   cursor: "pointer",
                 }}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenCase(e)
                   setTooltipOpenCase(false)
                 }}
@@ -1505,8 +1641,8 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "openCase-button",
                 }}
-                onMouseMove={()=>setTooltipOpenCase(false)}
-                onChange={()=>setTooltipOpenCase(false)}
+                onMouseMove={() => setTooltipOpenCase(false)}
+                onChange={() => setTooltipOpenCase(false)}
               >
                 <MenuItem onClick={() => handleTextTransformation(toSentenceCase)}>
                   Sentence case
@@ -1570,7 +1706,7 @@ export default function QuillToolbar() {
                 height: 33,
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
-                cursor:"pointer"
+                cursor: "pointer"
               }}
               onMouseEnter={() => setTooltipOpenNumbering(!open1)}
               onMouseLeave={() => setTooltipOpenNumbering(false)}
@@ -1605,7 +1741,7 @@ export default function QuillToolbar() {
                 aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleClick(e)
                   setTooltipOpenNumbering(false)
                 }}
@@ -1620,8 +1756,8 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}
-            
-                onMouseMove={()=>setTooltipOpenNumbering(false)}
+
+                onMouseMove={() => setTooltipOpenNumbering(false)}
               >
                 <div className="d-flex">
                   <MenuItem
@@ -1769,7 +1905,7 @@ export default function QuillToolbar() {
             >
               <span
                 className="d-flex justify-content-center align-items-center"
-                style={{ width: 32, height: 33 ,cursor:"pointer"}}
+                style={{ width: 32, height: 33, cursor: "pointer" }}
               >
                 <svg
                   onClick={() => handleListClick("bullet-dot")}
@@ -1798,7 +1934,7 @@ export default function QuillToolbar() {
                 aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleClick2(e)
                   setTooltipOpenBullets(false)
                 }}
@@ -1813,7 +1949,7 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}
-                onMouseMove={()=>setTooltipOpenBullets(false)}
+                onMouseMove={() => setTooltipOpenBullets(false)}
               >
                 <div className="d-flex">
                   <MenuItem
@@ -1916,7 +2052,7 @@ export default function QuillToolbar() {
           </Tooltip>
         </span>
         <span className="ql-formats">
-          <Tooltip title="Line Spacing" placement="bottom">
+          <Tooltip title="Line Spacing" placement="bottom" open={tooltipOpenSpacing}>
             <span
               className="d-flex ql-color"
               style={{
@@ -1924,6 +2060,9 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
+              onMouseEnter={() => setTooltipOpenSpacing(true)}
+              onMouseLeave={() => setTooltipOpenSpacing(false)}
+
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -1947,10 +2086,54 @@ export default function QuillToolbar() {
                 style={{
                   width: 19,
                   height: 33,
+                  cursor: "pointer",
                 }}
+                onClick={(e) => {
+                  handleOpenSpacing(e)
+                  setTooltipOpenSpacing(false)
+                }}
+                id="openSpacing-button"
+                aria-controls={openSpacing ? "openSpacing-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openSpacing ? "true" : undefined}
               >
                 <img src={DropdownBarImage} alt="Bar" />
               </span>
+              <Menu
+                id="openSpacing-menu"
+                anchorEl={anchorElSpacing}
+                open={openSpacing}
+                onClose={handleCloseSpacing}
+                MenuListProps={{
+                  "aria-labelledby": "openSize-button",
+                }}
+                onMouseMove={() => setTooltipOpenSpacing(false)}
+              >
+                {lineSpacing.map((size, index) => {
+                  return (
+                    <MenuItem
+                      key={index}
+                      onClick={() => handleSelectSpacing(size.value)}
+                      style={{
+                        background:
+                          spacing == size.value ? "#edf4fb" : "",
+                      }}
+                    >
+                      <div className="container">
+                        <div
+                          style={{
+                            fontSize: "14px",
+                            fontWeight: 550
+                          }}
+                        >
+                          {size.value}
+                        </div>
+
+                      </div>
+                    </MenuItem>
+                  );
+                })}
+              </Menu>
             </span>
           </Tooltip>
         </span>
@@ -2044,8 +2227,8 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseOver={()=>setTooltipOpenMargins(!openMargins)}
-              onMouseLeave={()=>setTooltipOpenMargins(false)}
+              onMouseOver={() => setTooltipOpenMargins(!openMargins)}
+              onMouseLeave={() => setTooltipOpenMargins(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2078,7 +2261,7 @@ export default function QuillToolbar() {
                 aria-controls={openMargins ? "margins-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openMargins ? "true" : undefined}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenMargins(e)
                   setTooltipOpenMargins(false)
                 }}
@@ -2093,7 +2276,7 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "margins-button", // Updated aria-labelledby
                 }}
-                onMouseMove={()=>{
+                onMouseMove={() => {
                   setTooltipOpenMargins(false)
                 }}
               >
@@ -2139,14 +2322,14 @@ export default function QuillToolbar() {
                       <div
                         style={{
                           fontWeight: 550,
-                          fontSize:14,
-                          position:"relative",
-                          top:2
+                          fontSize: 14,
+                          position: "relative",
+                          top: 2
                         }}
                       >
                         Standard
                       </div>
-                      <div style={{ fontSize: 12, color: "#00000080",position:"relative",bottom:2 }}>
+                      <div style={{ fontSize: 12, color: "#00000080", position: "relative", bottom: 2 }}>
                         Top: 2.54 cm, Bottom: 2.54 cm, Left: 2.54 cm, Right:
                         2.54 cm
                       </div>
@@ -2194,14 +2377,14 @@ export default function QuillToolbar() {
                       <div
                         style={{
                           fontWeight: "550",
-                          fontSize:14,
-                          position:"relative",
-                          top:2
+                          fontSize: 14,
+                          position: "relative",
+                          top: 2
                         }}
                       >
                         Narrow
                       </div>
-                      <div style={{ fontSize: 12, color: "#00000080" ,position:"relative",bottom:2}}>
+                      <div style={{ fontSize: 12, color: "#00000080", position: "relative", bottom: 2 }}>
                         Top: 1.27 cm, Bottom: 1.27 cm, Left: 1.27 cm, Right:
                         1.27 cm{" "}
                       </div>
@@ -2250,15 +2433,17 @@ export default function QuillToolbar() {
                       <div
                         style={{
                           fontWeight: "550",
-                          fontSize:14,
-                          position:"relative",
-                          top:2
+                          fontSize: 14,
+                          position: "relative",
+                          top: 2
                         }}
                       >
                         Moderate
                       </div>
-                      <div style={{ fontSize: 12, color: "#00000080",   position:"relative",
-                          bottom:2 }}>
+                      <div style={{
+                        fontSize: 12, color: "#00000080", position: "relative",
+                        bottom: 2
+                      }}>
                         Top: 2.54 cm, Bottom: 2.54 cm, Left: 1.91 cm, Right:
                         1.91 cm
                       </div>
@@ -2306,15 +2491,17 @@ export default function QuillToolbar() {
                       <div
                         style={{
                           fontWeight: "550",
-                          fontSize:14,
-                          position:"relative",
-                          top:2
+                          fontSize: 14,
+                          position: "relative",
+                          top: 2
                         }}
                       >
                         Wide
                       </div>
-                      <div style={{ fontSize: 12, color: "#00000080",   position:"relative",
-                          bottom:2 }}>
+                      <div style={{
+                        fontSize: 12, color: "#00000080", position: "relative",
+                        bottom: 2
+                      }}>
                         Top: 2.54 cm, Bottom: 2.54 cm, Left: 5.08 cm, Right:
                         5.08 cm
                       </div>
@@ -2327,7 +2514,7 @@ export default function QuillToolbar() {
         </span>
 
         <span className="ql-formats">
-          <Tooltip title="Orientation" placement="bottom" open={tooltipOpenOrientation}> 
+          <Tooltip title="Orientation" placement="bottom" open={tooltipOpenOrientation}>
             <span
               className="d-flex ql-color"
               style={{
@@ -2335,8 +2522,8 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseOver={()=>setTooltipOpenOrientation(!openOrientation)}
-              onMouseLeave={()=>setTooltipOpenOrientation(false)}
+              onMouseOver={() => setTooltipOpenOrientation(!openOrientation)}
+              onMouseLeave={() => setTooltipOpenOrientation(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2370,7 +2557,7 @@ export default function QuillToolbar() {
                 aria-controls={openOrientation ? "orientation-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={openOrientation ? "true" : undefined}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenOrientation(e)
                   setTooltipOpenOrientation(false)
                 }}
@@ -2385,9 +2572,12 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "orientation-button", // Updated aria-labelledby
                 }}
-                onMouseMove={()=>setTooltipOpenOrientation(false)}
+                onMouseMove={() => setTooltipOpenOrientation(false)}
               >
-                <MenuItem onClick={() => handleSelectOrientation("potrait")}>
+                <MenuItem style={{
+                  background:
+                    documentPageSize.title !== "Landscape" ? "#edf4fb" : "",
+                }} onClick={() => handleSelectOrientation("potrait")}>
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
@@ -2414,7 +2604,10 @@ export default function QuillToolbar() {
                     </div>
                   </div>
                 </MenuItem>
-                <MenuItem onClick={() => handleSelectOrientation("landscape")}>
+                <MenuItem style={{
+                  background:
+                    documentPageSize.title == "Landscape" ? "#edf4fb" : "",
+                }} onClick={() => handleSelectOrientation("landscape")}>
                   <div className="d-flex align-items-center justify-content-center">
                     <div>
                       <svg
@@ -2455,8 +2648,8 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseEnter={()=>setTooltipOpenSize(!openSize)}
-              onMouseLeave={()=>setTooltipOpenSize(false)}
+              onMouseEnter={() => setTooltipOpenSize(!openSize)}
+              onMouseLeave={() => setTooltipOpenSize(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2490,7 +2683,7 @@ export default function QuillToolbar() {
                   height: 33,
                   cursor: "pointer",
                 }}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenSize(e)
                   setTooltipOpenSize(false)
                 }}
@@ -2509,7 +2702,7 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "openSize-button",
                 }}
-                onMouseMove={()=>setTooltipOpenSize(false)}
+                onMouseMove={() => setTooltipOpenSize(false)}
               >
                 {pageSizes.map((size, index) => {
                   return (
@@ -2525,7 +2718,7 @@ export default function QuillToolbar() {
                         <div
                           style={{
                             fontSize: "14px",
-                            fontWeight:550
+                            fontWeight: 550
                           }}
                         >
                           {size.title}
@@ -2555,8 +2748,8 @@ export default function QuillToolbar() {
                 border: "1px solid #D9D9D9",
                 borderRadius: 5,
               }}
-              onMouseEnter={()=>setTooltipOpenColumns(!openColumns)}
-              onMouseLeave={()=>setTooltipOpenColumns(false)}
+              onMouseEnter={() => setTooltipOpenColumns(!openColumns)}
+              onMouseLeave={() => setTooltipOpenColumns(false)}
             >
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2585,7 +2778,7 @@ export default function QuillToolbar() {
                   height: 33,
                   cursor: "pointer",
                 }}
-                onClick={(e)=>{
+                onClick={(e) => {
                   handleOpenColumns(e)
                   setTooltipOpenColumns(false)
                 }}
@@ -2604,7 +2797,7 @@ export default function QuillToolbar() {
                 MenuListProps={{
                   "aria-labelledby": "openColumns-button",
                 }}
-                onMouseMove={()=>setTooltipOpenColumns(false)}
+                onMouseMove={() => setTooltipOpenColumns(false)}
               >
                 <MenuItem
                   style={{

@@ -95,6 +95,7 @@ import DiffMatchPatch, {
   DIFF_EQUAL,
   // @ts-ignore
 } from "diff-match-patch";
+import { Console } from "console";
 DocumentEditorComponent.Inject(
   Selection,
   Editor,
@@ -155,10 +156,14 @@ function SyncFesion() {
     documentPageSize,
     documentPageMargins,
     bgColor,
-    fontColor
+    fontColor,
+    setBgColor,
+    setFontColor,
+    setBgColorSvg,
+    setFontColorSvg,
+    selectionRef
   } = useContext(ContractContext);
 
-  console.log(bgColor)
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
 
@@ -166,6 +171,7 @@ function SyncFesion() {
     setIsLoading(false);
     setLeftSidebarExpanded(true);
   }, []);
+
 
   const listData = async () => {
     try {
@@ -649,7 +655,7 @@ function SyncFesion() {
   };
 
   //
- 
+
 
   const [highlightColor, setHighlightColor] = useState("#FFFF00"); // Default highlight color
   // Function to change the highlight color
@@ -677,20 +683,7 @@ function SyncFesion() {
       text: "Double",
     },
   ];
-  useEffect(() => {
-    const editorContainer = editorContainerRef.current;
-    if (editorContainer) {
-      editorContainer.getEditor().on("selection-change", handleChangeSelection);
-    }
 
-    return () => {
-      if (editorContainer) {
-        editorContainer
-          .getEditor()
-          .off("selection-change", handleChangeSelection);
-      }
-    };
-  }, []);
 
   const [showTableTools, setShowTableTools] = useState(false);
 
@@ -1125,7 +1118,7 @@ function SyncFesion() {
   const initialText =
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium minima doloremque pariatur?";
 
-  const [editorHtml, setEditorHtml] = useState<any>(initialText);
+  const [editorHtml, setEditorHtml] = useState<any>();
   const [addedString, setAddedString] = useState("");
   const [deletedString, setDeletedString] = useState("");
   const stripHtml = (html: any) => {
@@ -1143,7 +1136,9 @@ function SyncFesion() {
 
   const dmp = new DiffMatchPatch();
 
-  const handleChange = (html: string) => {
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null); // State to store cursor position
+
+  const handleChange = (html: string,range:any) => {
     // const newText = html;
     // const oldText = editorHtml;
 
@@ -1281,7 +1276,7 @@ function SyncFesion() {
 
   const [selection, setSelection] = useState<any>(null);
   const [comments, setComments] = useState<any>([]);
-  const selectionRef = useRef<any>(null);
+  
 
   const [selectedRange, setSelectedRange] = useState<any>(null);
   useEffect(() => {
@@ -1292,13 +1287,35 @@ function SyncFesion() {
     }
   }, [selection]);
 
-  const handleChangeSelection = (range: any) => {
+
+  // console.log(cursorPosition)
+  
+  const handleChangeSelection = (range: any,source:any) => {
+    
+    if (range) {
+      if(source === "user") {
+        const format = editorContainerRef.current.getEditor().getFormat(range.index); 
+        if(format.color) {
+          setFontColorSvg(format.color);
+        }else {
+          setFontColorSvg("black")
+        }
+        if(format.background) {
+          console.log(format.background)
+        if(format.background == "#ffffff" || format.background == "#fefefe") {
+          setBgColorSvg("#D9D9D940")
+        }
+          setBgColorSvg(format.background)
+        }
+        else {
+          setBgColorSvg("#D9D9D940")
+        }
+        
+      }
+    }
     if (range && range.length > 0) {
       setSelection(range);
       selectionRef.current = range;
-      console.log(selection);
-      console.log(selectionRef.current);
-
       const existingComment = comments?.find(
         (comment: any) =>
           comment.range.index === range.index &&
@@ -1311,6 +1328,15 @@ function SyncFesion() {
       }
     } else {
       setSelection(null);
+    }
+  };
+
+ 
+  // Use the focus event to move cursor to the end
+  const handleFocus = () => {
+    const quill = editorContainerRef?.current?.getEditor();
+    if (quill && cursorPosition !== null) {
+      quill.setSelection(cursorPosition, 0); 
     }
   };
 
@@ -1409,6 +1435,7 @@ function SyncFesion() {
     selectionRef.current = null;
   };
 
+
   const handleReply = (index: number) => {
     if (reply.length > 0) {
       setComments((prevComments: any) => {
@@ -1482,28 +1509,68 @@ function SyncFesion() {
     }
   };
 
+  // useEffect(() => {
+  //   const quill = editorContainerRef.current.getEditor();
+
+  //   if (quill) {
+  //     const applyFormatting = () => {
+  //       const range = quill.getSelection();
+  //       if (range) {
+  //         if (range.length > 0) {
+  //           // Apply formatting to the selected text
+  //           quill.formatText(range.index, range.length, {
+  //             background: bgColor,
+  //             color: fontColor,
+  //           });
+
+  //         } else {
+  //           // Apply formatting to the cursor position for future text input
+  //           quill.format('background', bgColor);
+  //           quill.format('color', fontColor);
+  //         }
+  //       }
+  //     };
+
+  //     // Attach event listeners for text and selection changes
+  //     quill.on('text-change', applyFormatting);
+  //     quill.on('selection-change', applyFormatting);
+
+  //     // Cleanup event listeners on component unmount
+  //     return () => {
+  //       quill.off('text-change', applyFormatting);
+  //       quill.off('selection-change', applyFormatting);
+  //     };
+  //   }
+  // }, [bgColor, fontColor]); 
 
   useEffect(() => {
     const quill = editorContainerRef.current.getEditor();
-
     if (quill) {
-
-      console.log("SADDDdd")
-
       const handleTextChange = () => {
-        quill.format("background",bgColor)
-        quill.format("color",fontColor)
-      }
+        const range = quill.getSelection(); 
+        if (!selection) {
+          quill.format("background", bgColor);
+          quill.format("color", fontColor);
+        } else {
+          const { index, length } = range;
 
-      quill.on('text-change', handleTextChange);
+          quill.formatText(index, length, { background: bgColor, color: fontColor });
+          setSelection(null)
+        }
+      };
+  
+      handleTextChange(); 
 
+      quill.on("text-change", handleTextChange); 
+  
       return () => {
-        quill.off('text-change', handleTextChange);
+        quill.off("text-change", handleTextChange);
       };
     }
-  }, [bgColor, fontColor]); 
+  }, [bgColor, fontColor]);
   
-  
+
+
   useEffect(() => {
     if (addReply.open && addReply.id !== null) {
       // Example: Auto-focus the textarea when it opens
@@ -1715,8 +1782,8 @@ function SyncFesion() {
                 <div className="relative  ">
                   <button
                     className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${showBlock == "uploadTrack"
-                        ? "text-gray-300"
-                        : "text-black hover:text-gray-700"
+                      ? "text-gray-300"
+                      : "text-black hover:text-gray-700"
                       }`}
                     disabled={showBlock == "uploadTrack"}
                     onClick={() => toggleDropdown("signature")}
@@ -2583,6 +2650,7 @@ function SyncFesion() {
                   style={{
                     height: "100%",
                     position: "relative",
+                    width:documentPageSize?.title === "Landscape"? "100%":""
                   }}
                 >
                   <ReactQuill
@@ -2591,6 +2659,19 @@ function SyncFesion() {
                     formats={formats}
                     value={editorHtml}
                     onChange={handleChange}
+                    onBlur={()=>{
+                      const handleBlur = () => {
+                        const quill = editorContainerRef.current?.getEditor();
+                        if (quill) {
+                          const range = quill.getSelection();
+                          if (range) {
+                            setCursorPosition(range.index); // Store the current cursor position
+                          }
+                        }
+                      };
+                      handleBlur()
+                    }}
+                    // @ts-ignore
                     onChangeSelection={handleChangeSelection}
                     style={{
                       border: "1px solid #f2f2f2",
@@ -2600,7 +2681,8 @@ function SyncFesion() {
                       height: documentPageSize.height,
                     }}
                     onFocus={() => {
-                      setAddReply({ open: false, id: "" });
+                      handleFocus()
+                      // setAddReply({ open: false, id: "" });
                     }}
                   />
                   <style>
@@ -3434,21 +3516,7 @@ function SyncFesion() {
                       );
                     })}
                   </div>
-                  <div className="form-check form-switch py-2">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      role="switch"
-                      id="flexSwitchCheckChecked"
-                      onClick={handleClickSignatures}
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor="flexSwitchCheckChecked"
-                    >
-                      Use pre-set signature block
-                    </label>
-                  </div>{" "}
+              
                 </Grid>
                 {/* <Grid item xs={3.8}>
                   <TrackChanges rejectChange={rejectChange} />

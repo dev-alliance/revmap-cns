@@ -775,11 +775,9 @@ body {
   /* Add padding to create space inside the dropdown */
 }
 
-.d-flex {
+/* .d-flex {
   display: flex;
-  /* Use flexbox for inline layout */
   align-items: center;
-  /* Center-align items vertically */
 }
 
 .d-flex button {
@@ -788,19 +786,18 @@ body {
   border: none;
   cursor: pointer;
   text-align: center;
-  /* Center-align text */
+ 
   border-left: 1px solid #ccc;
-  /* Optional: add a border between buttons */
+ 
 }
 
 .d-flex button:first-child {
   border-left: none;
-  /* Remove border from the first button */
 }
 
 .d-flex button:hover {
   background-color: #f1f1f1;
-}
+} */
 
 /* #5280ff */
 .input-comment {
@@ -1066,7 +1063,7 @@ body {
 .ql-editor li[data-list="bullet-dot"]::before {
   content: "•";
   color: black;
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .ql-editor li[data-list="bullet-dot-large"] {
@@ -1078,6 +1075,7 @@ body {
   content: "•";
   color: black;
   font-weight: bolder;
+  font-size: 15px;
 
 }
 
@@ -1089,7 +1087,7 @@ body {
 .ql-editor li[data-list="bullet-circle"]::before {
   content: "○";
   color: black;
-  font-size: 12px;
+  font-size: 13px;
   border-radius: 50px;
 }
 
@@ -1103,7 +1101,7 @@ body {
   /* Square character */
   color: black;
   /* Adjust color as needed */
-  font-size: 10px;
+  font-size: 13px;
 
 }
 
