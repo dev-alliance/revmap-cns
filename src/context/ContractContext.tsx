@@ -119,7 +119,7 @@ interface ContractContextProps {
 
   documentName: any | null;
   setDucomentName: Dispatch<SetStateAction<any>>;
-  
+
   bgColor: any | null;
   setBgColor: Dispatch<SetStateAction<any>>;
 
@@ -138,9 +138,26 @@ interface ContractContextProps {
   shadeColorSvg: any | null;
   setShadeColorSvg: Dispatch<SetStateAction<any>>;
 
+  selectedFont: any | null;
+  setSelectedFont: Dispatch<SetStateAction<any>>;
+
+  selectedFontSize: any | null;
+  setSelectedFontSize: Dispatch<SetStateAction<any>>;
+
+  selectedHeaders: any | null;
+  setSelectedHeaders: Dispatch<SetStateAction<any>>;
+
+  selectedFontValue: any | null;
+  setSelectedFontValue: Dispatch<SetStateAction<any>>;
+
+  selectedFontSizeValue: any | null;
+  setSelectedFontSizeValue: Dispatch<SetStateAction<any>>;
+
+  selectedHeadersValue: any | null;
+  setSelectedHeadersValue: Dispatch<SetStateAction<any>>;
+
   documentPageSize: any | null;
   setDocumentPageSize: Dispatch<SetStateAction<any>>;
-
 
   documentPageMargins: any | null;
   setDocumentPageMargins: Dispatch<SetStateAction<any>>;
@@ -157,7 +174,6 @@ interface ContractContextProps {
   inputRef: React.RefObject<HTMLInputElement>;
   selectionRef: any | null;
 
-
   IsTemplate: any | null;
   setIsTemplate: Dispatch<SetStateAction<any>>;
   temlatePoupup: any | null;
@@ -170,108 +186,120 @@ interface ContractContextProps {
 
 export const ContractContext = createContext<ContractContextProps>({
   contract: null,
-  setContract: () => { },
+  setContract: () => {},
   contractStatus: { status: "", expire: "" },
-  setContractStatus: () => { },
-  updateContractOverview: () => { },
+  setContractStatus: () => {},
+  updateContractOverview: () => {},
   signatories: [],
-  setSignatories: () => { },
+  setSignatories: () => {},
   openDocoment: [],
-  setOpenDocoment: () => { },
+  setOpenDocoment: () => {},
   selectedModule: {},
-  setSelectedModule: () => { },
+  setSelectedModule: () => {},
   sidebarExpanded: {},
-  setSidebarExpanded: () => { },
+  setSidebarExpanded: () => {},
   showCompanySelect: {},
-  setShowCompanySelect: () => { },
+  setShowCompanySelect: () => {},
   showConditionalSelect: {},
-  setShowConditionalSelect: () => { },
+  setShowConditionalSelect: () => {},
   showSignatories: {},
-  setShowSignatories: () => { },
+  setShowSignatories: () => {},
   selectedApproval: {},
-  setSelectedApproval: () => { },
+  setSelectedApproval: () => {},
   approvers: {},
-  setApprovers: () => { },
+  setApprovers: () => {},
   selectedUserApproval: {},
-  setSelectedUserApproval: () => { },
+  setSelectedUserApproval: () => {},
   userApproval: {},
-  setUserApproval: () => { },
+  setUserApproval: () => {},
   selectedConditionalApproval: {},
-  setSelectedConditionalApproval: () => { },
+  setSelectedConditionalApproval: () => {},
   userConditionalApproval: {},
-  setUserConditionalApproval: () => { },
+  setUserConditionalApproval: () => {},
   conditions: [],
-  setConditions: () => { },
+  setConditions: () => {},
   selectedFeild: [],
-  setSeletedFeild: () => { },
+  setSeletedFeild: () => {},
   type: {},
-  setType: () => { },
+  setType: () => {},
   viewUser: {},
-  setViewUser: () => { },
+  setViewUser: () => {},
   collaborater: {},
-  setCollaborater: () => { },
+  setCollaborater: () => {},
   showButtons: {},
-  setShowButtons: () => { },
+  setShowButtons: () => {},
   activeSection: {},
-  setActiveSection: () => { },
+  setActiveSection: () => {},
   comments: {},
-  setComments: () => { },
+  setComments: () => {},
   recipients: {},
-  setRecipients: () => { },
+  setRecipients: () => {},
   openMultiDialog: {},
-  setOpenMultiDialog: () => { },
+  setOpenMultiDialog: () => {},
   dragFields: {},
-  setDragFields: () => { },
+  setDragFields: () => {},
   editorRefContext: {},
-  setEditorRefContext: () => { },
+  setEditorRefContext: () => {},
   Drawsignature: {},
-  setDrawSignature: () => { },
+  setDrawSignature: () => {},
   uplodTrackFile: {},
-  setUplodTrackFile: () => { },
+  setUplodTrackFile: () => {},
   documentContent: {},
-  setDocumentContent: () => { },
+  setDocumentContent: () => {},
   showBlock: {},
-  setShowBlock: () => { },
+  setShowBlock: () => {},
   editMode: {},
-  setEditMode: () => { },
+  setEditMode: () => {},
   lifecycleData: {},
-  setLifecycleData: () => { },
+  setLifecycleData: () => {},
   documentName: {},
-  setDucomentName: () => { },
+  setDucomentName: () => {},
   leftsidebarExpanded: {},
-  setLeftSidebarExpanded: () => { },
+  setLeftSidebarExpanded: () => {},
   attachments: {},
-  setAttachments: () => { },
+  setAttachments: () => {},
   siningOrder: {},
-  setSiningOrder: () => { },
+  setSiningOrder: () => {},
   formState: {},
-  setFormState: () => { },
+  setFormState: () => {},
   IsTemplate: {},
-  setIsTemplate: () => { },
+  setIsTemplate: () => {},
   temlatePoupup: {},
-  setTemlatePoupup: () => { },
+  setTemlatePoupup: () => {},
   inputRef: { current: null },
   auditTrails: [],
-  setAuditTrails: () => { },
+  setAuditTrails: () => {},
   trackChanges: [],
-  setTrackChanges: () => { },
+  setTrackChanges: () => {},
   documentPageSize: {},
-  setDocumentPageSize: () => { },
-  documentPageMargins:{},
-  setDocumentPageMargins:()=>{},
-  bgColor:{},
-  setBgColor:()=>{},
-  shadeColor:{},
-  setShadeColor:()=>{},
-  fontColor:{},
-  setFontColor:()=>{},
-  fontColorSvg:{},
-  setFontColorSvg:()=>{},
-  bgColorSvg:{},
-  setBgColorSvg:()=>{},
-  setShadeColorSvg:()=>{},
-  shadeColorSvg:{},
-  selectionRef:{current:null}
+  setDocumentPageSize: () => {},
+  documentPageMargins: {},
+  setDocumentPageMargins: () => {},
+  bgColor: {},
+  setBgColor: () => {},
+  shadeColor: {},
+  setShadeColor: () => {},
+  fontColor: {},
+  setFontColor: () => {},
+  fontColorSvg: {},
+  setFontColorSvg: () => {},
+  bgColorSvg: {},
+  setBgColorSvg: () => {},
+  setShadeColorSvg: () => {},
+  shadeColorSvg: {},
+  selectionRef: { current: null },
+  selectedFont: {},
+  setSelectedFont: () => {},
+  selectedFontSize: {},
+  setSelectedFontSize: () => {},
+  selectedHeaders: {},
+  setSelectedHeaders: () => {},
+  selectedFontValue: {},
+  setSelectedFontValue: () => {},
+  selectedFontSizeValue: {},
+  setSelectedFontSizeValue: () => {},
+  selectedHeadersValue: {},
+  setSelectedHeadersValue: () => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -592,22 +620,29 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const [documentPageMargins, setDocumentPageMargins] = useState({
     title: "Standard",
-    top:"2.54cm",
-    left:"2.54cm",
-    right:"2.54cm",
-    bottom:"2.54cm"
+    top: "2.54cm",
+    left: "2.54cm",
+    right: "2.54cm",
+    bottom: "2.54cm",
   });
 
-  const [bgColor,setBgColor] = useState("#fefefe")
-  const [shadeColor,setShadeColor] = useState("")
-  const [fontColor,setFontColor] = useState("black")
- 
-  
-  const [bgColorSvg,setBgColorSvg] = useState("#D9D9D940")
-  const [shadeColorSvg,setShadeColorSvg] = useState("")
-  const [fontColorSvg,setFontColorSvg] = useState("black")
+  const [bgColor, setBgColor] = useState("#fefefe");
+  const [shadeColor, setShadeColor] = useState("");
+  const [fontColor, setFontColor] = useState("black");
 
-  const selectionRef:any = useRef()
+  const [bgColorSvg, setBgColorSvg] = useState("#D9D9D940");
+  const [shadeColorSvg, setShadeColorSvg] = useState("");
+  const [fontColorSvg, setFontColorSvg] = useState("black");
+
+  const selectionRef: any = useRef();
+
+  const [selectedFont, setSelectedFont] = useState("arial");
+  const [selectedHeaders, setSelectedHeaders] = useState(0);
+  const [selectedFontSize, setSelectedFontSize] = useState("12px");
+
+  const [selectedFontValue, setSelectedFontValue] = useState("arial");
+  const [selectedHeadersValue, setSelectedHeadersValue] = useState(0);
+  const [selectedFontSizeValue, setSelectedFontSizeValue] = useState("12px");
 
   return (
     <ContractContext.Provider
@@ -714,7 +749,19 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         shadeColorSvg,
         setShadeColorSvg,
         setFontColorSvg,
-        selectionRef
+        selectionRef,
+        selectedFont,
+        selectedFontSize,
+        selectedHeaders,
+        setSelectedFont,
+        setSelectedFontSize,
+        setSelectedHeaders,
+        selectedFontSizeValue,
+        selectedFontValue,
+        selectedHeadersValue,
+        setSelectedFontSizeValue,
+        setSelectedFontValue,
+        setSelectedHeadersValue,
       }}
     >
       {children}

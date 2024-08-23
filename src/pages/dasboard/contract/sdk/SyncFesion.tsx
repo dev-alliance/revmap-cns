@@ -161,7 +161,14 @@ function SyncFesion() {
     setFontColor,
     setBgColorSvg,
     setFontColorSvg,
-    selectionRef
+    selectionRef,
+    setSelectedFontValue,
+    selectedFont,
+    selectedFontSize,
+    setSelectedFontSizeValue,
+    setSelectedHeadersValue,
+    selectedHeaders,
+    setSelectedHeaders
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -1138,7 +1145,7 @@ function SyncFesion() {
 
   const [cursorPosition, setCursorPosition] = useState<number | null>(null); // State to store cursor position
 
-  const handleChange = (html: string,range:any) => {
+  const handleChange = (html: string, range: any) => {
     // const newText = html;
     // const oldText = editorHtml;
 
@@ -1276,9 +1283,8 @@ function SyncFesion() {
 
   const [selection, setSelection] = useState<any>(null);
   const [comments, setComments] = useState<any>([]);
-  
 
-  const [selectedRange, setSelectedRange] = useState<any>(null);
+
   useEffect(() => {
     const editor = editorContainerRef.current.getEditor();
     if (editor && selection) {
@@ -1288,34 +1294,72 @@ function SyncFesion() {
   }, [selection]);
 
 
-  // console.log(cursorPosition)
-  
-  const handleChangeSelection = (range: any,source:any) => {
-    
+
+
+  const handleChangeSelection = (range: any, source: any) => {
     if (range) {
-      if(source === "user") {
-        const format = editorContainerRef.current.getEditor().getFormat(range.index); 
-        if(format.color) {
+      const format = editorContainerRef.current.getEditor().getFormat(range.index);
+      if(!selection) {
+        if (format.color) {
           setFontColorSvg(format.color);
-        }else {
-          setFontColorSvg("black")
         }
-        if(format.background) {
-          console.log(format.background)
-        if(format.background == "#ffffff" || format.background == "#fefefe") {
-          setBgColorSvg("#D9D9D940")
-        }
+        if (format.background) {
+          if (format.background == "#ffffff" || format.background == "#fefefe") {
+            setBgColorSvg("#D9D9D940")
+          }
           setBgColorSvg(format.background)
         }
-        else {
-          setBgColorSvg("#D9D9D940")
+      }
+   
+   
+      if (format.font) {
+        setSelectedFontValue(format.font)
+      }
+      else {
+        setSelectedFontValue("arial")
+      }
+      if (format.size) {
+        setSelectedFontSizeValue(format.size)
+      } else {
+        if (format.header === 1) {
+          setSelectedFontSizeValue("26px")
         }
-        
+        else if (format.header === 2) {
+
+        }
+        setSelectedFontSizeValue("13px")
+      }
+     
+      if (format.header) {
+        setSelectedHeadersValue(format.header)
+        if (format.header === 1) {
+          setSelectedFontSizeValue("26px")
+        }
+        else if (format.header === 2) {
+          setSelectedFontSizeValue("20px")
+
+        }
+        else if (format.header === 3) {
+          setSelectedFontSizeValue("14px")
+
+        }
+        else if (format.header === 4) {
+          setSelectedFontSizeValue("13px")
+
+        }
+        else if (format.header === 0) {
+          setSelectedFontSizeValue("13px")
+
+        }
+      } else {
+        setSelectedHeadersValue(0)
+        setSelectedHeaders(0)
       }
     }
+
     if (range && range.length > 0) {
       setSelection(range);
-      selectionRef.current = range;
+      // selectionRef.current = range;
       const existingComment = comments?.find(
         (comment: any) =>
           comment.range.index === range.index &&
@@ -1327,16 +1371,10 @@ function SyncFesion() {
         setCurrentComment("");
       }
     } else {
-      setSelection(null);
-    }
-  };
-
- 
-  // Use the focus event to move cursor to the end
-  const handleFocus = () => {
-    const quill = editorContainerRef?.current?.getEditor();
-    if (quill && cursorPosition !== null) {
-      quill.setSelection(cursorPosition, 0); 
+      if (!openComment) {
+        setSelection(null);
+      }
+      // selectionRef.current = null;
     }
   };
 
@@ -1350,7 +1388,8 @@ function SyncFesion() {
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [isInternal, setIsInternal] = useState<boolean>(false);
   const [currentComment, setCurrentComment] = useState("");
-
+  const [commentSelection, setCommentSelection] = useState(null)
+  const [commentPrevBg, setCommentPrevBg] = useState("")
   const commentInputRef: any = useRef(null);
 
   useEffect(() => {
@@ -1509,79 +1548,350 @@ function SyncFesion() {
     }
   };
 
-  // useEffect(() => {
-  //   const quill = editorContainerRef.current.getEditor();
-
-  //   if (quill) {
-  //     const applyFormatting = () => {
-  //       const range = quill.getSelection();
-  //       if (range) {
-  //         if (range.length > 0) {
-  //           // Apply formatting to the selected text
-  //           quill.formatText(range.index, range.length, {
-  //             background: bgColor,
-  //             color: fontColor,
-  //           });
-
-  //         } else {
-  //           // Apply formatting to the cursor position for future text input
-  //           quill.format('background', bgColor);
-  //           quill.format('color', fontColor);
-  //         }
-  //       }
-  //     };
-
-  //     // Attach event listeners for text and selection changes
-  //     quill.on('text-change', applyFormatting);
-  //     quill.on('selection-change', applyFormatting);
-
-  //     // Cleanup event listeners on component unmount
-  //     return () => {
-  //       quill.off('text-change', applyFormatting);
-  //       quill.off('selection-change', applyFormatting);
-  //     };
-  //   }
-  // }, [bgColor, fontColor]); 
 
   useEffect(() => {
     const quill = editorContainerRef.current.getEditor();
-    if (quill) {
-      const handleTextChange = () => {
-        const range = quill.getSelection(); 
-        if (!selection) {
-          quill.format("background", bgColor);
-          quill.format("color", fontColor);
-        } else {
-          const { index, length } = range;
+    let isFormatting = false;
+    let savedSelection: any = false;
 
-          quill.formatText(index, length, { background: bgColor, color: fontColor });
-          setSelection(null)
+    if (quill) {
+      const handleButtonClick = () => {
+        const selection = quill.getSelection();
+        if (selection) {
+          savedSelection = selection;
         }
       };
-  
-      handleTextChange(); 
 
-      quill.on("text-change", handleTextChange); 
-  
+      const restoreSelection = () => {
+        if (savedSelection) {
+          quill.setSelection(savedSelection.index, savedSelection.length);
+        }
+      };
+
+
+      const handleTextChange = () => {
+        if (isFormatting) return;
+
+        const range = quill.getSelection();
+        if (!selection) {
+          isFormatting = true;
+          quill.format("background", bgColor);
+          isFormatting = false;
+        } else {
+          const { index, length } = range;
+          isFormatting = true;
+          quill.formatText(index, length, { background: bgColor });
+          isFormatting = false;
+          setSelection(null);
+          selectionRef.current = null;
+        }
+      };
+
+      handleTextChange();
+      const checkForBlank = () => {
+        if (quill.root.className.includes("ql-blank")) {
+          handleTextChange();
+          quill.on("text-change", handleTextChange);
+        } else {
+          quill.off("text-change", handleTextChange);
+        }
+      };
+
+      checkForBlank();
+
+      document.querySelectorAll('.ql-text-highlight').forEach((element) => {
+        element.addEventListener('mousedown', handleButtonClick);
+        element.addEventListener('mouseup', restoreSelection);
+      });
+
+
+      const observer = new MutationObserver((mutationsList) => {
+        for (let mutation of mutationsList) {
+          if (mutation.attributeName === "class") {
+            checkForBlank();
+          }
+        }
+      });
+
+      observer.observe(quill.root, {
+        attributes: true,
+      });
+
       return () => {
         quill.off("text-change", handleTextChange);
+        observer.disconnect();
+        document.querySelectorAll('.ql-text-highlight').forEach((element) => {
+          element.removeEventListener('mousedown', handleButtonClick);
+          element.removeEventListener('mouseup', restoreSelection);
+        });
       };
     }
-  }, [bgColor, fontColor]);
-  
+  }, [bgColor]);
+
+  useEffect(() => {
+    const quill = editorContainerRef.current.getEditor();
+    let isFormatting = false;
+    if (quill) {
+
+      const restoreSelection = () => {
+        if (selectionRef.current) {
+          quill.setSelection(selectionRef.current.index, selectionRef.current.length);
+        }
+      };
+
+
+      const handleTextChange = () => {
+        if (isFormatting) return;
+
+        const range = quill.getSelection();
+        if (!selection) {
+          isFormatting = true;
+          quill.format("color", fontColor);
+          isFormatting = false;
+        } else {
+          const { index, length } = range;
+          isFormatting = true;
+          quill.formatText(index, length, { color: fontColor });
+          isFormatting = false;
+          setSelection(null);
+          selectionRef.current = null;
+        }
+      };
+
+      handleTextChange();
+      const checkForBlank = () => {
+        if (quill.root.className.includes("ql-blank")) {
+          handleTextChange();
+          quill.on("text-change", handleTextChange);
+        } else {
+          quill.off("text-change", handleTextChange);
+        }
+      };
+
+      checkForBlank();
+
+
+      const menuToggle = document.getElementById("openFontColor-button");
+
+      const attachColorListeners = () => {
+        const menuColor = document.getElementById("menu-color");
+        if (menuColor) {
+          menuColor.addEventListener("click", restoreSelection);
+          menuColor.addEventListener("change", restoreSelection);
+        }
+      };
+
+      if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+          setTimeout(() => {
+            attachColorListeners();
+          }, 300);
+        });
+      }
+
+
+      const observer = new MutationObserver((mutationsList) => {
+        for (let mutation of mutationsList) {
+          if (mutation.attributeName === "class") {
+            checkForBlank();
+          }
+        }
+      });
+
+      observer.observe(quill.root, {
+        attributes: true,
+      });
+
+      return () => {
+        quill.off("text-change", handleTextChange);
+        observer.disconnect();
+        if (menuToggle) {
+          menuToggle.removeEventListener("click", attachColorListeners);
+        }
+        const menuColor = document.getElementById("menu-color");
+        if (menuColor) {
+          menuColor.removeEventListener("click", restoreSelection);
+          menuColor.removeEventListener("change", restoreSelection);
+        }
+        selectionRef.current = null;
+      };
+    }
+  }, [fontColor]);
+
 
 
   useEffect(() => {
     if (addReply.open && addReply.id !== null) {
-      // Example: Auto-focus the textarea when it opens
-
-      // Example: Scroll to the opened reply section (if needed)
       const replyElement = document.getElementById(`reply-${addReply.id}`);
       if (replyElement) {
         replyElement.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
   }, [addReply]);
+
+  useEffect(() => {
+    if (editorContainerRef) {
+      const quill = editorContainerRef.current.getEditor();
+      const length = quill.getLength();
+      quill.formatText(0, length, 'lineHeight', '1.5');
+    }
+  }, [])
+
+  useEffect(() => {
+    if (editorContainerRef.current) {
+      const editor = editorContainerRef.current.getEditor();
+
+      let shouldRunFontChange = true;
+
+      const fontChange = () => {
+        if (!shouldRunFontChange) return;
+        shouldRunFontChange = false;
+
+        if (!selection) {
+          editor.format('font', selectedFont);
+        } else {
+          const { index, length } = editor.getSelection();
+          editor.formatText(index, length, 'font', selectedFont);
+          setSelection(null);
+        }
+
+
+        setTimeout(() => { shouldRunFontChange = true; }, 0);
+      };
+
+      fontChange();
+
+      editor.on("text-change", fontChange);
+
+      return () => {
+        editor.off("text-change", fontChange);
+      };
+    }
+  }, [selectedFont]);
+
+
+  useEffect(() => {
+    if (editorContainerRef.current) {
+      const editor = editorContainerRef.current.getEditor();
+
+      const fontChange = () => {
+
+        if (!selection) {
+          editor.format('size', selectedFontSize);
+        } else {
+          const { index, length } = selection;
+          editor.formatText(index, length, 'size', selectedFontSize);
+        }
+        editor.focus()
+
+      };
+
+      fontChange();
+
+      const checkForBlank = () => {
+        if (editor.root.className.includes("ql-blank")) {
+          fontChange();
+          editor.on("text-change", fontChange);
+        } else {
+          editor.off("text-change", fontChange);
+        }
+      };
+      checkForBlank();
+
+      const observer = new MutationObserver((mutationsList) => {
+        for (let mutation of mutationsList) {
+          if (mutation.attributeName === "class") {
+            checkForBlank();
+          }
+        }
+      });
+
+      observer.observe(editor.root, {
+        attributes: true,
+      });
+
+      return () => {
+        editor.off("text-change", fontChange)
+        observer.disconnect()
+      }
+    }
+  }, [selectedFontSize]);
+
+
+
+  useEffect(() => {
+    if (editorContainerRef.current) {
+      const editor = editorContainerRef.current.getEditor();
+
+      const fontChange = () => {
+
+        if(selectedHeaders === 1) {
+          setSelectedFontSizeValue("26px")
+        }
+        if(selectedHeaders === 2) {
+          setSelectedFontSizeValue("20px")
+        }
+        if(selectedHeaders === 3) {
+          setSelectedFontSizeValue("14px")
+        }
+        if(selectedHeaders === 4) {
+          setSelectedFontSizeValue("13px")
+        }
+        if(selectedHeaders === 0) {
+          setSelectedFontSizeValue("13px")
+        }
+        if (!selection) {
+          editor.format("size", false)
+          editor.format('header', selectedHeaders);
+        }
+        else {
+          editor.formatText("size", false)
+          editor.format('header', selectedHeaders);
+        }
+      };
+
+      fontChange();
+
+    }
+  }, [selectedHeaders]);
+
+  const handleImageResize = () => {
+    const quill = editorContainerRef.current.getEditor();
+    const editorElement = quill.root;
+  
+    editorElement.addEventListener('mousedown', (event:any) => {
+      if (event.target.tagName === 'IMG' && event.target.classList.contains('resizable')) {
+        const img = event.target;
+        const startX = event.clientX;
+        const startY = event.clientY;
+        const startWidth = img.clientWidth;
+        const startHeight = img.clientHeight;
+  
+        const onMouseMove = (moveEvent:any) => {
+          const width = startWidth + (moveEvent.clientX - startX);
+          const height = startHeight + (moveEvent.clientY - startY);
+          img.style.width = `${width}px`;
+          img.style.height = `${height}px`;
+        };
+  
+        const onMouseUp = () => {
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        };
+  
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+  
+        event.preventDefault(); // Prevent text selection while resizing
+      }
+    });
+  };
+  
+  useEffect(()=>{
+    handleImageResize();
+  },[editorContainerRef])
+  
+    
 
   return (
     <>
@@ -2617,20 +2927,10 @@ function SyncFesion() {
                   id: "",
                 });
                 SetOpenComment(false);
-                if (editorContainerRef && selectionRef.current) {
+                if (editorContainerRef && commentSelection) {
                   const editor = editorContainerRef.current.getEditor();
-                  const { index, length } = selectionRef.current;
-                  const formats = editor.getFormat(index, length);
-
-                  const isOverlap = comments.some(
-                    (comment: any) =>
-                      comment.range.index < index + length &&
-                      comment.range.index + comment.range.length > index
-                  );
-
-                  if (!isOverlap) {
-                    // editor.formatText(index, length, { background: "#fefefe" });
-                  }
+                  const { index, length } = commentSelection;
+                  editor.formatText(index, length, { background: commentPrevBg })
                 }
               }}
             >
@@ -2648,9 +2948,10 @@ function SyncFesion() {
                 <Grid
                   item
                   style={{
-                    height: "100%",
+                    height: documentPageSize?.title === "Landscape" ? "90%" : "100%",
                     position: "relative",
-                    width:documentPageSize?.title === "Landscape"? "100%":""
+                    width: documentPageSize?.title === "Landscape" ? "90%" : ""
+
                   }}
                 >
                   <ReactQuill
@@ -2659,18 +2960,6 @@ function SyncFesion() {
                     formats={formats}
                     value={editorHtml}
                     onChange={handleChange}
-                    onBlur={()=>{
-                      const handleBlur = () => {
-                        const quill = editorContainerRef.current?.getEditor();
-                        if (quill) {
-                          const range = quill.getSelection();
-                          if (range) {
-                            setCursorPosition(range.index); // Store the current cursor position
-                          }
-                        }
-                      };
-                      handleBlur()
-                    }}
                     // @ts-ignore
                     onChangeSelection={handleChangeSelection}
                     style={{
@@ -2681,8 +2970,7 @@ function SyncFesion() {
                       height: documentPageSize.height,
                     }}
                     onFocus={() => {
-                      handleFocus()
-                      // setAddReply({ open: false, id: "" });
+                      setAddReply({ open: false, id: "" });
                     }}
                   />
                   <style>
@@ -2702,11 +2990,13 @@ function SyncFesion() {
                         onClick={(e) => {
                           e.stopPropagation();
                           if (editorContainerRef) {
-                            const editor =
-                              editorContainerRef.current.getEditor();
+                            const editor = editorContainerRef.current.getEditor()
                             const range = editor.getSelection();
+                            const format = editor.getFormat(range.index, range.length)
+                            setCommentPrevBg(format.background)
+                            setCommentSelection(range)
                             editor.formatText(range.index, range.length, {
-                              background: "#c8c8c8",
+                              background: "#e1ecff",
                             });
                           }
                           SetOpenComment(true);
@@ -2714,71 +3004,51 @@ function SyncFesion() {
                         style={{
                           position: "absolute",
                           top: `${buttonPosition.top}px`,
-                          left: `49rem`,
-                          padding: "8px 12px",
+                          left: `97.7%`,
                           color: "#fff",
                           border: "none",
                           borderRadius: "5px",
                           cursor: "pointer",
                         }}
                       >
-                        <svg
-                          width="30px"
-                          height="30px"
-                          viewBox="0 0 1024 1024"
-                          className="icon"
-                          version="1.1"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M512 512m-448 0a448 448 0 1 0 896 0 448 448 0 1 0-896 0Z"
-                            fill="#4CAF50"
-                          />
-                          <path
-                            d="M448 298.666667h128v426.666666h-128z"
-                            fill="#FFFFFF"
-                          />
-                          <path
-                            d="M298.666667 448h426.666666v128H298.666667z"
-                            fill="#FFFFFF"
-                          />
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5.25 15C5.05109 15 4.86032 14.921 4.71967 14.7803C4.57902 14.6397 4.5 14.4489 4.5 14.25V12H1.5C1.10218 12 0.720644 11.842 0.43934 11.5607C0.158035 11.2794 0 10.8978 0 10.5V1.5C0 0.6675 0.675 0 1.5 0H13.5C13.8978 0 14.2794 0.158035 14.5607 0.43934C14.842 0.720644 15 1.10218 15 1.5V10.5C15 10.8978 14.842 11.2794 14.5607 11.5607C14.2794 11.842 13.8978 12 13.5 12H8.925L6.15 14.7825C6 14.925 5.8125 15 5.625 15H5.25ZM6 10.5V12.81L8.31 10.5H13.5V1.5H1.5V10.5H6Z" fill="#174B8B" />
                         </svg>
+
                       </button>
                     </Tooltip>
                   )}
-                  {openComment === true && (
+                  {openComment && (
                     <div
                       onClick={(e) => e.stopPropagation()}
+                      className="px-1"
                       style={{
-                        background: "white",
-                        width: 250,
+                        background: "#e1ecff",
+                        // width: 229,
                         position: "absolute",
                         top: `${buttonPosition.top}px`,
-                        left: "51rem",
+                        left: "100%",
                         border: "1px solid #fefefe",
                         boxShadow: "rgba(60,64,67,.15) 0 1px 3px 1px",
                       }}
                     >
+                      <div className="float-right py-1">
+                        <svg width="10" height="10" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M6 0.632473L5.36753 0L3 2.36753L0.632473 0L0 0.632473L2.36753 3L0 5.36753L0.632473 6L3 3.63247L5.36753 6L6 5.36753L3.63247 3L6 0.632473Z" fill="black" />
+                        </svg>
+
+                      </div>
                       <div
                         style={{
                           display: "flex",
-                          padding: 10,
-                          alignItems: "center",
+                          background: "#fefefe",
+                          borderRadius: 5
                         }}
+                        className="m-2 py-2 px-1"
                       >
                         <div
-                          className="icon mx-2"
-                          style={{
-                            height: 25,
-                            width: 25,
-                            borderRadius: "50%",
-                            background: "#b5082e",
-                            textAlign: "center",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            color: "white",
-                          }}
+                          className="icon-person mx-2"
+
                         >
                           {user?.firstName
                             ? user.firstName
@@ -2794,7 +3064,7 @@ function SyncFesion() {
                               .substring(0, 2)
                               .toUpperCase()}
                         </div>
-                        <div style={{ padding: 0 }}>
+                        <div style={{ position: "relative", bottom: 3, right: 3 }}>
                           <b
                             style={{
                               fontSize: user?.firstName
@@ -3516,7 +3786,7 @@ function SyncFesion() {
                       );
                     })}
                   </div>
-              
+
                 </Grid>
                 {/* <Grid item xs={3.8}>
                   <TrackChanges rejectChange={rejectChange} />
