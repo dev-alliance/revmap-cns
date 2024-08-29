@@ -182,6 +182,12 @@ interface ContractContextProps {
   setAuditTrails: Dispatch<SetStateAction<any>>;
   trackChanges: any[];
   setTrackChanges: Dispatch<SetStateAction<any>>;
+  pages: any[];
+  setPages: Dispatch<SetStateAction<any>>;
+  currentPage:number | any;
+  setCurrentPage:Dispatch<SetStateAction<any>>;
+  spacing:string | any;
+  setSpacing:Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -300,6 +306,12 @@ export const ContractContext = createContext<ContractContextProps>({
   setSelectedFontSizeValue: () => {},
   selectedHeadersValue: {},
   setSelectedHeadersValue: () => {},
+  pages:[],
+  setPages:()=>{},
+  currentPage:0,
+  setCurrentPage:()=>{},
+  spacing:"",
+  setSpacing:()=>{}
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -638,11 +650,14 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const [selectedFont, setSelectedFont] = useState("arial");
   const [selectedHeaders, setSelectedHeaders] = useState(0);
-  const [selectedFontSize, setSelectedFontSize] = useState("12px");
+  const [selectedFontSize, setSelectedFontSize] = useState("13px");
 
   const [selectedFontValue, setSelectedFontValue] = useState("arial");
   const [selectedHeadersValue, setSelectedHeadersValue] = useState(0);
-  const [selectedFontSizeValue, setSelectedFontSizeValue] = useState("12px");
+  const [selectedFontSizeValue, setSelectedFontSizeValue] = useState("13px");
+  const [pages, setPages] = useState([{ content: '' }]);
+  const [currentPage, setCurrentPage] = useState(0); 
+  const [spacing, setSpacing] = useState("1.5");
 
   return (
     <ContractContext.Provider
@@ -762,6 +777,12 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setSelectedFontSizeValue,
         setSelectedFontValue,
         setSelectedHeadersValue,
+        pages,
+        setPages,
+        currentPage,
+        setCurrentPage,
+        spacing,
+        setSpacing
       }}
     >
       {children}

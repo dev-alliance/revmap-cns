@@ -1386,3 +1386,8 @@ body {
 .ql-editor audio {
   max-width: 100%;
 }
+
+.ql-editor{
+  overflow:hidden !important;
+}
+

@@ -1,6 +1,8 @@
 import { ContractContext } from "@/context/ContractContext";
 import useStore from "@/context/ZustandStore";
 import { Menu, MenuItem, Select, Tooltip } from "@mui/material";
+import Form from 'react-bootstrap/Form';
+
 import React, {
   ChangeEvent,
   useContext,
@@ -571,6 +573,10 @@ export default function QuillToolbar() {
     setSelectedFontSizeValue,
     setSelectedHeadersValue,
     selectionRef,
+    setPages,
+    setCurrentPage,
+    spacing,
+    setSpacing
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
@@ -669,12 +675,22 @@ export default function QuillToolbar() {
   const openLinkPicture = Boolean(anchorElLinkPicture);
 
   const handleClick2 = (event: any) => {
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if(range.length > 0) {
+      editor.setSelection(range.index,range.length)
+    }
     setAnchorEl2(event.currentTarget);
   };
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
   const handleClick = (event: any) => {
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if(range.length > 0) {
+      editor.setSelection(range.index,range.length)
+    }
     setAnchorEl(event.currentTarget);
     setTooltipOpenNumbering(false);
   };
@@ -698,16 +714,26 @@ export default function QuillToolbar() {
   };
 
   const handleOpenTextColor = (event: any) => {
+    const editor = editorRefContext.getEditor()
+    const range = editor.getSelection(true)
+    if(range.length>0) {
+      editor.setSelection(range.index,range.length)
+    }
     setAnchorElTextColor(event.currentTarget);
   };
 
   const handleCloseTextColor = () => {
     setAnchorElTextColor(null);
     const editor = editorRefContext.getEditor();
-    editor.focus();
+      editor.focus();
   };
 
   const handleOpenFontColor = (event: any) => {
+    const editor = editorRefContext.getEditor()
+    const range = editor.getSelection(true)
+    if(range.length>0) {
+      editor.setSelection(range.index,range.length)
+    }
     setAnchorElFontColor(event.currentTarget);
   };
 
@@ -749,6 +775,11 @@ export default function QuillToolbar() {
   };
 
   const handleOpenAlignment = (event: any) => {
+    const editor = editorRefContext.getEditor()
+    const range = editor.getSelection(true)
+    if(range.length>0) {
+      editor.setSelection(range.index,range.length)
+    }
     setAnchorElAlignment(event.currentTarget);
   };
 
@@ -781,6 +812,11 @@ export default function QuillToolbar() {
   };
 
   const handleOpenColumns = (event: any) => {
+    const editor = editorRefContext.getEditor()
+    const range = editor.getSelection(true)
+    if(range.length>0) {
+      editor.setSelection(range.index,range.length)
+    }
     setAnchorElColumns(event.currentTarget);
   };
 
@@ -789,11 +825,17 @@ export default function QuillToolbar() {
   };
 
   const handleOpenSpacing = (event: any) => {
+    const editor = editorRefContext.getEditor()
+    const range = editor.getSelection(true)
+    if(range.length>0) {
+      editor.setSelection(range.index,range.length)
+    }
     setAnchorElSpacing(event.currentTarget);
   };
 
   const handleCloseSpacing = () => {
     setAnchorElSpacing(null);
+    
   };
 
   const handleOpenLinkPicture = (event: any) => {
@@ -806,13 +848,12 @@ export default function QuillToolbar() {
   };
 
   const handleOpenCase = (event: any) => {
-    const editor = editorRefContext.getEditor();
-    const savedSelection = editor.getSelection();
-    setAnchorElCase(event.currentTarget);
-    editor.focus();
-    if (savedSelection) {
-      editor.setSelection(savedSelection);
+    const editor = editorRefContext.getEditor()
+    const range = editor.getSelection(true)
+    if(range.length>0) {
+      editor.setSelection(range.index,range.length)
     }
+    setAnchorElCase(event.currentTarget);
     setTooltipOpenCase(false);
   };
 
@@ -917,6 +958,9 @@ export default function QuillToolbar() {
     setDocumentPageSize(value);
   };
 
+
+  
+
   const pageSizes = [
     {
       title: "A3",
@@ -995,10 +1039,8 @@ export default function QuillToolbar() {
     },
   ];
 
-  const [highlightColor, setHighlightColor] = useState("");
 
   const handleTextHighlightColorChange = (color: any) => {
-    setHighlightColor(color.hex);
     setBgColor(color.hex);
     setBgColorSvg(color.hex);
   };
@@ -1112,43 +1154,58 @@ export default function QuillToolbar() {
 
   const handleClickColumns = (value: string) => {
     const editorContainer = editorRefContext.editor?.root;
-
+  
     if (!editorContainer) {
       console.error("Editor container not found");
       return;
     }
-
+  
     setSelectedColumn(value);
-
+  
+    // Reset grid styles before applying new styles
+    editorContainer.style.display = ""; // Reset display property
+    editorContainer.style.gridTemplateColumns = ""; // Reset grid columns
+    editorContainer.style.gridColumnGap = ""; // Reset column gap
+    editorContainer.style.width = "100%"; // Ensure full width
+    editorContainer.style.gridTemplateAreas = ""; // Reset grid areas
+  
     switch (value) {
       case "one":
-        editorContainer.style.columnCount = "1";
-        editorContainer.style.columnGap = "0";
+        editorContainer.style.display = "block"; // Single column layout, block-level by default
         break;
       case "two":
-        editorContainer.style.columnCount = "2";
-        editorContainer.style.columnGap = "20px";
+        editorContainer.style.display = "grid";
+        editorContainer.style.gridTemplateColumns = "50% 50%"; // Two equal columns
+        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
         break;
       case "three":
-        editorContainer.style.columnCount = "3";
-        editorContainer.style.columnGap = "20px";
+        editorContainer.style.display = "grid";
+        editorContainer.style.gridTemplateColumns = "33% 33% 33%"; // Three equal columns
+        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
         break;
       case "left":
-        editorContainer.style.columnCount = "2";
-        editorContainer.style.columnGap = "20px";
-        editorContainer.style.columnWidth = "25%";
+        editorContainer.style.display = "grid";
+        editorContainer.style.gridTemplateColumns = "25% 75%"; // Left 25% and right 75%
+        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
+        editorContainer.style.gridTemplateAreas = `
+          "left right"
+        `;
         break;
       case "right":
-        editorContainer.style.columnCount = "2";
-        editorContainer.style.columnGap = "20px";
-        editorContainer.style.columnWidth = "75%";
+        editorContainer.style.display = "grid";
+        editorContainer.style.gridTemplateColumns = "75% 25%"; // Left 75% and right 25%
+        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
+        editorContainer.style.gridTemplateAreas = `
+          "left right"
+        `;
         break;
       default:
-        editorContainer.style.columnCount = "1";
-        editorContainer.style.columnGap = "0";
+        editorContainer.style.display = "block"; // Default to single column
     }
+  
     handleCloseColumns();
   };
+  
 
   const [showFormattingMarks, setShowFormattingMarks] = useState(false);
 
@@ -1196,22 +1253,51 @@ export default function QuillToolbar() {
   const handleSelectSpacing = (value: any) => {
     setSpacing(value);
     setAnchorElSpacing(null);
-
+  
     const quillEditor = editorRefContext.getEditor();
-
+  
     if (quillEditor) {
       const savedRange = quillEditor.getSelection(true);
+  
       if (savedRange && savedRange.length > 0) {
-        quillEditor.formatLine(savedRange.index, savedRange.length, {
-          lineHeight: value,
-        });
+        // Selection is present
+        const [firstLineIndex] = quillEditor.getLine(0);
+        const firstLineLength = firstLineIndex.length();
+  
+        // Ensure the selection is beyond the first line
+        if (savedRange.index >= firstLineLength) {
+          quillEditor.formatLine(savedRange.index, savedRange.length, {
+            lineHeight: value,
+          });
+        } else if (savedRange.index + savedRange.length > firstLineLength) {
+          // If the selection partially overlaps the first line, adjust the range
+          const adjustedIndex = firstLineLength;
+          const adjustedLength = savedRange.index + savedRange.length - firstLineLength;
+  
+          quillEditor.formatLine(adjustedIndex, adjustedLength, {
+            lineHeight: value,
+          });
+        }
       } else {
-        quillEditor.format("lineHeight", value);
+        // No selection, apply line spacing to future content after the cursor position
+        const savedRange = quillEditor.getSelection(); // Use getSelection() to get the cursor position
+  
+        if (savedRange) {
+          const cursorPosition = savedRange.index;
+          const totalLength = quillEditor.getLength();
+  
+          if (cursorPosition < totalLength) {
+            quillEditor.formatLine(cursorPosition, totalLength - cursorPosition, {
+              lineHeight: value,
+            });
+          }
+        }
       }
     }
   };
+  
+  
 
-  const [spacing, setSpacing] = useState("1.5");
 
   useEffect(() => {
     if (!editorRefContext) return;
@@ -1291,6 +1377,7 @@ export default function QuillToolbar() {
 
   const [selection, setSelection] = useState<any>(null);
   const [cursorIndex, setCursorIndex] = useState<number>(0);
+
   const handleOpenLink = (event: any) => {
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
@@ -1300,6 +1387,7 @@ export default function QuillToolbar() {
       setSelection(range);
       const selectedText = editor.getText(range.index, range.length);
       setDisplayText(selectedText);
+      editor.setSelection(range.index,range.length)
     } else {
       setDisplayText("");
     }
@@ -1310,7 +1398,6 @@ export default function QuillToolbar() {
     const editor = editorRefContext.getEditor();
     if (selection) {
       editor.deleteText(selection.index, selection.length);
-      console.log(displayText, linkUrl);
       editor.insertText(selection.index, displayText, "link", linkUrl);
     } else {
       editor.insertText(cursorIndex, displayText, "link", linkUrl);
@@ -1318,10 +1405,14 @@ export default function QuillToolbar() {
     setDisplayText("");
     setLinkUrl("");
     handleCloseLink();
+    setSelection(null)
   };
 
   const handleCloseLink = () => {
+    const editor = editorRefContext.getEditor()
     setAnchorElLink(null);
+    editor.focus()
+    setSelection(null)
   };
 
   const [dispalyTextChange, setDisplayTextChange] = useState(false);
@@ -1330,7 +1421,7 @@ export default function QuillToolbar() {
     const url = e.target.value;
     setLinkUrl(url);
 
-    if (!dispalyTextChange && displayText.length === 0) {
+    if (!dispalyTextChange) {
       setDisplayText(url);
     }
   };
@@ -1527,16 +1618,22 @@ export default function QuillToolbar() {
         </span>
         <span className="ql-formats b-r">
           <Tooltip title="Font" placement="bottom" open={tooltipOpen}>
-            <span className="ql-formats">
-              <Select
-                className="ql-font b-r"
-                defaultValue="arial"
+            <span className="ql-formats"
                 onMouseLeave={() => {
                   setTooltipOpen(false);
                 }}
                 onMouseEnter={() => {
                   setTooltipOpen(true);
                 }}
+                style={{
+                  height: 33,
+                  width: 147,
+                }}
+                >
+              <Select
+                className="ql-font b-r"
+                defaultValue="arial"
+            
                 style={{
                   height: 33,
                   width: 147,
@@ -2676,6 +2773,15 @@ export default function QuillToolbar() {
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 34, height: 33 }}
+                onClick={()=>{
+                  setPages((prevPages:any)=>{
+                    let updatedPages = [...prevPages,{content:""}];
+                    let newIndex = updatedPages.length -1 ;
+                    setCurrentPage(newIndex)
+                    return updatedPages;
+                  })
+                  
+                }}
               >
                 <svg
                   width="24"
@@ -3412,7 +3518,7 @@ export default function QuillToolbar() {
                     </div>
                   </div>
                 </MenuItem>
-                {/* <MenuItem
+                <MenuItem
                   style={{
                     width: 136,
                     background: selectedColumn === "left" ? "#edf4fb" : "",
@@ -3478,7 +3584,7 @@ export default function QuillToolbar() {
                       Right
                     </div>
                   </div>
-                </MenuItem> */}
+                </MenuItem>
               </Menu>
             </span>
           </Tooltip>
