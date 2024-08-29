@@ -1251,51 +1251,23 @@ export default function QuillToolbar() {
   }, [showFormattingMarks]);
 
   const handleSelectSpacing = (value: any) => {
-    setSpacing(value);
-    setAnchorElSpacing(null);
-  
-    const quillEditor = editorRefContext.getEditor();
-  
-    if (quillEditor) {
-      const savedRange = quillEditor.getSelection(true);
-  
-      if (savedRange && savedRange.length > 0) {
-        // Selection is present
-        const [firstLineIndex] = quillEditor.getLine(0);
-        const firstLineLength = firstLineIndex.length();
-  
-        // Ensure the selection is beyond the first line
-        if (savedRange.index >= firstLineLength) {
-          quillEditor.formatLine(savedRange.index, savedRange.length, {
-            lineHeight: value,
-          });
-        } else if (savedRange.index + savedRange.length > firstLineLength) {
-          // If the selection partially overlaps the first line, adjust the range
-          const adjustedIndex = firstLineLength;
-          const adjustedLength = savedRange.index + savedRange.length - firstLineLength;
-  
-          quillEditor.formatLine(adjustedIndex, adjustedLength, {
-            lineHeight: value,
-          });
-        }
-      } else {
-        // No selection, apply line spacing to future content after the cursor position
-        const savedRange = quillEditor.getSelection(); // Use getSelection() to get the cursor position
-  
-        if (savedRange) {
-          const cursorPosition = savedRange.index;
-          const totalLength = quillEditor.getLength();
-  
-          if (cursorPosition < totalLength) {
-            quillEditor.formatLine(cursorPosition, totalLength - cursorPosition, {
-              lineHeight: value,
-            });
-          }
-        }
-      }
+  setSpacing(value);
+  setAnchorElSpacing(null);
+
+  const quillEditor = editorRefContext.getEditor();
+
+  if (quillEditor) {
+    const savedRange = quillEditor.getSelection(true);
+
+    if (savedRange && savedRange.length > 0) {
+     quillEditor.formatLine(savedRange.index,savedRange.length,{lineHeight:value}) 
+    } else {
+      quillEditor.format("lineHeight", value);
     }
-  };
-  
+
+  }
+};
+
   
 
 

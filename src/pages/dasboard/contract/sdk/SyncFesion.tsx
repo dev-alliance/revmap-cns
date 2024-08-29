@@ -1173,8 +1173,17 @@ function SyncFesion() {
   }
 
   const parentContainerRef = useRef(null); // Ref for the parent container
+  const isContentEmpty = (htmlContent: string): boolean => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+  
+    // Check if there is any non-whitespace text content
+    return !tempDiv.textContent || !tempDiv.textContent.trim();
+  };
 
-  const handleChange = (value: any, delta: any, source: any, editor: any, index: number) => {
+  const handleChange = (
+    value: any, delta: any, source: any, editor: any, index: number
+  ) => {
     setPages((prevPages: any) => {
       const updatedPages = [...prevPages];
 
@@ -1183,14 +1192,19 @@ function SyncFesion() {
         return prevPages;
       }
 
-      updatedPages[index] = { ...updatedPages[index], content: value };
+      
 
       const currentEditor = editorRefs.current[index]?.getEditor();
       if (currentEditor) {
         const editorHeight = currentEditor.root.scrollHeight;
         const documentHeight = cmToPx(documentPageSize.height) - toMinus
 
-        // Check if content exceeds the current page height
+        if (editorHeight <= documentHeight) {
+          updatedPages[index] = { ...updatedPages[index], content: value };
+        } else { 
+          editorRefs?.current[index+1]?.getEditor()?.focus()
+        }
+
         if (editorHeight > documentHeight) {
           if (index === updatedPages.length - 1) {
             updatedPages.push({ content: '' });
@@ -1206,7 +1220,7 @@ function SyncFesion() {
       }
 
       // Remove empty editors except the first one
-      if ((value === "<p><br></p>" || value == '<p style="line-height: 1.5;"><br></p>') && index > 0) {
+      if ((isContentEmpty(value)) && index > 0) {
         updatedPages.splice(index, 1);
         setCurrentPage(Math.max(0, index - 1));
         setTimeout(() => {
@@ -1218,6 +1232,35 @@ function SyncFesion() {
       return updatedPages;
     });
   };
+
+  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
+    if (event.key === "Backspace") {
+      const currentEditor = editorRefs.current[index]?.getEditor();
+      const content = currentEditor?.root.innerHTML;
+  
+      if (isContentEmpty(content) && index > 0) {
+        // Prevent default backspace action
+        event.preventDefault();
+  
+        // Remove the empty page and shift focus to the previous page
+        setPages((prevPages: any) => {
+          const updatedPages = [...prevPages];
+          updatedPages.splice(index, 1);
+          setCurrentPage(Math.max(0, index - 1));
+  
+          setTimeout(() => {
+            editorRefs.current[Math.max(0, index - 1)]?.getEditor().focus();
+            containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({
+              behavior: "smooth",
+            });
+          }, 100);
+  
+          return updatedPages;
+        });
+      }
+    }
+  };
+  
 
   useEffect(() => {
     const editor = editorRefs.current[currentPage]?.getEditor();
@@ -3020,7 +3063,6 @@ function SyncFesion() {
                 alignItems="center"
                 style={{
                   height: "100%",
-                  padding: "20px 20px",
                   overflowX: "auto",
                 }}
                 ref={parentContainerRef}
@@ -3047,7 +3089,7 @@ function SyncFesion() {
                           marginBottom: index > 0 ? '20px' : '0px', // Apply top margin for all but the first page
                           border: '1px solid #f2f2f2',
                           borderRadius: '5px',
-                          background: '#fefefe',
+                          // background: '#fefefe',
                           width: '100%',
                           minHeight: `${documentPageSize.height}`,
                         }}
@@ -3059,6 +3101,7 @@ function SyncFesion() {
                           onChangeSelection={handleChangeSelection}
                           modules={modules}
                           formats={formats}
+                          onKeyDown={(event)=>handleKeyDown(event,index)}
                           onFocus={() => {
                             setEditorRefContext(editorRefs.current[index])
                             setCurrentPage(index)
@@ -3069,6 +3112,7 @@ function SyncFesion() {
                             background: "#fefefe",
                             width: documentPageSize.width,
                             height: documentPageSize.height,
+                            margin:"20px 0"
                           }}
                         />
                         <style>
