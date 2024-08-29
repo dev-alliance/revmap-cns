@@ -1135,20 +1135,62 @@ export default function QuillToolbar() {
       )
       .join("");
   };
-
   const handleTextTransformation = (transformationFunction: Function) => {
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection();
-
+  
     if (selection && selection.length > 0) {
-      const selectedText = editor.getText(selection.index, selection.length);
-      const transformedText = transformationFunction(selectedText);
-      editor.deleteText(selection.index, selection.length);
-      editor.insertText(selection.index, transformedText);
-      editor.setSelection(selection.index, selection.length);
+      const { index, length } = selection;
+  
+      // Retrieve the current contents and formats of the selection
+      const contents = editor.getContents(index, length);
+  
+      // Initialize variables to store the final transformed text
+      let transformedText = '';
+      let formatOps :any= [];
+  
+      // Process each segment of text with its formatting
+      contents.ops.forEach((op:any) => {
+        if (op.insert) {
+          const segment = op.insert;
+          const format = op.attributes || {};
+  
+          // Transform the segment of text
+          const transformedSegment = transformationFunction(segment);
+  
+          // Append the transformed segment to the final text
+          transformedText += transformedSegment;
+  
+          // Create format operations for each character in the transformed segment
+          for (let i = 0; i < transformedSegment.length; i++) {
+            formatOps.push({ index: transformedText.length - transformedSegment.length + i, attributes: format });
+          }
+        }
+      });
+  
+      // Remove the original selected text
+      editor.deleteText(index, length);
+  
+      // Insert the transformed text with original formatting
+      let currentIndex = index;
+      transformedText.split('').forEach((char, i) => {
+        const format = formatOps[i]?.attributes || {};
+        editor.insertText(currentIndex, char, format);
+        currentIndex++;
+      });
+  
+      // Restore the selection
+      editor.setSelection(index, transformedText.length);
+  
+      handleCloseCase();
     }
-    handleCloseCase();
   };
+  
+  
+  
+  
+  
+  
 
   const [selectedColumn, setSelectedColumn] = useState("one");
 
