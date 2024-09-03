@@ -11,12 +11,14 @@ import React, {
   useState,
   useCallback,
 } from "react";
+
 import {
   DocumentEditorContainerComponent,
   Toolbar,
   CustomToolbarItemModel,
 } from "@syncfusion/ej2-react-documenteditor";
 
+import { Quill } from "react-quill";
 import {
   PdfDocument,
   PdfPageSettings,
@@ -1184,8 +1186,9 @@ function SyncFesion() {
     // Check if there is any non-whitespace text content
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
+  
   const handleChange = (value: any, delta: any, source: any, editor: any, index: number) => {
-    setPages((prevPages: any[]) => {
+    setPages((prevPages:any[]) => {
       const updatedPages = [...prevPages];
 
       if (index < 0 || index >= updatedPages.length) {
@@ -1235,7 +1238,7 @@ function SyncFesion() {
                 ops.pop(); // Remove non-string ops (e.g., images, formatting)
               }
               contentToFit = { ops: ops };
-              fitIndex = contentToFit.ops.reduce((acc: any, op: any) => acc + (typeof op.insert === 'string' ? op.insert.length : 0), 0);
+              fitIndex = contentToFit.ops.reduce((acc:any, op:any) => acc + (typeof op.insert === 'string' ? op.insert.length : 0), 0);
             }
           }
 
@@ -1286,7 +1289,13 @@ function SyncFesion() {
       return updatedPages; // Return updated pages
     });
   };
-
+  
+  
+  
+  
+  
+  
+  
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     if (event.key === "Backspace") {
       const currentEditor = editorRefs.current[index]?.getEditor();
@@ -1790,35 +1799,7 @@ function SyncFesion() {
 
     handleTextChange()
 
-    const isEditorBlank = () => {
-      const editorContent = quill.root.innerHTML.replace(/<[^>]*>/g, '').trim();
-      return editorContent === "";
-    };
 
-    if (quill) {
-      const checkForBlank = () => {
-        if (isEditorBlank()) {
-          handleTextChange();
-        };
-      }
-      checkForBlank();
-
-      const observer = new MutationObserver((mutationsList) => {
-        for (let mutation of mutationsList) {
-          checkForBlank(); // Check for blank content on any mutation
-        }
-      });
-
-      observer.observe(quill.root, {
-        childList: true, // Observe direct children
-        subtree: true,  // Observe all descendants
-      });
-
-      return () => {
-        quill.off("text-change", handleTextChange);
-        observer.disconnect();
-      };
-    }
   }, [bgColor]);
 
 
@@ -1858,10 +1839,7 @@ function SyncFesion() {
 
       handleTextChange()
 
-      const isEditorBlank = () => {
-        const editorContent = quill.root.innerHTML.replace(/<[^>]*>/g, '').trim();
-        return editorContent === "";
-      };
+    
 
       const menuToggle = document.getElementById("openFontColor-button");
 
@@ -1882,27 +1860,8 @@ function SyncFesion() {
       }
 
       if (quill) {
-        const checkForBlank = () => {
-          if (isEditorBlank()) {
-            handleTextChange();
-          };
-        }
-        checkForBlank();
-
-        const observer = new MutationObserver((mutationsList) => {
-          for (let mutation of mutationsList) {
-            checkForBlank(); // Check for blank content on any mutation
-          }
-        });
-
-        observer.observe(quill.root, {
-          childList: true, // Observe direct children
-          subtree: true,  // Observe all descendants
-        });
-
         return () => {
           quill.off("text-change", handleTextChange);
-          observer.disconnect();
           if (menuToggle) {
             menuToggle.removeEventListener("click", attachColorListeners);
           }
@@ -3169,6 +3128,7 @@ function SyncFesion() {
                             setEditorRefContext(editorRefs.current[index])
                             setCurrentPage(index)
                           }}
+                          theme="snow"
                           style={{
                             border: "1px solid #f2f2f2",
                             borderRadius: "5px",

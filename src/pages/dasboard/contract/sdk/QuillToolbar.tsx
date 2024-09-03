@@ -893,6 +893,8 @@ export default function QuillToolbar() {
   const handleHeaderChange = (event: any) => {
     const editor = editorRefContext.getEditor();
     setSelectedHeaders(event.target.value);
+    editor.format("size", false)
+    editor.format('header', event.target.value);
     setSelectedHeadersValue(event.target.value);
     setTimeout(() => {
       editor.focus();
