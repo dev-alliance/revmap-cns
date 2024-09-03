@@ -29,6 +29,7 @@ import { registerLicense, select } from "@syncfusion/ej2-base";
 registerLicense(
   "ORg4AjUWIQA/Gnt2UVhiQlJPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSX1Tc0ViWHZcd3dVRWQ="
 );
+
 import * as jQueryLibrary from "jquery"; // Rename the import
 const $ = jQueryLibrary;
 // other imports...
@@ -158,6 +159,7 @@ function SyncFesion() {
     fontColor,
     setBgColorSvg,
     setFontColorSvg,
+    setFontColor,
     selectionRef,
     setSelectedFontValue,
     selectedFont,
@@ -170,7 +172,8 @@ function SyncFesion() {
     setPages,
     currentPage,
     setCurrentPage,
-    setSpacing
+    setSpacing,
+    setBgColor
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -1173,18 +1176,16 @@ function SyncFesion() {
   }
 
   const parentContainerRef = useRef(null); // Ref for the parent container
+
   const isContentEmpty = (htmlContent: string): boolean => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlContent;
-  
+
     // Check if there is any non-whitespace text content
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
-
-  const handleChange = (
-    value: any, delta: any, source: any, editor: any, index: number
-  ) => {
-    setPages((prevPages: any) => {
+  const handleChange = (value: any, delta: any, source: any, editor: any, index: number) => {
+    setPages((prevPages: any[]) => {
       const updatedPages = [...prevPages];
 
       if (index < 0 || index >= updatedPages.length) {
@@ -1192,44 +1193,97 @@ function SyncFesion() {
         return prevPages;
       }
 
-      
-
       const currentEditor = editorRefs.current[index]?.getEditor();
       if (currentEditor) {
         const editorHeight = currentEditor.root.scrollHeight;
-        const documentHeight = cmToPx(documentPageSize.height) - toMinus
+        const documentHeight = cmToPx(documentPageSize.height) - toMinus;
 
+        // Save the current cursor position
+        const cursorPosition = editor.getSelection()?.index ?? null;
+
+        // Check if content fits within the current page
         if (editorHeight <= documentHeight) {
-          updatedPages[index] = { ...updatedPages[index], content: value };
-        } else { 
-          editorRefs?.current[index+1]?.getEditor()?.focus()
-        }
-
-        if (editorHeight > documentHeight) {
-          if (index === updatedPages.length - 1) {
-            updatedPages.push({ content: '' });
-            setCurrentPage(updatedPages.length - 1);
-            setTimeout(() => {
-              editorRefs.current[updatedPages.length - 1]?.getEditor().focus();
-              containerRefs.current[updatedPages.length - 1]?.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-          } else {
-            editorRefs.current[index + 1]?.getEditor().focus();
+          // Content fits within the current page
+          if (updatedPages[index].content !== value) { // Only update if content is different
+            updatedPages[index] = { ...updatedPages[index], content: value };
           }
+        } else {
+          // Handle overflow by finding a suitable point to split content (line-level)
+          const currentContent = currentEditor.getContents();
+          let fitIndex = currentContent.length();
+          let contentToFit = currentContent.slice(0, fitIndex);
+
+          // Find the point where content fits within the page size
+          while (fitIndex > 0) {
+            currentEditor.setContents(contentToFit);
+            if (currentEditor.root.scrollHeight <= documentHeight) {
+              break; // Content fits within the current page size
+            }
+
+            // Adjust by blocks (line, word, or op) to avoid splitting words or characters
+            const ops = contentToFit.ops;
+            if (ops.length > 0) {
+              const lastOp = ops[ops.length - 1];
+              if (lastOp.insert && typeof lastOp.insert === 'string') {
+                const lastIndex = lastOp.insert.lastIndexOf(' ');
+                if (lastIndex !== -1) {
+                  lastOp.insert = lastOp.insert.substring(0, lastIndex); // Remove last word
+                } else {
+                  ops.pop(); // Remove last op if it's a single word/character
+                }
+              } else {
+                ops.pop(); // Remove non-string ops (e.g., images, formatting)
+              }
+              contentToFit = { ops: ops };
+              fitIndex = contentToFit.ops.reduce((acc: any, op: any) => acc + (typeof op.insert === 'string' ? op.insert.length : 0), 0);
+            }
+          }
+
+          const fittingContent = currentContent.slice(0, fitIndex);
+          const overflowContent = currentContent.slice(fitIndex);
+
+          // Only update if content has changed
+          if (updatedPages[index].content !== fittingContent) {
+            updatedPages[index] = { ...updatedPages[index], content: fittingContent };
+          }
+
+          // Handle overflow
+          const handleOverflow = (overflow: any, nextPageIndex: number) => {
+            if (overflow.length() === 0) return;
+
+            if (nextPageIndex === updatedPages.length) {
+              // Add a new page for overflow content
+              updatedPages.push({ content: overflow });
+              setCurrentPage(updatedPages.length - 1);
+
+              setTimeout(() => {
+                const nextEditor = editorRefs.current[updatedPages.length - 1]?.getEditor();
+                if (nextEditor) {
+                  nextEditor.focus();
+                  nextEditor.setSelection(nextEditor.getLength(), 0); // Keep cursor at end
+                }
+              }, 100);
+            } else {
+              // Add to the next page if it already exists
+              const nextEditor = editorRefs.current[nextPageIndex]?.getEditor();
+              if (nextEditor) {
+                const nextPageContent = nextEditor.getContents();
+                nextEditor.setContents(overflow.concat(nextPageContent));
+
+                // Check for further overflow
+                if (nextEditor.root.scrollHeight > documentHeight) {
+                  handleOverflow(nextEditor.getContents().slice(overflow.length()), nextPageIndex + 1);
+                }
+              }
+            }
+          };
+
+          handleOverflow(overflowContent, index + 1);
         }
+
       }
 
-      // Remove empty editors except the first one
-      if ((isContentEmpty(value)) && index > 0) {
-        updatedPages.splice(index, 1);
-        setCurrentPage(Math.max(0, index - 1));
-        setTimeout(() => {
-          editorRefs.current[Math.max(0, index - 1)]?.getEditor().focus();
-          containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-
-      return updatedPages;
+      return updatedPages; // Return updated pages
     });
   };
 
@@ -1237,30 +1291,32 @@ function SyncFesion() {
     if (event.key === "Backspace") {
       const currentEditor = editorRefs.current[index]?.getEditor();
       const content = currentEditor?.root.innerHTML;
-  
+
       if (isContentEmpty(content) && index > 0) {
         // Prevent default backspace action
         event.preventDefault();
-  
+
         // Remove the empty page and shift focus to the previous page
         setPages((prevPages: any) => {
           const updatedPages = [...prevPages];
           updatedPages.splice(index, 1);
           setCurrentPage(Math.max(0, index - 1));
-  
+
           setTimeout(() => {
-            editorRefs.current[Math.max(0, index - 1)]?.getEditor().focus();
+            const editor = editorRefs.current[Math.max(0, index - 1)]?.getEditor();
+            editor.setSelection(editor.getLength() - 1)
+            editor.focus()
             containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({
               behavior: "smooth",
             });
           }, 100);
-  
+
           return updatedPages;
         });
       }
     }
   };
-  
+
 
   useEffect(() => {
     const editor = editorRefs.current[currentPage]?.getEditor();
@@ -1288,13 +1344,13 @@ function SyncFesion() {
       const documentHeightPx = cmToPx(documentPageSize.height);
 
       const adjustPagesForNewSize = () => {
-        setPages((prevPages:any) => {
+        setPages((prevPages: any) => {
           let updatedPages = [];
           let remainingContent = '';
           let totalContent = '';
 
           // Aggregate all content to process in one go
-          prevPages.forEach((page:any) => totalContent += page.content);
+          prevPages.forEach((page: any) => totalContent += page.content);
 
           // Create a temporary editor for height measurement
           const createTemporaryEditor = () => {
@@ -1307,7 +1363,7 @@ function SyncFesion() {
           };
 
           // Function to measure the height of content
-          const measureContentHeight = (content:any, tempEditor:any) => {
+          const measureContentHeight = (content: any, tempEditor: any) => {
             tempEditor.innerHTML = content;
             return tempEditor.scrollHeight;
           };
@@ -1427,8 +1483,8 @@ function SyncFesion() {
           if (format.color) {
             setFontColorSvg(format.color);
           } else {
-            editor.format("color", fontColor);
-            setFontColorSvg(fontColor)
+            editor.format("color", prevFontColor);
+            setFontColorSvg(prevFontColor)
           }
           if (format.background) {
             console.log(format.background)
@@ -1437,22 +1493,23 @@ function SyncFesion() {
             }
             setBgColorSvg(format.background)
           } else {
-            editor.format("background", bgColor)
+            editor.format("background", prevBgColor)
+            setBgColorSvg(prevBgColor)
           }
         }
 
       }
 
-      if(range.length > 0) {
+      if (range.length > 0) {
         const format = editor.getFormat(range.length)
         console.log(format.lineHeight)
-        if(format.lineHeight) {
+        if (format.lineHeight) {
           setSpacing(format.lineHeight)
         }
       } else {
         setSpacing(format.lineHeight)
       }
-      
+
 
       if (format.font) {
         setSelectedFontValue(format.font)
@@ -1468,17 +1525,17 @@ function SyncFesion() {
           const format = editor.getFormat(range.index, range.length);
           if (format.size) {
             setSelectedFontSizeValue(format.size)
-            if(typeof format.size === "object") {
+            if (typeof format.size === "object") {
               setSelectedFontSizeValue(format.size[0])
             }
           }
         } else {
-        setSelectedFontSizeValue("13px")
+          setSelectedFontSizeValue("13px")
 
         }
       }
 
-     
+
 
       if (format.header) {
         setSelectedHeadersValue(format.header)
@@ -1699,6 +1756,10 @@ function SyncFesion() {
     }
   };
 
+  const [prevBgColor, setPrevBgColor] = useState("#fefefe")
+  const [prevFontColor, setPrevFontColor] = useState("black")
+
+
   useEffect(() => {
     const quill = editorRefs.current[currentPage].getEditor();
     let isFormatting = false;
@@ -1707,7 +1768,11 @@ function SyncFesion() {
       setBgColorSvg(bgColor)
       if (isFormatting) return;
 
-      const range = quill.getSelection();
+      const range = quill.getSelection(true);
+
+      if (range?.length === 0) {
+        setPrevBgColor(bgColor)
+      }
       if (!selection) {
         isFormatting = true;
         quill.format("background", bgColor);
@@ -1773,7 +1838,10 @@ function SyncFesion() {
         if (isFormatting) return;
         setFontColorSvg(fontColor)
 
-        const range = quill.getSelection();
+        const range = quill.getSelection(true);
+        if (range.length == 0) {
+          setPrevFontColor(fontColor)
+        }
         if (!selection) {
           isFormatting = true;
           quill.format("color", fontColor);
@@ -1885,15 +1953,10 @@ function SyncFesion() {
           editor.formatText(index, length, 'font', selectedFont);
           setSelection(null);
         }
-
         setTimeout(() => { shouldRunFontChange = true; }, 0);
       };
 
       fontChange();
-
-      return () => {
-        editor.off("text-change", fontChange);
-      };
     }
   }, [selectedFont]);
 
@@ -3101,7 +3164,7 @@ function SyncFesion() {
                           onChangeSelection={handleChangeSelection}
                           modules={modules}
                           formats={formats}
-                          onKeyDown={(event)=>handleKeyDown(event,index)}
+                          onKeyDown={(event) => handleKeyDown(event, index)}
                           onFocus={() => {
                             setEditorRefContext(editorRefs.current[index])
                             setCurrentPage(index)
@@ -3112,7 +3175,7 @@ function SyncFesion() {
                             background: "#fefefe",
                             width: documentPageSize.width,
                             height: documentPageSize.height,
-                            margin:"20px 0"
+                            margin: "20px 0"
                           }}
                         />
                         <style>

@@ -875,8 +875,12 @@ export default function QuillToolbar() {
   };
 
   const handleFontChange = (event: any) => {
+    const editor = editorRefContext.getEditor();
     setSelectedFont(event.target.value);
     setSelectedFontValue(event.target.value);
+    setTimeout(() => {
+      editor.focus()
+    }, 0);
   };
 
   const handleFontSizeChange = (event: any) => {

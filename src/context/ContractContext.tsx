@@ -188,6 +188,9 @@ interface ContractContextProps {
   setCurrentPage:Dispatch<SetStateAction<any>>;
   spacing:string | any;
   setSpacing:Dispatch<SetStateAction<any>>;
+
+  editorsRefContext:any | null;
+  setEditorsRefContext:Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -246,6 +249,8 @@ export const ContractContext = createContext<ContractContextProps>({
   setDragFields: () => {},
   editorRefContext: {},
   setEditorRefContext: () => {},
+  editorsRefContext: [],
+  setEditorsRefContext: () => {},
   Drawsignature: {},
   setDrawSignature: () => {},
   uplodTrackFile: {},
@@ -396,6 +401,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [viewUser, setViewUser] = useState(false);
   const [dragFields, setDragFields] = useState("");
   const [editorRefContext, setEditorRefContext] = useState("");
+  const [editorsRefContext, setEditorsRefContext] = useState([]);
   const [uplodTrackFile, setUplodTrackFile] = useState<any | null>("");
   const [conditions, setConditions] = useState([
     {
@@ -717,6 +723,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         setDragFields,
         editorRefContext,
         setEditorRefContext,
+        editorsRefContext,
+        setEditorsRefContext,
         Drawsignature,
         setDrawSignature,
         uplodTrackFile,

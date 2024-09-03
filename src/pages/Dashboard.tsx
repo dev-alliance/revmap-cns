@@ -146,7 +146,7 @@ export default function Dashboard() {
 
   const location = useLocation();
   const drawerWidth = leftsidebarExpanded ? 55 : 240;
-  console.log(leftsidebarExpanded, "leftsidebarExpandedyyy");
+  // console.log(leftsidebarExpanded, "leftsidebarExpandedyyy");
 
   // Split the pathname by '/' and filter out empty strings
   const pathSegments = location.pathname.split("/").filter(Boolean);
