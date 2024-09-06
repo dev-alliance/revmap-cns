@@ -1,7 +1,7 @@
 import { ContractContext } from "@/context/ContractContext";
 import useStore from "@/context/ZustandStore";
 import { Menu, MenuItem, Select, Tooltip } from "@mui/material";
-import Form from 'react-bootstrap/Form';
+import Form from "react-bootstrap/Form";
 
 import React, {
   ChangeEvent,
@@ -27,55 +27,52 @@ function redoChange() {
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
 
-
 class VideoBlot extends BlockEmbed {
-  static create(value:any) {
+  static create(value: any) {
     const node = super.create();
-    node.setAttribute('controls', true); // Add controls to the video
-    node.setAttribute('src', value); // Set the video source
-    node.setAttribute('width', '100%'); // Optional: Set default width
-    node.setAttribute('height', 'auto'); // Optional: Set default height
+    node.setAttribute("controls", true); // Add controls to the video
+    node.setAttribute("src", value); // Set the video source
+    node.setAttribute("width", "100%"); // Optional: Set default width
+    node.setAttribute("height", "auto"); // Optional: Set default height
     return node;
   }
 
-  static value(node:any) {
-    return node.getAttribute('src'); // Get the video source
+  static value(node: any) {
+    return node.getAttribute("src"); // Get the video source
   }
 
-  format(name:any, value:any) {
-    if (name === 'video' && value) {
-      this.domNode.setAttribute('src', value); // Update the video source
+  format(name: any, value: any) {
+    if (name === "video" && value) {
+      this.domNode.setAttribute("src", value); // Update the video source
     } else {
       super.format(name, value);
     }
   }
 }
 
-VideoBlot.blotName = 'video';
-VideoBlot.tagName = 'video';
+VideoBlot.blotName = "video";
+VideoBlot.tagName = "video";
 
 Quill.register(VideoBlot);
 
-
 class AudioBlot extends BlockEmbed {
-  static create(value:any) {
+  static create(value: any) {
     const node = super.create();
-    node.setAttribute('src', value);
-    node.setAttribute('controls', true);
-    node.setAttribute('width', '100%');
+    node.setAttribute("src", value);
+    node.setAttribute("controls", true);
+    node.setAttribute("width", "100%");
     return node;
   }
 
-  static value(node:any) {
-    return node.getAttribute('src');
+  static value(node: any) {
+    return node.getAttribute("src");
   }
 }
 
-AudioBlot.blotName = 'audio';
-AudioBlot.tagName = 'audio';
+AudioBlot.blotName = "audio";
+AudioBlot.tagName = "audio";
 
 Quill.register(AudioBlot);
-
 
 class CheckboxContainerBlot extends BlockEmbed {
   static create(value: any) {
@@ -491,7 +488,7 @@ export const formats = [
   "alphabet-list-item",
   "lineHeight",
   "video",
-  "audio"
+  "audio",
 ];
 
 const ListItem = Quill.import("formats/list/item");
@@ -576,7 +573,8 @@ export default function QuillToolbar() {
     setPages,
     setCurrentPage,
     spacing,
-    setSpacing
+    setSpacing,
+    setBgColorSelection
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
@@ -585,15 +583,15 @@ export default function QuillToolbar() {
     if (value === "none") {
       localStorage.removeItem("list");
       if (editorRefContext) {
-        editorRefContext.getEditor()?.format("list", false);
+        editorRefContext.getEditor()?.format("list", false,"user");
       }
     } else {
       localStorage.setItem("list", value);
       if (editorRefContext) {
         if (value === "default") {
-          editorRefContext.getEditor()?.format("list", "ordered");
+          editorRefContext.getEditor()?.format("list", "ordered","user");
         } else {
-          editorRefContext.getEditor()?.format("list", value);
+          editorRefContext.getEditor()?.format("list", value,"user");
         }
       }
     }
@@ -623,8 +621,6 @@ export default function QuillToolbar() {
 
   const [tooltipOpenOrientation, setTooltipOpenOrientation] = useState(false);
   const [tooltipOpenMedia, setTooltipOpenMedia] = useState(false);
-
-
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open1 = Boolean(anchorEl);
@@ -677,8 +673,8 @@ export default function QuillToolbar() {
   const handleClick2 = (event: any) => {
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
-    if(range.length > 0) {
-      editor.setSelection(range.index,range.length)
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
     }
     setAnchorEl2(event.currentTarget);
   };
@@ -688,8 +684,8 @@ export default function QuillToolbar() {
   const handleClick = (event: any) => {
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
-    if(range.length > 0) {
-      editor.setSelection(range.index,range.length)
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
     }
     setAnchorEl(event.currentTarget);
     setTooltipOpenNumbering(false);
@@ -713,26 +709,33 @@ export default function QuillToolbar() {
     setAnchorElOrientation(null);
   };
 
+
   const handleOpenTextColor = (event: any) => {
-    const editor = editorRefContext.getEditor()
-    const range = editor.getSelection(true)
-    if(range.length>0) {
-      editor.setSelection(range.index,range.length)
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
+      setBgColorSelection(range);
     }
     setAnchorElTextColor(event.currentTarget);
   };
 
   const handleCloseTextColor = () => {
-    setAnchorElTextColor(null);
     const editor = editorRefContext.getEditor();
-      editor.focus();
+    const selection = editor.getSelection(true);
+    setBgColorSelection(null)
+    if (selection.length) {
+      editor.setSelection(selection.length, 0)
+    }
+    setAnchorElTextColor(null);
+    editor.focus();
   };
 
   const handleOpenFontColor = (event: any) => {
-    const editor = editorRefContext.getEditor()
-    const range = editor.getSelection(true)
-    if(range.length>0) {
-      editor.setSelection(range.index,range.length)
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
     }
     setAnchorElFontColor(event.currentTarget);
   };
@@ -750,6 +753,8 @@ export default function QuillToolbar() {
     setAnchorElFontColor(null);
     editor.focus();
   };
+
+
 
   const handleCancelFontColor = () => {
     const editor = editorRefContext.getEditor();
@@ -775,10 +780,10 @@ export default function QuillToolbar() {
   };
 
   const handleOpenAlignment = (event: any) => {
-    const editor = editorRefContext.getEditor()
-    const range = editor.getSelection(true)
-    if(range.length>0) {
-      editor.setSelection(range.index,range.length)
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
     }
     setAnchorElAlignment(event.currentTarget);
   };
@@ -798,12 +803,11 @@ export default function QuillToolbar() {
     setAnchorElPicture(null);
   };
 
-
   const handleOpenMedia = (event: any) => {
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
     setCursorIndex(range.index);
-    console.log(range.index)
+    console.log(range.index);
     setAnchorElMedia(event.currentTarget);
   };
 
@@ -812,10 +816,10 @@ export default function QuillToolbar() {
   };
 
   const handleOpenColumns = (event: any) => {
-    const editor = editorRefContext.getEditor()
-    const range = editor.getSelection(true)
-    if(range.length>0) {
-      editor.setSelection(range.index,range.length)
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
     }
     setAnchorElColumns(event.currentTarget);
   };
@@ -825,17 +829,16 @@ export default function QuillToolbar() {
   };
 
   const handleOpenSpacing = (event: any) => {
-    const editor = editorRefContext.getEditor()
-    const range = editor.getSelection(true)
-    if(range.length>0) {
-      editor.setSelection(range.index,range.length)
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
     }
     setAnchorElSpacing(event.currentTarget);
   };
 
   const handleCloseSpacing = () => {
     setAnchorElSpacing(null);
-    
   };
 
   const handleOpenLinkPicture = (event: any) => {
@@ -848,10 +851,10 @@ export default function QuillToolbar() {
   };
 
   const handleOpenCase = (event: any) => {
-    const editor = editorRefContext.getEditor()
-    const range = editor.getSelection(true)
-    if(range.length>0) {
-      editor.setSelection(range.index,range.length)
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    if (range.length > 0) {
+      editor.setSelection(range.index, range.length);
     }
     setAnchorElCase(event.currentTarget);
     setTooltipOpenCase(false);
@@ -879,7 +882,7 @@ export default function QuillToolbar() {
     setSelectedFont(event.target.value);
     setSelectedFontValue(event.target.value);
     setTimeout(() => {
-      editor.focus()
+      editor.focus();
     }, 0);
   };
 
@@ -893,8 +896,8 @@ export default function QuillToolbar() {
   const handleHeaderChange = (event: any) => {
     const editor = editorRefContext.getEditor();
     setSelectedHeaders(event.target.value);
-    editor.format("size", false)
-    editor.format('header', event.target.value);
+    editor.format("size", false, "user");
+    editor.format("header", event.target.value, "user");
     setSelectedHeadersValue(event.target.value);
     setTimeout(() => {
       editor.focus();
@@ -907,7 +910,7 @@ export default function QuillToolbar() {
   const handleSelectOrientation = (value: any) => {
     if (value === "landscape") {
       setDocumentPageSize({
-        width: "100%",
+        width: "30cm",
         height: "21cm",
         title: "Landscape",
         desc: "Landscape",
@@ -938,7 +941,6 @@ export default function QuillToolbar() {
         const quill = editorRefContext.getEditor();
         const undoStack = quill.history.stack.undo;
         const redoStack = quill.history.stack.redo;
-
         setCanUndo(undoStack.length > 0);
         setCanRedo(redoStack.length > 0);
       }
@@ -963,9 +965,6 @@ export default function QuillToolbar() {
     setAnchorElSize(null);
     setDocumentPageSize(value);
   };
-
-
-  
 
   const pageSizes = [
     {
@@ -1044,7 +1043,6 @@ export default function QuillToolbar() {
       value: "3.5",
     },
   ];
-
 
   const handleTextHighlightColorChange = (color: any) => {
     setBgColor(color.hex);
@@ -1144,79 +1142,76 @@ export default function QuillToolbar() {
   const handleTextTransformation = (transformationFunction: Function) => {
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection();
-  
+
     if (selection && selection.length > 0) {
       const { index, length } = selection;
-  
+
       // Retrieve the current contents and formats of the selection
       const contents = editor.getContents(index, length);
-  
+
       // Initialize variables to store the final transformed text
-      let transformedText = '';
-      let formatOps :any= [];
-  
+      let transformedText = "";
+      let formatOps: any = [];
+
       // Process each segment of text with its formatting
-      contents.ops.forEach((op:any) => {
+      contents.ops.forEach((op: any) => {
         if (op.insert) {
           const segment = op.insert;
           const format = op.attributes || {};
-  
+
           // Transform the segment of text
           const transformedSegment = transformationFunction(segment);
-  
+
           // Append the transformed segment to the final text
           transformedText += transformedSegment;
-  
+
           // Create format operations for each character in the transformed segment
           for (let i = 0; i < transformedSegment.length; i++) {
-            formatOps.push({ index: transformedText.length - transformedSegment.length + i, attributes: format });
+            formatOps.push({
+              index: transformedText.length - transformedSegment.length + i,
+              attributes: format,
+            });
           }
         }
       });
-  
+
       // Remove the original selected text
       editor.deleteText(index, length);
-  
+
       // Insert the transformed text with original formatting
       let currentIndex = index;
-      transformedText.split('').forEach((char, i) => {
+      transformedText.split("").forEach((char, i) => {
         const format = formatOps[i]?.attributes || {};
         editor.insertText(currentIndex, char, format);
         currentIndex++;
       });
-  
+
       // Restore the selection
       editor.setSelection(index, transformedText.length);
-  
+
       handleCloseCase();
     }
   };
-  
-  
-  
-  
-  
-  
 
   const [selectedColumn, setSelectedColumn] = useState("one");
 
   const handleClickColumns = (value: string) => {
     const editorContainer = editorRefContext.editor?.root;
-  
+
     if (!editorContainer) {
       console.error("Editor container not found");
       return;
     }
-  
+
     setSelectedColumn(value);
-  
+
     // Reset grid styles before applying new styles
     editorContainer.style.display = ""; // Reset display property
     editorContainer.style.gridTemplateColumns = ""; // Reset grid columns
     editorContainer.style.gridColumnGap = ""; // Reset column gap
     editorContainer.style.width = "100%"; // Ensure full width
     editorContainer.style.gridTemplateAreas = ""; // Reset grid areas
-  
+
     switch (value) {
       case "one":
         editorContainer.style.display = "block"; // Single column layout, block-level by default
@@ -1250,10 +1245,9 @@ export default function QuillToolbar() {
       default:
         editorContainer.style.display = "block"; // Default to single column
     }
-  
+
     handleCloseColumns();
   };
-  
 
   const [showFormattingMarks, setShowFormattingMarks] = useState(false);
 
@@ -1299,25 +1293,23 @@ export default function QuillToolbar() {
   }, [showFormattingMarks]);
 
   const handleSelectSpacing = (value: any) => {
-  setSpacing(value);
-  setAnchorElSpacing(null);
+    setSpacing(value);
+    setAnchorElSpacing(null);
 
-  const quillEditor = editorRefContext.getEditor();
+    const quillEditor = editorRefContext.getEditor();
 
-  if (quillEditor) {
-    const savedRange = quillEditor.getSelection(true);
+    if (quillEditor) {
+      const savedRange = quillEditor.getSelection(true);
 
-    if (savedRange && savedRange.length > 0) {
-     quillEditor.formatLine(savedRange.index,savedRange.length,{lineHeight:value}) 
-    } else {
-      quillEditor.format("lineHeight", value);
+      if (savedRange && savedRange.length > 0) {
+        quillEditor.formatLine(savedRange.index, savedRange.length, {
+          lineHeight: value,
+        },"user");
+      } else {
+        quillEditor.format("lineHeight", value,"user");
+      }
     }
-
-  }
-};
-
-  
-
+  };
 
   useEffect(() => {
     if (!editorRefContext) return;
@@ -1375,19 +1367,12 @@ export default function QuillToolbar() {
     const quill = editorRefContext.getEditor();
     const range = quill.getSelection();
 
-    if (range) {
-      if (align === "left") {
-        quill.format("align", false);
-      } else {
-        quill.format("align", align);
-      }
+    if (align === "left") {
+      quill.format("align", false,"user");
     } else {
-      if (align === "left") {
-        quill.format("align", false);
-      } else {
-        quill.format("align", align);
-      }
+      quill.format("align", align,"user");
     }
+    
     setAnchorElAlignment(null);
     quill.focus();
   };
@@ -1407,7 +1392,8 @@ export default function QuillToolbar() {
       setSelection(range);
       const selectedText = editor.getText(range.index, range.length);
       setDisplayText(selectedText);
-      editor.setSelection(range.index,range.length)
+      setDisplayTextChange(true)
+      editor.setSelection(range.index, range.length);
     } else {
       setDisplayText("");
     }
@@ -1418,21 +1404,22 @@ export default function QuillToolbar() {
     const editor = editorRefContext.getEditor();
     if (selection) {
       editor.deleteText(selection.index, selection.length);
-      editor.insertText(selection.index, displayText, "link", linkUrl);
+      editor.insertText(selection.index, displayText, "link", linkUrl,"user");
     } else {
-      editor.insertText(cursorIndex, displayText, "link", linkUrl);
+      editor.insertText(cursorIndex, displayText, "link", linkUrl,"user");
     }
     setDisplayText("");
     setLinkUrl("");
     handleCloseLink();
-    setSelection(null)
+    setSelection(null);
   };
 
   const handleCloseLink = () => {
-    const editor = editorRefContext.getEditor()
+    setDisplayTextChange(false)
+    const editor = editorRefContext.getEditor();
     setAnchorElLink(null);
-    editor.focus()
-    setSelection(null)
+    editor.focus();
+    setSelection(null);
   };
 
   const [dispalyTextChange, setDisplayTextChange] = useState(false);
@@ -1453,9 +1440,9 @@ export default function QuillToolbar() {
 
   const handlePictureFromFile = () => {
     // Open a file input dialog
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
 
     fileInput.onchange = async (e: any) => {
       const file = e.target.files[0];
@@ -1467,16 +1454,15 @@ export default function QuillToolbar() {
           const imageUrl = event.target.result;
 
           const quill = editorRefContext.getEditor();
-          quill.insertEmbed(cursorIndex, 'image', imageUrl);
+          quill.insertEmbed(cursorIndex, "image", imageUrl,"user");
 
           const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
           if (img) {
-            img.classList.add('resizable');
+            img.classList.add("resizable");
           }
 
           // quill.setSelection(cursorIndex + 1);
-          quill.focus()
-
+          quill.focus();
         };
 
         reader.readAsDataURL(file);
@@ -1485,95 +1471,95 @@ export default function QuillToolbar() {
 
     // Trigger the file input dialog
     fileInput.click();
-    setAnchorElPicture(null)
+    setAnchorElPicture(null);
   };
 
   const handleVideoFromFile = () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'video/*';
-  
-    fileInput.onchange = async (e:any) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "video/*";
+
+    fileInput.onchange = async (e: any) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = (event:any) => {
+        reader.onload = (event: any) => {
           const videoUrl = event.target.result;
           const quill = editorRefContext.getEditor();
-            quill.insertEmbed(cursorIndex, 'video', videoUrl);
-            quill.setSelection(cursorIndex + 1);
-            quill.focus()
-          
+          quill.insertEmbed(cursorIndex, "video", videoUrl,"user");
+          quill.setSelection(cursorIndex + 1);
+          quill.focus();
         };
         reader.readAsDataURL(file);
       }
     };
-  
+
     fileInput.click();
-    setAnchorElMedia(null)
+    setAnchorElMedia(null);
   };
-  
+
   const handleAudioFromFile = () => {
     // Create a file input element for audio files
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'audio/*';
-  
-    fileInput.onchange = async (e:any) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "audio/*";
+
+    fileInput.onchange = async (e: any) => {
       const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = (event:any) => {
+        reader.onload = (event: any) => {
           const audioUrl = event.target.result;
           const quill = editorRefContext.getEditor();
-            quill.insertEmbed(cursorIndex, 'audio', audioUrl);
-            quill.setSelection(cursorIndex + 1);
-          
+          quill.insertEmbed(cursorIndex, "audio", audioUrl,"user");
+          quill.setSelection(cursorIndex + 1);
         };
         reader.readAsDataURL(file);
       }
     };
-  
+
     fileInput.click();
   };
-  
 
-  const [linkUrlImage,setLinkUrlImage ] = useState("")
+  const [linkUrlImage, setLinkUrlImage] = useState("");
   const handleAddLinkPicture = () => {
-     if(linkUrlImage.trim().length > 0) {
+    if (linkUrlImage.trim().length > 0) {
       const quill = editorRefContext.getEditor();
-      quill.insertEmbed(cursorIndex,"image",linkUrlImage)
+      quill.insertEmbed(cursorIndex, "image", linkUrlImage,"user");
       const img = quill.root.querySelector(`img[src="${linkUrlImage}"]`);
-          if (img) {
-            img.classList.add('resizable');
-          }
-      setAnchorElLinkPicture(null)
-      setAnchorElPicture(null)
-     }
-  }
-
-  useEffect(() => {
-    if(!editorRefContext) return ;
-    const quill = editorRefContext.getEditor();
-
-    quill.keyboard.addBinding({
-      key: 'Backspace',
-      handler: function (range:any, context:any) {
-        if (range.index === 0) return true; // If at the start of the editor, do nothing
-
-        const [leaf, offset] = quill.getLeaf(range.index - 1);
-        
-        // Check if the leaf is an embed (like an image or audio)
-        if (leaf instanceof Quill.import('blots/embed')) {
-          quill.deleteText(range.index - 1, 1); // Delete the embed
-          return false; // Prevent the default behavior
-        }
-
-        return true; // Let Quill handle other backspace actions
+      if (img) {
+        img.classList.add("resizable");
       }
-    });
-  }, [editorRefContext]);
+      setAnchorElLinkPicture(null);
+      setAnchorElPicture(null);
+    }
+  };
 
+  const handleClean = () => {
+    const editor = editorRefContext.getEditor();
+    const length = editor.getLength(); 
+  
+    editor.formatText(0, length, {
+      color: "black",         
+      background: "#fefefe",   
+      lineHeight: "1.5",  
+      font: "arial",
+      size: "13px",
+      header: false,
+      bold: false, 
+      italic: false,  
+      underline: false,   
+      strike: false,           
+      list:false     
+    },"user");
+
+    setBgColor("#fefefe");
+    setFontColor("black");
+    setSelectedFont("arial")
+    setSelectedFontSize("13px")
+    setSelectedHeaders(0)
+  };
+  
 
   return (
     <div className="d-flex">
@@ -1595,9 +1581,12 @@ export default function QuillToolbar() {
         <span className="ql-formats b-r">
           <Tooltip title="Undo" placement="bottom">
             <button
-              className="ql-undo btn-undo"
+              className="btn-undo"
               style={{
                 cursor: canUndo ? "pointer" : "default",
+              }}
+              onClick={()=>{
+                editorRefContext?.getEditor()?.history?.undo()
               }}
             >
               <svg
@@ -1616,9 +1605,12 @@ export default function QuillToolbar() {
           </Tooltip>
           <Tooltip title="Redo" placement="bottom">
             <button
-              className="ql-redo btn-undo ml-2"
+              className="btn-undo ml-2"
               style={{
                 cursor: canRedo ? "pointer" : "default",
+              }}
+              onClick={()=>{
+                editorRefContext?.getEditor()?.history?.redo()
               }}
             >
               <svg
@@ -1638,22 +1630,22 @@ export default function QuillToolbar() {
         </span>
         <span className="ql-formats b-r">
           <Tooltip title="Font" placement="bottom" open={tooltipOpen}>
-            <span className="ql-formats"
-                onMouseLeave={() => {
-                  setTooltipOpen(false);
-                }}
-                onMouseEnter={() => {
-                  setTooltipOpen(true);
-                }}
-                style={{
-                  height: 33,
-                  width: 147,
-                }}
-                >
+            <span
+              className="ql-formats"
+              onMouseLeave={() => {
+                setTooltipOpen(false);
+              }}
+              onMouseEnter={() => {
+                setTooltipOpen(true);
+              }}
+              style={{
+                height: 33,
+                width: 147,
+              }}
+            >
               <Select
                 className="ql-font b-r"
                 defaultValue="arial"
-            
                 style={{
                   height: 33,
                   width: 147,
@@ -2793,14 +2785,13 @@ export default function QuillToolbar() {
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 34, height: 33 }}
-                onClick={()=>{
-                  setPages((prevPages:any)=>{
-                    let updatedPages = [...prevPages,{content:""}];
-                    let newIndex = updatedPages.length -1 ;
-                    setCurrentPage(newIndex)
+                onClick={() => {
+                  setPages((prevPages: any) => {
+                    let updatedPages = [...prevPages, { content: "" }];
+                    let newIndex = updatedPages.length - 1;
+                    setCurrentPage(newIndex);
                     return updatedPages;
-                  })
-                  
+                  });
                 }}
               >
                 <svg
@@ -3945,13 +3936,13 @@ export default function QuillToolbar() {
                 }}
                 onMouseMove={() => setTooltipOpenPicture(false)}
               >
-                 <div className="d-flex container py-1 align-items-center">
+                <div className="d-flex container py-1 align-items-center">
                   <label style={{ fontSize: 14, fontWeight: 550 }}>
                     Address:
                   </label>
                   <input
                     value={linkUrlImage}
-                    onChange={(e)=>setLinkUrlImage(e.target.value)}
+                    onChange={(e) => setLinkUrlImage(e.target.value)}
                     type="text"
                     style={{
                       width: 211,
@@ -3965,41 +3956,41 @@ export default function QuillToolbar() {
                   />
                 </div>
                 <div className="d-flex container py-1 align-items-center justify-content-end">
-                    <div>
-                      <button
-                        className=""
-                        style={{
-                          width: 60,
-                          height: 24,
-                          border: "1px solid #00000080",
-                          fontSize: 12,
-                          borderRadius: 5,
-                          fontWeight: 550,
-                        }}
-                        onClick={handleCloseLinkPicture}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                    <div>
-                      <button
-                        className="ml-2"
-                        style={{
-                          width: 60,
-                          height: 24,
-                          border: "1px solid #00000080",
-                          fontSize: 12,
-                          borderRadius: 5,
-                          background: "#174B8B",
-                          color: "#fefefe",
-                          fontWeight: 550,
-                        }}
-                        onClick={handleAddLinkPicture}
-                      >
-                        Save
-                      </button>
-                    </div>
+                  <div>
+                    <button
+                      className=""
+                      style={{
+                        width: 60,
+                        height: 24,
+                        border: "1px solid #00000080",
+                        fontSize: 12,
+                        borderRadius: 5,
+                        fontWeight: 550,
+                      }}
+                      onClick={handleCloseLinkPicture}
+                    >
+                      Cancel
+                    </button>
                   </div>
+                  <div>
+                    <button
+                      className="ml-2"
+                      style={{
+                        width: 60,
+                        height: 24,
+                        border: "1px solid #00000080",
+                        fontSize: 12,
+                        borderRadius: 5,
+                        background: "#174B8B",
+                        color: "#fefefe",
+                        fontWeight: 550,
+                      }}
+                      onClick={handleAddLinkPicture}
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
               </Menu>
             </span>
           </Tooltip>
@@ -4064,10 +4055,19 @@ export default function QuillToolbar() {
                 <MenuItem onClick={handleVideoFromFile}>
                   <div className="d-flex align-items-center">
                     <div className="mr-2">
-                      <svg width="24" height="22" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13.125 4.83333H13.625V4.33333V2.88889V2.38889H13.125H11.25H10.75V2.88889V4.33333V4.83333H11.25H13.125ZM13.125 7.72222H13.625V7.22222V5.77778V5.27778H13.125H11.25H10.75V5.77778V7.22222V7.72222H11.25H13.125ZM13.125 10.6111H13.625V10.1111V8.66667V8.16667H13.125H11.25H10.75V8.66667V10.1111V10.6111H11.25H13.125ZM3.75 4.83333H4.25V4.33333V2.88889V2.38889H3.75H1.875H1.375V2.88889V4.33333V4.83333H1.875H3.75ZM3.75 7.72222H4.25V7.22222V5.77778V5.27778H3.75H1.875H1.375V5.77778V7.22222V7.72222H1.875H3.75ZM3.75 10.6111H4.25V10.1111V8.66667V8.16667H3.75H1.875H1.375V8.66667V10.1111V10.6111H1.875H3.75ZM13.125 1.94444H13.625V1.44444V0.5H14.5V12.5H13.625V11.5556V11.0556H13.125H11.25H10.75V11.5556V12.5H4.25V11.5556V11.0556H3.75H1.875H1.375V11.5556V12.5H0.5V0.5H1.375V1.44444V1.94444H1.875H3.75H4.25V1.44444V0.5H10.75V1.44444V1.94444H11.25H13.125Z" fill="white" stroke="black" />
+                      <svg
+                        width="24"
+                        height="22"
+                        viewBox="0 0 15 13"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M13.125 4.83333H13.625V4.33333V2.88889V2.38889H13.125H11.25H10.75V2.88889V4.33333V4.83333H11.25H13.125ZM13.125 7.72222H13.625V7.22222V5.77778V5.27778H13.125H11.25H10.75V5.77778V7.22222V7.72222H11.25H13.125ZM13.125 10.6111H13.625V10.1111V8.66667V8.16667H13.125H11.25H10.75V8.66667V10.1111V10.6111H11.25H13.125ZM3.75 4.83333H4.25V4.33333V2.88889V2.38889H3.75H1.875H1.375V2.88889V4.33333V4.83333H1.875H3.75ZM3.75 7.72222H4.25V7.22222V5.77778V5.27778H3.75H1.875H1.375V5.77778V7.22222V7.72222H1.875H3.75ZM3.75 10.6111H4.25V10.1111V8.66667V8.16667H3.75H1.875H1.375V8.66667V10.1111V10.6111H1.875H3.75ZM13.125 1.94444H13.625V1.44444V0.5H14.5V12.5H13.625V11.5556V11.0556H13.125H11.25H10.75V11.5556V12.5H4.25V11.5556V11.0556H3.75H1.875H1.375V11.5556V12.5H0.5V0.5H1.375V1.44444V1.94444H1.875H3.75H4.25V1.44444V0.5H10.75V1.44444V1.94444H11.25H13.125Z"
+                          fill="white"
+                          stroke="black"
+                        />
                       </svg>
-
                     </div>
                     <div
                       style={{ position: "relative", bottom: 2, fontSize: 14 }}
@@ -4079,10 +4079,19 @@ export default function QuillToolbar() {
                 <MenuItem onClick={handleAudioFromFile}>
                   <div className="d-flex align-items-center">
                     <div className="mr-2">
-                      <svg width="24" height="22" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3.66562 8.45632L3.52351 8.32993H3.33333H0.5V4.88296H3.33333H3.52351L3.66562 4.75657L7 1.79098V11.4219L3.66562 8.45632ZM13.8333 6.60645C13.8333 4.11703 12.0659 2.04479 9.66667 1.25987V0.742781C12.4999 1.55596 14.5 3.90318 14.5 6.60645C14.5 9.30971 12.4999 11.6569 9.66667 12.4701V11.9457C12.0651 11.1616 13.8333 9.09661 13.8333 6.60645ZM9.66667 4.49123C10.3474 5.01762 10.75 5.77685 10.75 6.60645C10.75 7.43262 10.3457 8.19377 9.66667 8.71069V4.49123Z" fill="white" stroke="black" />
+                      <svg
+                        width="24"
+                        height="22"
+                        viewBox="0 0 15 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3.66562 8.45632L3.52351 8.32993H3.33333H0.5V4.88296H3.33333H3.52351L3.66562 4.75657L7 1.79098V11.4219L3.66562 8.45632ZM13.8333 6.60645C13.8333 4.11703 12.0659 2.04479 9.66667 1.25987V0.742781C12.4999 1.55596 14.5 3.90318 14.5 6.60645C14.5 9.30971 12.4999 11.6569 9.66667 12.4701V11.9457C12.0651 11.1616 13.8333 9.09661 13.8333 6.60645ZM9.66667 4.49123C10.3474 5.01762 10.75 5.77685 10.75 6.60645C10.75 7.43262 10.3457 8.19377 9.66667 8.71069V4.49123Z"
+                          fill="white"
+                          stroke="black"
+                        />
                       </svg>
-
                     </div>
 
                     <div
@@ -4104,7 +4113,11 @@ export default function QuillToolbar() {
             <button className="ql-code-block btn-undo mr-2" />
           </Tooltip>
           <Tooltip title="Clean">
-            <button className="ql-clean btn-undo" />
+            <button className="btn-undo" onClick={handleClean}>
+              <svg width="22" height="20" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.33333 0V0.2475L9.09333 4.125H12.2933L11.3333 6.435L14.1333 9.3225L16.28 4.125H24V0H5.33333ZM1.69333 0L0 1.74625L9.29333 11.33L6 19.25H10L12.0933 14.2175L19.64 22L21.3333 20.2537L2.06667 0.37125L1.69333 0Z" fill="black" />
+              </svg>
+            </button>
           </Tooltip>
         </span>
       </div>

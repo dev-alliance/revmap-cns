@@ -191,6 +191,11 @@ interface ContractContextProps {
 
   editorsRefContext:any | null;
   setEditorsRefContext:Dispatch<SetStateAction<any>>;
+
+  bgColorSelection:any | null;
+  setBgColorSelection:Dispatch<SetStateAction<any>>;
+
+
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -316,7 +321,9 @@ export const ContractContext = createContext<ContractContextProps>({
   currentPage:0,
   setCurrentPage:()=>{},
   spacing:"",
-  setSpacing:()=>{}
+  setSpacing:()=>{},
+  bgColorSelection:{},
+  setBgColorSelection:()=>{}
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -665,6 +672,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [currentPage, setCurrentPage] = useState(0); 
   const [spacing, setSpacing] = useState("1.5");
 
+  const [bgColorSelection,setBgColorSelection] = useState(null)
+
   return (
     <ContractContext.Provider
       value={{
@@ -790,7 +799,9 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         currentPage,
         setCurrentPage,
         spacing,
-        setSpacing
+        setSpacing,
+        bgColorSelection,
+        setBgColorSelection
       }}
     >
       {children}

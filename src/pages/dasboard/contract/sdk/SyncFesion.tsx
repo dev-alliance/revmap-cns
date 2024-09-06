@@ -175,7 +175,7 @@ function SyncFesion() {
     currentPage,
     setCurrentPage,
     setSpacing,
-    setBgColor
+    bgColorSelection
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -185,7 +185,6 @@ function SyncFesion() {
     setIsLoading(false);
     setLeftSidebarExpanded(true);
   }, []);
-
 
   const listData = async () => {
     try {
@@ -226,8 +225,6 @@ function SyncFesion() {
   }, [id]);
 
   const editorContainerRef: any = useRef(null);
-
-
 
   const handleSubmit = async () => {
     try {
@@ -564,8 +561,6 @@ function SyncFesion() {
     }
   };
 
-
-
   const setupHeader = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
     if (documentEditor && documentEditor.selection) {
@@ -594,9 +589,6 @@ function SyncFesion() {
 
   //
 
-
-
-
   const itemsss: ItemModel[] = [
     {
       text: "Single",
@@ -611,7 +603,6 @@ function SyncFesion() {
       text: "Double",
     },
   ];
-
 
   const [showTableTools, setShowTableTools] = useState(false);
 
@@ -1043,7 +1034,7 @@ function SyncFesion() {
     calculateWidth(); // Call on mount and documentName change
   }, [documentName]);
 
-  const [editorHtml, setEditorHtml] = useState<any>(['']);
+  const [editorHtml, setEditorHtml] = useState<any>([""]);
   const [addedString, setAddedString] = useState("");
   const [deletedString, setDeletedString] = useState("");
 
@@ -1167,32 +1158,35 @@ function SyncFesion() {
   //   setEditorHtml(html);
   // };
 
-
   const editorRefs: any = useRef<any>([]);
   const containerRefs: any = useRef([]); // Ref for storing page container divs
 
   const cmToPx = (cm: any) => {
-    const numericValue = parseFloat(cm.replace(/[^0-9.]/g, ''));
+    const numericValue = parseFloat(cm.replace(/[^0-9.]/g, ""));
     return numericValue * 37.8;
-
-  }
+  };
 
   const parentContainerRef = useRef(null); // Ref for the parent container
 
   const isContentEmpty = (htmlContent: string): boolean => {
-    const tempDiv = document.createElement('div');
+    const tempDiv = document.createElement("div");
     tempDiv.innerHTML = htmlContent;
 
     // Check if there is any non-whitespace text content
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
-  
-  const handleChange = (value: any, delta: any, source: any, editor: any, index: number) => {
-    setPages((prevPages:any[]) => {
-      const updatedPages = [...prevPages];
 
+  const handleChange = (
+    value: any,
+    delta: any,
+    source: any,
+    editor: any,
+    index: number
+  ) => {
+    setPages((prevPages: any[]) => {
+      const updatedPages = [...prevPages];
       if (index < 0 || index >= updatedPages.length) {
-        console.error('Index out of bounds');
+        console.error("Index out of bounds");
         return prevPages;
       }
 
@@ -1201,34 +1195,31 @@ function SyncFesion() {
         const editorHeight = currentEditor.root.scrollHeight;
         const documentHeight = cmToPx(documentPageSize.height) - toMinus;
 
-        // Save the current cursor position
-        const cursorPosition = editor.getSelection()?.index ?? null;
-
         // Check if content fits within the current page
-        if (editorHeight <= documentHeight) {
-          // Content fits within the current page
-          if (updatedPages[index].content !== value) { // Only update if content is different
-            updatedPages[index] = { ...updatedPages[index], content: value };
-          }
-        } else {
-          // Handle overflow by finding a suitable point to split content (line-level)
+        if (editorHeight > documentHeight) {
+          // Handle overflow by splitting content
           const currentContent = currentEditor.getContents();
           let fitIndex = currentContent.length();
           let contentToFit = currentContent.slice(0, fitIndex);
 
           // Find the point where content fits within the page size
           while (fitIndex > 0) {
-            currentEditor.setContents(contentToFit);
+            currentEditor.setContents(contentToFit, "silent"); // Use setContents to replace content silently
+            setTimeout(() => {
+              currentEditor.setSelecion(cursorPosition, 0);
+              currentEditor.focus();
+            }, 0);
+
             if (currentEditor.root.scrollHeight <= documentHeight) {
               break; // Content fits within the current page size
             }
 
-            // Adjust by blocks (line, word, or op) to avoid splitting words or characters
+            // Adjust content by removing the last part
             const ops = contentToFit.ops;
             if (ops.length > 0) {
               const lastOp = ops[ops.length - 1];
-              if (lastOp.insert && typeof lastOp.insert === 'string') {
-                const lastIndex = lastOp.insert.lastIndexOf(' ');
+              if (lastOp.insert && typeof lastOp.insert === "string") {
+                const lastIndex = lastOp.insert.lastIndexOf(" ");
                 if (lastIndex !== -1) {
                   lastOp.insert = lastOp.insert.substring(0, lastIndex); // Remove last word
                 } else {
@@ -1238,64 +1229,78 @@ function SyncFesion() {
                 ops.pop(); // Remove non-string ops (e.g., images, formatting)
               }
               contentToFit = { ops: ops };
-              fitIndex = contentToFit.ops.reduce((acc:any, op:any) => acc + (typeof op.insert === 'string' ? op.insert.length : 0), 0);
+              fitIndex = contentToFit.ops.reduce(
+                (acc: any, op: any) =>
+                  acc + (typeof op.insert === "string" ? op.insert.length : 0),
+                0
+              );
             }
           }
 
           const fittingContent = currentContent.slice(0, fitIndex);
           const overflowContent = currentContent.slice(fitIndex);
 
-          // Only update if content has changed
-          if (updatedPages[index].content !== fittingContent) {
-            updatedPages[index] = { ...updatedPages[index], content: fittingContent };
+          // Update current page with fitting content
+          if (
+            JSON.stringify(updatedPages[index].content) !==
+            JSON.stringify(fittingContent)
+          ) {
+            updatedPages[index] = {
+              ...updatedPages[index],
+              content: fittingContent,
+            };
           }
 
-          // Handle overflow
+          // Handle overflow content
           const handleOverflow = (overflow: any, nextPageIndex: number) => {
             if (overflow.length() === 0) return;
 
-            if (nextPageIndex === updatedPages.length) {
+            if (nextPageIndex >= updatedPages.length) {
               // Add a new page for overflow content
               updatedPages.push({ content: overflow });
-              setCurrentPage(updatedPages.length - 1);
+              setCurrentPage(updatedPages.length - 1); // Set current page to the newly created page
 
-              setTimeout(() => {
-                const nextEditor = editorRefs.current[updatedPages.length - 1]?.getEditor();
-                if (nextEditor) {
-                  nextEditor.focus();
-                  nextEditor.setSelection(nextEditor.getLength(), 0); // Keep cursor at end
-                }
-              }, 100);
+              const nextEditor =
+                editorRefs.current[updatedPages.length - 1]?.getEditor();
+              if (nextEditor) {
+                nextEditor.focus();
+                nextEditor.setSelection(0, 0); // Set cursor to the start
+              }
             } else {
               // Add to the next page if it already exists
               const nextEditor = editorRefs.current[nextPageIndex]?.getEditor();
               if (nextEditor) {
                 const nextPageContent = nextEditor.getContents();
-                nextEditor.setContents(overflow.concat(nextPageContent));
+                const newContent = overflow.concat(nextPageContent);
+                nextEditor.setContents(newContent, "silent"); // Use setContents to replace content
 
                 // Check for further overflow
                 if (nextEditor.root.scrollHeight > documentHeight) {
-                  handleOverflow(nextEditor.getContents().slice(overflow.length()), nextPageIndex + 1);
+                  handleOverflow(
+                    nextEditor.getContents().slice(overflow.length()),
+                    nextPageIndex + 1
+                  );
                 }
               }
             }
           };
 
           handleOverflow(overflowContent, index + 1);
+        } else {
+          // Update page content if it fits
+          if (
+            JSON.stringify(updatedPages[index].content) !==
+            JSON.stringify(value)
+          ) {
+            updatedPages[index] = { ...updatedPages[index], content: value };
+          }
         }
-
       }
 
       return updatedPages; // Return updated pages
     });
   };
-  
-  
-  
-  
-  
-  
-  
+
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     if (event.key === "Backspace") {
       const currentEditor = editorRefs.current[index]?.getEditor();
@@ -1312,9 +1317,10 @@ function SyncFesion() {
           setCurrentPage(Math.max(0, index - 1));
 
           setTimeout(() => {
-            const editor = editorRefs.current[Math.max(0, index - 1)]?.getEditor();
-            editor.setSelection(editor.getLength() - 1)
-            editor.focus()
+            const editor =
+              editorRefs.current[Math.max(0, index - 1)]?.getEditor();
+            editor.setSelection(editor.getLength() - 1);
+            editor.focus();
             containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({
               behavior: "smooth",
             });
@@ -1326,16 +1332,15 @@ function SyncFesion() {
     }
   };
 
-
   useEffect(() => {
     const editor = editorRefs.current[currentPage]?.getEditor();
-    setEditorRefContext(editorRefs.current[currentPage])
+    setEditorRefContext(editorRefs.current[currentPage]);
     if (editor) {
       editor.focus();
     }
   }, [currentPage, editorRefs]);
 
-  const [toMinus, setToMinus] = useState<number>(0)
+  const [toMinus, setToMinus] = useState<number>(0);
 
   useEffect(() => {
     const editor = editorRefs.current[currentPage]?.getEditor();
@@ -1343,7 +1348,6 @@ function SyncFesion() {
       const editorHeight = editor.root.scrollHeight;
       const documentHeightPx = cmToPx(documentPageSize.height);
       setToMinus(documentHeightPx - editorHeight);
-
     }
   }, [editorRefs, currentPage, documentPageSize]);
 
@@ -1355,18 +1359,18 @@ function SyncFesion() {
       const adjustPagesForNewSize = () => {
         setPages((prevPages: any) => {
           let updatedPages = [];
-          let remainingContent = '';
-          let totalContent = '';
+          let remainingContent = "";
+          let totalContent = "";
 
           // Aggregate all content to process in one go
-          prevPages.forEach((page: any) => totalContent += page.content);
+          prevPages.forEach((page: any) => (totalContent += page.content));
 
           // Create a temporary editor for height measurement
           const createTemporaryEditor = () => {
-            const tempEditor = document.createElement('div');
-            tempEditor.style.position = 'absolute';
-            tempEditor.style.visibility = 'hidden';
-            tempEditor.style.width = editor.root.offsetWidth + 'px'; // Match editor's width
+            const tempEditor = document.createElement("div");
+            tempEditor.style.position = "absolute";
+            tempEditor.style.visibility = "hidden";
+            tempEditor.style.width = editor.root.offsetWidth + "px"; // Match editor's width
             document.body.appendChild(tempEditor);
             return tempEditor;
           };
@@ -1389,7 +1393,7 @@ function SyncFesion() {
               const partialContent = totalContent.slice(start, end);
               const height = measureContentHeight(partialContent, tempEditor);
 
-              if (height > cmToPx(documentPageSize.height) + '400' + 'px') {
+              if (height > cmToPx(documentPageSize.height) + "400" + "px") {
                 break;
               }
               end++;
@@ -1409,7 +1413,7 @@ function SyncFesion() {
 
           // Ensure the first page has content if necessary
           if (updatedPages.length === 0 || !updatedPages[0].content) {
-            updatedPages.unshift({ content: '<p><br></p>' });
+            updatedPages.unshift({ content: "<p><br></p>" });
           }
 
           document.body.removeChild(tempEditor);
@@ -1421,19 +1425,16 @@ function SyncFesion() {
     }
   }, [documentPageSize]);
 
-
-
   useEffect(() => {
     // Cleanup function to remove all event listeners if necessary
     return () => {
       editorRefs.current.forEach((editor: any) => {
         if (editor) {
-          editor.getEditor().off('text-change', handleChange);
+          editor.getEditor().off("text-change", handleChange);
         }
       });
     };
   }, [handleChange]);
-
 
   const rejectChange = (changeToReject: any) => {
     const { action, changes } = changeToReject;
@@ -1469,9 +1470,8 @@ function SyncFesion() {
   const [selection, setSelection] = useState<any>(null);
   const [comments, setComments] = useState<any>([]);
 
-
   useEffect(() => {
-    if (!editorRefs.current[currentPage]) return
+    if (!editorRefs.current[currentPage]) return;
     const editor = editorRefs.current[currentPage].getEditor();
     if (editor && selection) {
       const bounds = editor.getBounds(selection.index);
@@ -1479,11 +1479,12 @@ function SyncFesion() {
     }
   }, [selection]);
 
-
-
+  const [cursorPosition, setCurosrPosition] = useState<number>(0);
 
   const handleChangeSelection = (range: any, source: any) => {
     if (range) {
+      console.log(cursorPosition);
+      setCurosrPosition(range?.index);
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
 
@@ -1493,83 +1494,71 @@ function SyncFesion() {
             setFontColorSvg(format.color);
           } else {
             editor.format("color", prevFontColor);
-            setFontColorSvg(prevFontColor)
+            setFontColorSvg(prevFontColor);
           }
           if (format.background) {
-            console.log(format.background)
-            if (format.background == "#ffffff" || format.background == "#fefefe") {
-              setBgColorSvg("#D9D9D940")
+            if (
+              format.background == "#ffffff" ||
+              format.background == "#fefefe"
+            ) {
+              setBgColorSvg("#D9D9D940");
             }
-            setBgColorSvg(format.background)
+            setBgColorSvg(format.background);
           } else {
-            editor.format("background", prevBgColor)
-            setBgColorSvg(prevBgColor)
+            editor.format("background", prevBgColor);
+            setBgColorSvg(prevBgColor);
           }
         }
-
       }
 
       if (range.length > 0) {
-        const format = editor.getFormat(range.length)
-        console.log(format.lineHeight)
+        const format = editor.getFormat(range.length);
+        console.log(format.lineHeight);
         if (format.lineHeight) {
-          setSpacing(format.lineHeight)
+          setSpacing(format.lineHeight);
         }
       } else {
-        setSpacing(format.lineHeight)
+        setSpacing(format.lineHeight);
       }
-
 
       if (format.font) {
-        setSelectedFontValue(format.font)
-      }
-      else {
-        editor.format("font", selectedFont)
-        setSelectedFontValue(selectedFont)
+        setSelectedFontValue(format.font);
+      } else {
+        editor.format("font", selectedFont);
+        setSelectedFontValue(selectedFont);
       }
       if (format.size) {
-        setSelectedFontSizeValue(format.size)
+        setSelectedFontSizeValue(format.size);
       } else {
         if (range.length > 0) {
           const format = editor.getFormat(range.index, range.length);
           if (format.size) {
-            setSelectedFontSizeValue(format.size)
+            setSelectedFontSizeValue(format.size);
             if (typeof format.size === "object") {
-              setSelectedFontSizeValue(format.size[0])
+              setSelectedFontSizeValue(format.size[0]);
             }
           }
         } else {
-          setSelectedFontSizeValue("13px")
-
+          setSelectedFontSizeValue("13px");
         }
       }
 
-
-
       if (format.header) {
-        setSelectedHeadersValue(format.header)
+        setSelectedHeadersValue(format.header);
         if (format.header === 1) {
-          setSelectedFontSizeValue("26px")
-        }
-        else if (format.header === 2) {
-          setSelectedFontSizeValue("20px")
-
-        }
-        else if (format.header === 3) {
-          setSelectedFontSizeValue("14px")
-
-        }
-        else if (format.header === 4) {
-          setSelectedFontSizeValue("13px")
-
-        }
-        else if (format.header === 0) {
-          setSelectedFontSizeValue("13px")
-
+          setSelectedFontSizeValue("26px");
+        } else if (format.header === 2) {
+          setSelectedFontSizeValue("20px");
+        } else if (format.header === 3) {
+          setSelectedFontSizeValue("14px");
+        } else if (format.header === 4) {
+          setSelectedFontSizeValue("13px");
+        } else if (format.header === 0) {
+          setSelectedFontSizeValue("13px");
         }
       } else {
-        setSelectedHeadersValue(0)
-        setSelectedHeaders(0)
+        setSelectedHeadersValue(0);
+        setSelectedHeaders(0);
       }
     }
 
@@ -1604,8 +1593,8 @@ function SyncFesion() {
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [isInternal, setIsInternal] = useState<boolean>(false);
   const [currentComment, setCurrentComment] = useState("");
-  const [commentSelection, setCommentSelection] = useState(null)
-  const [commentPrevBg, setCommentPrevBg] = useState("")
+  const [commentSelection, setCommentSelection] = useState(null);
+  const [commentPrevBg, setCommentPrevBg] = useState("");
   const commentInputRef: any = useRef(null);
 
   useEffect(() => {
@@ -1690,7 +1679,6 @@ function SyncFesion() {
     selectionRef.current = null;
   };
 
-
   const handleReply = (index: number) => {
     if (reply.length > 0) {
       setComments((prevComments: any) => {
@@ -1765,81 +1753,126 @@ function SyncFesion() {
     }
   };
 
-  const [prevBgColor, setPrevBgColor] = useState("#fefefe")
-  const [prevFontColor, setPrevFontColor] = useState("black")
-
+  const [prevBgColor, setPrevBgColor] = useState("#fefefe");
+  const [prevFontColor, setPrevFontColor] = useState("black");
 
   useEffect(() => {
     const quill = editorRefs.current[currentPage].getEditor();
     let isFormatting = false;
-
+  
     const handleTextChange = () => {
-      setBgColorSvg(bgColor)
       if (isFormatting) return;
-
+  
       const range = quill.getSelection(true);
-
-      if (range?.length === 0) {
-        setPrevBgColor(bgColor)
+  
+      if(!bgColorSelection){
+        if (range?.length == 0) {
+          setPrevBgColor(bgColor);
+        }
       }
-      if (!selection) {
+  
+      if (!bgColorSelection) {
         isFormatting = true;
-        quill.format("background", bgColor);
+        quill.format("background", bgColor, "user");
         isFormatting = false;
       } else {
-        const { index, length } = range;
+        const { index, length } = bgColorSelection;
         isFormatting = true;
-        quill.formatText(index, length, { background: bgColor });
+        quill.formatText(index, length, { background: bgColor }, "user");
         isFormatting = false;
         setSelection(null);
         selectionRef.current = null;
       }
-      quill.focus()
+  
+      // Manage the cursor or selection restoration after formatting
+      if (bgColorSelection) {
+        quill.setSelection(bgColorSelection.index + bgColorSelection.length, 0); // Move cursor to end of selection
+      } else if (range) {
+        quill.setSelection(range.index, 0); // Keep the cursor where it was
+      }
+      quill.focus();
     };
-
-    handleTextChange()
-
-
+  
+    handleTextChange();
+  
+    const checkForBlank = () => {
+      const editor = quill.root;
+  
+      // Check if the editor content is empty (HTML is blank or contains only empty tags)
+      if (editor.innerHTML.trim() === "" || editor.textContent.trim() === "") {
+        handleTextChange(); // Apply handleTextChange if the editor is blank
+        quill.on("text-change", handleTextChange); // Listen for text changes
+      } else {
+        quill.off("text-change", handleTextChange); // Stop listening if not blank
+      }
+    };
+  
+    checkForBlank();
+  
+    // Observe changes in the editor content to detect if it becomes empty
+    const observer = new MutationObserver((mutationsList) => {
+      for (let mutation of mutationsList) {
+        if (mutation.type === "childList") {  // Look for child list mutations
+          checkForBlank();
+        }
+      }
+    });
+  
+    observer.observe(quill.root, {
+      childList: true,   // Observe direct children of the editor root
+      subtree: true,     // Observe all descendant nodes
+      characterData: true // Observe changes to text content within nodes
+    });
+  
+    return () => {
+      quill.off("text-change", handleTextChange);
+      observer.disconnect();
+    };
   }, [bgColor]);
-
+  
 
   useEffect(() => {
     const quill = editorRefs.current[currentPage].getEditor();
     let isFormatting = false;
     if (quill) {
-
       const restoreSelection = () => {
         if (selectionRef.current) {
-          quill.setSelection(selectionRef.current.index, selectionRef.current.length);
+          quill.setSelection(
+            selectionRef.current.index,
+            selectionRef.current.length
+          );
         }
       };
 
-
       const handleTextChange = () => {
         if (isFormatting) return;
-        setFontColorSvg(fontColor)
+        setFontColorSvg(fontColor);
 
         const range = quill.getSelection(true);
         if (range.length == 0) {
-          setPrevFontColor(fontColor)
+          setPrevFontColor(fontColor);
         }
         if (!selection) {
           isFormatting = true;
-          quill.format("color", fontColor);
+          quill.format("color", fontColor, "user");
           isFormatting = false;
         } else {
           const { index, length } = range;
           isFormatting = true;
-          quill.formatText(index, length, { color: fontColor });
+          quill.formatText(index, length, { color: fontColor }, "user");
           isFormatting = false;
           setSelection(null);
           selectionRef.current = null;
         }
+        if(range.length) {
+          quill.setSelection(range.length,0)
+        }else{
+          quill.setSelection(range.index,0)
+        }
+
       };
 
-      handleTextChange()
-
-    
+      handleTextChange();
 
       const menuToggle = document.getElementById("openFontColor-button");
 
@@ -1860,8 +1893,38 @@ function SyncFesion() {
       }
 
       if (quill) {
+        const checkForBlank = () => {
+          const editor = quill.root;
+      
+          // Check if the editor content is empty (HTML is blank or contains only empty tags)
+          if (editor.innerHTML.trim() === "" || editor.textContent.trim() === "") {
+            handleTextChange(); // Apply handleTextChange if the editor is blank
+            quill.on("text-change", handleTextChange); // Listen for text changes
+          } else {
+            quill.off("text-change", handleTextChange); // Stop listening if not blank
+          }
+        };
+      
+        checkForBlank();
+      
+        // Observe changes in the editor content to detect if it becomes empty
+        const observer = new MutationObserver((mutationsList) => {
+          for (let mutation of mutationsList) {
+            if (mutation.type === "childList") {  // Look for child list mutations
+              checkForBlank();
+            }
+          }
+        });
+      
+        observer.observe(quill.root, {
+          childList: true,   // Observe direct children of the editor root
+          subtree: true,     // Observe all descendant nodes
+          characterData: true // Observe changes to text content within nodes
+        });
+
         return () => {
           quill.off("text-change", handleTextChange);
+          observer.disconnect()
           if (menuToggle) {
             menuToggle.removeEventListener("click", attachColorListeners);
           }
@@ -1877,23 +1940,13 @@ function SyncFesion() {
   }, [fontColor]);
 
 
-
-  // useEffect(() => {
-  //   if (addReply.open && addReply.id !== null) {
-  //     const replyElement = document.getElementById(`reply-${addReply.id}`);
-  //     if (replyElement) {
-  //       replyElement.scrollIntoView({ behavior: "smooth", block: "center" });
-  //     }
-  //   }
-  // }, [addReply]);
-
   useEffect(() => {
     if (editorRefs) {
       const quill = editorRefs.current[currentPage].getEditor();
       const length = quill.getLength();
-      quill.formatText(0, length, 'lineHeight', '1.5');
+      quill.formatText(0, length, "lineHeight", "1.5");
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (editorRefs.current[currentPage]) {
@@ -1906,34 +1959,33 @@ function SyncFesion() {
         shouldRunFontChange = false;
 
         if (!selection) {
-          editor.format('font', selectedFont);
+          editor.format("font", selectedFont, "user");
         } else {
           const { index, length } = editor.getSelection();
-          editor.formatText(index, length, 'font', selectedFont);
+          editor.formatText(index, length, "font", selectedFont, "user");
           setSelection(null);
         }
-        setTimeout(() => { shouldRunFontChange = true; }, 0);
+        setTimeout(() => {
+          shouldRunFontChange = true;
+        }, 0);
       };
 
       fontChange();
     }
   }, [selectedFont]);
 
-
   useEffect(() => {
     if (editorRefs.current[currentPage]) {
       const editor = editorRefs.current[currentPage].getEditor();
 
       const fontChange = () => {
-
         if (!selection) {
-          editor.format('size', selectedFontSize);
+          editor.format("size", selectedFontSize, "user");
         } else {
           const { index, length } = selection;
-          editor.formatText(index, length, 'size', selectedFontSize);
+          editor.formatText(index, length, "size", selectedFontSize, "user");
         }
-        editor.focus()
-
+        editor.focus();
       };
 
       fontChange();
@@ -1961,41 +2013,37 @@ function SyncFesion() {
       });
 
       return () => {
-        editor.off("text-change", fontChange)
-        observer.disconnect()
-      }
+        editor.off("text-change", fontChange);
+        observer.disconnect();
+      };
     }
   }, [selectedFontSize]);
-
-
 
   useEffect(() => {
     if (editorRefs.current[currentPage]) {
       const editor = editorRefs.current[currentPage].getEditor();
 
       const fontChange = () => {
-
         if (selectedHeaders === 1) {
-          setSelectedFontSizeValue("26px")
+          setSelectedFontSizeValue("26px");
         }
         if (selectedHeaders === 2) {
-          setSelectedFontSizeValue("20px")
+          setSelectedFontSizeValue("20px");
         }
         if (selectedHeaders === 3) {
-          setSelectedFontSizeValue("14px")
+          setSelectedFontSizeValue("14px");
         }
         if (selectedHeaders === 4) {
-          setSelectedFontSizeValue("13px")
+          setSelectedFontSizeValue("13px");
         }
         if (selectedHeaders === 0) {
-          setSelectedFontSizeValue("13px")
+          setSelectedFontSizeValue("13px");
         }
-        editor.format("size", false)
-        editor.format('header', selectedHeaders);
+        editor.format("size", false, "user");
+        editor.format("header", selectedHeaders, "user");
       };
 
       fontChange();
-
     }
   }, [selectedHeaders]);
 
@@ -2003,8 +2051,11 @@ function SyncFesion() {
     const quill = editorRefs.current[currentPage].getEditor();
     const editorElement = quill.root;
 
-    editorElement.addEventListener('mousedown', (event: any) => {
-      if (event.target.tagName === 'IMG' && event.target.classList.contains('resizable')) {
+    editorElement.addEventListener("mousedown", (event: any) => {
+      if (
+        event.target.tagName === "IMG" &&
+        event.target.classList.contains("resizable")
+      ) {
         const img = event.target;
         const startX = event.clientX;
         const startY = event.clientY;
@@ -2019,12 +2070,12 @@ function SyncFesion() {
         };
 
         const onMouseUp = () => {
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
+          document.removeEventListener("mousemove", onMouseMove);
+          document.removeEventListener("mouseup", onMouseUp);
         };
 
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
 
         event.preventDefault(); // Prevent text selection while resizing
       }
@@ -2033,9 +2084,7 @@ function SyncFesion() {
 
   useEffect(() => {
     handleImageResize();
-  }, [editorRefs])
-
-
+  }, [editorRefs]);
 
   return (
     <>
@@ -2235,15 +2284,16 @@ function SyncFesion() {
               <>
                 <div className="relative  ">
                   <button
-                    className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${showBlock == "uploadTrack"
-                      ? "text-gray-300"
-                      : "text-black hover:text-gray-700"
-                      }`}
+                    className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${
+                      showBlock == "uploadTrack"
+                        ? "text-gray-300"
+                        : "text-black hover:text-gray-700"
+                    }`}
                     disabled={showBlock == "uploadTrack"}
                     onClick={() => toggleDropdown("signature")}
-                  // onMouseEnter={() => {
-                  //   toggleDropdown("signature");
-                  // }}
+                    // onMouseEnter={() => {
+                    //   toggleDropdown("signature");
+                    // }}
                   >
                     Manage Document
                     <span
@@ -2494,12 +2544,12 @@ function SyncFesion() {
                         }}
                         className="px-2 py-2   flex items-center gap-x-2"
                         onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor =
-                          !recipients.some(
-                            (recipient: any) => recipient.signature
-                          )
-                            ? "inherit"
-                            : "#E4EDF8")
+                          (e.currentTarget.style.backgroundColor =
+                            !recipients.some(
+                              (recipient: any) => recipient.signature
+                            )
+                              ? "inherit"
+                              : "#E4EDF8")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.backgroundColor = "initial")
@@ -2548,12 +2598,12 @@ function SyncFesion() {
                           reverToReview(), toggleDropdown("signature");
                         }}
                         onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor =
-                          !recipients.some(
-                            (recipient: any) => recipient.signature
-                          )
-                            ? "inherit"
-                            : "#E4EDF8")
+                          (e.currentTarget.style.backgroundColor =
+                            !recipients.some(
+                              (recipient: any) => recipient.signature
+                            )
+                              ? "inherit"
+                              : "#E4EDF8")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.backgroundColor = "initial")
@@ -3036,22 +3086,8 @@ function SyncFesion() {
             style={{
               borderTop: "1px solid #174b8b",
               height: "100%",
-              // overflow: "auto",
             }}
           >
-            {/* <DocumentEditorContainerComponent
-              ref={editorContainerRef}
-              id="container"
-              height="88vh"
-              toolbarItems={items}
-              toolbarClick={onToolbarClick}
-              serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
-              showPropertiesPane={false}
-              documentEditorSettings={{
-                searchHighlightColor: "red",
-              }}
-              created={onCreated}
-            /> */}
             <div
               style={{
                 backgroundColor: "#fefefe",
@@ -3062,7 +3098,7 @@ function SyncFesion() {
 
             <div
               style={{
-                height: "77vh",
+                height: "49rem",
                 overflowX: "auto",
               }}
               onClick={() => {
@@ -3074,7 +3110,9 @@ function SyncFesion() {
                 if (editorRefs && commentSelection) {
                   const editor = editorRefs.current[currentPage].getEditor();
                   const { index, length } = commentSelection;
-                  editor.formatText(index, length, { background: commentPrevBg })
+                  editor.formatText(index, length, {
+                    background: commentPrevBg,
+                  });
                 }
               }}
             >
@@ -3088,45 +3126,40 @@ function SyncFesion() {
                   overflowX: "auto",
                 }}
                 ref={parentContainerRef}
-
-
               >
                 <Grid
                   item
                   style={{
-                    height: documentPageSize?.title === "Landscape" ? "90%" : "100%",
+                    height:"100%",
                     position: "relative",
-                    width: documentPageSize?.title === "Landscape" ? "90%" : ""
-
+                    // width: documentPageSize?.title === "Landscape" ? "90%" : "",
                   }}
-
                 >
                   {pages.map((page, index) => {
                     return (
                       <div
                         key={index}
                         ref={(el) => (containerRefs.current[index] = el)} // Ref for the wrapper div
-
                         style={{
-                          marginBottom: index > 0 ? '20px' : '0px', // Apply top margin for all but the first page
-                          border: '1px solid #f2f2f2',
-                          borderRadius: '5px',
-                          // background: '#fefefe',
-                          width: '100%',
+                          marginBottom: index > 0 ? "20px" : "0px",
+                          borderRadius: "5px",
+                          width: "100%",
                           minHeight: `${documentPageSize.height}`,
                         }}
                       >
                         <ReactQuill
                           ref={(el) => (editorRefs.current[index] = el)}
                           value={page.content}
-                          onChange={(value, delta, source, editor) => handleChange(value, delta, source, editor, index)}
+                          onChange={(value, delta, source, editor) =>
+                            handleChange(value, delta, source, editor, index)
+                          }
                           onChangeSelection={handleChangeSelection}
                           modules={modules}
                           formats={formats}
                           onKeyDown={(event) => handleKeyDown(event, index)}
                           onFocus={() => {
-                            setEditorRefContext(editorRefs.current[index])
-                            setCurrentPage(index)
+                            setEditorRefContext(editorRefs.current[index]);
+                            setCurrentPage(index);
                           }}
                           theme="snow"
                           style={{
@@ -3135,22 +3168,22 @@ function SyncFesion() {
                             background: "#fefefe",
                             width: documentPageSize.width,
                             height: documentPageSize.height,
-                            margin: "20px 0"
+                            margin: "20px 0",
                           }}
                         />
                         <style>
                           {`
-              .ql-container.ql-snow {
-                min-height: 375px;
-                padding-top: ${documentPageMargins.top} !important;
-                padding-bottom: ${documentPageMargins.bottom} !important;
-                padding-left: ${documentPageMargins.left} !important;
-                padding-right: ${documentPageMargins.right} !important;
-              } 
-            `}
+                            .ql-container.ql-snow {
+                             min-height: 375px;
+                             padding-top: ${documentPageMargins.top} !important;
+                             padding-bottom: ${documentPageMargins.bottom} !important;
+                             padding-left: ${documentPageMargins.left} !important;
+                             padding-right: ${documentPageMargins.right} !important;                        
+                             } 
+                           `}
                         </style>
                       </div>
-                    )
+                    );
                   })}
 
                   {selection && (
@@ -3159,11 +3192,15 @@ function SyncFesion() {
                         onClick={(e) => {
                           e.stopPropagation();
                           if (editorRefs) {
-                            const editor = editorRefs.current[currentPage].getEditor()
+                            const editor =
+                              editorRefs.current[currentPage].getEditor();
                             const range = editor.getSelection();
-                            const format = editor.getFormat(range.index, range.length)
-                            setCommentPrevBg(format.background)
-                            setCommentSelection(range)
+                            const format = editor.getFormat(
+                              range.index,
+                              range.length
+                            );
+                            setCommentPrevBg(format.background);
+                            setCommentSelection(range);
                             editor.formatText(range.index, range.length, {
                               background: "#e1ecff",
                             });
@@ -3180,10 +3217,18 @@ function SyncFesion() {
                           cursor: "pointer",
                         }}
                       >
-                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M5.25 15C5.05109 15 4.86032 14.921 4.71967 14.7803C4.57902 14.6397 4.5 14.4489 4.5 14.25V12H1.5C1.10218 12 0.720644 11.842 0.43934 11.5607C0.158035 11.2794 0 10.8978 0 10.5V1.5C0 0.6675 0.675 0 1.5 0H13.5C13.8978 0 14.2794 0.158035 14.5607 0.43934C14.842 0.720644 15 1.10218 15 1.5V10.5C15 10.8978 14.842 11.2794 14.5607 11.5607C14.2794 11.842 13.8978 12 13.5 12H8.925L6.15 14.7825C6 14.925 5.8125 15 5.625 15H5.25ZM6 10.5V12.81L8.31 10.5H13.5V1.5H1.5V10.5H6Z" fill="#174B8B" />
+                        <svg
+                          width="15"
+                          height="15"
+                          viewBox="0 0 15 15"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5.25 15C5.05109 15 4.86032 14.921 4.71967 14.7803C4.57902 14.6397 4.5 14.4489 4.5 14.25V12H1.5C1.10218 12 0.720644 11.842 0.43934 11.5607C0.158035 11.2794 0 10.8978 0 10.5V1.5C0 0.6675 0.675 0 1.5 0H13.5C13.8978 0 14.2794 0.158035 14.5607 0.43934C14.842 0.720644 15 1.10218 15 1.5V10.5C15 10.8978 14.842 11.2794 14.5607 11.5607C14.2794 11.842 13.8978 12 13.5 12H8.925L6.15 14.7825C6 14.925 5.8125 15 5.625 15H5.25ZM6 10.5V12.81L8.31 10.5H13.5V1.5H1.5V10.5H6Z"
+                            fill="#174B8B"
+                          />
                         </svg>
-
                       </button>
                     </Tooltip>
                   )}
@@ -3202,45 +3247,52 @@ function SyncFesion() {
                       }}
                     >
                       <div className="float-right py-1">
-                        <svg width="10" height="10" viewBox="0 0 6 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M6 0.632473L5.36753 0L3 2.36753L0.632473 0L0 0.632473L2.36753 3L0 5.36753L0.632473 6L3 3.63247L5.36753 6L6 5.36753L3.63247 3L6 0.632473Z" fill="black" />
+                        <svg
+                          width="10"
+                          height="10"
+                          viewBox="0 0 6 6"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M6 0.632473L5.36753 0L3 2.36753L0.632473 0L0 0.632473L2.36753 3L0 5.36753L0.632473 6L3 3.63247L5.36753 6L6 5.36753L3.63247 3L6 0.632473Z"
+                            fill="black"
+                          />
                         </svg>
-
                       </div>
                       <div
                         style={{
                           display: "flex",
                           background: "#fefefe",
-                          borderRadius: 5
+                          borderRadius: 5,
                         }}
                         className="m-2 py-2 px-1"
                       >
-                        <div
-                          className="icon-person mx-2"
-
-                        >
+                        <div className="icon-person mx-2">
                           {user?.firstName
                             ? user.firstName
-                              .split(" ")
-                              .map((name: string) => name.charAt(0))
-                              .slice(0, 2)
-                              .join("")
-                              .toUpperCase()
+                                .split(" ")
+                                .map((name: string) => name.charAt(0))
+                                .slice(0, 2)
+                                .join("")
+                                .toUpperCase()
                             : user?.email
-                              ?.split(" ")
-                              .map((e: string) => e.charAt(0))
-                              .join("")
-                              .substring(0, 2)
-                              .toUpperCase()}
+                                ?.split(" ")
+                                .map((e: string) => e.charAt(0))
+                                .join("")
+                                .substring(0, 2)
+                                .toUpperCase()}
                         </div>
-                        <div style={{ position: "relative", bottom: 3, right: 3 }}>
+                        <div
+                          style={{ position: "relative", bottom: 3, right: 3 }}
+                        >
                           <b
                             style={{
                               fontSize: user?.firstName
                                 ? 14
                                 : user?.email
-                                  ? 14
-                                  : "",
+                                ? 14
+                                : "",
                             }}
                           >
                             {user?.firstName || user?.email.substring(0, 14)}
@@ -3248,10 +3300,18 @@ function SyncFesion() {
                           <div style={{ fontSize: 13, margin: 0 - 2 }}>
                             {isInternal ? (
                               <span style={{ display: "flex" }}>
-                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M8 6.66667H7V7.77778H8V6.66667ZM8 4.44444H7V5.55556H8V4.44444ZM9 8.88889H5V7.77778H6V6.66667H5V5.55556H6V4.44444H5V3.33333H9V8.88889ZM4 2.22222H3V1.11111H4V2.22222ZM4 4.44444H3V3.33333H4V4.44444ZM4 6.66667H3V5.55556H4V6.66667ZM4 8.88889H3V7.77778H4V8.88889ZM2 2.22222H1V1.11111H2V2.22222ZM2 4.44444H1V3.33333H2V4.44444ZM2 6.66667H1V5.55556H2V6.66667ZM2 8.88889H1V7.77778H2V8.88889ZM5 2.22222V0H0V10H10V2.22222H5Z" fill="black" />
+                                <svg
+                                  width="10"
+                                  height="10"
+                                  viewBox="0 0 10 10"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M8 6.66667H7V7.77778H8V6.66667ZM8 4.44444H7V5.55556H8V4.44444ZM9 8.88889H5V7.77778H6V6.66667H5V5.55556H6V4.44444H5V3.33333H9V8.88889ZM4 2.22222H3V1.11111H4V2.22222ZM4 4.44444H3V3.33333H4V4.44444ZM4 6.66667H3V5.55556H4V6.66667ZM4 8.88889H3V7.77778H4V8.88889ZM2 2.22222H1V1.11111H2V2.22222ZM2 4.44444H1V3.33333H2V4.44444ZM2 6.66667H1V5.55556H2V6.66667ZM2 8.88889H1V7.77778H2V8.88889ZM5 2.22222V0H0V10H10V2.22222H5Z"
+                                    fill="black"
+                                  />
                                 </svg>
-
                                 Internal
                               </span>
                             ) : (
@@ -3432,8 +3492,8 @@ function SyncFesion() {
                               openComment && e?.replies?.length > 0
                                 ? "-18rem"
                                 : openComment
-                                  ? "-51px"
-                                  : `${e.style.top}px`,
+                                ? "-51px"
+                                : `${e.style.top}px`,
                             left: `52rem`,
                             border: "1px solid #fefefe",
                             boxShadow: "rgba(60,64,67,.15) 0 1px 3px 1px",
@@ -3536,18 +3596,18 @@ function SyncFesion() {
                                   )}
                                   <span style={{ marginLeft: 10 }}>
                                     {new Date(e.date).toDateString() ===
-                                      new Date().toDateString()
+                                    new Date().toDateString()
                                       ? new Date(e.date).getTime() ===
                                         new Date().getTime()
                                         ? "Just now"
                                         : `Today ${new Date(
-                                          e.date
-                                        ).toLocaleTimeString()}`
+                                            e.date
+                                          ).toLocaleTimeString()}`
                                       : `${new Date(
-                                        e.date
-                                      ).toDateString()} ${new Date(
-                                        e.date
-                                      ).toLocaleTimeString()}`}
+                                          e.date
+                                        ).toDateString()} ${new Date(
+                                          e.date
+                                        ).toLocaleTimeString()}`}
                                   </span>
                                 </div>
                               </div>
@@ -3825,18 +3885,18 @@ function SyncFesion() {
                                           {new Date(
                                             reply.date
                                           ).toDateString() ===
-                                            new Date().toDateString()
+                                          new Date().toDateString()
                                             ? new Date(reply.date).getTime() ===
                                               new Date().getTime()
                                               ? "Just now"
                                               : `Today ${new Date(
-                                                reply.date
-                                              ).toLocaleTimeString()}`
+                                                  reply.date
+                                                ).toLocaleTimeString()}`
                                             : `${new Date(
-                                              reply.date
-                                            ).toDateString()} ${new Date(
-                                              reply.date
-                                            ).toLocaleTimeString()}`}
+                                                reply.date
+                                              ).toDateString()} ${new Date(
+                                                reply.date
+                                              ).toLocaleTimeString()}`}
                                         </span>
                                       </div>
                                     </div>
@@ -3933,7 +3993,6 @@ function SyncFesion() {
                       );
                     })}
                   </div>
-
                 </Grid>
                 {/* <Grid item xs={3.8}>
                   <TrackChanges rejectChange={rejectChange} />
