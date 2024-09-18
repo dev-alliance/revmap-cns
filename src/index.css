@@ -1109,7 +1109,6 @@ body {
 .ql-editor li[data-list="bullet-flower"]::before {
   content: "";
   display: inline-block;
-  width: 15px; /* Adjust size as needed */
   height: 8px;
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="5" height="5" fill="black"><path d="M2.5 0C2.37503 0 2.25006 0.047494 2.14759 0.147482L1.32279 0.969879L2.5 2.14473L3.67721 0.969879L2.85241 0.147482C2.74994 0.047494 2.62497 0 2.5 0ZM0.970382 1.32233L0.148088 2.14723C-0.0493627 2.34221 -0.0493627 2.65717 0.148088 2.85214L0.970382 3.67704L2.14509 2.49969L0.970382 1.32233ZM4.02962 1.32233L2.85491 2.49969L4.02962 3.67704L4.85191 2.85214C5.04936 2.65717 5.04936 2.34221 4.85191 2.14723L4.02962 1.32233ZM2.5 2.85464L1.32279 4.0295L2.14759 4.85189C2.34254 5.04937 2.65746 5.04937 2.85241 4.85189L3.67721 4.0295L2.5 2.85464Z"/></svg>');
   background-size: contain;
@@ -1127,7 +1126,6 @@ body {
 .ql-editor li[data-list="bullet-arrow"]::before {
   content: "";
   display: inline-block;
-  width: 15px; /* Adjust size as needed */
   height: 8px;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 5" fill="none"><path d="M3.5 2.5L1.5 2.5L1 1L3.5 2.5ZM5 2.5L0 0L0.789474 2.5L0 5L5 2.5Z" fill="black"/></svg>');
   background-size: contain;
@@ -1145,7 +1143,6 @@ body {
 .ql-editor li[data-list="bullet-tick"]::before {
   content: "";
   display: inline-block;
-  width: 15px; /* Adjust size as needed */
   height: 8px;
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 5" fill="none"><path d="M1.96934 5L0 3.00193L0.897463 2.09138L1.96934 3.18211L5.10254 0L6 0.910553L1.96934 5Z" fill="black"/></svg>');
   background-size: contain;
@@ -1155,6 +1152,10 @@ body {
   left: 5px;
 }
 
+.ql-editor li:not(.ql-direction-rtl)::before {
+  position: relative !important;
+  top: 1px !important;
+}
 .css-6hp17o-MuiList-root-MuiMenu-list {
   display: flex;
   flex-direction: column;
@@ -1351,8 +1352,7 @@ body {
 }
 
 .icon-person{
-  height: 22px;
-  width: 22px;
+  width: 14px;
   border-radius: 50%;
   display: flex;
   text-align: center;
@@ -1360,6 +1360,10 @@ body {
   align-items: center;
   background-color: #15b5e5;
   color: #fefefe;
+  height: 14px;
+  padding: 13px;
+  position: relative;
+  bottom: 3px;
 }
 
 /* Custom styles for image resizing handles */
@@ -1395,3 +1399,84 @@ body {
   overflow:hidden !important;
 }
 
+
+.comment-container{
+  background: #e1ecff;
+  position: absolute;
+  left: 100%;
+  border: 1px solid #e1ecff;
+  box-shadow:rgba(60,64,67,.15) 0 1px 3px 1px ;
+}
+
+.comment-user-info {
+  display: flex;
+  background: #fefefe;
+  border-radius: 5px;
+  height: 56px;
+}
+
+.bottom-1{
+  position: relative;
+  bottom: -1px;
+}
+.bottom-2{
+  position: relative;
+  bottom: 1px;
+}
+
+.input-comment {
+  color: #00000080;
+  background-color: #fefefe;
+  border-radius: 5px;
+  height: 30px;  
+  padding-left: 5px;
+  padding-top:2px;
+  resize: none;
+  outline: none;
+}
+
+.outline-btn-comment{
+  display: flex;
+  margin-left: 6px;
+  align-items: center;
+  cursor: pointer;
+  height: 27px;
+  padding: 7px;
+  border-radius: 11px;
+}
+
+.comments{
+  position: absolute;
+  left: 100%;
+  border: 1px solid #fefefe;
+  box-shadow:rgba(60,64,67,.15) 0 1px 3px 1px ;
+  background-color: #E1ECFF;
+  width: 300px;
+}
+
+
+.comments-upper-section {
+  background: #fefefe;
+  border-radius: 5px;
+  margin: 8px 13px;
+}
+
+
+.position-options{
+  position: relative;
+  bottom: -9px;
+  right: -1rem;
+  cursor: pointer;
+}
+
+
+.add-reply-container{
+  border-top:1px solid #00000080 ;
+  padding: 20px 0px;
+  background: #eef3fa;
+}
+
+
+.ql-editor{
+  font-size: 12px !important;
+}

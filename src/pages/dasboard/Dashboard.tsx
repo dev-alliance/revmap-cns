@@ -547,7 +547,7 @@ const CategoryList = () => {
                       component={Link}
                       // to={hasAddUsersPermission ? "/dashboard/create-user" : ""}
                       disabled={!user?.role?.permissions?.create_categories}
-                      to="/dashboard/testSync"
+                      to="/dashboard/editor-dahsbord"
                     >
                       <AddIcon /> Create Document
                     </Button>

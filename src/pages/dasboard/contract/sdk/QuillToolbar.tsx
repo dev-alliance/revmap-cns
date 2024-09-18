@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 
 import React, {
   ChangeEvent,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -491,8 +492,8 @@ export const formats = [
   "audio",
 ];
 
-const ListItem = Quill.import("formats/list/item");
 
+const ListItem = Quill.import("formats/list/item");
 class AlphabetListItem extends ListItem {
   static create(value: any) {
     let node = super.create();
@@ -580,24 +581,22 @@ export default function QuillToolbar() {
   const toolbarRef: any = useRef(null);
 
   const handleListClick = (value: string) => {
+    const editor = editorRefContext.getEditor();
+    if (!editor) return;
+  
     if (value === "none") {
       localStorage.removeItem("list");
-      if (editorRefContext) {
-        editorRefContext.getEditor()?.format("list", false,"user");
-      }
+      editor.format("list", false, "user");
     } else {
-      localStorage.setItem("list", value);
-      if (editorRefContext) {
-        if (value === "default") {
-          editorRefContext.getEditor()?.format("list", "ordered","user");
-        } else {
-          editorRefContext.getEditor()?.format("list", value,"user");
-        }
-      }
+      const formattedValue = value === "default" ? "ordered" : value;
+      localStorage.setItem("list", formattedValue);
+      editor.format("list", formattedValue, "user");
     }
     setAnchorEl2(null);
     setAnchorEl(null);
   };
+  
+  
 
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [selectOpen, setSelectOpen] = useState(false);
@@ -807,7 +806,6 @@ export default function QuillToolbar() {
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
     setCursorIndex(range.index);
-    console.log(range.index);
     setAnchorElMedia(event.currentTarget);
   };
 
@@ -896,13 +894,28 @@ export default function QuillToolbar() {
   const handleHeaderChange = (event: any) => {
     const editor = editorRefContext.getEditor();
     setSelectedHeaders(event.target.value);
-    editor.format("size", false, "user");
-    editor.format("header", event.target.value, "user");
+  
+    // Get the current selection range
+    const range = editor.getSelection();
+  
+    if (range) {
+      // If there is a selection, format the selected text
+      editor.format("size", false, "user"); // Reset the size format
+      editor.format("header", event.target.value, "user"); // Apply the new header format
+    } else {
+      // If there is no selection, apply format to the current cursor position
+      const currentFormat = editor.getFormat(); // Get the current format at the cursor
+      editor.formatText(editor.getLength() - 1, 0, { ...currentFormat, size: false, header: event.target.value }, "user");
+    }
+  
     setSelectedHeadersValue(event.target.value);
+  
+    // Refocus the editor after formatting
     setTimeout(() => {
       editor.focus();
     }, 0);
   };
+  
 
   const [tooltipOpenNumbering, setTooltipOpenNumbering] = useState(false);
   const [tooltipOpenBullets, setTooltipOpenBullets] = useState(false);
@@ -948,10 +961,12 @@ export default function QuillToolbar() {
 
     if (editorRefContext) {
       const quill = editorRefContext.getEditor();
+      
 
       quill.on("text-change", checkHistory);
       quill.on("selection-change", checkHistory);
 
+      
       checkHistory(); // Initial check
 
       return () => {
@@ -1559,6 +1574,61 @@ export default function QuillToolbar() {
     setSelectedFontSize("13px")
     setSelectedHeaders(0)
   };
+
+  const handleUndo = () => {
+    const editor = editorRefContext?.getEditor();
+    editor.history.undo()
+  }
+
+  const handleRedo = () => {
+    const editor = editorRefContext?.getEditor();
+    editor.history.redo();
+  }
+
+  interface delta {
+    ops:any[]
+  }
+
+
+  const handleTextChange = useCallback((delta:delta, oldDelta:delta, source:string) => {
+    if (source === 'user') {
+      const quill = editorRefContext?.getEditor();
+      if (!quill) return;
+  
+      // Track list-item changes
+      const listItemChanges= new Map();
+  
+      // Record changes from delta
+      delta.ops.forEach((op) => {
+        if (op.attributes && op.attributes['list-item']) {
+          listItemChanges.set(op.index, op.attributes['list-item']);
+        }
+      });
+  
+      // Apply changes to DOM and localStorage
+      listItemChanges.forEach((newValue, index) => {
+        const nodes = document.querySelectorAll(`[data-list]`);
+        nodes.forEach(node => {
+          if (node.hasAttribute('data-list')) {
+            node.setAttribute('data-list', newValue);
+            localStorage.setItem('list', newValue);
+          }
+        });
+      });
+    }
+  }, [editorRefContext]);
+  useEffect(() => {
+    if (!editorRefContext) return;
+    const quill = editorRefContext.getEditor();
+  
+    // Listen to the undo and redo actions via text-change
+    quill.on('text-change', handleTextChange);
+  
+    return () => {
+      quill.off('text-change', handleTextChange);
+    };
+  }, [editorRefContext, handleTextChange]);
+  
   
 
   return (
@@ -1586,7 +1656,7 @@ export default function QuillToolbar() {
                 cursor: canUndo ? "pointer" : "default",
               }}
               onClick={()=>{
-                editorRefContext?.getEditor()?.history?.undo()
+                handleUndo()
               }}
             >
               <svg
@@ -1610,7 +1680,7 @@ export default function QuillToolbar() {
                 cursor: canRedo ? "pointer" : "default",
               }}
               onClick={()=>{
-                editorRefContext?.getEditor()?.history?.redo()
+                handleRedo()
               }}
             >
               <svg

@@ -663,11 +663,11 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const [selectedFont, setSelectedFont] = useState("arial");
   const [selectedHeaders, setSelectedHeaders] = useState(0);
-  const [selectedFontSize, setSelectedFontSize] = useState("13px");
+  const [selectedFontSize, setSelectedFontSize] = useState("12px");
 
   const [selectedFontValue, setSelectedFontValue] = useState("arial");
   const [selectedHeadersValue, setSelectedHeadersValue] = useState(0);
-  const [selectedFontSizeValue, setSelectedFontSizeValue] = useState("13px");
+  const [selectedFontSizeValue, setSelectedFontSizeValue] = useState("12px");
   const [pages, setPages] = useState([{ content: '' }]);
   const [currentPage, setCurrentPage] = useState(0); 
   const [spacing, setSpacing] = useState("1.5");
