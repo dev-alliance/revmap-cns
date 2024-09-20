@@ -167,7 +167,7 @@ function SyncFesion() {
     setSpacing,
     bgColorSelection,
     setDocumentPageSize,
-    setDocumentPageMargins
+    setDocumentPageMargins,
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -187,7 +187,7 @@ function SyncFesion() {
       if (data?.pdfData) {
         // const pdfBlob = convertBase64ToBlob(data?.pdfData, "application/pdf");
         setUplodTrackFile(data?.pdfData);
-        console.log(data?.pdfData)
+        console.log(data?.pdfData);
         setShowBlock("uploadTrack");
       }
       if (data?.uploadedWordData) {
@@ -199,24 +199,30 @@ function SyncFesion() {
         setDocumentData(data?.wordDocumentData);
       }
 
-      if(data?.pages) {
-        setPages(()=>{
-          let pages = data?.pages
+      if (data?.pages) {
+        setPages(() => {
+          let pages = data?.pages;
           return pages;
         });
       }
 
-      if(data?.pageSize) {
-        setDocumentPageSize(()=>{
+      if (data?.pageSize) {
+        setDocumentPageSize(() => {
           let pageSize = data?.pageSize;
-          return pageSize
-        })
+          return pageSize;
+        });
       }
 
-      if(data?.pageMargins){
-        setDocumentPageMargins(()=>{
+      if (data?.pageMargins) {
+        setDocumentPageMargins(() => {
           let pageSize = data?.pageMargins;
-          return pageSize
+          return pageSize;
+        });
+      }
+
+      if (data?.comments) {
+        setComments(() => {
+          return data.comments;
         })
       }
       setFormState(data?.overview);
@@ -257,9 +263,9 @@ function SyncFesion() {
       setDocumentReady(false); // Reset the document ready state
       // saveDocumentToState(); // Start saving the document to state
       // if (uplodTrackFile) {
-        setDocumentReady(true);
+      setDocumentReady(true);
       // }
-      console.log(documentReady)
+      console.log(documentReady);
     } catch (error: any) {
       console.log(error);
 
@@ -279,10 +285,9 @@ function SyncFesion() {
   useEffect(() => {
     if (!documentReady) return;
 
-
     const createPayload = async () => {
       try {
-        let status = "Draft"; 
+        let status = "Draft";
 
         const hasReqOption = recipients.some(
           (recipient: any) => recipient.ReqOption
@@ -304,9 +309,8 @@ function SyncFesion() {
           status = "Signed";
           // Update status to 'completed' when all required signatures are present
         }
-        console.log(status, "status");
 
-        const payload = {
+        const payload: any = {
           userId: user._id,
           overview: { ...formState, name: documentName },
           lifecycle: lifecycleData,
@@ -320,12 +324,17 @@ function SyncFesion() {
           wordDocumentData: showBlock == "" ? documentData : null,
           pdfData: uplodTrackFile,
           uploadedWordData: showBlock === "uploadTrack" ? documentData : null,
-          pages:pages,
-          pageSize:documentPageSize,
-          pageMargins:documentPageMargins
+          pages: pages,
+          pageSize: documentPageSize,
+          pageMargins: documentPageMargins,
         };
 
-        console.log(payload, "payload");
+        if (comments.length > 0) {
+          payload.comments = comments
+        }
+
+        console.log(payload);
+
 
         let response;
 
@@ -335,7 +344,6 @@ function SyncFesion() {
           response = await updateDocument(id, payload);
         } else {
           response = await create(payload);
-          console.log(response.contract._id, "res");
           if (response.contract._id) {
             setNewId(response.contract._id);
           }
@@ -1207,7 +1215,6 @@ function SyncFesion() {
         console.error("Index out of bounds");
         return prevPages;
       }
-      
 
       const currentEditor = editorRefs.current[index]?.getEditor();
       if (currentEditor) {
@@ -1560,7 +1567,6 @@ function SyncFesion() {
         }
       }
 
-
       if (format.lineHeight) {
         setSpacing(format.lineHeight);
       }
@@ -1583,7 +1589,7 @@ function SyncFesion() {
             }
           }
         } else {
-          setSelectedFontSizeValue("12px")
+          setSelectedFontSizeValue("12px");
         }
       }
 
@@ -1683,10 +1689,11 @@ function SyncFesion() {
       setEditComment(false);
       SetOpenComment(false);
       setCurrentComment("");
+      setEditCommmentIndex(null);
+
     } else {
       if (currentComment) {
         let initialTop = buttonPosition.top;
-        let initialLeft = parseFloat(`52rem`);
 
         let newComment = {
           range: selectionRef.current,
@@ -1711,27 +1718,22 @@ function SyncFesion() {
         SetOpenComment(false);
         setCurrentComment("");
         setEditComment(false);
-
-        if (editorRefs) {
-          const editor = editorRefs.current[currentPage].getEditor();
-          const { index, length } = selectionRef.current;
-          editor.formatText(index, length, { background: "#fde9ae" });
-        }
       }
     }
+    setCommentSelection(null)
     setSelection(null);
     selectionRef.current = null;
   };
 
   const handleReply = (index: number) => {
-    if (reply.length > 0) {
+    if (reply[index].length > 0) {
       setComments((prevComments: any) => {
         const updatedComments = [...prevComments];
         if (!updatedComments[index].replies) {
           updatedComments[index].replies = [];
         }
         updatedComments[index].replies.push({
-          text: reply,
+          text: reply[indexComment],
           date: new Date(),
           user: user?.firstName || user?.email,
         });
@@ -1739,20 +1741,31 @@ function SyncFesion() {
         return updatedComments;
       });
     }
+    setReply((prevReplies: any) => ({
+      ...prevReplies,
+      [index]: ``
+    }));
     setCurrentComment("");
-    setReply("");
     SetOpenComment(false);
     setEditComment(false);
     setAddReply({ open: false, id: "" });
   };
 
   const [editComment, setEditComment] = useState<boolean>(false);
-  const [editCommentIndex, setEditCommmentIndex] = useState<number>(0);
+  const [editCommentIndex, setEditCommmentIndex] = useState<any>(null);
   const [addReply, setAddReply] = useState<any>({
     open: false,
     id: "",
   });
-  const [reply, setReply] = useState<string>("");
+  const [reply, setReply] = useState<any>({});
+
+  const handleReplyChange = (indexComment: number, value: string) => {
+    setReply((prevReplies: any) => ({
+      ...prevReplies,
+      [indexComment]: value
+    }));
+    console.log(reply)
+  };
 
   const [addSigns, setAddSigns] = useState<boolean>(true);
 
@@ -1892,7 +1905,7 @@ function SyncFesion() {
         setFontColorSvg(fontColor);
 
         const range = quill.getSelection(true);
-        if (range.length == 0) {
+        if (range?.length == 0) {
           setPrevFontColor(fontColor);
         }
         if (!selection) {
@@ -1907,10 +1920,10 @@ function SyncFesion() {
           setSelection(null);
           selectionRef.current = null;
         }
-        if (range.length) {
-          quill.setSelection(range.length, 0);
+        if (range?.length) {
+          quill.setSelection(range?.length, 0);
         } else {
-          quill.setSelection(range.index, 0);
+          quill.setSelection(range?.index, 0);
         }
       };
 
@@ -2034,7 +2047,6 @@ function SyncFesion() {
       };
 
       fontChange();
-
     }
   }, [selectedFontSize]);
 
@@ -2158,12 +2170,24 @@ function SyncFesion() {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleOpenOptionsMenu = (event: any) => {
+
+  const [indexComment, setIndexComment] = useState<number>(0);
+  const handleOpenOptionsMenu = (event: any, index: number) => {
+    setIndexComment(index);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleEditComment = (index: number) => {
+    setEditComment(true);
+    setEditCommmentIndex(indexComment);
+    setCurrentComment(comments[indexComment]?.text);
+    handleClose();
+  };
+
+
   return (
     <>
       {isLoading && (
@@ -3175,7 +3199,7 @@ function SyncFesion() {
 
             <div
               style={{
-                height: "49rem",
+                height: "77vh",
                 overflowX: "auto",
               }}
               onClick={() => {
@@ -3187,6 +3211,7 @@ function SyncFesion() {
                 if (editorRefs && commentSelection) {
                   const editor = editorRefs.current[currentPage].getEditor();
                   const { index, length } = commentSelection;
+                  console.log(commentPrevBg)
                   editor.formatText(index, length, {
                     background: commentPrevBg,
                   });
@@ -3513,32 +3538,24 @@ function SyncFesion() {
                                       </span>
                                     )}
                                   </div>
-                                  <span
-                                    style={{
-                                      color: "#00000080",
-                                    }}
-                                  >
-                                    {new Date(e.date).toDateString() ===
-                                      new Date().toDateString()
-                                      ? new Date(e.date).getTime() ===
-                                        new Date().getTime()
-                                        ? "Just now"
-                                        : `Today ${new Date(
-                                          e.date
-                                        ).toLocaleTimeString()}`
-                                      : `${new Date(
-                                        e.date
-                                      ).toDateString()} ${new Date(
-                                        e.date
-                                      ).toLocaleTimeString()}`}
-                                  </span>
+                                  {editCommentIndex !== indexComment && (
+                                    <span
+                                      style={{
+                                        color: "#00000080",
+                                      }}
+                                    >
+                                      {e?.date?.toLocaleString()}
+                                    </span>
+                                  )}
                                 </div>
                                 <div>
                                   <img
                                     src={OptionImage}
                                     className="position-options"
                                     alt="Options"
-                                    onClick={handleOpenOptionsMenu}
+                                    onClick={(event) =>
+                                      handleOpenOptionsMenu(event, indexComment)
+                                    }
                                   />
                                   <Menu
                                     id="basic-menu"
@@ -3549,7 +3566,11 @@ function SyncFesion() {
                                       "aria-labelledby": "basic-button",
                                     }}
                                   >
-                                    <MenuItem onClick={handleClose}>
+                                    <MenuItem
+                                      onClick={() =>
+                                        handleEditComment(indexComment)
+                                      }
+                                    >
                                       Edit comment
                                     </MenuItem>
                                     <MenuItem onClick={handleClose}>
@@ -3565,49 +3586,44 @@ function SyncFesion() {
                             {editComment &&
                               editCommentIndex === indexComment ? (
                               <>
-                                <div style={{ textAlign: "center" }}>
+                                <div className="px-3" style={{ width: "100%" }}>
                                   <textarea
                                     name="comment"
-                                    placeholder="Enter Comment"
+                                    placeholder="Start a conversation"
                                     rows={1}
+                                    ref={commentInputRef}
                                     value={currentComment}
                                     onChange={(e) =>
                                       setCurrentComment(e.target.value)
                                     }
-                                    style={{
-                                      borderBottom: isFocusedInput
-                                        ? "1px solid #5280ff"
-                                        : "1px solid #c8c8c8",
-                                      background: "#f4f4f4",
-                                      width: "90%",
-                                      outline: "none",
-                                    }}
-                                    onFocus={() => setIsFocusedInput(true)}
-                                    onBlur={() => setIsFocusedInput(false)}
+                                    className="input-comment-update"
                                   />
                                 </div>
-                                <div style={{ display: "flex", padding: 10 }}>
-                                  <div
+                                <div
+                                  className="d-flex justify-content-end px-2"
+                                  style={{ paddingBottom: 10 }}
+                                >
+                                  <button
                                     style={{
-                                      display: "flex",
-                                      justifyContent: "end",
-                                      width: "100%",
+                                      backgroundColor:
+                                        currentComment.trim().length === 0
+                                          ? "#174B8B80"
+                                          : "#174B8B",
+                                      border: "1px solid #174B8B80",
+                                      color: "white",
+                                      borderRadius: 5,
+                                      padding: 1,
+                                      fontSize: 13,
                                     }}
+                                    disabled={
+                                      currentComment.trim().length === 0
+                                        ? true
+                                        : false
+                                    }
+                                    onClick={addComment}
                                   >
-                                    <button
-                                      style={{
-                                        backgroundColor: "#5280ff",
-                                        border: "1px solid #5280ff",
-                                        color: "white",
-                                        borderRadius: 4,
-                                        padding: 1,
-                                        fontSize: 13,
-                                      }}
-                                      onClick={addComment}
-                                    >
-                                      <b>Update</b>
-                                    </button>
-                                  </div>
+                                    <b>Update</b>
+                                  </button>
                                 </div>
                               </>
                             ) : (
@@ -3634,205 +3650,233 @@ function SyncFesion() {
                           {e?.replies &&
                             e?.replies?.map((reply: any, index: any) => {
                               return (
-                                <div
-                                  className="reply-container"
-                                  onClick={(e) => e.stopPropagation()}
-                                  style={{
-                                    borderTop: "1px solid #deddd7",
-                                    position: "relative",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      padding: 10,
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    <div
-                                      className="icon mx-2"
-                                      style={{
-                                        height: 30,
-                                        width: 30,
-                                        borderRadius: "50%",
-                                        background: "#b5082e",
-                                        textAlign: "center",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        color: "white",
-                                      }}
-                                    >
-                                      {reply.user
-                                        ?.split(" ")
-                                        .map((e: any) => e.charAt(0))
-                                        .join("")
-                                        .substring(0, 2)
-                                        .toUpperCase()}
-                                    </div>
-                                    <div style={{ padding: 0 }}>
-                                      <b
-                                        style={{
-                                          fontSize: reply.user.includes("@")
-                                            ? 11
-                                            : 14,
-                                        }}
-                                      >
-                                        {reply.user}
-                                      </b>
-                                      <div
-                                        className="py-1"
-                                        style={{
-                                          fontSize: 14,
-                                          display: "flex",
-                                          margin: 0 - 3,
-                                        }}
-                                      >
-                                        {e.access === "Internal" ? (
-                                          <span style={{ display: "flex" }}>
-                                            <svg
-                                              width="18px"
-                                              height="18px"
-                                              viewBox="0 0 512 512"
-                                              version="1.1"
-                                              xmlns="http://www.w3.org/2000/svg"
+                                <div className="replies">
+                                  <div className="comments-upper-section">
+                                    <div className="d-flex justify-content-between algin-items-center pt-2">
+                                      <div className="d-flex">
+                                        <div className="icon-person mx-1">
+                                          {reply.user
+                                            ?.split(" ")
+                                            .map((e: any) => e.charAt(0))
+                                            .join("")
+                                            .substring(0, 2)
+                                            .toUpperCase()}
+                                        </div>
+                                        <div>
+                                          <b
+                                            style={{
+                                              fontSize: 14,
+                                            }}
+                                          >
+                                            {e.user}
+                                          </b>
+                                          <div
+                                            style={{
+                                              fontSize: 14,
+                                            }}
+                                          >
+                                            {e.access === "Internal" ? (
+                                              <span className="d-flex">
+                                                <Internal />
+                                                <span className="bottom-2 mx-1">
+                                                  Internal
+                                                </span>
+                                              </span>
+                                            ) : (
+                                              <span className="d-flex">
+                                                <Public />
+                                                <span className="bottom-2 mx-1">
+                                                  Public
+                                                </span>
+                                              </span>
+                                            )}
+                                          </div>
+                                          {editCommentIndex !== indexComment && (
+                                            <span
+                                              style={{
+                                                color: "#00000080",
+                                              }}
                                             >
-                                              <g
-                                                id="Page-1"
-                                                stroke="none"
-                                                stroke-width="1"
-                                                fill="none"
-                                                fill-rule="evenodd"
-                                              >
-                                                <g
-                                                  id="icon"
-                                                  fill="#000000"
-                                                  transform="translate(42.666667, 64.000000)"
-                                                >
-                                                  <path
-                                                    d="M234.666667,1.42108547e-14 L234.666667,341.333333 L362.666667,341.333333 L362.666667,128 L277.333333,128 L277.333333,85.3333333 L405.333333,85.3333333 L405.333,341.333 L426.666667,341.333333 L426.666667,384 L234.666667,384 L234.666667,384 L21.3333333,384 L21.333,383.999 L3.55271368e-14,384 L3.55271368e-14,341.333333 L21.333,341.333 L21.3333333,1.42108547e-14 L234.666667,1.42108547e-14 Z M192,42.6666667 L64,42.6666667 L64,341.333333 L106.666667,341.333333 L106.666667,277.333333 L149.333333,277.333333 L149.333333,341.333333 L192,341.333333 L192,42.6666667 Z M320,256 L320,298.666667 L277.333333,298.666667 L277.333333,256 L320,256 Z M149.333333,170.666667 L149.333333,213.333333 L106.666667,213.333333 L106.666667,170.666667 L149.333333,170.666667 Z M320,170.666667 L320,213.333333 L277.333333,213.333333 L277.333333,170.666667 L320,170.666667 Z M149.333333,85.3333333 L149.333333,128 L106.666667,128 L106.666667,85.3333333 L149.333333,85.3333333 Z"
-                                                    id="Combined-Shape"
-                                                  ></path>
-                                                </g>
-                                              </g>
-                                            </svg>{" "}
-                                            Internal
-                                          </span>
-                                        ) : (
-                                          <span style={{ display: "flex" }}>
-                                            <svg
-                                              fill="#000000"
-                                              width="18px"
-                                              height="18px"
-                                              viewBox="0 -8 72 72"
-                                              id="Layer_1"
-                                              data-name="Layer 1"
-                                              xmlns="http://www.w3.org/2000/svg"
+                                              {reply?.date?.toLocaleString()}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div>
+                                          <img
+                                            src={OptionImage}
+                                            className="position-options"
+                                            alt="Options"
+                                            onClick={(event) =>
+                                              handleOpenOptionsMenu(event, indexComment)
+                                            }
+                                          />
+                                          <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorEl}
+                                            open={open}
+                                            onClose={handleClose}
+                                            MenuListProps={{
+                                              "aria-labelledby": "basic-button",
+                                            }}
+                                          >
+                                            <MenuItem
+                                              onClick={() =>
+                                                handleEditComment(indexComment)
+                                              }
                                             >
-                                              <title>world</title>
-                                              <path d="M59.25,12.42l-.83.27L54,13.08l-1.27,2-.91-.29L48.23,11.6l-.52-1.66L47,8.16l-2.23-2-2.63-.51-.06,1.2,2.58,2.52,1.26,1.48-1.42.75-1.15-.34-1.73-.73,0-1.39L39.42,8.2l-.75,3.29L36.38,12l.23,1.84,3,.57.52-2.93,2.46.37,1.14.67h1.84L46.8,15l3.34,3.38-.25,1.32-2.69-.34-4.64,2.34-3.34,4-.43,1.78H37.58l-2.23-1-2.17,1,.54,2.29.94-1.09,1.67,0-.12,2,1.38.4L39,32.67,41.2,32l2.57.4,3,.8,1.48.18,2.52,2.86,4.87,2.86-3.15,6-3.32,1.54-1.26,3.44-4.81,3.21-.51,1.85A28,28,0,0,0,59.25,12.42Z" />
-                                              <path d="M39.22,42.63l-2-3.78L39.05,35l-1.87-.56-2.1-2.11-4.66-1L28.88,28v1.92H28.2l-4-5.44V20l-2.94-4.78-4.67.83H13.43l-1.59-1,2-1.6-2,.46A28,28,0,0,0,36,56a29,29,0,0,0,3.51-.25l-.29-3.39s1.29-5,1.29-5.2S39.22,42.63,39.22,42.63Z" />
-                                              <path d="M18.41,9l5-.7,2.29-1.25,2.58.74,4.12-.23,1.42-2.22,2.05.34,5-.47,1.38-1.52,2-1.29,2.74.41,1-.15a27.91,27.91,0,0,0-33.51,7.49h0ZM37.18,2.78,40,1.21l1.84,1.06-2.66,2-2.54.26-1.14-.74ZM28.71,3,30,3.54,31.63,3l.9,1.56-3.82,1L26.88,4.5S28.67,3.35,28.71,3Z" />
-                                            </svg>{" "}
-                                            Public
-                                          </span>
-                                        )}
-                                        <span style={{ marginLeft: 10 }}>
-                                          {new Date(
-                                            reply.date
-                                          ).toDateString() ===
-                                            new Date().toDateString()
-                                            ? new Date(reply.date).getTime() ===
-                                              new Date().getTime()
-                                              ? "Just now"
-                                              : `Today ${new Date(
-                                                reply.date
-                                              ).toLocaleTimeString()}`
-                                            : `${new Date(
-                                              reply.date
-                                            ).toDateString()} ${new Date(
-                                              reply.date
-                                            ).toLocaleTimeString()}`}
-                                        </span>
+                                              Edit comment
+                                            </MenuItem>
+                                            <MenuItem onClick={handleClose}>
+                                              Resolve thread
+                                            </MenuItem>
+                                            <MenuItem onClick={handleClose}>
+                                              Delete thread
+                                            </MenuItem>
+                                          </Menu>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                  <div
-                                    style={{
-                                      padding: "0 20px",
-                                      paddingBottom: 10,
-                                    }}
-                                    onClick={() => {
-                                      setAddReply({
-                                        open: true,
-                                        id: indexComment,
-                                      });
-                                    }}
-                                  >
-                                    <p
-                                      style={{
-                                        wordBreak: "break-word",
-                                        whiteSpace: "pre-wrap",
-                                      }}
-                                    >
-                                      {reply?.text}
-                                    </p>
+                                    {editComment &&
+                                      editCommentIndex === indexComment ? (
+                                      <>
+                                        <div className="px-3" style={{ width: "100%" }}>
+                                          <textarea
+                                            name="comment"
+                                            placeholder="Start a conversation"
+                                            rows={1}
+                                            ref={commentInputRef}
+                                            value={currentComment}
+                                            onChange={(e) =>
+                                              setCurrentComment(e.target.value)
+                                            }
+                                            className="input-comment-update"
+                                          />
+                                        </div>
+                                        <div
+                                          className="d-flex justify-content-end px-2"
+                                          style={{ paddingBottom: 10 }}
+                                        >
+                                          <button
+                                            style={{
+                                              backgroundColor:
+                                                currentComment.trim().length === 0
+                                                  ? "#174B8B80"
+                                                  : "#174B8B",
+                                              border: "1px solid #174B8B80",
+                                              color: "white",
+                                              borderRadius: 5,
+                                              padding: 1,
+                                              fontSize: 13,
+                                            }}
+                                            disabled={
+                                              currentComment.trim().length === 0
+                                                ? true
+                                                : false
+                                            }
+                                            onClick={addComment}
+                                          >
+                                            <b>Update</b>
+                                          </button>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <div
+                                        style={{ margin: "0 2rem" }}
+                                        className="pb-1"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setAddReply({ open: true, id: indexComment });
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            wordBreak: "break-word",
+                                            whiteSpace: "pre-wrap",
+                                          }}
+                                        >
+                                          {reply.text}
+                                        </span>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               );
                             })}
-                          {addReply.open && addReply.id === indexComment && (
+                          {editCommentIndex !== indexComment && (
                             <div
                               id={`reply-${indexComment}`}
                               onClick={(e) => e.stopPropagation()}
                               className="add-reply-container"
                             >
-                              <div
-                                style={{
-                                  textAlign: "center",
-                                }}
-                              >
+                              <div className="d-flex align-items-center justify-content-around px-1">
                                 <textarea
                                   name="Reply"
                                   placeholder="Reply"
                                   rows={1}
-                                  value={reply}
-                                  onChange={(e) => setReply(e.target.value)}
+                                  value={reply[indexComment]}
+                                  onChange={(e) => handleReplyChange(indexComment, e.target.value)}
                                   className="input-comment"
                                   onFocus={() => {
                                     setIsFocusedInput(true);
                                   }}
                                   onBlur={() => setIsFocusedInput(false)}
                                 />
+
+                                {reply[indexComment]?.length > 0 && (
+                                  <svg
+                                    onClick={() => {
+                                      setReply((prevReplies: any) => ({
+                                        ...prevReplies,
+                                        [indexComment]: ``
+                                      }))
+                                    }}
+                                    style={{
+                                      cursor: "pointer",
+                                    }}
+                                    width="9"
+                                    height="9"
+                                    viewBox="0 0 6 6"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M6 0.632473L5.36753 0L3 2.36753L0.632473 0L0 0.632473L2.36753 3L0 5.36753L0.632473 6L3 3.63247L5.36753 6L6 5.36753L3.63247 3L6 0.632473Z"
+                                      fill="black"
+                                    />
+                                  </svg>
+                                )}
+                              </div>
+
+                              {reply[indexComment]?.length > 0 && (
                                 <div
+                                  className="d-flex justify-content-end px-3"
                                   style={{
-                                    display: "flex",
-                                    justifyContent: "end",
-                                    width: "100%",
-                                    padding: 10,
+                                    marginTop: 10,
                                   }}
                                 >
                                   <button
                                     style={{
                                       backgroundColor:
-                                        reply.trim().length === 0
-                                          ? "#a3b9ff"
-                                          : "#5280ff",
-                                      border: "1px solid #5280ff",
+                                        reply[indexComment]?.trim().length === 0
+                                          ? "#174B8B80"
+                                          : "#174B8B",
+                                      border: "1px solid #174B8B80",
                                       color: "white",
-                                      borderRadius: 4,
+                                      borderRadius: 5,
                                       padding: 1,
                                       fontSize: 13,
                                     }}
-                                    onClick={() => handleReply(indexComment)}
                                     disabled={
-                                      reply.trim().length === 0 ? true : false
+                                      reply[indexComment].trim().length === 0
+                                        ? true
+                                        : false
                                     }
+                                    onClick={() => handleReply(indexComment)}
                                   >
                                     <b>Comment</b>
                                   </button>
                                 </div>
-                              </div>
+                              )}
                             </div>
                           )}
                         </div>

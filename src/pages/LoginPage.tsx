@@ -55,6 +55,9 @@ const LoginPage: React.FC = () => {
         email: data.email,
         password: data.password,
       };
+
+      console.log(payload)
+
       const response = await login(payload);
 
       if (response.ok === true) {

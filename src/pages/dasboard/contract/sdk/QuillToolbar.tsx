@@ -486,46 +486,30 @@ export const formats = [
   "checkbox-container",
   "text-field-container",
   "signature-blot",
-  "alphabet-list-item",
   "lineHeight",
   "video",
   "audio",
 ];
 
 
-const ListItem = Quill.import("formats/list/item");
-class AlphabetListItem extends ListItem {
-  static create(value: any) {
-    let node = super.create();
-    if (value || value === undefined) {
-      const valueFromStorage = localStorage.getItem("list");
-      if (valueFromStorage) {
-        node.setAttribute("data-list", valueFromStorage);
-      }
-    }
+const List = Quill.import('formats/list');
+
+// Flower List
+class FlowerList extends List {
+  static create(value:any) {
+    console.log(value,"from flower")
+    const node = super.create(value);
+    node.setAttribute('data-list-type', value);
     return node;
   }
 
-  static formats(domNode: any) {
-    if (domNode.hasAttribute("data-list")) {
-      return domNode.getAttribute("data-list");
-    }
-    return super.formats(domNode);
-  }
-
-  format(name: any, value: any) {
-    if (name === "list") {
-      if (value) {
-        this.domNode.setAttribute("data-list", localStorage.getItem("list"));
-      } else {
-        this.domNode.removeAttribute("data-list");
-        super.format(name, false);
-      }
-    } else {
-      super.format(name, value);
-    }
+  static formats(node:any) {
+    console.log(node)
+    return node.getAttribute('data-list-type') || '';
   }
 }
+
+Quill.register(FlowerList,true);
 
 const Parchment = Quill.import("parchment");
 const lineHeightConfig = {
@@ -539,10 +523,6 @@ const LineHeightStyle = new Parchment.Attributor.Style(
 );
 Quill.register(LineHeightStyle, true);
 
-// Register custom format
-Quill.register({
-  "formats/alphabet-list-item": AlphabetListItem,
-});
 
 export default function QuillToolbar() {
   const {
@@ -575,7 +555,8 @@ export default function QuillToolbar() {
     setCurrentPage,
     spacing,
     setSpacing,
-    setBgColorSelection
+    setBgColorSelection,
+    editMode
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
@@ -585,12 +566,9 @@ export default function QuillToolbar() {
     if (!editor) return;
   
     if (value === "none") {
-      localStorage.removeItem("list");
       editor.format("list", false, "user");
     } else {
-      const formattedValue = value === "default" ? "ordered" : value;
-      localStorage.setItem("list", formattedValue);
-      editor.format("list", formattedValue, "user");
+      editor.format("list", value, "user");
     }
     setAnchorEl2(null);
     setAnchorEl(null);
@@ -1646,6 +1624,8 @@ export default function QuillToolbar() {
           scrollbarWidth: "none",
           overflowY: "hidden",
           height: 53,
+          pointerEvents:editMode? "all" : "none",
+          opacity:editMode? "1" : "0.7",
         }}
       >
         <span className="ql-formats b-r">
