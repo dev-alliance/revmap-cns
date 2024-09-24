@@ -223,7 +223,7 @@ function SyncFesion() {
       if (data?.comments) {
         setComments(() => {
           return data.comments;
-        })
+        });
       }
       setFormState(data?.overview);
       setDucomentName(data?.overview?.name);
@@ -330,11 +330,10 @@ function SyncFesion() {
         };
 
         if (comments.length > 0) {
-          payload.comments = comments
+          payload.comments = comments;
         }
 
         console.log(payload);
-
 
         let response;
 
@@ -883,13 +882,8 @@ function SyncFesion() {
   };
 
   const Breadcrumb = ({ recipients }: any) => {
-    const hasReqOption = recipients.some(
-      (recipient: any) => recipient.ReqOption
-    );
-
-    const hasSignature = recipients.some(
-      (recipient: any) => recipient.signature
-    );
+    const hasReqOption = recipients.some((recipient: any) => recipient.ReqOption);
+    const hasSignature = recipients.some((recipient: any) => recipient.signature);
 
     // Determine which step to highlight
     let highlightStep = "";
@@ -903,66 +897,28 @@ function SyncFesion() {
       highlightStep = "Signed";
     }
 
+    const steps = [
+      { label: "Draft", step: "" },
+      { label: "Review", step: "Review" },
+      { label: "Signing", step: "Signing" },
+      { label: "Signed", step: "Signed" },
+      { label: "Active", step: "Active" },
+    ];
+
     return (
-      <ul className="flex mt-2">
-        <li style={{ color: highlightStep === "" ? "#155BE5" : "black" }}>
-          Draft
-        </li>
-
-        <li style={{ color: highlightStep === "Review" ? "#155BE5" : "black" }}>
-          <span
-            style={{
-              marginRight: "0.5rem",
-              marginLeft: "0.5rem",
-              color: "#174B8B",
-            }}
-          >
-            »»
-          </span>{" "}
-          Review
-        </li>
-        <li
-          style={{ color: highlightStep === "Signing" ? "#155BE5" : "black" }}
-        >
-          <span
-            style={{
-              marginRight: "0.5rem",
-              marginLeft: "0.5rem",
-              color: "#174B8B",
-            }}
-          >
-            »»
-          </span>{" "}
-          Signing
-        </li>
-
-        <li style={{ color: highlightStep === "Signed" ? "#155BE5" : "black" }}>
-          <span
-            style={{
-              marginRight: "0.5rem",
-              marginLeft: "0.5rem",
-              color: "#174B8B",
-            }}
-          >
-            »»
-          </span>{" "}
-          Signed
-        </li>
-        <li>
-          <span
-            style={{
-              marginLeft: "0.5rem",
-              marginRight: "0.5rem",
-              color: "#174B8B",
-            }}
-          >
-            »»
-          </span>{" "}
-          Active
-        </li>
-      </ul>
+      <div className="flex mt-1 mx-1">
+        {steps
+          .filter(({ step }) => step === highlightStep || (highlightStep === "" && step === "Draft"))
+          .map(({ label, step }) => (
+            <li key={step} className="btn-steps d-flex align-items-center">
+              <div className="color mx-2"></div>
+              <div className="text-[14px]">{label}</div>
+            </li>
+          ))}
+      </div>
     );
   };
+
 
   let container: DocumentEditorContainerComponent;
   const onCreated = useCallback(() => {
@@ -1690,7 +1646,6 @@ function SyncFesion() {
       SetOpenComment(false);
       setCurrentComment("");
       setEditCommmentIndex(null);
-
     } else {
       if (currentComment) {
         let initialTop = buttonPosition.top;
@@ -1720,7 +1675,7 @@ function SyncFesion() {
         setEditComment(false);
       }
     }
-    setCommentSelection(null)
+    setCommentSelection(null);
     setSelection(null);
     selectionRef.current = null;
   };
@@ -1743,7 +1698,7 @@ function SyncFesion() {
     }
     setReply((prevReplies: any) => ({
       ...prevReplies,
-      [index]: ``
+      [index]: ``,
     }));
     setCurrentComment("");
     SetOpenComment(false);
@@ -1762,9 +1717,9 @@ function SyncFesion() {
   const handleReplyChange = (indexComment: number, value: string) => {
     setReply((prevReplies: any) => ({
       ...prevReplies,
-      [indexComment]: value
+      [indexComment]: value,
     }));
-    console.log(reply)
+    console.log(reply);
   };
 
   const [addSigns, setAddSigns] = useState<boolean>(true);
@@ -2188,6 +2143,53 @@ function SyncFesion() {
   };
 
 
+  const div1Ref = useRef<any>(null);
+  const div2Ref = useRef<any>(null);
+  const div3Ref = useRef<any>(null);
+
+  const [remainingVh, setRemainingVh] = useState(0);
+
+  useEffect(() => {
+    const calculateRemainingVh = () => {
+      const viewportHeight = window.innerHeight; // Get the total viewport height in pixels
+
+      // Get the heights of the first three divs in pixels
+      const div1Height = div1Ref.current?.offsetHeight || 0;
+      const div2Height = div2Ref.current?.offsetHeight || 0;
+      const div3Height = div3Ref.current?.offsetHeight || 0;
+
+      // Calculate total height of the three divs
+      const totalHeight = div1Height + div2Height + div3Height;
+
+      // Convert total height to vh
+      const totalHeightInVh = (totalHeight / viewportHeight) * 100;
+
+      // Calculate the remaining vh
+      const remaining = 100 - totalHeightInVh;
+
+      setRemainingVh(remaining > 0 ? remaining : 0); // If there's no remaining space, set it to 0
+    };
+
+    calculateRemainingVh(); // Calculate on initial load
+
+    // Recalculate height when window is resized
+    window.addEventListener('resize', calculateRemainingVh);
+
+    // Clean up event listener on component unmount
+    return () => window.removeEventListener('resize', calculateRemainingVh);
+  }, []);
+
+
+  const EditIconSvg = () => {
+    return (
+      <svg width="18" height="18" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.01992 8.8125C3.04336 8.8125 3.0668 8.81016 3.09023 8.80664L5.06133 8.46094C5.08477 8.45625 5.10703 8.4457 5.12344 8.42813L10.091 3.46055C10.1019 3.44971 10.1105 3.43683 10.1164 3.42265C10.1223 3.40847 10.1253 3.39328 10.1253 3.37793C10.1253 3.36258 10.1223 3.34738 10.1164 3.33321C10.1105 3.31903 10.1019 3.30615 10.091 3.29531L8.14336 1.34648C8.12109 1.32422 8.0918 1.3125 8.06016 1.3125C8.02852 1.3125 7.99922 1.32422 7.97695 1.34648L3.00937 6.31406C2.9918 6.33164 2.98125 6.35273 2.97656 6.37617L2.63086 8.34727C2.61946 8.41004 2.62353 8.47466 2.64273 8.53551C2.66192 8.59635 2.69566 8.65161 2.74102 8.69648C2.81836 8.77148 2.91563 8.8125 3.01992 8.8125ZM3.80977 6.76875L8.06016 2.51953L8.91914 3.37852L4.66875 7.62773L3.62695 7.81172L3.80977 6.76875ZM10.3125 9.79688H1.6875C1.48008 9.79688 1.3125 9.96445 1.3125 10.1719V10.5938C1.3125 10.6453 1.35469 10.6875 1.40625 10.6875H10.5938C10.6453 10.6875 10.6875 10.6453 10.6875 10.5938V10.1719C10.6875 9.96445 10.5199 9.79688 10.3125 9.79688Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+ 
   return (
     <>
       {isLoading && (
@@ -2213,6 +2215,7 @@ function SyncFesion() {
         }}
       >
         <div
+          ref={div1Ref}
           style={{
             display: "flex",
             background: "white",
@@ -2241,150 +2244,43 @@ function SyncFesion() {
                 minWidth: "150px",
                 fontSize: "1.3rem",
                 color: "#155BE5",
-                borderBottom: "1px solid #174B8B",
                 borderTop: "none",
                 borderLeft: "none",
                 borderRight: "none",
                 outline: "none",
               }}
-              onFocus={(e) => {
-                e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-              }}
-              onBlur={(e) => {
-                e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-              }}
+            // onFocus={(e) => {
+            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
+            // }}
+            // onBlur={(e) => {
+            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
+            // }}
             />
 
             <div
-              className="px-1 border- flex justify-center items-end space-x-1.5 cursor-pointer mx-2 mt-1"
+              className="pl-4 border- flex justify-center items-end space-x-1.5 cursor-pointer mx-2 mt-1"
               style={{
-                border: "1px solid #174B8B",
                 borderRadius: "4px",
                 display: "flex",
                 alignItems: "center",
               }}
             >
               <svg
-                width="30"
-                height="30"
-                viewBox="0 0 18 16"
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M8.69884 3.625H15.2222C16.2041 3.625 17 4.4085 17 5.375V13.25C17 14.2165 16.2041 15 15.2222 15H2.77778C1.79594 15 1 14.2165 1 13.25V3.625M8.69884 3.625C8.26621 3.625 7.84843 3.46971 7.52378 3.18822L5.50376 1.43678C5.17911 1.15529 4.76132 1 4.3287 1H2.77778C1.79594 1 1 1.7835 1 2.75V3.625M8.69884 3.625H1"
-                  stroke="#174B8B"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  d="M21.125 7.49375H12.7109L9.96172 4.86406C9.92674 4.83132 9.88073 4.81291 9.83281 4.8125H3.875C3.46016 4.8125 3.125 5.14766 3.125 5.5625V19.4375C3.125 19.8523 3.46016 20.1875 3.875 20.1875H21.125C21.5398 20.1875 21.875 19.8523 21.875 19.4375V8.24375C21.875 7.82891 21.5398 7.49375 21.125 7.49375ZM20.1875 18.5H4.8125V6.5H9.23047L12.0336 9.18125H20.1875V18.5Z"
+                  fill="#7F7F7F"
                 />
               </svg>
-
-              <span className="text-[#155be5] text-[15px] leading-[28px] ">
-                Manage Folder
-              </span>
             </div>
-          </Box>
-          {IsTemplate ? (
-            <ListItemButton
-              sx={{
-                mt: 1,
-                pl: 2, // Adjust padding left value as needed
-                fontSize: "10px",
-              }}
-            >
-              <div
-                style={{
-                  height: "10px",
-                  width: "10px",
-                  backgroundColor: "#FFAA04",
-                  borderRadius: "50%",
-                  marginRight: "10px",
-                  alignSelf: "center",
-                }}
-              />
-              <ListItemText
-                sx={{
-                  fontSize: "10px",
-                  color: "#1976d2",
-                }}
-                primaryTypographyProps={{
-                  variant: "subtitle2",
-                  fontSize: "16px",
-                  color: "#155be5",
-                }}
-                primary="Template"
-              />
-            </ListItemButton>
-          ) : (
-            (showBlock === "" || showBlock === "pdf") && (
-              <>
-                <div style={{ marginTop: "12px" }}>
-                  <Breadcrumb recipients={recipients} />
-                </div>
-              </>
-            )
-          )}
-        </div>
-
-        <div
-          className="w-full flex justify-between"
-          style={{
-            borderTop:
-              showBlock == "uploadTrack" ? "1px solid #174B8B" : "none",
-            background: "#fefefe",
-          }}
-        >
-          <div className="flex items-center gap-x-8 min-w-[500px] pb-0 my-2 pl-4">
-            {showBlock == "uploadTrack" && (
-              <Typography
-                variant="body2"
-                component="span"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  style={{ display: "block", marginRight: "7px" }}
-                >
-                  <g clipPath="url(#clip0_4225_12326)">
-                    <path
-                      d="M8.00065 14.6181C11.6825 14.6181 14.6673 11.6432 14.6673 7.9736C14.6673 4.30394 11.6825 1.3291 8.00065 1.3291C4.31875 1.3291 1.33398 4.30394 1.33398 7.9736C1.33398 11.6432 4.31875 14.6181 8.00065 14.6181Z"
-                      stroke="#EF3E36"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M8 5.31543V7.97323"
-                      stroke="#EF3E36"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M8 10.6309H8.00667"
-                      stroke="#EF3E36"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_4225_12326">
-                      <rect width="16" height="15.9468" fill="white" />
-                    </clipPath>
-                  </defs>
-                </svg>
-                Externally Executed Document
-              </Typography>
-            )}
             {(showBlock === "" || showBlock === "pdf") && (
               <>
-                <div className="relative  ">
+                {/* <div className="relative  ">
                   <button
                     className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${showBlock == "uploadTrack"
                         ? "text-gray-300"
@@ -2996,6 +2892,735 @@ function SyncFesion() {
                       ></div>
                     </ul>
                   )}
+                </div> */}
+                <div className="border-docs ml-3 mr-1 mt-1">
+                  <span
+                    className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer "
+                    onClick={() => {
+                      setSelectedModule("approval"), setSidebarExpanded(true);
+                    }}
+                  >
+                    Approvals:{" "}
+                    {
+                      approvers.filter((recipient: any) => recipient.signature)
+                        .length
+                    }
+                    /{approvers.length}
+                  </span>
+                </div>
+
+                <div className="border-docs mx-1 mt-1">
+                  <span
+                    className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer"
+                    onClick={() => {
+                      setSelectedModule("signature"), setSidebarExpanded(true);
+                    }}
+                  >
+                    Signers:{" "}
+                    {
+                      recipients.filter((recipient: any) => recipient.signature)
+                        .length
+                    }
+                    /{recipients.length}
+                  </span>
+                </div>
+
+                <div className="border-docs mx-1 mt-1">
+                  <span className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer" onClick={() => {
+                    setSelectedModule("share");
+                    setSidebarExpanded(true);
+                  }}>
+                    Shared With:{" "}
+                    {collaborater?.filter((dt: any) => dt.permission).length}/
+                    {collaborater?.length}
+                  </span>
+                </div>
+
+                <div className="border-docs mx-1 mt-1">
+                  <span className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer" onClick={() => {
+                    setSelectedModule("fields"), setSidebarExpanded(true);
+                  }}>
+                    Fields: 0/0{" "}
+                  </span>
+                </div>
+              </>
+            )}
+          </Box>
+
+        </div>
+
+        <div
+          ref={div2Ref}
+          className="w-full flex"
+          style={{
+            borderTop:
+              showBlock == "uploadTrack" ? "1px solid #174B8B" : "none",
+            background: "#f7f7f7",
+          }}
+        >
+          {/* <div className="flex items-center gap-x-8 min-w-[500px] pb-0 my-2 pl-4">
+            {showBlock == "uploadTrack" && (
+              <Typography
+                variant="body2"
+                component="span"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ display: "block", marginRight: "7px" }}
+                >
+                  <g clipPath="url(#clip0_4225_12326)">
+                    <path
+                      d="M8.00065 14.6181C11.6825 14.6181 14.6673 11.6432 14.6673 7.9736C14.6673 4.30394 11.6825 1.3291 8.00065 1.3291C4.31875 1.3291 1.33398 4.30394 1.33398 7.9736C1.33398 11.6432 4.31875 14.6181 8.00065 14.6181Z"
+                      stroke="#EF3E36"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M8 5.31543V7.97323"
+                      stroke="#EF3E36"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M8 10.6309H8.00667"
+                      stroke="#EF3E36"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_4225_12326">
+                      <rect width="16" height="15.9468" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+                Externally Executed Document
+              </Typography>
+            )}
+            {(showBlock === "" || showBlock === "pdf") && (
+              <>
+                <div className="relative  ">
+                  <button
+                    className={`text-black text-[14px]   rounded focus:outline-none flex whitespace-nowrap  ${
+                      showBlock == "uploadTrack"
+                        ? "text-gray-300"
+                        : "text-black hover:text-gray-700"
+                    }`}
+                    disabled={showBlock == "uploadTrack"}
+                    onClick={() => toggleDropdown("signature")}
+                    // onMouseEnter={() => {
+                    //   toggleDropdown("signature");
+                    // }}
+                  >
+                    Manage Document
+                    <span
+                      style={{
+                        marginLeft: "0.5rem",
+                        marginTop: ".4rem",
+                        color: "#174B8B",
+                        fontSize: "16px",
+                        transform: !openDropdowns.signature
+                          ? "rotate(-90deg)"
+                          : "none", // Rotate the chevron when the dropdown is open
+                        display: "inline-block", // Ensure the span can be transformed
+                        transition: "transform 0.3s ease", // Smooth transition for rotation
+                      }}
+                    >
+                      <svg
+                        width="16"
+                        height="12"
+                        viewBox="0 0 16 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1.88 7.41504L8 10.2513L14.12 7.41504L16 8.29248L8 12L0 8.29248L1.88 7.41504ZM1.88 3.70752L8 6.54377L14.12 3.70752L16 4.58496L8 8.29248L0 4.58496L1.88 3.70752ZM1.88 0L8 2.83625L14.12 0L16 0.877446L8 4.58496L0 0.877446L1.88 0Z"
+                          fill="#174B8B"
+                        />
+                      </svg>
+                    </span>{" "}
+                  </button>
+                  {openDropdowns.signature && (
+                    <ul
+                      className="absolute space-y-0 text-[14px] py-2 left-0 -mt-1 w-60 bg-red shadow-lg rounded z-10"
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        border: "1.5px dashed #174B8B",
+                      }}
+                    >
+                      <li
+                        className="px-2 py-2 pb-2 cursor-pointer flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                        onClick={() => {
+                          triggerClick(
+                            "container_editor_font_properties_properties"
+                          );
+                          toggleDropdown("signature");
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M4.65374 13.7143H1.55125V1.52381H6.98061V5.33333H10.8587V7.69524L12.41 6.17143V4.57143L7.75623 0H1.55125C0.698061 0 0 0.685714 0 1.52381V13.7143C0 14.5524 0.698061 15.2381 1.55125 15.2381H4.65374V13.7143ZM12.5651 8.38095C12.6427 8.38095 12.7978 8.45714 12.8753 8.53333L13.8837 9.52381C14.0388 9.67619 14.0388 9.98095 13.8837 10.1333L13.108 10.8952L11.4792 9.29524L12.2548 8.53333C12.3324 8.45714 12.41 8.38095 12.5651 8.38095ZM12.5651 11.3524L7.8338 16H6.20499V14.4L10.9363 9.75238L12.5651 11.3524Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Edit
+                      </li>
+                      <li
+                        onClick={() => {
+                          // saveDocumentToState();
+                          toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2 cursor-pointer flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10.8889 0H1.55556C0.692222 0 0 0.8 0 1.77778V14.2222C0 15.2 0.692222 16 1.55556 16H12.4444C13.3 16 14 15.2 14 14.2222V3.55556L10.8889 0ZM12.4444 14.2222H1.55556V1.77778H10.2433L12.4444 4.29333V14.2222ZM7 8C5.70889 8 4.66667 9.19111 4.66667 10.6667C4.66667 12.1422 5.70889 13.3333 7 13.3333C8.29111 13.3333 9.33333 12.1422 9.33333 10.6667C9.33333 9.19111 8.29111 8 7 8ZM2.33333 2.66667H9.33333V6.22222H2.33333V2.66667Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Save
+                      </li>
+
+                      <li
+                        onClick={() => {
+                          // saveDocumentToState();
+                          toggleDropdown("signature");
+                        }}
+                        className="px-2  py-2 cursor-pointer   flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10.0363 0.499866L13.5811 4.72096C14.1396 5.39599 14.1396 6.47263 13.5811 7.14766L7 15.0003C5.88286 16.3332 4.0711 16.3332 2.9468 15.0003L0.418926 11.984C-0.139642 11.3089 -0.139642 10.2323 0.418926 9.55728L8.00972 0.499866C8.57545 -0.166622 9.47775 -0.166622 10.0363 0.499866ZM1.42864 10.7706L3.96368 13.7869C4.52225 14.4619 5.42455 14.4619 5.99028 13.7869L8.51816 10.7706L4.9734 6.54099L1.42864 10.7706Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Cancel
+                      </li>
+
+                      <li
+                        className="px-2 py-2 cursor-pointer border-y border-[#174B8B] flex items-center gap-x-2"
+                        onClick={() => {
+                          setShowPopup((current: any) => !current);
+                          toggleDropdown("signature");
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M9.33333 8L6.22222 4V7H0V9H6.22222V12L9.33333 8ZM14 14V2C14 0.89 13.3 0 12.4444 0H3.11111C2.69855 0 2.30289 0.210714 2.01117 0.585786C1.71944 0.960859 1.55556 1.46957 1.55556 2V5H3.11111V2H12.4444V14H3.11111V11H1.55556V14C1.55556 14.5304 1.71944 15.0391 2.01117 15.4142C2.30289 15.7893 2.69855 16 3.11111 16H12.4444C12.857 16 13.2527 15.7893 13.5444 15.4142C13.8361 15.0391 14 14.5304 14 14Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Import Document
+                      </li>
+                      <li
+                        onClick={() => {
+                          toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2   cursor-pointer  flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M12.5263 14.5455H4.42105V4.36364H12.5263V14.5455ZM12.5263 2.90909H4.42105C4.03021 2.90909 3.65537 3.06234 3.379 3.33512C3.10263 3.6079 2.94737 3.97787 2.94737 4.36364V14.5455C2.94737 14.9312 3.10263 15.3012 3.379 15.574C3.65537 15.8468 4.03021 16 4.42105 16H12.5263C12.9172 16 13.292 15.8468 13.5684 15.574C13.8447 15.3012 14 14.9312 14 14.5455V4.36364C14 3.97787 13.8447 3.6079 13.5684 3.33512C13.292 3.06234 12.9172 2.90909 12.5263 2.90909ZM10.3158 0H1.47368C1.08284 0 0.708001 0.153246 0.431632 0.426027C0.155263 0.698807 0 1.06878 0 1.45455V11.6364H1.47368V1.45455H10.3158V0Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Copy as a Template
+                      </li>
+                      <li
+                        className="px-2 py-2 hover:bg-gray-200 cursor-pointer border-t pt-2 border-b border-[#174B8B]  flex items-center gap-x-2"
+                        onClick={() => {
+                          triggerClick("container_toolbar_open");
+                          toggleDropdown("signature");
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M2.43478 8C2.43478 8.888 1.89304 9.6 1.21739 9.6C0.547826 9.6 0 8.888 0 8C0 7.12 0.547826 6.4 1.21739 6.4C1.89304 6.4 2.43478 7.12 2.43478 8ZM1.82609 0V4.8H0.608696V0H1.82609ZM0.608696 16V11.2H1.82609V16H0.608696ZM14 3.2V12.8C14 13.688 13.4583 14.4 12.7826 14.4H5.47826C4.8087 14.4 4.26087 13.688 4.26087 12.8V9.6L3.04348 8L4.26087 6.4V3.2C4.26087 2.312 4.8087 1.6 5.47826 1.6H12.7826C13.4583 1.6 14 2.312 14 3.2ZM12.7826 3.2H5.47826V7.064L4.76609 8L5.47826 8.936V12.8H12.7826V3.2ZM6.69565 5.6H11.5652V7.2H6.69565V5.6ZM6.69565 8.8H10.3478V10.4H6.69565V8.8Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        View Audit Trail
+                      </li>
+                      <li
+                        className="px-2 py-2 hover:bg-gray-200 cursor-pointer  pt-2 border-b border-[#174B8B]  flex items-center gap-x-2"
+                        onClick={() => {
+                          triggerClick("container_toolbar_open");
+                          toggleDropdown("signature");
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M14.2547 1.19687L14.0629 1H14.3474L21.1538 7.98557V8.27758L21.0239 8.14424L14.2547 1.19687ZM12.5385 1V1.89474V8.8421V9.8421H13.5385H20.3077H21.1538V11.7682C20.6813 11.68 20.1934 11.6316 19.6923 11.6316C15.0419 11.6316 11.3077 15.5018 11.3077 20.2105C11.3077 20.7339 11.357 21.2435 11.4468 21.7368H2.46154C1.68109 21.7368 1 21.0817 1 20.2105V2.52632C1 1.65185 1.672 1 2.46154 1H12.5385ZM16.1969 20.1782L17.4376 21.4515L18.1538 22.1866L18.8701 21.4515L22.4994 17.7268L22.6667 17.9355L18.1856 22.5344L16.1365 20.2402L16.1969 20.1782Z"
+                            stroke="#174B8B"
+                            stroke-width="2"
+                          />
+                        </svg>
+                        Clauses
+                      </li>
+                      <li
+                        onClick={() => {
+                          toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2  cursor-pointer   flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M11.8356 8.72L8.22799 13.28H6.77227V11.44L10.3799 6.88L11.8356 8.72ZM13.9876 8.08C13.9876 8.32 13.7977 8.56 13.6078 8.8L12.0255 10.8L11.4559 10.08L13.1015 8L12.7217 7.52L12.2787 8.08L10.823 6.24L12.2154 4.56C12.342 4.4 12.5952 4.4 12.785 4.56L13.6711 5.68C13.7977 5.84 13.7977 6.16 13.6711 6.4C13.5445 6.56 13.418 6.72 13.418 6.88C13.418 7.04 13.5445 7.2 13.6711 7.36C13.861 7.6 14.0509 7.84 13.9876 8.08ZM1.26584 14.4V1.6H5.6963V5.6H8.86091V6.8L10.1268 5.2V4.8L6.32922 0H1.26584C0.56963 0 0 0.72 0 1.6V14.4C0 15.28 0.56963 16 1.26584 16H8.86091C9.55713 16 10.1268 15.28 10.1268 14.4H1.26584ZM6.32922 12.08C6.20264 12.08 6.07606 12.16 6.01276 12.16L5.6963 10.4H4.74692L3.41778 11.76L3.79753 9.6H2.84815L2.21523 13.6H3.16461L5.00009 11.52L5.37984 13.36H6.01276L6.32922 13.28V12.08Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Request Signature
+                      </li>
+                      <li
+                        onClick={() => {
+                          cancelAllSignatures(), toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2   flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            !recipients.some(
+                              (recipient: any) => recipient.signature
+                            )
+                              ? "inherit"
+                              : "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                        style={{
+                          color: !recipients.some(
+                            (recipient: any) => recipient.signature
+                          )
+                            ? "gray"
+                            : "inherit", // Light blue if condition is true, else no color
+                          borderColor: !recipients.some(
+                            (recipient: any) => recipient.signature
+                          )
+                            ? "gray"
+                            : "#a1a1a1", // Dark blue if true, else grey
+                          cursor: !recipients.some(
+                            (recipient: any) => recipient.signature
+                          )
+                            ? "auto"
+                            : "pointer",
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="17"
+                          viewBox="0 0 14 17"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M11.8356 9.66089L8.22799 14.19H6.77227V12.3624L10.3799 7.83336L11.8356 9.66089ZM13.9876 9.02523C13.9876 9.2636 13.7977 9.50197 13.6078 9.74034L12.0255 11.7268L11.4559 11.0117L13.1015 8.94577L12.7217 8.46902L12.2787 9.02523L10.823 7.1977L12.2154 5.52909C12.342 5.37017 12.5952 5.37017 12.785 5.52909L13.6711 6.6415C13.7977 6.80041 13.7977 7.11824 13.6711 7.35661C13.5445 7.51553 13.418 7.67445 13.418 7.83336C13.418 7.99228 13.5445 8.15119 13.6711 8.31011C13.861 8.54848 14.0509 8.78685 13.9876 9.02523ZM1.26584 15.3024V2.58915H5.6963V6.56204H8.86091V7.7539L10.1268 6.16475V5.76746L6.32922 1H1.26584C0.56963 1 0 1.71512 0 2.58915V15.3024C0 16.1764 0.56963 16.8915 1.26584 16.8915H8.86091C9.55713 16.8915 10.1268 16.1764 10.1268 15.3024H1.26584ZM6.32922 12.9981C6.20264 12.9981 6.07606 13.0776 6.01276 13.0776L5.6963 11.3295H4.74692L3.41778 12.6803L3.79753 10.5349H2.84815L2.21523 14.5078H3.16461L5.00009 12.4419L5.37984 14.2694H6.01276L6.32922 14.19V12.9981Z"
+                            fill="#174B8B"
+                          />
+                          <line
+                            y1="-0.5"
+                            x2="19.6648"
+                            y2="-0.5"
+                            transform="matrix(0.581374 0.813637 -0.735688 0.677321 0 1)"
+                            stroke="#174B8B"
+                          />
+                        </svg>
+                        Cancel All Signatures
+                      </li>
+                      <li
+                        onClick={() => {
+                          reverToReview(), toggleDropdown("signature");
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            !recipients.some(
+                              (recipient: any) => recipient.signature
+                            )
+                              ? "inherit"
+                              : "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                        className="px-2  py-2 cursor-pointer flex items-center gap-x-2"
+                        style={{
+                          color: !recipients.some(
+                            (recipient: any) => recipient.ReqOption
+                          )
+                            ? "gray"
+                            : "inherit",
+                          cursor: !recipients.some(
+                            (recipient: any) => recipient.ReqOption
+                          )
+                            ? "auto"
+                            : "pointer",
+                        }}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M8 0C6.4087 0 4.88258 0.842855 3.75736 2.34315C2.63214 3.84344 2 5.87827 2 8H0L2.59333 11.4578L2.64 11.5822L5.33333 8H3.33333C3.33333 6.34976 3.825 4.76712 4.70017 3.60022C5.57534 2.43333 6.76232 1.77778 8 1.77778C9.23768 1.77778 10.4247 2.43333 11.2998 3.60022C12.175 4.76712 12.6667 6.34976 12.6667 8C12.6667 9.65024 12.175 11.2329 11.2998 12.3998C10.4247 13.5667 9.23768 14.2222 8 14.2222C6.71333 14.2222 5.54667 13.52 4.70667 12.3911L3.76 13.6533C4.84667 15.1111 6.33333 16 8 16C9.5913 16 11.1174 15.1571 12.2426 13.6569C13.3679 12.1566 14 10.1217 14 8C14 5.87827 13.3679 3.84344 12.2426 2.34315C11.1174 0.842855 9.5913 0 8 0Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Revert To Review
+                      </li>
+                      <li
+                        onClick={() => {
+                          toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2 cursor-pointer pt-2 border-b border-[#174B8B] flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="16"
+                          height="18"
+                          viewBox="0 0 16 18"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M6.16016 17H15.0009"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M2.24925 7.08754C1.46178 6.22567 1.11613 5.69893 1.01358 4.43391C0.916387 3.23499 1.35071 1.9988 2.0037 1.36731C2.91177 0.489144 3.99008 1.31537 4.59306 2.48019C5.2465 3.74247 5.81153 7.39155 5.85476 8.95648C5.90384 10.7333 5.67812 12.3476 5.09734 13.8921C4.69899 14.9513 4.1104 16.2 3.32699 16.623C2.61703 17.0063 1.84553 16.8634 1.70265 15.5666C1.52751 13.9772 2.01007 12.4287 2.53763 11.1151C3.2371 9.37351 4.12041 7.93155 5.34372 7.08754C10.0609 3.83281 7.27543 14.3129 8.83991 14.3129C10.4044 14.3129 10.5054 9.1645 11.6022 9.98748C12.6989 10.8105 10.6021 15.9217 14.5269 12.6917"
+                            stroke="#174B8B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        Sign
+                      </li>
+                      <li
+                        onClick={() => {
+                          onClick(), toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2  cursor-pointer   flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="16"
+                          height="18"
+                          viewBox="0 0 60 80"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M59.9996 12.236V77.2044C59.9996 78.744 58.7808 80 57.2867 80H7.27353C5.77943 80 4.56055 78.744 4.56055 77.2044V2.79564C4.56055 1.25601 5.77943 0 7.27353 0H48.1058L59.9996 12.236Z"
+                            fill="white"
+                          />
+                          <path
+                            d="M60.001 12.236V77.2044C60.001 78.744 58.7821 80 57.288 80H53.4151C54.9092 80 56.1281 78.744 56.1281 77.2044V12.236L44.2539 0H48.1268L60.001 12.236Z"
+                            fill="#E5E5E5"
+                          />
+                          <path
+                            d="M59.9993 12.236H50.8185C49.3244 12.236 48.1055 10.98 48.1055 9.44036V0L59.9993 12.236Z"
+                            fill="#92929D"
+                          />
+                          <path
+                            d="M48.5389 37.8827H16.337C15.2558 37.8827 14.3711 36.9711 14.3711 35.8569C14.3711 34.7427 15.2558 33.8311 16.337 33.8311H48.5389C49.6201 33.8311 50.5048 34.7427 50.5048 35.8569C50.5048 36.9913 49.6398 37.8827 48.5389 37.8827Z"
+                            fill="#92929D"
+                          />
+                          <path
+                            d="M48.5389 48.2753H16.337C15.2558 48.2753 14.3711 47.3637 14.3711 46.2495C14.3711 45.1353 15.2558 44.2236 16.337 44.2236H48.5389C49.6201 44.2236 50.5048 45.1353 50.5048 46.2495C50.5048 47.3839 49.6398 48.2753 48.5389 48.2753Z"
+                            fill="#92929D"
+                          />
+                          <path
+                            d="M48.5389 58.6679H16.337C15.2558 58.6679 14.3711 57.7562 14.3711 56.642C14.3711 55.5278 15.2558 54.6162 16.337 54.6162H48.5389C49.6201 54.6162 50.5048 55.5278 50.5048 56.642C50.5048 57.7765 49.6398 58.6679 48.5389 58.6679Z"
+                            fill="#92929D"
+                          />
+                          <path
+                            d="M27.2281 27.3486H0V15.9837C0 15.1329 0.668405 14.4238 1.51375 14.4238H27.2281C28.0537 14.4238 28.7418 15.1126 28.7418 15.9837V25.7887C28.7418 26.6396 28.0734 27.3486 27.2281 27.3486Z"
+                            fill="#F55B4B"
+                          />
+                          <path
+                            d="M28.7418 25.5861V25.7887C28.7418 26.6396 28.0734 27.3486 27.2281 27.3486H0V15.9837C0 15.1329 0.668405 14.4238 1.51375 14.4238H2.28047V18.4755C2.28047 22.4056 5.36697 25.6064 9.20053 25.6064H28.7418V25.5861Z"
+                            fill="#DD4E43"
+                          />
+                          <path
+                            d="M0 27.3486L4.56094 32.6968V27.3486H0Z"
+                            fill="#DB1B1B"
+                          />
+                          <path
+                            d="M7.37246 23.3386V24.6959H3.26367V23.3386H4.26629V18.0106H3.26367V16.6533H7.37246C8.33576 16.6533 9.06315 16.8762 9.59395 17.3421C10.1248 17.808 10.3803 18.4361 10.3803 19.2059C10.3803 19.6515 10.282 20.0567 10.1051 20.4214C9.92816 20.786 9.69225 21.0696 9.39736 21.252C9.10247 21.4545 8.78792 21.5761 8.4144 21.6571C8.04087 21.7382 7.58871 21.7584 7.03825 21.7584H6.2912V23.3183H7.37246V23.3386ZM6.2912 20.4214H6.58609C7.27416 20.4214 7.72632 20.2998 7.92292 20.077C8.11951 19.8541 8.21781 19.5503 8.21781 19.2059C8.21781 18.9223 8.13916 18.6589 8.00155 18.4563C7.86393 18.2537 7.70667 18.1322 7.52973 18.0714C7.3528 18.0309 7.05791 17.9904 6.64507 17.9904H6.27154V20.4214H6.2912Z"
+                            fill="white"
+                          />
+                          <path
+                            d="M10.8516 24.6959V23.3386H12.0311V18.0106H10.8516V16.6533H14.5475C15.3339 16.6533 15.9433 16.6938 16.4348 16.7951C16.9066 16.8964 17.3588 17.1193 17.7913 17.4434C18.2238 17.7878 18.5777 18.2335 18.8332 18.8007C19.0888 19.3679 19.2264 19.9959 19.2264 20.6847C19.2264 21.252 19.1281 21.7787 18.9512 22.2851C18.7742 22.7916 18.5383 23.1967 18.2631 23.5209C17.9879 23.8248 17.6733 24.0881 17.2801 24.2704C16.9066 24.4528 16.5527 24.5743 16.2382 24.6351C15.9237 24.6959 15.4322 24.7161 14.7638 24.7161H10.8516V24.6959ZM14.0757 23.3386H14.5672C15.1569 23.3386 15.6288 23.2575 15.9826 23.0955C16.3365 22.9334 16.6117 22.6498 16.8083 22.2649C17.0246 21.8597 17.1229 21.3532 17.1229 20.705C17.1229 20.0972 17.0246 19.5705 16.8083 19.1451C16.5921 18.7197 16.3168 18.4158 15.9433 18.2537C15.5894 18.0917 15.1176 18.0106 14.5672 18.0106H14.0757V23.3386Z"
+                            fill="white"
+                          />
+                          <path
+                            d="M20.1309 24.6959V23.3386H21.2514V18.0106H20.1309V16.6533H27.1296V19.1451H25.6354V18.0309H23.296V19.8946H24.9867V21.252H23.296V23.3386H24.4952V24.6959H20.1309Z"
+                            fill="white"
+                          />
+                          <path
+                            d="M24.2393 31.1167H4.58008V27.3486H27.3258V27.9564C27.3062 29.6986 25.93 31.1167 24.2393 31.1167Z"
+                            fill="#E5E5E5"
+                          />
+                        </svg>
+                        Download PDF
+                      </li>
+                      <li
+                        onClick={() => {
+                          save(), toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2 cursor-pointer  flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="16"
+                          height="14"
+                          viewBox="0 0 16 14"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M15.336 0C15.512 0 15.6693 0.0666667 15.808 0.2C15.936 0.328 16 0.482667 16 0.664V13.336C16 13.5173 15.936 13.672 15.808 13.8C15.6693 13.9333 15.512 14 15.336 14H4.664C4.488 14 4.33067 13.9333 4.192 13.8C4.064 13.672 4 13.5173 4 13.336V11H0.664C0.488 11 0.330667 10.936 0.192 10.808C0.064 10.6693 0 10.512 0 10.336V3.664C0 3.488 0.064 3.33067 0.192 3.192C0.330667 3.064 0.488 3 0.664 3H4V0.664C4 0.482667 4.064 0.328 4.192 0.2C4.33067 0.0666667 4.488 0 4.664 0H15.336ZM4.024 6.472L4.984 9.624H6.08L7.128 4.376H6.024L5.4 7.48L4.512 4.48H3.6L2.648 7.496L2.024 4.376H0.872L1.92 9.624H3.016L4.024 6.472ZM15 13V11H5V13H15ZM15 10V7.504H8V10H15ZM15 6.504V4H8V6.504H15ZM15 3V1H5V3H15Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Download Word
+                      </li>
+                      <li
+                        onClick={() => {
+                          toggleDropdown("signature");
+                        }}
+                        style={{ whiteSpace: "nowrap" }}
+                        className="px-2 py-2 cursor-pointer  border-b border-[#174B8B] flex items-center gap-x-1 no-wrap"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="18"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M7.7 16L9.1 15.1111L10.5 16V9.77778H7.7V16ZM10.5 5.33333V3.55556L9.1 4.44444L7.7 3.55556V5.33333L6.3 6.22222L7.7 7.11111V8.88889L9.1 8L10.5 8.88889V7.11111L11.9 6.22222L10.5 5.33333ZM12.6 0H1.4C1.0287 0 0.672601 0.187301 0.41005 0.520699C0.1475 0.854097 0 1.30628 0 1.77778V10.6667C0 11.1382 0.1475 11.5903 0.41005 11.9237C0.672601 12.2571 1.0287 12.4444 1.4 12.4444H6.3V10.6667H1.4V1.77778H12.6V10.6667H11.9V12.4444H12.6C12.9713 12.4444 13.3274 12.2571 13.5899 11.9237C13.8525 11.5903 14 11.1382 14 10.6667V1.77778C14 1.30628 13.8525 0.854097 13.5899 0.520699C13.3274 0.187301 12.9713 0 12.6 0ZM6.3 4.44444H2.1V2.66667H6.3V4.44444ZM4.9 7.11111H2.1V5.33333H4.9V7.11111ZM6.3 9.77778H2.1V8H6.3V9.77778Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        <span style={{ marginTop: "-2px", marginLeft: "2px" }}>
+                          {" "}
+                          Download Signature Certificate
+                        </span>
+                      </li>
+                      <li
+                        onClick={() => {
+                          toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2 cursor-pointer flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="16"
+                          height="18"
+                          viewBox="0 0 16 18"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M11.4617 14.3223V10.4926C11.4617 10.2251 11.5549 9.96862 11.7208 9.77949C11.8867 9.59036 12.1117 9.48411 12.3464 9.48411C12.581 9.48411 12.806 9.59036 12.9719 9.77949C13.1378 9.96862 13.231 10.2251 13.231 10.4926V14.945C13.2354 15.2131 13.1929 15.4795 13.106 15.7286C13.019 15.9778 12.8894 16.2047 12.7246 16.3961C12.5598 16.5874 12.3633 16.7395 12.1464 16.8432C11.9295 16.947 11.6966 17.0005 11.4614 17.0005C11.2261 17.0005 10.9933 16.947 10.7764 16.8432C10.5595 16.7395 10.3629 16.5874 10.1981 16.3961C10.0334 16.2047 9.90373 15.9778 9.81677 15.7286C9.72982 15.4795 9.68731 15.2131 9.69172 14.945V10.0564C9.69172 9.25385 9.9714 8.48413 10.4692 7.91662C10.9671 7.3491 11.6423 7.03027 12.3464 7.03027C13.0504 7.03027 13.7256 7.3491 14.2235 7.91662C14.7213 8.48413 15.001 9.25385 15.001 10.0564V14.3223"
+                            stroke="#174B8B"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M7.68791 14.8294H1.9332C1.6857 14.8294 1.44834 14.7173 1.27333 14.5178C1.09832 14.3183 1 14.0478 1 13.7656V2.0638C1 1.78166 1.09832 1.51108 1.27333 1.31158C1.44834 1.11208 1.6857 1 1.9332 1H8.54583C8.79315 1.00006 9.03034 1.11204 9.20529 1.31134L10.992 3.34817C11.1669 3.54759 11.2651 3.81798 11.2652 4.09992V4.95096"
+                            stroke="#174B8B"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        Add Attachments
+                      </li>
+                      <li
+                        onClick={() => {
+                          toggleDropdown("signature");
+                        }}
+                        style={{ whiteSpace: "nowrap" }}
+                        className="px-2 py-2 border-b border-[#174B8B] cursor-pointer flex items-center gap-x-2 no-wrap"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M8.75 0H1.75C0.77875 0 0 0.72 0 1.6V14.4C0 15.288 0.77875 16 1.75 16H12.25C13.2212 16 14 15.288 14 14.4V4.8L8.75 0ZM12.25 14.4H1.75V1.6H7.875V5.6H12.25V14.4ZM6.125 13.6H5.90625C4.76875 13.6 2.625 12.976 2.625 10.6C2.625 8.224 4.76875 7.6 5.90625 7.6H6.125V8.8H5.90625C5.5825 8.8 3.9375 8.904 3.9375 10.6C3.9375 12.352 5.6875 12.4 5.90625 12.4H6.125V13.6ZM8.75 11.2H5.25V10H8.75V11.2ZM7.875 7.6H8.09375C9.23125 7.6 11.375 8.224 11.375 10.6C11.375 12.976 9.23125 13.6 8.09375 13.6H7.875V12.4H8.09375C8.4175 12.4 10.0625 12.296 10.0625 10.6C10.0625 8.848 8.3125 8.8 8.09375 8.8H7.875V7.6Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        View Linked Documents
+                      </li>
+                      <li
+                        onClick={() => {
+                          toggleDropdown("signature");
+                        }}
+                        className="px-2 py-2  cursor-pointer  flex items-center gap-x-2"
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#E4EDF8")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "initial")
+                        }
+                      >
+                        <svg
+                          width="14"
+                          height="16"
+                          viewBox="0 0 14 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1 14.2222C1 14.6937 1.21071 15.1459 1.58579 15.4793C1.96086 15.8127 2.46957 16 3 16H11C11.5304 16 12.0391 15.8127 12.4142 15.4793C12.7893 15.1459 13 14.6937 13 14.2222V3.55556H1V14.2222ZM3 5.33333H11V14.2222H3V5.33333ZM10.5 0.888889L9.5 0H4.5L3.5 0.888889H0V2.66667H14V0.888889H10.5Z"
+                            fill="#174B8B"
+                          />
+                        </svg>
+                        Move to Bin
+                      </li>
+                      <div
+                        onClick={() => toggleDropdown("signature")}
+                        className="w-full h-full  fixed inset-0 z-[-9]"
+                      ></div>
+                    </ul>
+                  )}
                 </div>
                 <span className="text-[14px] font-regular flex whitespace-nowrap ">
                   Approvals:{" "}
@@ -3067,9 +3692,53 @@ function SyncFesion() {
                 </span>
               </>
             )}
-          </div>
-
-          {/* buttons */}
+          </div> */}
+          {IsTemplate ? (
+            <ListItemButton
+              sx={{
+                mt: 1,
+                pl: 2, // Adjust padding left value as needed
+                fontSize: "10px",
+              }}
+            >
+              <div
+                style={{
+                  height: "10px",
+                  width: "10px",
+                  backgroundColor: "#FFAA04",
+                  borderRadius: "50%",
+                  marginRight: "10px",
+                  alignSelf: "center",
+                }}
+              />
+              <ListItemText
+                sx={{
+                  fontSize: "10px",
+                  color: "#1976d2",
+                }}
+                primaryTypographyProps={{
+                  variant: "subtitle2",
+                  fontSize: "16px",
+                  color: "#155be5",
+                }}
+                primary="Template"
+              />
+            </ListItemButton>
+          ) : (
+            (showBlock === "" || showBlock === "pdf") && (
+              <>
+                <div style={{ marginTop: "12px" }}>
+                  <Breadcrumb recipients={recipients} />
+                </div>
+              </>
+            )
+          )}
+          <div className="align-self-center mt-1 mx-4 text-[14px]">File</div>
+          <div className="align-self-center mt-1 mx-3 text-[14px]">View</div>
+          <div className="align-self-center mt-1 mx-3 text-[14px]">Insert</div>
+          <div className="align-self-center mt-1 mx-3 text-[14px]">Signature</div>
+          <div className="align-self-center mt-1 mx-3 text-[14px]">Export</div>
+          <div className="align-self-center mt-1 mx-3 text-[14px]">Attach</div>
           <div
             style={{
               display: "flex",
@@ -3078,6 +3747,7 @@ function SyncFesion() {
               marginTop: ".5rem",
               marginBottom: ".5rem",
               marginLeft: "13rem",
+              width: "100%"
             }}
           >
             {(showBlock == "uploadTrack" || editMode) && (
@@ -3133,18 +3803,20 @@ function SyncFesion() {
                 sx={{
                   ml: 2,
                   textTransform: "none",
-
-                  color: "#174B8B",
-                  borderColor: "#174B8B", // Change this to your preferred color
+                  color: "#43464C",
+                  borderColor: "#EEEEEE", // Change this to your preferred color
                   "&:hover": {
-                    borderColor: "#1171D1", // Optional: Change for hover state
+                    borderColor: "#EEEEEE", // Optional: Change for hover state
                   },
+                  borderRadius: 2,
+                  background: "#fefefe"
                 }}
                 onClick={() => {
                   handleClick();
                 }}
               >
-                <EditIcon fontSize="small" sx={{ mr: 1 }} /> Edit
+                <EditIconSvg />
+                <span className="mx-2">Edit</span>
               </Button>
             )}
           </div>
@@ -3182,25 +3854,29 @@ function SyncFesion() {
           <PDFUploaderViewer documentPath={documentPath} />
         )}
 
+        <div
+          ref={div3Ref}
+          style={{
+            backgroundColor: "#fefefe",
+            border: '1px solid #fefefe'
+          }}
+        >
+          <QuillToolbar />
+        </div>
+
         {(showBlock === "" || documentContent == "word") && (
           <div
             style={{
-              borderTop: "1px solid #174b8b",
               height: "100%",
+              background:"rgb(247, 247, 247)"
             }}
           >
-            <div
-              style={{
-                backgroundColor: "#fefefe",
-              }}
-            >
-              <QuillToolbar />
-            </div>
 
             <div
               style={{
-                height: "77vh",
-                overflowX: "auto",
+                overflowX: "auto", // Allows horizontal scrolling if necessary
+                overflowY: "auto", // Allows vertical scrolling if necessary
+                height: `${remainingVh + 1}vh`
               }}
               onClick={() => {
                 setAddReply({
@@ -3211,7 +3887,7 @@ function SyncFesion() {
                 if (editorRefs && commentSelection) {
                   const editor = editorRefs.current[currentPage].getEditor();
                   const { index, length } = commentSelection;
-                  console.log(commentPrevBg)
+                  console.log(commentPrevBg);
                   editor.formatText(index, length, {
                     background: commentPrevBg,
                   });
@@ -3691,15 +4367,16 @@ function SyncFesion() {
                                               </span>
                                             )}
                                           </div>
-                                          {editCommentIndex !== indexComment && (
-                                            <span
-                                              style={{
-                                                color: "#00000080",
-                                              }}
-                                            >
-                                              {reply?.date?.toLocaleString()}
-                                            </span>
-                                          )}
+                                          {editCommentIndex !==
+                                            indexComment && (
+                                              <span
+                                                style={{
+                                                  color: "#00000080",
+                                                }}
+                                              >
+                                                {reply?.date?.toLocaleString()}
+                                              </span>
+                                            )}
                                         </div>
                                         <div>
                                           <img
@@ -3707,7 +4384,10 @@ function SyncFesion() {
                                             className="position-options"
                                             alt="Options"
                                             onClick={(event) =>
-                                              handleOpenOptionsMenu(event, indexComment)
+                                              handleOpenOptionsMenu(
+                                                event,
+                                                indexComment
+                                              )
                                             }
                                           />
                                           <Menu
@@ -3739,7 +4419,10 @@ function SyncFesion() {
                                     {editComment &&
                                       editCommentIndex === indexComment ? (
                                       <>
-                                        <div className="px-3" style={{ width: "100%" }}>
+                                        <div
+                                          className="px-3"
+                                          style={{ width: "100%" }}
+                                        >
                                           <textarea
                                             name="comment"
                                             placeholder="Start a conversation"
@@ -3759,7 +4442,8 @@ function SyncFesion() {
                                           <button
                                             style={{
                                               backgroundColor:
-                                                currentComment.trim().length === 0
+                                                currentComment.trim().length ===
+                                                  0
                                                   ? "#174B8B80"
                                                   : "#174B8B",
                                               border: "1px solid #174B8B80",
@@ -3785,7 +4469,10 @@ function SyncFesion() {
                                         className="pb-1"
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          setAddReply({ open: true, id: indexComment });
+                                          setAddReply({
+                                            open: true,
+                                            id: indexComment,
+                                          });
                                         }}
                                       >
                                         <span
@@ -3814,7 +4501,12 @@ function SyncFesion() {
                                   placeholder="Reply"
                                   rows={1}
                                   value={reply[indexComment]}
-                                  onChange={(e) => handleReplyChange(indexComment, e.target.value)}
+                                  onChange={(e) =>
+                                    handleReplyChange(
+                                      indexComment,
+                                      e.target.value
+                                    )
+                                  }
                                   className="input-comment"
                                   onFocus={() => {
                                     setIsFocusedInput(true);
@@ -3827,8 +4519,8 @@ function SyncFesion() {
                                     onClick={() => {
                                       setReply((prevReplies: any) => ({
                                         ...prevReplies,
-                                        [indexComment]: ``
-                                      }))
+                                        [indexComment]: ``,
+                                      }));
                                     }}
                                     style={{
                                       cursor: "pointer",

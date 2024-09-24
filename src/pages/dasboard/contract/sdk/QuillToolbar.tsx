@@ -456,7 +456,7 @@ export const modules = {
     },
   },
   history: {
-    delay: 500,
+    delay: 0,
     maxStack: 100,
     userOnly: true,
   },
@@ -496,20 +496,20 @@ const List = Quill.import('formats/list');
 
 // Flower List
 class FlowerList extends List {
-  static create(value:any) {
-    console.log(value,"from flower")
+  static create(value: any) {
+    console.log(value, "from flower")
     const node = super.create(value);
     node.setAttribute('data-list-type', value);
     return node;
   }
 
-  static formats(node:any) {
+  static formats(node: any) {
     console.log(node)
     return node.getAttribute('data-list-type') || '';
   }
 }
 
-Quill.register(FlowerList,true);
+Quill.register(FlowerList, true);
 
 const Parchment = Quill.import("parchment");
 const lineHeightConfig = {
@@ -564,7 +564,7 @@ export default function QuillToolbar() {
   const handleListClick = (value: string) => {
     const editor = editorRefContext.getEditor();
     if (!editor) return;
-  
+
     if (value === "none") {
       editor.format("list", false, "user");
     } else {
@@ -573,8 +573,8 @@ export default function QuillToolbar() {
     setAnchorEl2(null);
     setAnchorEl(null);
   };
-  
-  
+
+
 
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [selectOpen, setSelectOpen] = useState(false);
@@ -872,10 +872,10 @@ export default function QuillToolbar() {
   const handleHeaderChange = (event: any) => {
     const editor = editorRefContext.getEditor();
     setSelectedHeaders(event.target.value);
-  
+
     // Get the current selection range
     const range = editor.getSelection();
-  
+
     if (range) {
       // If there is a selection, format the selected text
       editor.format("size", false, "user"); // Reset the size format
@@ -885,15 +885,15 @@ export default function QuillToolbar() {
       const currentFormat = editor.getFormat(); // Get the current format at the cursor
       editor.formatText(editor.getLength() - 1, 0, { ...currentFormat, size: false, header: event.target.value }, "user");
     }
-  
+
     setSelectedHeadersValue(event.target.value);
-  
+
     // Refocus the editor after formatting
     setTimeout(() => {
       editor.focus();
     }, 0);
   };
-  
+
 
   const [tooltipOpenNumbering, setTooltipOpenNumbering] = useState(false);
   const [tooltipOpenBullets, setTooltipOpenBullets] = useState(false);
@@ -939,12 +939,12 @@ export default function QuillToolbar() {
 
     if (editorRefContext) {
       const quill = editorRefContext.getEditor();
-      
+
 
       quill.on("text-change", checkHistory);
       quill.on("selection-change", checkHistory);
 
-      
+
       checkHistory(); // Initial check
 
       return () => {
@@ -1132,6 +1132,7 @@ export default function QuillToolbar() {
       )
       .join("");
   };
+
   const handleTextTransformation = (transformationFunction: Function) => {
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection();
@@ -1139,52 +1140,32 @@ export default function QuillToolbar() {
     if (selection && selection.length > 0) {
       const { index, length } = selection;
 
-      // Retrieve the current contents and formats of the selection
       const contents = editor.getContents(index, length);
 
-      // Initialize variables to store the final transformed text
       let transformedText = "";
-      let formatOps: any = [];
+      let delta = new editor.constructor.imports.delta();
 
-      // Process each segment of text with its formatting
-      contents.ops.forEach((op: any) => {
-        if (op.insert) {
+      contents.ops.forEach((op: any, i: number) => {
+        if (op.insert && typeof op.insert === 'string') {
           const segment = op.insert;
-          const format = op.attributes || {};
-
-          // Transform the segment of text
           const transformedSegment = transformationFunction(segment);
-
-          // Append the transformed segment to the final text
           transformedText += transformedSegment;
+          delta = delta.retain(index).delete(length).insert(transformedSegment, op.attributes || {});
 
-          // Create format operations for each character in the transformed segment
-          for (let i = 0; i < transformedSegment.length; i++) {
-            formatOps.push({
-              index: transformedText.length - transformedSegment.length + i,
-              attributes: format,
-            });
-          }
+          console.log(`Transformed segment #${i}:`, transformedSegment);
         }
       });
 
-      // Remove the original selected text
-      editor.deleteText(index, length);
 
-      // Insert the transformed text with original formatting
-      let currentIndex = index;
-      transformedText.split("").forEach((char, i) => {
-        const format = formatOps[i]?.attributes || {};
-        editor.insertText(currentIndex, char, format);
-        currentIndex++;
-      });
+      editor.updateContents(delta, 'user');
 
-      // Restore the selection
       editor.setSelection(index, transformedText.length);
 
-      handleCloseCase();
+      handleCloseCase(); // Final action after transformation
     }
   };
+
+
 
   const [selectedColumn, setSelectedColumn] = useState("one");
 
@@ -1297,9 +1278,9 @@ export default function QuillToolbar() {
       if (savedRange && savedRange.length > 0) {
         quillEditor.formatLine(savedRange.index, savedRange.length, {
           lineHeight: value,
-        },"user");
+        }, "user");
       } else {
-        quillEditor.format("lineHeight", value,"user");
+        quillEditor.format("lineHeight", value, "user");
       }
     }
   };
@@ -1361,11 +1342,11 @@ export default function QuillToolbar() {
     const range = quill.getSelection();
 
     if (align === "left") {
-      quill.format("align", false,"user");
+      quill.format("align", false, "user");
     } else {
-      quill.format("align", align,"user");
+      quill.format("align", align, "user");
     }
-    
+
     setAnchorElAlignment(null);
     quill.focus();
   };
@@ -1395,17 +1376,33 @@ export default function QuillToolbar() {
 
   const handleAddLink = () => {
     const editor = editorRefContext.getEditor();
+
     if (selection) {
-      editor.deleteText(selection.index, selection.length);
-      editor.insertText(selection.index, displayText, "link", linkUrl,"user");
+      const { index, length } = selection;
+
+      // Create a Delta for deleting the selected text and inserting the link
+      let delta = new editor.constructor.imports.delta();
+
+      // Delete the selected text and insert the link
+      delta = delta.retain(index) // Retain the text before the selection
+        .delete(length) // Delete the selected text
+        .insert(displayText, { link: linkUrl }); // Insert the display text with link formatting
+
+      // Apply the delta with 'user' action to track undo/redo
+      editor.updateContents(delta, 'user');
+
     } else {
-      editor.insertText(cursorIndex, displayText, "link", linkUrl,"user");
+      // If no selection, insert the link at the cursor position
+      editor.insertText(cursorIndex, displayText, { link: linkUrl }, 'user');
     }
+
+    // Clear inputs and close the link dialog
     setDisplayText("");
     setLinkUrl("");
     handleCloseLink();
     setSelection(null);
   };
+
 
   const handleCloseLink = () => {
     setDisplayTextChange(false)
@@ -1447,7 +1444,7 @@ export default function QuillToolbar() {
           const imageUrl = event.target.result;
 
           const quill = editorRefContext.getEditor();
-          quill.insertEmbed(cursorIndex, "image", imageUrl,"user");
+          quill.insertEmbed(cursorIndex, "image", imageUrl, "user");
 
           const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
           if (img) {
@@ -1479,7 +1476,7 @@ export default function QuillToolbar() {
         reader.onload = (event: any) => {
           const videoUrl = event.target.result;
           const quill = editorRefContext.getEditor();
-          quill.insertEmbed(cursorIndex, "video", videoUrl,"user");
+          quill.insertEmbed(cursorIndex, "video", videoUrl, "user");
           quill.setSelection(cursorIndex + 1);
           quill.focus();
         };
@@ -1504,7 +1501,7 @@ export default function QuillToolbar() {
         reader.onload = (event: any) => {
           const audioUrl = event.target.result;
           const quill = editorRefContext.getEditor();
-          quill.insertEmbed(cursorIndex, "audio", audioUrl,"user");
+          quill.insertEmbed(cursorIndex, "audio", audioUrl, "user");
           quill.setSelection(cursorIndex + 1);
         };
         reader.readAsDataURL(file);
@@ -1518,7 +1515,7 @@ export default function QuillToolbar() {
   const handleAddLinkPicture = () => {
     if (linkUrlImage.trim().length > 0) {
       const quill = editorRefContext.getEditor();
-      quill.insertEmbed(cursorIndex, "image", linkUrlImage,"user");
+      quill.insertEmbed(cursorIndex, "image", linkUrlImage, "user");
       const img = quill.root.querySelector(`img[src="${linkUrlImage}"]`);
       if (img) {
         img.classList.add("resizable");
@@ -1530,21 +1527,21 @@ export default function QuillToolbar() {
 
   const handleClean = () => {
     const editor = editorRefContext.getEditor();
-    const length = editor.getLength(); 
-  
+    const length = editor.getLength();
+
     editor.formatText(0, length, {
-      color: "black",         
-      background: "#fefefe",   
-      lineHeight: "1.5",  
+      color: "black",
+      background: "#fefefe",
+      lineHeight: "1.5",
       font: "arial",
       size: "13px",
       header: false,
-      bold: false, 
-      italic: false,  
-      underline: false,   
-      strike: false,           
-      list:false     
-    },"user");
+      bold: false,
+      italic: false,
+      underline: false,
+      strike: false,
+      list: false
+    }, "user");
 
     setBgColor("#fefefe");
     setFontColor("black");
@@ -1564,25 +1561,25 @@ export default function QuillToolbar() {
   }
 
   interface delta {
-    ops:any[]
+    ops: any[]
   }
 
 
-  const handleTextChange = useCallback((delta:delta, oldDelta:delta, source:string) => {
+  const handleTextChange = useCallback((delta: delta, oldDelta: delta, source: string) => {
     if (source === 'user') {
       const quill = editorRefContext?.getEditor();
       if (!quill) return;
-  
+
       // Track list-item changes
-      const listItemChanges= new Map();
-  
+      const listItemChanges = new Map();
+
       // Record changes from delta
       delta.ops.forEach((op) => {
         if (op.attributes && op.attributes['list-item']) {
           listItemChanges.set(op.index, op.attributes['list-item']);
         }
       });
-  
+
       // Apply changes to DOM and localStorage
       listItemChanges.forEach((newValue, index) => {
         const nodes = document.querySelectorAll(`[data-list]`);
@@ -1598,59 +1595,435 @@ export default function QuillToolbar() {
   useEffect(() => {
     if (!editorRefContext) return;
     const quill = editorRefContext.getEditor();
-  
+
     // Listen to the undo and redo actions via text-change
     quill.on('text-change', handleTextChange);
-  
+
     return () => {
       quill.off('text-change', handleTextChange);
     };
   }, [editorRefContext, handleTextChange]);
-  
-  
 
+
+
+  const ScrollLeftSvg = () => {
+    return (
+      <svg width="20" height="53" viewBox="0 0 14 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.5" y="0.5" width="13" height="39" fill="white" />
+        <rect x="0.5" y="0.5" width="13" height="39" stroke="#EEEEEE" />
+        <path d="M10 24L4 20L10 16" stroke="#7F7F7F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+    )
+  }
+
+  const ScrollRightSvg = () => {
+    return (
+      <svg width="20" height="53" viewBox="0 0 15 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.5" y="0.5" width="13.0453" height="39" fill="white" />
+        <rect x="0.5" y="0.5" width="13.0453" height="39" stroke="#EEEEEE" />
+        <path d="M4 16.0171L10.0226 19.983L4.04541 24.017" stroke="#7F7F7F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+    )
+  }
+
+  const RedoSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.924 14.7462C14.796 13.2368 16 10.8859 16 8.24643C16 3.6912 12.43 0.00619412 8.012 7.76047e-06C3.588 -0.0061786 0 3.68708 0 8.24643C0 10.8282 1.15 13.1316 2.952 14.6431C3.022 14.7009 3.124 14.6885 3.18 14.6163L3.968 13.5749C4.022 13.5048 4.01 13.4038 3.944 13.3461C3.782 13.21 3.626 13.0635 3.476 12.9089C2.89124 12.308 2.42527 11.5958 2.104 10.8117C1.768 10.0013 1.6 9.13726 1.6 8.24643C1.6 7.35559 1.768 6.49156 2.102 5.67909C2.424 4.89342 2.886 4.18817 3.474 3.58191C4.062 2.97565 4.746 2.4993 5.508 2.1673C6.298 1.82292 7.136 1.6497 8 1.6497C8.864 1.6497 9.702 1.82292 10.49 2.1673C11.252 2.4993 11.936 2.97565 12.524 3.58191C13.112 4.18817 13.574 4.89342 13.896 5.67909C14.23 6.49156 14.398 7.35559 14.398 8.24643C14.398 9.13726 14.23 10.0013 13.896 10.8138C13.5747 11.5979 13.1088 12.3101 12.524 12.9109C12.338 13.1027 12.142 13.2821 11.938 13.4471L11.124 12.3727C11.1056 12.3482 11.0808 12.3295 11.0525 12.3188C11.0242 12.3081 10.9936 12.3058 10.9641 12.3123C10.9347 12.3188 10.9076 12.3337 10.886 12.3553C10.8644 12.3769 10.8491 12.4044 10.842 12.4346L10.05 15.7794C10.026 15.8825 10.102 15.9835 10.204 15.9835L13.544 16C13.678 16 13.754 15.8412 13.67 15.734L12.924 14.7462Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const UndoSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.988 7.75946e-06C3.57 0.00619332 0 3.69072 0 8.24535C0 10.8845 1.204 13.235 3.076 14.7443L2.326 15.734C2.244 15.8433 2.32 16.002 2.452 16L5.792 15.9835C5.896 15.9835 5.972 15.8825 5.946 15.7794L5.156 12.433C5.14887 12.4028 5.13362 12.3753 5.11201 12.3537C5.0904 12.3321 5.06331 12.3172 5.03385 12.3107C5.00439 12.3042 4.97376 12.3065 4.94548 12.3172C4.91721 12.3279 4.89243 12.3466 4.874 12.3711L4.06 13.4453C3.856 13.2804 3.66 13.101 3.474 12.9093C2.88924 12.3085 2.42327 11.5963 2.102 10.8124C1.768 9.99999 1.6 9.13607 1.6 8.24535C1.6 7.35463 1.768 6.49072 2.102 5.67835C2.424 4.89278 2.886 4.18763 3.474 3.58144C4.062 2.97526 4.746 2.49897 5.508 2.16701C6.298 1.82269 7.136 1.64949 8 1.64949C8.864 1.64949 9.702 1.82269 10.49 2.16701C11.252 2.49897 11.936 2.97526 12.524 3.58144C13.112 4.18763 13.574 4.89278 13.896 5.67835C14.23 6.49072 14.398 7.35463 14.398 8.24535C14.398 9.13607 14.23 9.99999 13.896 10.8124C13.5747 11.5963 13.1088 12.3085 12.524 12.9093C12.374 13.0639 12.218 13.2082 12.056 13.3464C12.0235 13.3736 12.0028 13.4129 11.9983 13.4557C11.9938 13.4986 12.0059 13.5415 12.032 13.5752L12.82 14.6165C12.876 14.6886 12.978 14.701 13.048 14.6433C14.85 13.1299 16 10.8268 16 8.24535C16 3.6866 12.412 -0.0061778 7.988 7.75946e-06Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const TextHighlightSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.9591 7.89808L9.62977 0.0522995C9.61666 0.0357239 9.60107 0.0225709 9.58391 0.0135957C9.56675 0.00462048 9.54834 0 9.52975 0C9.51117 0 9.49276 0.00462048 9.4756 0.0135957C9.45844 0.0225709 9.44285 0.0357239 9.42974 0.0522995L5.16671 5.33674C5.13988 5.37023 5.12465 5.41568 5.12431 5.46323C5.12398 5.51077 5.13857 5.55655 5.16493 5.59063L5.16671 5.59288L5.88109 6.47811L3.78797 9.06866C3.76114 9.10215 3.7459 9.1476 3.74557 9.19514C3.74524 9.24268 3.75983 9.28847 3.78618 9.32255L3.78797 9.32479L4.49342 10.1988L1.11621 14.4003H0.144661C0.0660796 14.4003 0 14.4812 0 14.58V15.8203C0 15.9191 0.0642937 16 0.142875 16H6.30257C6.34007 16 6.37579 15.982 6.40258 15.9483L7.76168 14.2498L8.4832 15.144C8.49631 15.1606 8.51189 15.1737 8.52905 15.1827C8.54622 15.1917 8.56462 15.1963 8.58321 15.1963C8.6018 15.1963 8.6202 15.1917 8.63736 15.1827C8.65453 15.1737 8.67011 15.1606 8.68322 15.144L10.7746 12.5467L11.4907 13.4342C11.5038 13.4507 11.5194 13.4639 11.5366 13.4729C11.5537 13.4818 11.5721 13.4865 11.5907 13.4865C11.6093 13.4865 11.6277 13.4818 11.6449 13.4729C11.662 13.4639 11.6776 13.4507 11.6907 13.4342L15.9538 8.14972C16.0145 8.08232 16.0145 7.96998 15.9591 7.89808ZM5.81858 14.3868H2.95751L5.35781 11.3986L6.78834 13.1713L5.81858 14.3868ZM8.58321 12.9916L5.52211 9.19673L6.74727 7.6779L9.80836 11.4727L8.58321 12.9916ZM11.5925 11.2817L6.89907 5.46481L9.52975 2.20472L14.2232 8.0239L11.5925 11.2817Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const FontColorSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.70265 14.6667H2.2666L7.33327 2H8.6666L13.7333 14.6667H12.2972L10.6972 10.6667H5.30265L3.70265 14.6667ZM5.83598 9.33333H10.1639L7.99994 3.92345L5.83598 9.33333Z" fill="#7F7F7F" />
+      </svg>
+    )
+  }
+
+  const ShadeColorSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.2783 10.2395C14.1991 10.2964 12.5565 12.0614 12.5565 13.3008C12.5565 14.6076 13.3735 15.442 14.2783 15.4875C15.0582 15.5259 16 14.7081 16 13.3008C16 11.9888 14.3575 10.2964 14.2783 10.2395ZM0 9.36489C0 9.83196 0.179059 10.271 0.504466 10.6017L5.31325 15.4875C5.63865 15.8181 6.07081 16 6.53051 16C6.99021 16 7.42236 15.8181 7.74777 15.4875L13.7738 9.36489L13.1652 8.74652L6.53051 2.00558L4.55655 0L3.33929 1.23676L5.31325 3.24233L0.504466 8.12814C0.179059 8.45875 0 8.89783 0 9.36489ZM6.53051 4.47909L11.3393 9.36489L6.53051 14.2507H6.53137L6.53051 15.1253V14.2507L1.72173 9.36489L6.53051 4.47909Z" fill="#7F7F7F" />
+      </svg>
+    )
+  }
+
+  const ChangeCaseSvg = () => {
+    return (
+      <svg width="18" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.09727 10.3333H2.76937L1.43604 13.6667H0L4.26667 3H5.6L9.86667 13.6667H8.4306L7.09727 10.3333ZM6.56394 9L4.93333 4.92344L3.30271 9H6.56394ZM13.6 8.69007V8.33333H14.9333V13.6667H13.6V13.3099C13.2078 13.5368 12.7524 13.6667 12.2667 13.6667C10.7939 13.6667 9.6 12.4727 9.6 11C9.6 9.52727 10.7939 8.33333 12.2667 8.33333C12.7524 8.33333 13.2078 8.4632 13.6 8.69007ZM12.2667 12.3333C13.0031 12.3333 13.6 11.7364 13.6 11C13.6 10.2636 13.0031 9.66667 12.2667 9.66667C11.5303 9.66667 10.9333 10.2636 10.9333 11C10.9333 11.7364 11.5303 12.3333 12.2667 12.3333Z" fill="#7F7F7F" />
+      </svg>
+    )
+  }
+
+  const BoldSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M7.99984 8.00001C9.83504 8.00001 11.3228 6.50761 11.3228 4.66668C11.3228 2.82573 9.83504 1.33334 7.99984 1.33334H3.6665V8.00001H7.99984Z" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.34357 14.6667C11.1788 14.6667 12.6665 13.1743 12.6665 11.3333C12.6665 9.4924 11.1788 8 9.34357 8H3.6665V14.6667H9.34357Z" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+    )
+  }
+
+  const ItalicSvg = () => {
+    return (<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6.6665 2H11.9998" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M4 14H9.33333" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M9.66683 1.98413L6.3335 14" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    )
+  }
+
+  const UnderlineSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.6665 14.6667H13.3332" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M12.3332 2.03232C12.3332 4.25452 12.3332 5.11109 12.3332 7.33332C12.3332 9.72656 10.3931 11.6667 7.99984 11.6667C5.6066 11.6667 3.6665 9.72656 3.6665 7.33332C3.6665 5.11109 3.6665 4.25452 3.6665 2.03232" stroke="#7F7F7F" stroke-linecap="round" />
+      </svg>
+
+    )
+  }
+
+  const StrikeThroughSvg = () => {
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 10.0421H17" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M11.4352 5.17391C11.462 4.07617 11.0446 3.01408 10.2776 2.22833C9.51057 1.44257 8.45886 0.999673 7.36079 1C5.58204 1.00167 4.07465 2.30984 3.82253 4.07064C3.57042 5.83143 4.65015 7.51004 6.35697 8.01078L9.12358 8.81774C11.1197 9.39737 12.3852 11.3574 12.0918 13.4152C11.7984 15.473 10.0356 17.0013 7.95697 17C5.26758 17 3.0874 14.8198 3.0874 12.1304" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+    )
+  }
+
+  const SubScriptSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.5 13C15.5 13.1326 15.4474 13.2598 15.3536 13.3536C15.2598 13.4473 15.1326 13.5 15 13.5H12C11.9072 13.5 11.8162 13.4742 11.7372 13.4253C11.6582 13.3765 11.5944 13.3067 11.5528 13.2236C11.5113 13.1406 11.4937 13.0476 11.5021 12.9551C11.5104 12.8626 11.5443 12.7743 11.6 12.7L14.2982 9.10251C14.3846 8.98738 14.4451 8.85495 14.4756 8.71428C14.5061 8.57361 14.5059 8.42801 14.4749 8.28743C14.444 8.14685 14.3831 8.01461 14.2964 7.89973C14.2096 7.78486 14.0991 7.69007 13.9724 7.62183C13.8456 7.55359 13.7057 7.51352 13.562 7.50435C13.4184 7.49518 13.2744 7.51713 13.14 7.56871C13.0056 7.62028 12.884 7.70025 12.7833 7.80317C12.6827 7.90608 12.6055 8.02951 12.5569 8.16501C12.535 8.22694 12.5011 8.28394 12.4572 8.33277C12.4132 8.3816 12.3601 8.42129 12.3008 8.44958C12.2415 8.47788 12.1772 8.49421 12.1116 8.49767C12.046 8.50112 11.9804 8.49162 11.9185 8.4697C11.8566 8.44779 11.7995 8.41389 11.7507 8.36995C11.7019 8.326 11.6622 8.27287 11.6339 8.21359C11.6056 8.1543 11.5893 8.09002 11.5858 8.02443C11.5824 7.95883 11.5919 7.89319 11.6138 7.83126C11.6824 7.63864 11.78 7.4576 11.9032 7.29439C12.2224 6.87079 12.6969 6.59136 13.2221 6.51758C13.7474 6.44379 14.2805 6.5817 14.7041 6.90095C15.1277 7.22021 15.4071 7.69466 15.4809 8.21994C15.5547 8.74521 15.4168 9.27829 15.0975 9.70189L13 12.5H15C15.1326 12.5 15.2598 12.5527 15.3536 12.6465C15.4474 12.7402 15.5 12.8674 15.5 13ZM9.32754 3.12501C9.2779 3.08198 9.22026 3.04915 9.15792 3.0284C9.09558 3.00765 9.02977 2.99939 8.96424 3.00409C8.8987 3.00879 8.83474 3.02636 8.776 3.0558C8.71727 3.08523 8.66491 3.12596 8.62192 3.17564L5.75004 6.48626L2.87817 3.17376C2.78862 3.08478 2.66873 3.03296 2.54256 3.0287C2.4164 3.02445 2.29329 3.06808 2.19796 3.15083C2.10262 3.23359 2.04212 3.34934 2.0286 3.47485C2.01507 3.60037 2.04953 3.72635 2.12504 3.82751L5.08817 7.25001L2.12504 10.6725C2.03818 10.7728 1.99472 10.9035 2.00421 11.0358C2.01371 11.1681 2.07538 11.2913 2.17567 11.3781C2.27595 11.465 2.40663 11.5085 2.53896 11.499C2.67129 11.4895 2.79443 11.4278 2.88129 11.3275L5.75629 8.01501L8.62817 11.3275C8.67117 11.3772 8.72354 11.4179 8.78228 11.4473C8.84101 11.4767 8.90497 11.4943 8.97049 11.499C9.03602 11.5037 9.10182 11.4954 9.16416 11.4747C9.22649 11.454 9.28413 11.4211 9.33379 11.3781C9.38345 11.3351 9.42415 11.2828 9.45356 11.224C9.48298 11.1653 9.50054 11.1013 9.50524 11.0358C9.50994 10.9703 9.50169 10.9045 9.48096 10.8421C9.46023 10.7798 9.42742 10.7222 9.38442 10.6725L6.41192 7.25001L9.37817 3.82751C9.46411 3.72742 9.50702 3.59742 9.49754 3.46584C9.48805 3.33425 9.42695 3.21175 9.32754 3.12501Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const SuperScriptSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.5 9C15.5 9.13261 15.4474 9.25978 15.3536 9.35355C15.2598 9.44732 15.1326 9.5 15 9.5H12C11.9072 9.5 11.8162 9.47414 11.7372 9.42532C11.6582 9.3765 11.5944 9.30666 11.5528 9.2236C11.5113 9.14055 11.4937 9.04757 11.5021 8.95509C11.5104 8.86261 11.5443 8.77428 11.6 8.7L14.2982 5.10312C14.3846 4.98799 14.4451 4.85556 14.4756 4.71489C14.5061 4.57422 14.5059 4.42862 14.4749 4.28804C14.444 4.14746 14.3831 4.01522 14.2964 3.90034C14.2096 3.78547 14.0991 3.69068 13.9724 3.62244C13.8456 3.5542 13.7057 3.51413 13.562 3.50496C13.4184 3.49579 13.2744 3.51774 13.14 3.56931C13.0056 3.62088 12.884 3.70086 12.7833 3.80377C12.6827 3.90669 12.6055 4.03012 12.5569 4.16562C12.535 4.22755 12.5012 4.28456 12.4573 4.3334C12.4134 4.38224 12.3603 4.42196 12.301 4.45028C12.2418 4.4786 12.1775 4.49498 12.1119 4.49847C12.0463 4.50196 11.9807 4.4925 11.9188 4.47062C11.8569 4.44875 11.7999 4.41489 11.751 4.37099C11.7022 4.32708 11.6625 4.27398 11.6341 4.21473C11.6058 4.15547 11.5894 4.09122 11.5859 4.02564C11.5825 3.96005 11.5919 3.89442 11.6138 3.8325C11.7101 3.56082 11.864 3.31318 12.0649 3.10652C12.2659 2.89987 12.5091 2.73909 12.778 2.6352C13.0468 2.5313 13.335 2.48675 13.6227 2.5046C13.9103 2.52244 14.1908 2.60226 14.4447 2.73858C14.6987 2.87491 14.9202 3.06451 15.0941 3.29442C15.2679 3.52432 15.39 3.78908 15.452 4.07058C15.514 4.35207 15.5144 4.64364 15.4533 4.92531C15.3921 5.20698 15.2707 5.47209 15.0975 5.7025L13 8.5H15C15.1326 8.5 15.2598 8.55267 15.3536 8.64644C15.4474 8.74021 15.5 8.86739 15.5 9ZM9.32754 4.625C9.27794 4.58192 9.22033 4.54905 9.15802 4.52825C9.0957 4.50745 9.0299 4.49913 8.96437 4.50377C8.89883 4.50842 8.83486 4.52593 8.7761 4.55531C8.71734 4.58469 8.66495 4.62536 8.62191 4.675L5.75004 7.98687L2.87816 4.67437C2.78852 4.58615 2.66891 4.53496 2.5432 4.531C2.41748 4.52704 2.2949 4.5706 2.19987 4.65301C2.10485 4.73541 2.04438 4.8506 2.03051 4.97561C2.01664 5.10062 2.05039 5.22627 2.12504 5.3275L5.08816 8.75L2.12504 12.1725C2.08203 12.2222 2.04923 12.2798 2.02849 12.3421C2.00776 12.4045 1.99951 12.4703 2.00421 12.5358C2.00891 12.6013 2.02647 12.6653 2.05589 12.724C2.08531 12.7827 2.12601 12.8351 2.17566 12.8781C2.27595 12.965 2.40663 13.0084 2.53896 12.9989C2.60449 12.9942 2.66844 12.9767 2.72718 12.9473C2.78591 12.9179 2.83828 12.8772 2.88129 12.8275L5.75629 9.515L8.62816 12.8275C8.71502 12.9278 8.83816 12.9895 8.97049 12.9989C9.10282 13.0084 9.2335 12.965 9.33379 12.8781C9.43407 12.7913 9.49575 12.6681 9.50524 12.5358C9.51474 12.4035 9.47127 12.2728 9.38441 12.1725L6.41191 8.75L9.37816 5.3275C9.46411 5.22741 9.50702 5.09741 9.49754 4.96582C9.48805 4.83423 9.42695 4.71173 9.32754 4.625Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const FormattingSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.75 2H6.5C5.43913 2 4.42172 2.42143 3.67157 3.17157C2.92143 3.92172 2.5 4.93913 2.5 6C2.5 7.06087 2.92143 8.07828 3.67157 8.82843C4.42172 9.57857 5.43913 10 6.5 10H8.25V14H11.75V3H13.75V2ZM8.25 9H6.5C5.70435 9 4.94129 8.68393 4.37868 8.12132C3.81607 7.55871 3.5 6.79565 3.5 6C3.5 5.20435 3.81607 4.44129 4.37868 3.87868C4.94129 3.31607 5.70435 3 6.5 3H8.25V9ZM10.75 13H9.25V3H10.75V13Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const NumberingSvg = () => {
+    return (
+      <svg width="24" height="24" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 11.5C5 11.3674 5.05268 11.2402 5.14645 11.1464C5.24021 11.0527 5.36739 11 5.5 11H14.5C14.6326 11 14.7598 11.0527 14.8536 11.1464C14.9473 11.2402 15 11.3674 15 11.5C15 11.6326 14.9473 11.7598 14.8536 11.8536C14.7598 11.9473 14.6326 12 14.5 12H5.5C5.36739 12 5.24021 11.9473 5.14645 11.8536C5.05268 11.7598 5 11.6326 5 11.5ZM5 7.5C5 7.36739 5.05268 7.24021 5.14645 7.14645C5.24021 7.05268 5.36739 7 5.5 7H14.5C14.6326 7 14.7598 7.05268 14.8536 7.14645C14.9473 7.24021 15 7.36739 15 7.5C15 7.63261 14.9473 7.75979 14.8536 7.85355C14.7598 7.94732 14.6326 8 14.5 8H5.5C5.36739 8 5.24021 7.94732 5.14645 7.85355C5.05268 7.75979 5 7.63261 5 7.5ZM5 3.5C5 3.36739 5.05268 3.24021 5.14645 3.14645C5.24021 3.05268 5.36739 3 5.5 3H14.5C14.6326 3 14.7598 3.05268 14.8536 3.14645C14.9473 3.24021 15 3.36739 15 3.5C15 3.63261 14.9473 3.75979 14.8536 3.85355C14.7598 3.94732 14.6326 4 14.5 4H5.5C5.36739 4 5.24021 3.94732 5.14645 3.85355C5.05268 3.75979 5 3.63261 5 3.5Z" fill="#7F7F7F" />
+        <path d="M1.713 11.865V11.391H2C2.217 11.391 2.363 11.254 2.363 11.074C2.363 10.889 2.205 10.764 2.002 10.764C1.779 10.764 1.635 10.916 1.629 11.074H1.039C1.055 10.607 1.412 10.287 2.025 10.287C2.613 10.285 2.979 10.578 2.982 10.99C2.98389 11.1313 2.93543 11.2687 2.84528 11.3775C2.75513 11.4863 2.62919 11.5595 2.49 11.584V11.617C2.64781 11.6288 2.79501 11.7009 2.90098 11.8184C3.00696 11.936 3.06356 12.0898 3.059 12.248C3.062 12.781 2.557 13.048 2.008 13.048C1.352 13.048 1.008 12.678 1 12.254H1.582C1.59 12.432 1.768 12.56 2.004 12.563C2.258 12.563 2.428 12.418 2.426 12.213C2.424 12.018 2.271 11.865 2.012 11.865H1.712H1.713ZM1.709 7.16598H1.105V7.13098C1.105 6.72298 1.4 6.28698 2.063 6.28698C2.646 6.28698 3.023 6.61298 3.023 7.04298C3.023 7.43198 2.766 7.65998 2.547 7.89098L2.01 8.46298V8.49298H3.064V8.99998H1.143V8.60498L2.1 7.61498C2.238 7.47298 2.393 7.31098 2.393 7.10698C2.393 6.92698 2.246 6.78698 2.051 6.78698C2.00598 6.78533 1.9611 6.79291 1.91913 6.80926C1.87715 6.82561 1.83897 6.85038 1.80693 6.88205C1.77489 6.91371 1.74967 6.9516 1.73283 6.99338C1.71599 7.03516 1.70788 7.07995 1.709 7.12498V7.16598ZM2.564 4.99998H1.929V2.92398H1.898L1.3 3.34398V2.77698L1.929 2.33398H2.564V4.99998Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const BulletSvg = () => {
+    return (
+      <svg width="24" height="24" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M5 11.5C5 11.3674 5.05268 11.2402 5.14645 11.1464C5.24021 11.0527 5.36739 11 5.5 11H14.5C14.6326 11 14.7598 11.0527 14.8536 11.1464C14.9473 11.2402 15 11.3674 15 11.5C15 11.6326 14.9473 11.7598 14.8536 11.8536C14.7598 11.9473 14.6326 12 14.5 12H5.5C5.36739 12 5.24021 11.9473 5.14645 11.8536C5.05268 11.7598 5 11.6326 5 11.5ZM5 7.5C5 7.36739 5.05268 7.24021 5.14645 7.14645C5.24021 7.05268 5.36739 7 5.5 7H14.5C14.6326 7 14.7598 7.05268 14.8536 7.14645C14.9473 7.24021 15 7.36739 15 7.5C15 7.63261 14.9473 7.75979 14.8536 7.85355C14.7598 7.94732 14.6326 8 14.5 8H5.5C5.36739 8 5.24021 7.94732 5.14645 7.85355C5.05268 7.75979 5 7.63261 5 7.5ZM5 3.5C5 3.36739 5.05268 3.24021 5.14645 3.14645C5.24021 3.05268 5.36739 3 5.5 3H14.5C14.6326 3 14.7598 3.05268 14.8536 3.14645C14.9473 3.24021 15 3.36739 15 3.5C15 3.63261 14.9473 3.75979 14.8536 3.85355C14.7598 3.94732 14.6326 4 14.5 4H5.5C5.36739 4 5.24021 3.94732 5.14645 3.85355C5.05268 3.75979 5 3.63261 5 3.5ZM2 4.5C2.26522 4.5 2.51957 4.39464 2.70711 4.20711C2.89464 4.01957 3 3.76522 3 3.5C3 3.23478 2.89464 2.98043 2.70711 2.79289C2.51957 2.60536 2.26522 2.5 2 2.5C1.73478 2.5 1.48043 2.60536 1.29289 2.79289C1.10536 2.98043 1 3.23478 1 3.5C1 3.76522 1.10536 4.01957 1.29289 4.20711C1.48043 4.39464 1.73478 4.5 2 4.5ZM2 8.5C2.26522 8.5 2.51957 8.39464 2.70711 8.20711C2.89464 8.01957 3 7.76522 3 7.5C3 7.23478 2.89464 6.98043 2.70711 6.79289C2.51957 6.60536 2.26522 6.5 2 6.5C1.73478 6.5 1.48043 6.60536 1.29289 6.79289C1.10536 6.98043 1 7.23478 1 7.5C1 7.76522 1.10536 8.01957 1.29289 8.20711C1.48043 8.39464 1.73478 8.5 2 8.5ZM2 12.5C2.26522 12.5 2.51957 12.3946 2.70711 12.2071C2.89464 12.0196 3 11.7652 3 11.5C3 11.2348 2.89464 10.9804 2.70711 10.7929C2.51957 10.6054 2.26522 10.5 2 10.5C1.73478 10.5 1.48043 10.6054 1.29289 10.7929C1.10536 10.9804 1 11.2348 1 11.5C1 11.7652 1.10536 12.0196 1.29289 12.2071C1.48043 12.3946 1.73478 12.5 2 12.5Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const LineSpacingSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_2557_456)">
+          <path d="M15.5 1.5H7.5V2.5H15.5V1.5Z" fill="#7F7F7F" />
+          <path d="M15.5 5.5H7.5V6.5H15.5V5.5Z" fill="#7F7F7F" />
+          <path d="M15.5 9.5H7.5V10.5H15.5V9.5Z" fill="#7F7F7F" />
+          <path d="M15.5 13.5H7.5V14.5H15.5V13.5Z" fill="#7F7F7F" />
+          <path d="M0.75 11.5V12.4434L3.52928 15.4974L6.25 12.4403V11.5H3.975V4.49997H6.25V3.55653L3.47072 0.502533L0.75 3.55969V4.49997H2.975V11.5H0.75ZM2.14181 3.49997L3.47903 1.99741L4.84644 3.49997H2.14181ZM4.85819 12.5L3.52097 14.0025L2.15356 12.5H4.85819Z" fill="#7F7F7F" />
+        </g>
+        <defs>
+          <clipPath id="clip0_2557_456">
+            <rect width="16" height="16" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>
+
+    )
+  }
+
+  const AlignmentSvg = () => {
+    return (
+      <svg width="24" height="23" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.5 3.5V4.5H14.5V3.5H1.5ZM1.5 5.5V6.5H10.5V5.5H1.5ZM1.5 7.5V8.5H14.5V7.5H1.5ZM1.5 9.5V10.5H10.5V9.5H1.5ZM1.5 11.5V12.5H14.5V11.5H1.5Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const IncreaseIndentSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 3.5C2 3.36739 2.05268 3.24021 2.14645 3.14645C2.24021 3.05268 2.36739 3 2.5 3H13.5C13.6326 3 13.7598 3.05268 13.8536 3.14645C13.9473 3.24021 14 3.36739 14 3.5C14 3.63261 13.9473 3.75979 13.8536 3.85355C13.7598 3.94732 13.6326 4 13.5 4H2.5C2.36739 4 2.24021 3.94732 2.14645 3.85355C2.05268 3.75979 2 3.63261 2 3.5ZM2.646 5.646C2.69245 5.59944 2.74762 5.56249 2.80837 5.53729C2.86911 5.51208 2.93423 5.49911 3 5.49911C3.06577 5.49911 3.13089 5.51208 3.19163 5.53729C3.25238 5.56249 3.30755 5.59944 3.354 5.646L5.354 7.646C5.40056 7.69245 5.43751 7.74762 5.46271 7.80837C5.48792 7.86911 5.50089 7.93423 5.50089 8C5.50089 8.06577 5.48792 8.13089 5.46271 8.19163C5.43751 8.25238 5.40056 8.30755 5.354 8.354L3.354 10.354C3.30751 10.4005 3.25232 10.4374 3.19158 10.4625C3.13084 10.4877 3.06574 10.5006 3 10.5006C2.93426 10.5006 2.86916 10.4877 2.80842 10.4625C2.74768 10.4374 2.69249 10.4005 2.646 10.354C2.59951 10.3075 2.56264 10.2523 2.53748 10.1916C2.51232 10.1308 2.49937 10.0657 2.49937 10C2.49937 9.93426 2.51232 9.86916 2.53748 9.80842C2.56264 9.74768 2.59951 9.69249 2.646 9.646L4.293 8L2.646 6.354C2.59944 6.30755 2.56249 6.25238 2.53729 6.19163C2.51208 6.13089 2.49911 6.06577 2.49911 6C2.49911 5.93423 2.51208 5.86911 2.53729 5.80837C2.56249 5.74762 2.59944 5.69245 2.646 5.646ZM7 6.5C7 6.36739 7.05268 6.24021 7.14645 6.14645C7.24021 6.05268 7.36739 6 7.5 6H13.5C13.6326 6 13.7598 6.05268 13.8536 6.14645C13.9473 6.24021 14 6.36739 14 6.5C14 6.63261 13.9473 6.75979 13.8536 6.85355C13.7598 6.94732 13.6326 7 13.5 7H7.5C7.36739 7 7.24021 6.94732 7.14645 6.85355C7.05268 6.75979 7 6.63261 7 6.5ZM7 9.5C7 9.36739 7.05268 9.24021 7.14645 9.14645C7.24021 9.05268 7.36739 9 7.5 9H13.5C13.6326 9 13.7598 9.05268 13.8536 9.14645C13.9473 9.24021 14 9.36739 14 9.5C14 9.63261 13.9473 9.75979 13.8536 9.85355C13.7598 9.94732 13.6326 10 13.5 10H7.5C7.36739 10 7.24021 9.94732 7.14645 9.85355C7.05268 9.75979 7 9.63261 7 9.5ZM2 12.5C2 12.3674 2.05268 12.2402 2.14645 12.1464C2.24021 12.0527 2.36739 12 2.5 12H13.5C13.6326 12 13.7598 12.0527 13.8536 12.1464C13.9473 12.2402 14 12.3674 14 12.5C14 12.6326 13.9473 12.7598 13.8536 12.8536C13.7598 12.9473 13.6326 13 13.5 13H2.5C2.36739 13 2.24021 12.9473 2.14645 12.8536C2.05268 12.7598 2 12.6326 2 12.5Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const DecreaseIndentSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 3.5C2 3.36739 2.05268 3.24021 2.14645 3.14645C2.24021 3.05268 2.36739 3 2.5 3H13.5C13.6326 3 13.7598 3.05268 13.8536 3.14645C13.9473 3.24021 14 3.36739 14 3.5C14 3.63261 13.9473 3.75979 13.8536 3.85355C13.7598 3.94732 13.6326 4 13.5 4H2.5C2.36739 4 2.24021 3.94732 2.14645 3.85355C2.05268 3.75979 2 3.63261 2 3.5ZM12.646 5.646C12.7399 5.55211 12.8672 5.49937 13 5.49937C13.1328 5.49937 13.2601 5.55211 13.354 5.646C13.4479 5.73989 13.5006 5.86722 13.5006 6C13.5006 6.13278 13.4479 6.26011 13.354 6.354L11.707 8L13.354 9.646C13.4479 9.73989 13.5006 9.86722 13.5006 10C13.5006 10.1328 13.4479 10.2601 13.354 10.354C13.2601 10.4479 13.1328 10.5006 13 10.5006C12.8672 10.5006 12.7399 10.4479 12.646 10.354L10.646 8.354C10.5994 8.30755 10.5625 8.25238 10.5373 8.19163C10.5121 8.13089 10.4991 8.06577 10.4991 8C10.4991 7.93423 10.5121 7.86911 10.5373 7.80837C10.5625 7.74762 10.5994 7.69245 10.646 7.646L12.646 5.646ZM2 6.5C2 6.36739 2.05268 6.24021 2.14645 6.14645C2.24021 6.05268 2.36739 6 2.5 6H8.5C8.63261 6 8.75979 6.05268 8.85355 6.14645C8.94732 6.24021 9 6.36739 9 6.5C9 6.63261 8.94732 6.75979 8.85355 6.85355C8.75979 6.94732 8.63261 7 8.5 7H2.5C2.36739 7 2.24021 6.94732 2.14645 6.85355C2.05268 6.75979 2 6.63261 2 6.5ZM2 9.5C2 9.36739 2.05268 9.24021 2.14645 9.14645C2.24021 9.05268 2.36739 9 2.5 9H8.5C8.63261 9 8.75979 9.05268 8.85355 9.14645C8.94732 9.24021 9 9.36739 9 9.5C9 9.63261 8.94732 9.75979 8.85355 9.85355C8.75979 9.94732 8.63261 10 8.5 10H2.5C2.36739 10 2.24021 9.94732 2.14645 9.85355C2.05268 9.75979 2 9.63261 2 9.5ZM2 12.5C2 12.3674 2.05268 12.2402 2.14645 12.1464C2.24021 12.0527 2.36739 12 2.5 12H13.5C13.6326 12 13.7598 12.0527 13.8536 12.1464C13.9473 12.2402 14 12.3674 14 12.5C14 12.6326 13.9473 12.7598 13.8536 12.8536C13.7598 12.9473 13.6326 13 13.5 13H2.5C2.36739 13 2.24021 12.9473 2.14645 12.8536C2.05268 12.7598 2 12.6326 2 12.5Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const PageBreakSvg = () => {
+    return (
+      <svg width="32" height="30" viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.5" y="0.5" width="31" height="29" rx="4.5" fill="white" />
+        <rect x="0.5" y="0.5" width="31" height="29" rx="4.5" stroke="#EEEEEE" />
+        <g clip-path="url(#clip0_2557_1218)">
+          <path d="M22 11.5V16H21V11.5H19C18.6022 11.5 18.2206 11.342 17.9393 11.0607C17.658 10.7794 17.5 10.3978 17.5 10V8H12C11.7348 8 11.4804 8.10536 11.2929 8.29289C11.1054 8.48043 11 8.73478 11 9V16H10V9C10 8.46957 10.2107 7.96086 10.5858 7.58579C10.9609 7.21071 11.4696 7 12 7H17.5L22 11.5ZM21 19H22V21C22 21.5304 21.7893 22.0391 21.4142 22.4142C21.0391 22.7893 20.5304 23 20 23H12C11.4696 23 10.9609 22.7893 10.5858 22.4142C10.2107 22.0391 10 21.5304 10 21V19H11V21C11 21.2652 11.1054 21.5196 11.2929 21.7071C11.4804 21.8946 11.7348 22 12 22H20C20.2652 22 20.5196 21.8946 20.7071 21.7071C20.8946 21.5196 21 21.2652 21 21V19ZM8.5 17C8.36739 17 8.24021 17.0527 8.14645 17.1464C8.05268 17.2402 8 17.3674 8 17.5C8 17.6326 8.05268 17.7598 8.14645 17.8536C8.24021 17.9473 8.36739 18 8.5 18H23.5C23.6326 18 23.7598 17.9473 23.8536 17.8536C23.9473 17.7598 24 17.6326 24 17.5C24 17.3674 23.9473 17.2402 23.8536 17.1464C23.7598 17.0527 23.6326 17 23.5 17H8.5Z" fill="#7F7F7F" />
+        </g>
+        <defs>
+          <clipPath id="clip0_2557_1218">
+            <rect width="16" height="16" fill="white" transform="translate(8 7)" />
+          </clipPath>
+        </defs>
+      </svg>
+
+    )
+  }
+
+  const MarginSvg = () => {
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.90909 1V17M14.0909 1V17M1 3.90909H17M1 14.0909H17M1.66667 17H16.3333C16.7015 17 17 16.6744 17 16.2727V1.72727C17 1.32561 16.7015 1 16.3333 1H1.66667C1.29848 1 1 1.32561 1 1.72727V16.2727C1 16.6744 1.29848 17 1.66667 17Z" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+    )
+  }
+
+  const OrientationSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 10.4444V14.8889C16 15.1836 15.8703 15.4662 15.6395 15.6746C15.4087 15.8829 15.0957 16 14.7692 16H4.92308C4.59666 16 4.28361 15.8829 4.05279 15.6746C3.82198 15.4662 3.69231 15.1836 3.69231 14.8889V8.22222C3.69231 7.92754 3.82198 7.64492 4.05279 7.43655C4.28361 7.22817 4.59666 7.11111 4.92308 7.11111H12.3077L16 10.4444ZM4.92308 8.22222V14.8889H14.7692V11H11.6923V8.22222H4.92308Z" fill="#7F7F7F" />
+        <path d="M6.15385 1.18519L1.23077 1.18519C0.904349 1.18519 0.591298 1.31005 0.360484 1.53232C0.12967 1.75458 0 2.05604 0 2.37037V11.8519C0 12.1662 0.12967 12.4676 0.360484 12.6899C0.591298 12.9122 0.904349 13.037 1.23077 13.037H8.61539C8.9418 13.037 9.25486 12.9122 9.48567 12.6899C9.71648 12.4676 9.84615 12.1662 9.84615 11.8519V4.74074L6.15385 1.18519ZM8.61539 11.8519H1.23077V2.37037H5.53846V5.33333H8.61539V11.8519Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const PageSizeSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.8609 0H3.33913C3.26261 0 3.2 0.0631579 3.2 0.140351V1.19298C3.2 1.27018 3.26261 1.33333 3.33913 1.33333H15.8609C15.9374 1.33333 16 1.27018 16 1.19298V0.140351C16 0.0631579 15.9374 0 15.8609 0ZM0 2.81159V15.8551C0 15.9348 0.0757895 16 0.168421 16H1.43158C1.52421 16 1.6 15.9348 1.6 15.8551V2.81159C1.6 2.73188 1.52421 2.66667 1.43158 2.66667H0.168421C0.0757895 2.66667 0 2.73188 0 2.81159ZM14.4 7.22L10.536 4H4.8V14.6667H14.4V7.22ZM4.8 2.66667H11.2L16 6.66667V14.6667C16 15.4 15.28 16 14.4 16H4.8C3.92 16 3.2 15.4 3.2 14.6667V4C3.2 3.26667 3.92 2.66667 4.8 2.66667Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const TrackChangeSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.3332 7.66665V4.66665L10.3332 1.33331H3.33317C2.96498 1.33331 2.6665 1.63179 2.6665 1.99998V14C2.6665 14.3682 2.96498 14.6666 3.33317 14.6666H7.33317" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M10.6668 14.6667L14.0002 11.3333L12.6668 10L9.3335 13.3333V14.6667H10.6668Z" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M10 1.33331V4.66665H13.3333" stroke="#7F7F7F" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+
+    )
+  }
+
+  const TableSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.75 14.75H14.25C14.3826 14.75 14.5098 14.6973 14.6036 14.6036C14.6973 14.5098 14.75 14.3826 14.75 14.25V1.75C14.75 1.61739 14.6973 1.49021 14.6036 1.39645C14.5098 1.30268 14.3826 1.25 14.25 1.25H1.75C1.61739 1.25 1.49021 1.30268 1.39645 1.39645C1.30268 1.49021 1.25 1.61739 1.25 1.75V14.25C1.25 14.3826 1.30268 14.5098 1.39645 14.6036C1.49021 14.6973 1.61739 14.75 1.75 14.75ZM8.5 2.25H13.75V7.5H8.5V2.25ZM8.5 8.5H13.75V13.75H8.5V8.5ZM2.25 2.25H7.5V7.5H2.25V2.25ZM2.25 8.5H7.5V13.75H2.25V8.5Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const LinkSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_2557_1250)">
+          <path d="M14.2959 1.74481C12.6388 0.0877485 9.94252 0.0877485 8.28549 1.74481L5.28027 4.75003L5.98743 5.45712L8.99259 2.4519C9.60208 1.84241 10.4287 1.5 11.2907 1.50001C12.1526 1.50001 12.9793 1.84242 13.5888 2.45192C14.1983 3.06142 14.5407 3.88807 14.5407 4.75002C14.5407 5.61198 14.1983 6.43863 13.5888 7.04812L10.5836 10.0533L11.2906 10.7604L14.2958 7.75522C15.9531 6.09816 15.9531 3.4019 14.2959 1.74481Z" fill="#7F7F7F" />
+          <path d="M7.04794 13.5889C6.43844 14.1984 5.61179 14.5408 4.74984 14.5408C3.88789 14.5408 3.06124 14.1984 2.45175 13.5889C1.84226 12.9794 1.49985 12.1528 1.49985 11.2908C1.49985 10.4289 1.84226 9.60221 2.45175 8.99272L5.28022 6.16425L4.57312 5.45715L1.74462 8.28562C1.34843 8.67993 1.03392 9.14852 0.819092 9.66456C0.604264 10.1806 0.493342 10.7339 0.492679 11.2929C0.492015 11.8519 0.601623 12.4055 0.815225 12.922C1.02883 13.4386 1.34223 13.9079 1.73748 14.3032C2.13273 14.6984 2.60207 15.0118 3.11862 15.2254C3.63517 15.439 4.18877 15.5486 4.74774 15.548C5.30671 15.5473 5.86006 15.4364 6.3761 15.2215C6.89213 15.0067 7.36072 14.6922 7.75503 14.296L10.5835 11.4676L9.87637 10.7605L7.04794 13.5889Z" fill="#7F7F7F" />
+          <path d="M11.114 4.21959L4.04297 11.2906L4.75008 11.9978L11.8212 4.9267L11.114 4.21959Z" fill="#7F7F7F" />
+        </g>
+        <defs>
+          <clipPath id="clip0_2557_1250">
+            <rect width="16" height="16" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>
+
+    )
+  }
+
+  const PictureSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.25 14.75H14.75V1.25H1.25V14.75ZM13.75 10.8794L10.2696 7.39903L11.7259 5.94278L13.75 7.96672V10.8794ZM2.25 2.25H13.75V6.5525L11.726 4.52844L9.5625 6.69194L6.4375 3.56694L2.25 7.75444V2.25ZM2.25 9.16875L6.4375 4.98125L13.75 12.2937V13.75H2.25V9.16875Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const MediaSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_2557_1260)">
+          <path d="M0 1C0 0.734784 0.105357 0.48043 0.292893 0.292893C0.48043 0.105357 0.734784 0 1 0L15 0C15.2652 0 15.5196 0.105357 15.7071 0.292893C15.8946 0.48043 16 0.734784 16 1V15C16 15.2652 15.8946 15.5196 15.7071 15.7071C15.5196 15.8946 15.2652 16 15 16H1C0.734784 16 0.48043 15.8946 0.292893 15.7071C0.105357 15.5196 0 15.2652 0 15V1ZM4 1V7H12V1H4ZM12 9H4V15H12V9ZM1 1V3H3V1H1ZM3 4H1V6H3V4ZM1 7V9H3V7H1ZM3 10H1V12H3V10ZM1 13V15H3V13H1ZM15 1H13V3H15V1ZM13 4V6H15V4H13ZM15 7H13V9H15V7ZM13 10V12H15V10H13ZM15 13H13V15H15V13Z" fill="#7F7F7F" />
+        </g>
+        <defs>
+          <clipPath id="clip0_2557_1260">
+            <rect width="16" height="16" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>
+
+    )
+  }
+
+  const FormulaSvg = () => {
+    return (
+      <svg width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M11.5636 4.45147L9.45331 6.49141L9.35813 6.04669L9.35675 6.04044C9.26012 5.6167 9.02694 5.23645 8.69308 4.95819C8.35922 4.67993 7.94318 4.51908 7.50897 4.50037L7.49869 4.49994H5.39919L5.98813 1.75969C6.03616 1.55221 6.15029 1.36595 6.31333 1.22894C6.47638 1.09193 6.67951 1.01159 6.89216 1H8.38081V0H6.88081L6.86022 0.000437498C6.42601 0.0191844 6.00998 0.180072 5.67614 0.458351C5.34229 0.736631 5.10913 1.11689 5.0125 1.54063L4.37638 4.5H1.75V5.5H4.16144L3.14269 10.2402C3.09466 10.4477 2.98054 10.634 2.8175 10.771C2.65445 10.9081 2.45131 10.9884 2.23866 11H0.75V12H2.26028L2.27056 11.9996C2.70477 11.9808 3.12081 11.82 3.45467 11.5417C3.78853 11.2635 4.02172 10.8832 4.11838 10.4595L5.18438 5.5H7.47716C7.68974 5.51161 7.89281 5.59192 8.05582 5.72887C8.21882 5.86581 8.33296 6.05198 8.38106 6.25937L8.60606 7.31059L5.04784 10.75H6.48666L8.85263 8.46291L9.01106 9.20331L9.01241 9.20956C9.10905 9.6333 9.34224 10.0135 9.6761 10.2918C10.01 10.5701 10.426 10.7309 10.8602 10.7496L12.5 10.75V9.75H10.8922C10.6796 9.73841 10.4765 9.6581 10.3135 9.52116C10.1504 9.38421 10.0363 9.19803 9.98819 8.99063L9.7 7.64375L13.0024 4.45147H11.5636Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const SourceCodeSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.85392 4.85402C5.90041 4.80753 5.93728 4.75234 5.96244 4.6916C5.9876 4.63087 6.00055 4.56577 6.00055 4.50002C6.00055 4.43428 5.9876 4.36918 5.96244 4.30844C5.93728 4.2477 5.90041 4.19251 5.85392 4.14602C5.80743 4.09953 5.75224 4.06266 5.6915 4.0375C5.63076 4.01234 5.56566 3.99939 5.49992 3.99939C5.43417 3.99939 5.36907 4.01234 5.30833 4.0375C5.24759 4.06266 5.19241 4.09953 5.14592 4.14602L1.64592 7.64602C1.59935 7.69247 1.56241 7.74764 1.5372 7.80839C1.512 7.86913 1.49902 7.93425 1.49902 8.00002C1.49902 8.06579 1.512 8.13091 1.5372 8.19165C1.56241 8.2524 1.59935 8.30758 1.64592 8.35402L5.14592 11.854C5.2398 11.9479 5.36714 12.0007 5.49992 12.0007C5.63269 12.0007 5.76003 11.9479 5.85392 11.854C5.9478 11.7601 6.00055 11.6328 6.00055 11.5C6.00055 11.3672 5.9478 11.2399 5.85392 11.146L2.70692 8.00002L5.85392 4.85402ZM10.1459 4.85402C10.052 4.76013 9.99929 4.6328 9.99929 4.50002C9.99929 4.36725 10.052 4.23991 10.1459 4.14602C10.2398 4.05213 10.3671 3.99939 10.4999 3.99939C10.6327 3.99939 10.76 4.05213 10.8539 4.14602L14.3539 7.64602C14.4005 7.69247 14.4374 7.74764 14.4626 7.80839C14.4878 7.86913 14.5008 7.93425 14.5008 8.00002C14.5008 8.06579 14.4878 8.13091 14.4626 8.19165C14.4374 8.2524 14.4005 8.30758 14.3539 8.35402L10.8539 11.854C10.76 11.9479 10.6327 12.0007 10.4999 12.0007C10.3671 12.0007 10.2398 11.9479 10.1459 11.854C10.052 11.7601 9.99929 11.6328 9.99929 11.5C9.99929 11.3672 10.052 11.2399 10.1459 11.146L13.2929 8.00002L10.1459 4.85402Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const ClearFormattingSvg = () => {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8.4343 9.37693L7.73663 13.3333H6.38275L7.28329 8.226L2.34326 3.28595L3.28607 2.34314L13.657 12.7141L12.7142 13.6569L8.4343 9.37693ZM7.84863 5.02006L8.02849 3.99999H6.82856L5.49521 2.66666H13.3334V3.99999H9.38236L8.99956 6.17101L7.84863 5.02006Z" fill="#7F7F7F" />
+      </svg>
+
+    )
+  }
+
+  const handleBold = () => {
+    const editor = editorRefContext.getEditor();
+    const isBold = editor.getFormat().bold;
+    editor.format("bold",isBold == undefined ? true :false);
+    editor.focus();
+  }
+
+  const handleItalic = () => {
+    const editor = editorRefContext.getEditor();
+    const isItalic = editor.getFormat().italic;
+    console.log(isItalic)
+    editor.format("italic",isItalic == undefined ? true :false);
+    editor.focus();
+  }
+
+  const handleUnderline = () => {
+    const editor = editorRefContext.getEditor();
+    const isUnderline = editor.getFormat().underline;
+    editor.format("underline",isUnderline == undefined ? true :false);
+    editor.focus();
+  }
+
+  const handleStrikethrough = () => {
+    const editor = editorRefContext.getEditor();
+    const isStrike = editor.getFormat().strike;
+    editor.format("strike",isStrike == undefined ? true :false);
+    editor.focus();
+  }
+
+
+  const handleSuperscript = () => {
+    const editor = editorRefContext.getEditor();
+    const isSuperscript = editor.getFormat().script === "super"; // Check if superscript is applied
+    editor.format("script", isSuperscript ? false : "super"); // Toggle superscript
+    editor.focus();
+  };
+  
+  const handleSubscript = () => {
+    const editor = editorRefContext.getEditor();
+    const isSubscript = editor.getFormat().script === "sub"; // Check if subscript is applied
+    editor.format("script", isSubscript ? false : "sub"); // Toggle subscript
+    editor.focus();
+  };
+
+  
   return (
     <div className="d-flex">
-      <button onClick={scrollLeft} className="btn-slider">
-        {"<"}
+      <button onClick={scrollLeft}>
+        <ScrollLeftSvg />
       </button>
       <div
         id="toolbar"
         ref={toolbarRef}
-        className="toolbar"
+        className="toolbar mx-1"
         style={{
           overflowX: "auto",
           whiteSpace: "nowrap",
           scrollbarWidth: "none",
           overflowY: "hidden",
           height: 53,
-          pointerEvents:editMode? "all" : "none",
-          opacity:editMode? "1" : "0.7",
+          pointerEvents: editMode ? "all" : "none",
+          // opacity: editMode ? "1" : "0.7",
+          border: "none"
         }}
       >
-        <span className="ql-formats b-r">
+        <span className="ql-formats ">
           <Tooltip title="Undo" placement="bottom">
             <button
               className="btn-undo"
               style={{
                 cursor: canUndo ? "pointer" : "default",
               }}
-              onClick={()=>{
+              onClick={() => {
                 handleUndo()
               }}
             >
-              <svg
-                width="20.47"
-                height="9"
-                viewBox="0 0 21 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10.5 1C7.85 1 5.45 2 3.6 3.6L0 0V9H9L5.38 5.38C6.77 4.22 8.54 3.5 10.5 3.5C14.04 3.5 17.05 5.81 18.1 9L20.47 8.22C19.08 4.03 15.15 1 10.5 1Z"
-                  fill={canUndo ? "black" : "#b8b8b8"}
-                />
-              </svg>
+              <UndoSvg />
             </button>
           </Tooltip>
           <Tooltip title="Redo" placement="bottom">
@@ -1659,22 +2032,11 @@ export default function QuillToolbar() {
               style={{
                 cursor: canRedo ? "pointer" : "default",
               }}
-              onClick={()=>{
+              onClick={() => {
                 handleRedo()
               }}
             >
-              <svg
-                width="20.47"
-                height="9"
-                viewBox="0 0 21 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M16.86 3.6C15.01 2 12.61 1 9.96 1C5.31 1 1.38 4.03 0 8.22L2.36 9C3.41 5.81 6.41 3.5 9.96 3.5C11.91 3.5 13.69 4.22 15.08 5.38L11.46 9H20.46V0L16.86 3.6Z"
-                  fill={canRedo ? "black" : "#b8b8b8"}
-                />
-              </svg>
+              <RedoSvg />
             </button>
           </Tooltip>
         </span>
@@ -1690,7 +2052,7 @@ export default function QuillToolbar() {
               }}
               style={{
                 height: 33,
-                width: 147,
+                // width: 147,
               }}
             >
               <Select
@@ -1698,9 +2060,10 @@ export default function QuillToolbar() {
                 defaultValue="arial"
                 style={{
                   height: 33,
-                  width: 147,
+                  // width: 104,
                   borderColor: "#D9D9D9",
                   borderRadius: 5,
+                  color: "#626469"
                 }}
                 onOpen={() => {
                   setTooltipOpen(false);
@@ -1735,10 +2098,11 @@ export default function QuillToolbar() {
             <span className="ql-formats">
               <Select
                 style={{
-                  width: 83,
+                  width: 82,
                   height: 33,
                   borderColor: "#D9D9D9",
                   borderRadius: 5,
+                  color: "#626469"
                 }}
                 className="ql-size"
                 defaultValue="10px"
@@ -1774,9 +2138,10 @@ export default function QuillToolbar() {
                 className="text-center"
                 style={{
                   height: 33,
-                  // width: 147,
+                  // width: 130,
                   borderColor: "#D9D9D9",
                   borderRadius: 5,
+                  color: "#626469"
                 }}
                 defaultValue="0"
                 onMouseLeave={() => {
@@ -1850,29 +2215,7 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33, cursor: "pointer" }}
                 onClick={handleTextHighlight}
               >
-                <svg
-                  width="21"
-                  height="21"
-                  viewBox="0 0 21 21"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4 14L6.15426 11.3494L6.13076 11.3301C5.67641 10.7614 5.67641 9.84578 6.13076 9.28675L9.84393 4.71807L13.1654 8.80482L9.45224 13.3735C9.00572 13.9325 8.27719 13.9325 7.815 13.3928L7.32148 14H4ZM13.3299 0.419277C13.7921 -0.139759 14.5363 -0.139759 14.9907 0.419277L16.6592 2.46265C17.1136 3.03133 17.1136 3.94699 16.6592 4.51566L14.0741 7.68675L10.7526 3.6L13.3299 0.419277Z"
-                    fill="black"
-                  />
-                  <line
-                    y1="18.5"
-                    x2="21"
-                    y2="18.5"
-                    stroke={
-                      bgColorSvg === "#ffffff" || bgColor === "#fefefe"
-                        ? "#D9D9D940"
-                        : bgColorSvg
-                    }
-                    stroke-width="5"
-                  />
-                </svg>
+                <TextHighlightSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -1932,25 +2275,7 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33, cursor: "pointer" }}
                 onClick={handleFontColor}
               >
-                <svg
-                  width="21"
-                  height="21"
-                  viewBox="0 0 21 21"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M8.12 9L10.5 2.67L12.87 9H8.12ZM9.5 0L4 14H6.25L7.37 11H13.62L14.75 14H17L11.5 0H9.5Z"
-                    fill="black"
-                  />
-                  <line
-                    y1="18.5"
-                    x2="21"
-                    y2="18.5"
-                    stroke={fontColorSvg}
-                    stroke-width="5"
-                  />
-                </svg>
+                <FontColorSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2022,25 +2347,7 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33, cursor: "pointer" }}
                 onClick={handleBgColor}
               >
-                <svg
-                  width="21"
-                  height="21"
-                  viewBox="0 0 21 21"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15.5558 9.47059C15.5558 9.47059 14.1115 11.2576 14.1115 12.3529C14.1115 12.7898 14.2637 13.2087 14.5345 13.5176C14.8054 13.8265 15.1727 14 15.5558 14C15.9388 14 16.3061 13.8265 16.577 13.5176C16.8478 13.2087 17 12.7898 17 12.3529C17 11.2576 15.5558 9.47059 15.5558 9.47059ZM5.59769 8.23529L9.05666 4.29059L12.5156 8.23529H5.59769ZM13.7938 7.36235L7.33801 0L6.31982 1.16118L8.03847 3.12118L4.31954 7.36235C3.89349 7.82353 3.89349 8.62235 4.31954 9.10824L8.29121 13.6376C8.50062 13.8765 8.78225 14 9.05666 14C9.33106 14 9.61269 13.8765 9.82211 13.6376L13.7938 9.10824C14.2198 8.62235 14.2198 7.82353 13.7938 7.36235Z"
-                    fill="black"
-                  />
-                  <line
-                    y1="18.5"
-                    x2="21"
-                    y2="18.5"
-                    stroke={shadeColor}
-                    stroke-width="5"
-                  />
-                </svg>
+                <ShadeColorSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2098,18 +2405,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="21"
-                  height="21"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M22.1435 21.7105C22.0702 21.403 21.9603 20.8783 21.8992 20.1003C21.0809 21.3668 20.0916 22 18.9557 22C17.942 22 17.0992 21.5658 16.4519 20.7155C15.8046 19.9013 15.4748 18.7977 15.4748 17.477C15.4748 15.8849 15.8779 14.6546 16.6962 13.7681C17.5145 12.8816 18.6626 12.4474 20.1527 12.4474H21.8626V11.2895C21.8626 10.403 21.6794 9.69737 21.313 9.1727C20.9466 8.64803 20.3969 8.39474 19.6885 8.39474C19.0534 8.39474 18.5282 8.61184 18.1008 9.04605C17.6733 9.49835 17.4656 10.023 17.4656 10.6563H15.6824C15.6824 9.87829 15.8656 9.13651 16.2321 8.41283C16.574 7.68914 17.0992 7.12829 17.7221 6.71217C18.345 6.33224 19.0168 6.07895 19.7863 6.07895C20.9832 6.07895 21.9114 6.51316 22.5832 7.39967C23.255 8.28618 23.6092 9.49835 23.6336 11.0543V18.0921C23.6336 19.5395 23.7557 20.6612 24 21.4934V21.7105H22.1435ZM19.2122 19.6842C19.7618 19.6842 20.287 19.4852 20.7878 19.1053C21.2763 18.7253 21.6427 18.2188 21.8626 17.6036V14.7632H20.4824C18.3206 14.7632 17.2336 15.6135 17.2336 17.3141C17.2336 18.0921 17.4168 18.6349 17.7954 19.051C18.1618 19.4671 18.626 19.6842 19.2122 19.6842ZM4.31145 13.949H9.28244L6.80305 4.14309L4.31145 13.949ZM5.75267 0H7.85344L13.6061 21.7105H11.2489L10.0641 17.0609H3.52977L2.35725 21.7105H0L5.75267 0Z"
-                    fill="black"
-                  />
-                </svg>
+                <ChangeCaseSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2167,39 +2463,40 @@ export default function QuillToolbar() {
         </span>
         <span className="ql-formats b-r">
           <Tooltip title="Bold" placement="bottom">
-            <button className="btn-undo ql-bold"></button>
+            <button className="btn-undo" onClick={handleBold}>
+              <BoldSvg />
+            </button>
           </Tooltip>
           <Tooltip title="Italic" placement="bottom">
-            <button className="btn-undo ml-2 ql-italic"></button>
+            <button className="btn-undo ml-2 " onClick={handleItalic}>
+              <ItalicSvg />
+            </button>
           </Tooltip>
           <Tooltip title="Underline" placement="bottom">
-            <button className="btn-undo mx-2 ql-underline"></button>
+            <button className="btn-undo mx-2 " onClick={handleUnderline}>
+              <UnderlineSvg />
+            </button>
           </Tooltip>
           <Tooltip title="Strikethrough" placement="bottom">
-            <button className="btn-undo ql-strike"></button>
+            <button className="btn-undo " onClick={handleStrikethrough}>
+              <StrikeThroughSvg />
+            </button>
           </Tooltip>
         </span>
         <span className="ql-formats b-r">
           <Tooltip title="Superscript">
-            <button className="btn-undo ql-script" value="super"></button>
+            <button className="btn-undo " onClick={handleSuperscript}>
+              <SuperScriptSvg />
+            </button>
           </Tooltip>
-          <Tooltip title="Subscript">
-            <button className="btn-undo ql-script mx-2" value="sub" />
+          <Tooltip title="Subscript" onClick={handleSubscript}>
+            <button className="btn-undo ql-script mx-2">
+              <SubScriptSvg />
+            </button>
           </Tooltip>
           <Tooltip title="Show/Hide formatting marks">
             <button className="btn-undo" onClick={toggleFormattingMarks}>
-              <svg
-                width="16"
-                height="28"
-                viewBox="0 0 16 22"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5.33333 9.77778C3.91885 9.77778 2.56229 9.2627 1.5621 8.34586C0.561903 7.42901 0 6.1855 0 4.88889C0 3.59227 0.561903 2.34877 1.5621 1.43192C2.56229 0.515078 3.91885 0 5.33333 0H16V2.44444H13.3333V22H10.6667V2.44444H8V22H5.33333V9.77778Z"
-                  fill="black"
-                />
-              </svg>
+              <FormattingSvg />
             </button>
           </Tooltip>
         </span>
@@ -2225,19 +2522,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  onClick={() => handleListClick("default")}
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6.31579 12.375V9.625H24V12.375H6.31579ZM6.31579 20.625V17.875H24V20.625H6.31579ZM6.31579 4.125V1.375H24V4.125H6.31579ZM1.26316 5.5V1.375H0V0H2.52632V5.5H1.26316ZM0 17.875V16.5H3.78947V22H0V20.625H2.52632V19.9375H1.26316V18.5625H2.52632V17.875H0ZM2.84211 8.25C3.09336 8.25 3.33433 8.35865 3.512 8.55205C3.68966 8.74544 3.78947 9.00775 3.78947 9.28125C3.78947 9.55625 3.68842 9.8175 3.52421 9.99625L1.41474 12.375H3.78947V13.75H0V12.485L2.52632 9.625H0V8.25H2.84211Z"
-                    fill="black"
-                  />
-                </svg>
+                <NumberingSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2416,19 +2701,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33, cursor: "pointer" }}
               >
-                <svg
-                  onClick={() => handleListClick("bullet-dot")}
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M5.83784 0.733333H24V3.66667H5.83784V0.733333ZM5.83784 12.4667V9.53333H24V12.4667H5.83784ZM1.94595 0C2.46204 0 2.957 0.231785 3.32194 0.644365C3.68687 1.05694 3.89189 1.61652 3.89189 2.2C3.89189 2.78348 3.68687 3.34306 3.32194 3.75564C2.957 4.16822 2.46204 4.4 1.94595 4.4C1.42985 4.4 0.93489 4.16822 0.569954 3.75564C0.205019 3.34306 0 2.78348 0 2.2C0 1.61652 0.205019 1.05694 0.569954 0.644365C0.93489 0.231785 1.42985 0 1.94595 0ZM1.94595 8.8C2.46204 8.8 2.957 9.03179 3.32194 9.44436C3.68687 9.85695 3.89189 10.4165 3.89189 11C3.89189 11.5835 3.68687 12.1431 3.32194 12.5556C2.957 12.9682 2.46204 13.2 1.94595 13.2C1.42985 13.2 0.93489 12.9682 0.569954 12.5556C0.205019 12.1431 0 11.5835 0 11C0 10.4165 0.205019 9.85695 0.569954 9.44436C0.93489 9.03179 1.42985 8.8 1.94595 8.8ZM5.83784 21.2667V18.3333H24V21.2667H5.83784ZM1.94595 17.6C2.46204 17.6 2.957 17.8318 3.32194 18.2444C3.68687 18.6569 3.89189 19.2165 3.89189 19.8C3.89189 20.3835 3.68687 20.9431 3.32194 21.3556C2.957 21.7682 2.46204 22 1.94595 22C1.42985 22 0.93489 21.7682 0.569954 21.3556C0.205019 20.9431 0 20.3835 0 19.8C0 19.2165 0.205019 18.6569 0.569954 18.2444C0.93489 17.8318 1.42985 17.6 1.94595 17.6Z"
-                    fill="black"
-                  />
-                </svg>
+                <BulletSvg />
               </span>
 
               <span
@@ -2580,18 +2853,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M4.8 0L9.6 4.88889H6V17.1111H9.6L4.8 22L0 17.1111H3.6V4.88889H0L4.8 0ZM24 2.44444V4.88889H12V2.44444H24ZM24 9.77778V12.2222H12V9.77778H24ZM24 17.1111V19.5556H12V17.1111H24Z"
-                    fill="black"
-                  />
-                </svg>
+                <LineSpacingSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2683,18 +2945,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0 0H24V2.44444H0V0ZM0 4.88889H16V7.33333H0V4.88889ZM0 9.77778H24V12.2222H0V9.77778ZM0 14.6667H16V17.1111H0V14.6667ZM0 19.5556H24V22H0V19.5556Z"
-                    fill="black"
-                  />
-                </svg>
+                <AlignmentSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -2816,10 +3067,14 @@ export default function QuillToolbar() {
         </span>
         <span className="ql-formats">
           <Tooltip title="Increase indent">
-            <button className="ql-indent btn-undo mr-2" value="-1" />
+            <button className="btn-undo mr-2" >
+              <IncreaseIndentSvg />
+            </button>
           </Tooltip>
           <Tooltip title="Decrease indent">
-            <button className="ql-indent btn-undo" value="+1" />
+            <button className="btn-undo " >
+              <DecreaseIndentSvg />
+            </button>
           </Tooltip>
         </span>
         <span className="ql-formats">
@@ -2844,22 +3099,7 @@ export default function QuillToolbar() {
                   });
                 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M14.6667 14.1574H22L14.6667 10.2361V14.1574ZM2.66667 9.16669H16L24 13.4445V20.5741C24 20.9523 23.719 21.315 23.219 21.5824C22.7189 21.8498 22.0406 22 21.3333 22H2.66667C1.18667 22 0 21.3584 0 20.5741V10.5926C0 9.80122 1.18667 9.16669 2.66667 9.16669ZM2.66667 10.5926V20.5741H21.3333V15.5834H12V10.5926H2.66667Z"
-                    fill="black"
-                  />
-                  <path
-                    d="M0 0H2.4V4.58333H21.6V0H24V4.58333C24 5.06956 23.7471 5.53588 23.2971 5.87969C22.847 6.22351 22.2365 6.41667 21.6 6.41667H2.4C1.76348 6.41667 1.15303 6.22351 0.702944 5.87969C0.252856 5.53588 0 5.06956 0 4.58333V0Z"
-                    fill="black"
-                  />
-                </svg>
+                <PageBreakSvg />
               </span>
             </span>
           </Tooltip>
@@ -2880,21 +3120,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 26 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M5.36364 1V23M20.6364 1V23M1 5H25M1 19H25M2 23H24C24.5523 23 25 22.5523 25 22V2C25 1.44772 24.5523 1 24 1H2C1.44772 1 1 1.44772 1 2V22C1 22.5523 1.44772 23 2 23Z"
-                    stroke="black"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <MarginSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -3201,22 +3427,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 21"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M24 13.3611V19.4722C24 19.8774 23.8055 20.266 23.4593 20.5525C23.1131 20.839 22.6435 21 22.1538 21H7.38462C6.89499 21 6.42541 20.839 6.07919 20.5525C5.73297 20.266 5.53846 19.8774 5.53846 19.4722V10.3056C5.53846 9.90036 5.73297 9.51177 6.07919 9.22525C6.42541 8.93874 6.89499 8.77778 7.38462 8.77778H18.4615L24 13.3611ZM7.38462 10.3056V19.4722H22.1538V14.125H17.5385V10.3056H7.38462Z"
-                    fill="black"
-                  />
-                  <path
-                    d="M9.23077 0.62963L1.84615 0.62963C1.35652 0.62963 0.886947 0.801322 0.540726 1.10694C0.194505 1.41255 0 1.82705 0 2.25926V15.2963C0 15.7285 0.194505 16.143 0.540726 16.4486C0.886947 16.7542 1.35652 16.9259 1.84615 16.9259H12.9231C13.4127 16.9259 13.8823 16.7542 14.2285 16.4486C14.5747 16.143 14.7692 15.7285 14.7692 15.2963V5.51852L9.23077 0.62963ZM12.9231 15.2963H1.84615V2.25926H8.30769V6.33333H12.9231V15.2963Z"
-                    fill="black"
-                  />
-                </svg>
+                <OrientationSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -3333,26 +3544,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 23"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M16 2.04761H5.33332C4.62608 2.04761 3.9478 2.26836 3.4477 2.66129C2.94761 3.05422 2.66666 3.58715 2.66666 4.14285V20.9048C2.66666 21.4604 2.94761 21.9934 3.4477 22.3863C3.9478 22.7792 4.62608 23 5.33332 23H21.3333C22.0406 23 22.7188 22.7792 23.2189 22.3863C23.719 21.9934 24 21.4604 24 20.9048V8.33332L16 2.04761ZM21.3333 20.9048H5.33332V4.14285H14.6667V9.38094H21.3333V20.9048Z"
-                    fill="black"
-                  />
-                  <line x1="2.66666" y1="0.5" x2="24" y2="0.5" stroke="black" />
-                  <line
-                    x1="0.5"
-                    y1="4.14288"
-                    x2="0.5"
-                    y2="20.9048"
-                    stroke="black"
-                  />
-                </svg>
+                <PageSizeSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -3434,15 +3626,15 @@ export default function QuillToolbar() {
                 style={{ width: 32, height: 33 }}
               >
                 <svg
-                  width="24"
-                  height="22"
+                  width="18"
+                  height="16"
                   viewBox="0 0 26 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M5 6H10M16 6H21M5 10H10M16 10H21M5 14H10M16 14H21M5 18H10M16 18H21M2.09091 23H23.9091C24.5116 23 25 22.5116 25 21.9091V2.09091C25 1.48842 24.5116 1 23.9091 1H2.09091C1.48842 1 1 1.48842 1 2.09091V21.9091C1 22.5116 1.48842 23 2.09091 23Z"
-                    stroke="black"
+                    stroke="#7F7F7F"
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -3664,18 +3856,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 34, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M18.156 10.4211L19.668 8.9621C20.196 8.45263 20.868 8.17474 21.6 8.10526V6.94737L14.4 0H2.4C1.068 0 0 1.03053 0 2.31579V18.5263C0 19.8 1.068 20.8421 2.4 20.8421H9.6V18.6768L9.756 18.5263H2.4V2.31579H10.8V10.4211H18.156ZM13.2 1.73684L19.8 8.10526H13.2V1.73684ZM19.356 12.54L21.804 14.9021L14.448 22H12V19.6379L19.356 12.54ZM23.82 12.9568L22.644 14.0916L20.196 11.7295L21.372 10.5947C21.6 10.3632 21.996 10.3632 22.236 10.5947L23.82 12.1232C24.06 12.3547 24.06 12.7368 23.82 12.9568Z"
-                    fill="black"
-                  />
-                </svg>
+                <TrackChangeSvg />
               </span>
             </span>
           </Tooltip>
@@ -3694,18 +3875,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M2.66667 0H21.3333C22.0406 0 22.7189 0.289731 23.219 0.805456C23.719 1.32118 24 2.02065 24 2.75V19.25C24 19.9793 23.719 20.6788 23.219 21.1945C22.7189 21.7103 22.0406 22 21.3333 22H2.66667C1.95942 22 1.28115 21.7103 0.781048 21.1945C0.280951 20.6788 0 19.9793 0 19.25V2.75C0 2.02065 0.280951 1.32118 0.781048 0.805456C1.28115 0.289731 1.95942 0 2.66667 0ZM2.66667 5.5V11H10.6667V5.5H2.66667ZM13.3333 5.5V11H21.3333V5.5H13.3333ZM2.66667 13.75V19.25H10.6667V13.75H2.66667ZM13.3333 13.75V19.25H21.3333V13.75H13.3333Z"
-                    fill="black"
-                  />
-                </svg>
+                <TableSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -3741,18 +3911,7 @@ export default function QuillToolbar() {
                 style={{ width: 34, height: 33 }}
                 onClick={handleOpenLink}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M10.1693 12.6781C10.7017 13.1423 10.7017 13.904 10.1693 14.3681C9.66297 14.8323 8.83203 14.8323 8.32567 14.3681C5.79389 12.0473 5.79389 8.27455 8.32567 5.95375L12.9218 1.7406C15.4536 -0.5802 19.5694 -0.5802 22.1012 1.7406C24.6329 4.0614 24.6329 7.83419 22.1012 10.155L20.1666 11.9283C20.1796 10.9524 20.0108 9.97647 19.6473 9.04815L20.2575 8.47687C21.7896 7.08439 21.7896 4.8231 20.2575 3.43062C18.7384 2.02624 16.2716 2.02624 14.7525 3.43062L10.1693 7.63186C8.63727 9.02434 8.63727 11.2856 10.1693 12.6781ZM13.8307 7.63186C14.337 7.1677 15.168 7.1677 15.6743 7.63186C18.2061 9.95267 18.2061 13.7255 15.6743 16.0463L11.0782 20.2594C8.54639 22.5802 4.43062 22.5802 1.89884 20.2594C-0.632946 17.9386 -0.632946 14.1658 1.89884 11.845L3.83338 10.0717C3.8204 11.0476 3.98918 12.0235 4.35272 12.9638L3.74249 13.5231C2.21044 14.9156 2.21044 17.1769 3.74249 18.5694C5.26156 19.9738 7.72843 19.9738 9.2475 18.5694L13.8307 14.3681C15.3627 12.9757 15.3627 10.7144 13.8307 9.32188C13.2983 8.85772 13.2983 8.09602 13.8307 7.63186Z"
-                    fill="black"
-                  />
-                </svg>
+                <LinkSvg />
               </span>
               <Menu
                 id="openLink-menu"
@@ -3883,18 +4042,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 24 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M21.3333 19.5556H2.66667V2.44444H21.3333V19.5556ZM21.3333 0H2.66667C1.95942 0 1.28115 0.257539 0.781048 0.715961C0.280951 1.17438 0 1.79614 0 2.44444V19.5556C0 20.2039 0.280951 20.8256 0.781048 21.284C1.28115 21.7425 1.95942 22 2.66667 22H21.3333C22.0406 22 22.7189 21.7425 23.219 21.284C23.719 20.8256 24 20.2039 24 19.5556V2.44444C24 1.79614 23.719 1.17438 23.219 0.715961C22.7189 0.257539 22.0406 0 21.3333 0ZM14.6133 11.3544L10.9467 15.6811L8.33333 12.7967L4.66667 17.1111H19.3333L14.6133 11.3544Z"
-                    fill="black"
-                  />
-                </svg>
+                <PictureSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -4061,18 +4209,7 @@ export default function QuillToolbar() {
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 32, height: 33 }}
               >
-                <svg
-                  width="24"
-                  height="22"
-                  viewBox="0 0 20 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M17.5 7.33333H15V4.88889H17.5V7.33333ZM17.5 12.2222H15V9.77778H17.5V12.2222ZM17.5 17.1111H15V14.6667H17.5V17.1111ZM5 7.33333H2.5V4.88889H5V7.33333ZM5 12.2222H2.5V9.77778H5V12.2222ZM5 17.1111H2.5V14.6667H5V17.1111ZM17.5 0V2.44444H15V0H5V2.44444H2.5V0H0V22H2.5V19.5556H5V22H15V19.5556H17.5V22H20V0H17.5Z"
-                    fill="black"
-                  />
-                </svg>
+                <MediaSvg />
               </span>
               <span
                 className="d-flex justify-content-center align-items-center"
@@ -4157,22 +4294,24 @@ export default function QuillToolbar() {
         </span>
         <span className="ql-formats">
           <Tooltip title="Formula">
-            <button className="ql-formula btn-undo mr-2" />
+            <button className=" btn-undo mr-2" >
+              <FormulaSvg />
+              </button>
           </Tooltip>
           <Tooltip title="Source code">
-            <button className="ql-code-block btn-undo mr-2" />
+            <button className=" btn-undo mr-2" >
+              <SourceCodeSvg />
+              </button>
           </Tooltip>
           <Tooltip title="Clean">
             <button className="btn-undo" onClick={handleClean}>
-              <svg width="22" height="20" viewBox="0 0 24 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M5.33333 0V0.2475L9.09333 4.125H12.2933L11.3333 6.435L14.1333 9.3225L16.28 4.125H24V0H5.33333ZM1.69333 0L0 1.74625L9.29333 11.33L6 19.25H10L12.0933 14.2175L19.64 22L21.3333 20.2537L2.06667 0.37125L1.69333 0Z" fill="black" />
-              </svg>
+            <ClearFormattingSvg />
             </button>
           </Tooltip>
         </span>
       </div>
-      <button className="btn-slider" onClick={scrollRight}>
-        {">"}
+      <button onClick={scrollRight}>
+        <ScrollRightSvg />
       </button>
     </div>
   );
