@@ -657,7 +657,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const [bgColorSvg, setBgColorSvg] = useState("#D9D9D940");
   const [shadeColorSvg, setShadeColorSvg] = useState("");
-  const [fontColorSvg, setFontColorSvg] = useState("black");
+  const [fontColorSvg, setFontColorSvg] = useState("#43464C");
 
   const selectionRef: any = useRef();
 

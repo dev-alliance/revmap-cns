@@ -882,8 +882,12 @@ function SyncFesion() {
   };
 
   const Breadcrumb = ({ recipients }: any) => {
-    const hasReqOption = recipients.some((recipient: any) => recipient.ReqOption);
-    const hasSignature = recipients.some((recipient: any) => recipient.signature);
+    const hasReqOption = recipients.some(
+      (recipient: any) => recipient.ReqOption
+    );
+    const hasSignature = recipients.some(
+      (recipient: any) => recipient.signature
+    );
 
     // Determine which step to highlight
     let highlightStep = "";
@@ -908,7 +912,11 @@ function SyncFesion() {
     return (
       <div className="flex mt-1 mx-1">
         {steps
-          .filter(({ step }) => step === highlightStep || (highlightStep === "" && step === "Draft"))
+          .filter(
+            ({ step }) =>
+              step === highlightStep ||
+              (highlightStep === "" && step === "Draft")
+          )
           .map(({ label, step }) => (
             <li key={step} className="btn-steps d-flex align-items-center">
               <div className="color mx-2"></div>
@@ -918,7 +926,6 @@ function SyncFesion() {
       </div>
     );
   };
-
 
   let container: DocumentEditorContainerComponent;
   const onCreated = useCallback(() => {
@@ -1494,12 +1501,12 @@ function SyncFesion() {
 
   const [cursorPosition, setCurosrPosition] = useState<number>(0);
 
-  const [isBoldActive,setIsBoldActive] = useState(false);
-  const [isItalicActive,setIsItalicActive] = useState(false);
-  const [isStrikeActive,setIsStrikeActive] = useState(false);
-  const [isUnderlineActive,setIsUnderlineActive] = useState(false);
-  const [isScriptActive,setIsScriptActice] = useState("")
-  const [isListActive,setIsListActive] = useState("");
+  const [isBoldActive, setIsBoldActive] = useState(false);
+  const [isItalicActive, setIsItalicActive] = useState(false);
+  const [isStrikeActive, setIsStrikeActive] = useState(false);
+  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
+  const [isScriptActive, setIsScriptActice] = useState("");
+  const [isListActive, setIsListActive] = useState("");
 
   const handleChangeSelection = (range: any, source: any) => {
     if (range) {
@@ -1529,42 +1536,39 @@ function SyncFesion() {
           }
         }
       }
-      console.log(format.list)
-      if(format.list) {
+      if (format.list) {
         setIsListActive(format.list);
-      }
-      else {
-        setIsListActive("")
-      }
-
-      if(format.script) {
-        setIsScriptActice(format.script)
-      }else{
-        setIsScriptActice("")
+      } else {
+        setIsListActive("");
       }
 
-      if(format.bold){
-        setIsBoldActive(true)
-      }
-      else {
-        setIsBoldActive(false)
-      }
-      if(format.italic) {
-        setIsItalicActive(true)
-      }else{
-        setIsItalicActive(false)
+      if (format.script) {
+        setIsScriptActice(format.script);
+      } else {
+        setIsScriptActice("");
       }
 
-      if(format.strike) {
-        setIsStrikeActive(true)
-      }else{
-        setIsStrikeActive(false)
+      if (format.bold) {
+        setIsBoldActive(true);
+      } else {
+        setIsBoldActive(false);
+      }
+      if (format.italic) {
+        setIsItalicActive(true);
+      } else {
+        setIsItalicActive(false);
       }
 
-      if(format.underline) {
-        setIsUnderlineActive(true)
-      }else{
-        setIsUnderlineActive(false)
+      if (format.strike) {
+        setIsStrikeActive(true);
+      } else {
+        setIsStrikeActive(false);
+      }
+
+      if (format.underline) {
+        setIsUnderlineActive(true);
+      } else {
+        setIsUnderlineActive(false);
       }
 
       if (format.lineHeight) {
@@ -1763,7 +1767,6 @@ function SyncFesion() {
       ...prevReplies,
       [indexComment]: value,
     }));
-    console.log(reply);
   };
 
   const [addSigns, setAddSigns] = useState<boolean>(true);
@@ -2186,7 +2189,6 @@ function SyncFesion() {
     handleClose();
   };
 
-
   const div1Ref = useRef<any>(null);
   const div2Ref = useRef<any>(null);
   const div3Ref = useRef<any>(null);
@@ -2217,24 +2219,29 @@ function SyncFesion() {
     calculateRemainingVh(); // Calculate on initial load
 
     // Recalculate height when window is resized
-    window.addEventListener('resize', calculateRemainingVh);
+    window.addEventListener("resize", calculateRemainingVh);
 
     // Clean up event listener on component unmount
-    return () => window.removeEventListener('resize', calculateRemainingVh);
-  }, []);
-
-
+    return () => window.removeEventListener("resize", calculateRemainingVh);
+  }, [handleClick]);
 
   const EditIconSvg = () => {
     return (
-      <svg width="18" height="18" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path className="edit-icon-btn" d="M3.01992 8.8125C3.04336 8.8125 3.0668 8.81016 3.09023 8.80664L5.06133 8.46094C5.08477 8.45625 5.10703 8.4457 5.12344 8.42813L10.091 3.46055C10.1019 3.44971 10.1105 3.43683 10.1164 3.42265C10.1223 3.40847 10.1253 3.39328 10.1253 3.37793C10.1253 3.36258 10.1223 3.34738 10.1164 3.33321C10.1105 3.31903 10.1019 3.30615 10.091 3.29531L8.14336 1.34648C8.12109 1.32422 8.0918 1.3125 8.06016 1.3125C8.02852 1.3125 7.99922 1.32422 7.97695 1.34648L3.00937 6.31406C2.9918 6.33164 2.98125 6.35273 2.97656 6.37617L2.63086 8.34727C2.61946 8.41004 2.62353 8.47466 2.64273 8.53551C2.66192 8.59635 2.69566 8.65161 2.74102 8.69648C2.81836 8.77148 2.91563 8.8125 3.01992 8.8125ZM3.80977 6.76875L8.06016 2.51953L8.91914 3.37852L4.66875 7.62773L3.62695 7.81172L3.80977 6.76875ZM10.3125 9.79688H1.6875C1.48008 9.79688 1.3125 9.96445 1.3125 10.1719V10.5938C1.3125 10.6453 1.35469 10.6875 1.40625 10.6875H10.5938C10.6453 10.6875 10.6875 10.6453 10.6875 10.5938V10.1719C10.6875 9.96445 10.5199 9.79688 10.3125 9.79688Z"  />
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          className="edit-icon-btn"
+          d="M3.01992 8.8125C3.04336 8.8125 3.0668 8.81016 3.09023 8.80664L5.06133 8.46094C5.08477 8.45625 5.10703 8.4457 5.12344 8.42813L10.091 3.46055C10.1019 3.44971 10.1105 3.43683 10.1164 3.42265C10.1223 3.40847 10.1253 3.39328 10.1253 3.37793C10.1253 3.36258 10.1223 3.34738 10.1164 3.33321C10.1105 3.31903 10.1019 3.30615 10.091 3.29531L8.14336 1.34648C8.12109 1.32422 8.0918 1.3125 8.06016 1.3125C8.02852 1.3125 7.99922 1.32422 7.97695 1.34648L3.00937 6.31406C2.9918 6.33164 2.98125 6.35273 2.97656 6.37617L2.63086 8.34727C2.61946 8.41004 2.62353 8.47466 2.64273 8.53551C2.66192 8.59635 2.69566 8.65161 2.74102 8.69648C2.81836 8.77148 2.91563 8.8125 3.01992 8.8125ZM3.80977 6.76875L8.06016 2.51953L8.91914 3.37852L4.66875 7.62773L3.62695 7.81172L3.80977 6.76875ZM10.3125 9.79688H1.6875C1.48008 9.79688 1.3125 9.96445 1.3125 10.1719V10.5938C1.3125 10.6453 1.35469 10.6875 1.40625 10.6875H10.5938C10.6453 10.6875 10.6875 10.6453 10.6875 10.5938V10.1719C10.6875 9.96445 10.5199 9.79688 10.3125 9.79688Z"
+        />
       </svg>
+    );
+  };
 
-    )
-  }
-
- 
   return (
     <>
       {isLoading && (
@@ -2292,14 +2299,14 @@ function SyncFesion() {
                 borderLeft: "none",
                 borderRight: "none",
                 outline: "none",
-                width:168
+                width: 168,
               }}
-            // onFocus={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-            // }}
-            // onBlur={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-            // }}
+              // onFocus={(e) => {
+              //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
+              // }}
+              // onBlur={(e) => {
+              //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
+              // }}
             />
 
             <div
@@ -2308,10 +2315,9 @@ function SyncFesion() {
                 borderRadius: "4px",
                 display: "flex",
                 alignItems: "center",
-                width:71,
-                height:35,
-                padding: "4px 8px"
-
+                width: 71,
+                height: 35,
+                padding: "4px 8px",
               }}
             >
               <svg
@@ -2975,10 +2981,13 @@ function SyncFesion() {
                 </div>
 
                 <div className="border-docs color-docs">
-                  <span className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer" onClick={() => {
-                    setSelectedModule("share");
-                    setSidebarExpanded(true);
-                  }}>
+                  <span
+                    className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer"
+                    onClick={() => {
+                      setSelectedModule("share");
+                      setSidebarExpanded(true);
+                    }}
+                  >
                     Shared With:{" "}
                     {collaborater?.filter((dt: any) => dt.permission).length}/
                     {collaborater?.length}
@@ -2986,16 +2995,18 @@ function SyncFesion() {
                 </div>
 
                 <div className="border-docs color-docs">
-                  <span className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer" onClick={() => {
-                    setSelectedModule("fields"), setSidebarExpanded(true);
-                  }}>
+                  <span
+                    className="text-[14px] font-regular flex whitespace-nowrap cursor-pointer"
+                    onClick={() => {
+                      setSelectedModule("fields"), setSidebarExpanded(true);
+                    }}
+                  >
                     Fields: 0/0{" "}
                   </span>
                 </div>
               </>
             )}
           </Box>
-
         </div>
 
         <div
@@ -3005,6 +3016,7 @@ function SyncFesion() {
             borderTop:
               showBlock == "uploadTrack" ? "1px solid #174B8B" : "none",
             background: "#f7f7f7",
+            padding:"5px 0"
           }}
         >
           {IsTemplate ? (
@@ -3041,21 +3053,54 @@ function SyncFesion() {
           ) : (
             (showBlock === "" || showBlock === "pdf") && (
               <>
-                <div className="color-docs2" style={{ marginTop: "12px",marginLeft:4 }}>
+                <div
+                  className="color-docs2"
+                  style={{ marginTop: 9, marginLeft: 4 }}
+                >
                   <Breadcrumb recipients={recipients} />
                 </div>
               </>
             )
           )}
-          <div className="align-self-center mt-1 text-[14px] color-docs2" style={{
-            marginRight:55,
-            marginLeft:40
-          }}>File</div>
-          <div className="align-self-center mt-1 text-[14px] color-docs2" style={{marginRight:55}}>View</div>
-          <div className="align-self-center mt-1 text-[14px] color-docs2" style={{marginRight:55}}>Insert</div>
-          <div className="align-self-center mt-1 text-[14px] color-docs2" style={{marginRight:55}}>Signature</div>
-          <div className="align-self-center mt-1 text-[14px] color-docs2" style={{marginRight:55}}>Export</div>
-          <div className="align-self-center mt-1 text-[14px] color-docs2" style={{marginRight:55}}>Attach</div>
+          <div
+            className="align-self-center mt-1 text-[14px] color-docs2"
+            style={{
+              marginRight: 55,
+              marginLeft: 40,
+            }}
+          >
+            File
+          </div>
+          <div
+            className="align-self-center mt-1 text-[14px] color-docs2"
+            style={{ marginRight: 55 }}
+          >
+            View
+          </div>
+          <div
+            className="align-self-center mt-1 text-[14px] color-docs2"
+            style={{ marginRight: 55 }}
+          >
+            Insert
+          </div>
+          <div
+            className="align-self-center mt-1 text-[14px] color-docs2"
+            style={{ marginRight: 55 }}
+          >
+            Signature
+          </div>
+          <div
+            className="align-self-center mt-1 text-[14px] color-docs2"
+            style={{ marginRight: 55 }}
+          >
+            Export
+          </div>
+          <div
+            className="align-self-center mt-1 text-[14px] color-docs2"
+            style={{ marginRight: 55 }}
+          >
+            Attach
+          </div>
           <div
             style={{
               display: "flex",
@@ -3063,8 +3108,8 @@ function SyncFesion() {
               marginRight: "1rem",
               marginTop: ".5rem",
               marginBottom: ".5rem",
-              marginLeft:8,
-              width: "100%"
+              marginLeft: 8,
+              width: "100%",
             }}
           >
             {(showBlock == "uploadTrack" || editMode) && (
@@ -3077,9 +3122,14 @@ function SyncFesion() {
                     ml: 2,
                     textTransform: "none",
                     color: "#43464C",
-                    borderRadius: 2,
+                    borderRadius: "5px",
                     background: "#fefefe",
-                    border:"1px solid #EEE"
+                    border: "1px solid #EEE",
+                    height: 30,
+                    width:55,
+                    minWidth:55,
+                    minHeight:30,
+                    fontSize:"13px"
                   }}
                   onClick={() => {
                     handleClickCencel();
@@ -3088,13 +3138,21 @@ function SyncFesion() {
                   Cancel
                 </Button>
                 <Button
-                  sx={{  ml: 1,
+                  sx={{
+                    ml: 1,
                     textTransform: "none",
                     color: "#43464C",
-                    borderRadius: 2,
+                    borderRadius: "5px",
                     background: "#fefefe",
-                    border:"1px solid #EEE" }}
-                    className="save-btn"
+                    border: "1px solid #EEE",
+                    height: 30,
+                    width:40,
+                    minWidth:40,
+                    minHeight:30,
+                    fontSize:"13px"
+
+                  }}
+                  className="save-btn"
                   onClick={() => {
                     handleSubmit();
                     if (showBlock !== "uploadTrack") {
@@ -3127,22 +3185,28 @@ function SyncFesion() {
               <Button
                 variant="outlined"
                 color="primary"
-                className="btn-edit color-docs2"
+                className="btn-edit color-docs2 d-flex align-items-center"
                 sx={{
-                  ml: 2,
                   textTransform: "none",
                   color: "#43464C",
-                  borderRadius: 2,
+                  borderRadius: "5px",
                   background: "#fefefe",
-                  border:"1px solid #EEE"
+                  border: "1px solid #EEE",
+                  height: 30,
+                  width:52,
+                  padding:"4px",
+                  fontSize:"13px",
+                  minHeight:30,
+                  minWidth:52
                 }}
                 onClick={() => {
                   handleClick();
                 }}
-              
               >
-                <EditIconSvg/>
-                <span className="mx-2 ">Edit</span>
+                <span style={{paddingRight:"8px"}}>
+                  <EditIconSvg />
+                </span>
+                <span style={{fontSize:13,position:"relative",right:"3px"}}>Edit</span>
               </Button>
             )}
           </div>
@@ -3184,26 +3248,39 @@ function SyncFesion() {
           ref={div3Ref}
           style={{
             backgroundColor: "#fefefe",
-            border: '1px solid #fefefe',
-            display:editMode ? "" : "none"
+            border: "1px solid #fefefe",
+            // display: editMode ? "" : "none",
+            height:38
           }}
         >
-          <QuillToolbar isBoldActive={isBoldActive} setIsBoldActive={setIsBoldActive} isItalicActive={isItalicActive} setIsItalicActive={setIsItalicActive} isUnderlineActive={isUnderlineActive} setIsUnderlineActive={setIsUnderlineActive} isStrikeActive={isStrikeActive} setIsStrikeActive={setIsStrikeActive} isScriptActive={isScriptActive} setIsScriptActive={setIsScriptActice} isListActive={isListActive} setIsListActive={setIsListActive}/>
+          <QuillToolbar
+            isBoldActive={isBoldActive}
+            setIsBoldActive={setIsBoldActive}
+            isItalicActive={isItalicActive}
+            setIsItalicActive={setIsItalicActive}
+            isUnderlineActive={isUnderlineActive}
+            setIsUnderlineActive={setIsUnderlineActive}
+            isStrikeActive={isStrikeActive}
+            setIsStrikeActive={setIsStrikeActive}
+            isScriptActive={isScriptActive}
+            setIsScriptActive={setIsScriptActice}
+            isListActive={isListActive}
+            setIsListActive={setIsListActive}
+          />
         </div>
 
         {(showBlock === "" || documentContent == "word") && (
           <div
             style={{
               height: "100%",
-              background:"rgb(247, 247, 247)"
+              background: "rgb(247, 247, 247)",
             }}
           >
-
             <div
               style={{
                 overflowX: "auto", // Allows horizontal scrolling if necessary
                 overflowY: "auto", // Allows vertical scrolling if necessary
-                height: `${remainingVh + 1}vh`
+                height: `${remainingVh + 1}vh`,
               }}
               onClick={() => {
                 setAddReply({
@@ -3353,17 +3430,17 @@ function SyncFesion() {
                         <div className="icon-person mx-2">
                           {user?.firstName
                             ? user.firstName
-                              .split(" ")
-                              .map((name: string) => name.charAt(0))
-                              .slice(0, 2)
-                              .join("")
-                              .toUpperCase()
+                                .split(" ")
+                                .map((name: string) => name.charAt(0))
+                                .slice(0, 2)
+                                .join("")
+                                .toUpperCase()
                             : user?.email
-                              ?.split(" ")
-                              .map((e: string) => e.charAt(0))
-                              .join("")
-                              .substring(0, 2)
-                              .toUpperCase()}
+                                ?.split(" ")
+                                .map((e: string) => e.charAt(0))
+                                .join("")
+                                .substring(0, 2)
+                                .toUpperCase()}
                         </div>
                         <div
                           style={{ position: "relative", bottom: 3, right: 3 }}
@@ -3587,7 +3664,7 @@ function SyncFesion() {
                               </div>
                             </div>
                             {editComment &&
-                              editCommentIndex === indexComment ? (
+                            editCommentIndex === indexComment ? (
                               <>
                                 <div className="px-3" style={{ width: "100%" }}>
                                   <textarea
@@ -3696,14 +3773,14 @@ function SyncFesion() {
                                           </div>
                                           {editCommentIndex !==
                                             indexComment && (
-                                              <span
-                                                style={{
-                                                  color: "#00000080",
-                                                }}
-                                              >
-                                                {reply?.date?.toLocaleString()}
-                                              </span>
-                                            )}
+                                            <span
+                                              style={{
+                                                color: "#00000080",
+                                              }}
+                                            >
+                                              {reply?.date?.toLocaleString()}
+                                            </span>
+                                          )}
                                         </div>
                                         <div>
                                           <img
@@ -3744,7 +3821,7 @@ function SyncFesion() {
                                       </div>
                                     </div>
                                     {editComment &&
-                                      editCommentIndex === indexComment ? (
+                                    editCommentIndex === indexComment ? (
                                       <>
                                         <div
                                           className="px-3"
@@ -3770,7 +3847,7 @@ function SyncFesion() {
                                             style={{
                                               backgroundColor:
                                                 currentComment.trim().length ===
-                                                  0
+                                                0
                                                   ? "#174B8B80"
                                                   : "#174B8B",
                                               border: "1px solid #174B8B80",
