@@ -82,8 +82,9 @@ class CheckboxContainerBlot extends BlockEmbed {
 
     let node = super.create();
     node.setAttribute("contenteditable", "false");
-    node.innerHTML = `<input type="checkbox" id="${value.id}" name="${value.name
-      }" ${value.checked ? "checked" : ""} data-id="${value.id}"> ${value.label}`;
+    node.innerHTML = `<input type="checkbox" id="${value.id}" name="${
+      value.name
+    }" ${value.checked ? "checked" : ""} data-id="${value.id}"> ${value.label}`;
     node.classList.add("checkbox-container");
     node.setAttribute("draggable", "true");
 
@@ -346,19 +347,21 @@ class SignatureBlot extends BlockEmbed {
     recipients.forEach((recipient: any, index: number) => {
       const initials = recipient.label
         ? recipient.label
-          .split(" ")
-          .map((word: any) => word.charAt(0))
-          .join("")
-          .substring(0, 2)
+            .split(" ")
+            .map((word: any) => word.charAt(0))
+            .join("")
+            .substring(0, 2)
         : recipient.email
-          ? recipient.email.charAt(0)
-          : "P";
+        ? recipient.email.charAt(0)
+        : "P";
 
       const child = document.createElement("div");
       child.className = "col-6";
-      child.innerHTML = ` <div style="background-color: ${bubbleColors[index % bubbleColors.length]
-        }; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-align: center; margin-left:50%">${initials.toUpperCase()}</div>    <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Full Name</label> <input type="text" value=${recipient.label || recipient.email
-        } /> </div>  <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Company</label> <input type="text"/> </div> <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;" className='px-2'>Title</label> <input type="text" /> </div> `;
+      child.innerHTML = ` <div style="background-color: ${
+        bubbleColors[index % bubbleColors.length]
+      }; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-align: center; margin-left:50%">${initials.toUpperCase()}</div>    <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Full Name</label> <input type="text" value=${
+        recipient.label || recipient.email
+      } /> </div>  <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Company</label> <input type="text"/> </div> <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;" className='px-2'>Title</label> <input type="text" /> </div> `;
       rowDiv.appendChild(child);
     });
     node.appendChild(outerDiv);
@@ -1573,7 +1576,7 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext?.getEditor();
     editor.history.undo();
     const range = editor.getSelection(true);
-    handleChangeSelection(range, "user")
+    handleChangeSelection(range,"user")
     // editor.focus();
   };
 
@@ -1581,7 +1584,7 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext?.getEditor();
     editor.history.redo();
     const range = editor.getSelection(true);
-    handleChangeSelection(range, "user")
+    handleChangeSelection(range,"user")
   };
 
 
@@ -1658,7 +1661,7 @@ export default function QuillToolbar(props: any) {
         <path
           className={canRedo ? "history-svg-selected" : "history-svg"}
           d="M12.924 14.7462C14.796 13.2368 16 10.8859 16 8.24643C16 3.6912 12.43 0.00619412 8.012 7.76047e-06C3.588 -0.0061786 0 3.68708 0 8.24643C0 10.8282 1.15 13.1316 2.952 14.6431C3.022 14.7009 3.124 14.6885 3.18 14.6163L3.968 13.5749C4.022 13.5048 4.01 13.4038 3.944 13.3461C3.782 13.21 3.626 13.0635 3.476 12.9089C2.89124 12.308 2.42527 11.5958 2.104 10.8117C1.768 10.0013 1.6 9.13726 1.6 8.24643C1.6 7.35559 1.768 6.49156 2.102 5.67909C2.424 4.89342 2.886 4.18817 3.474 3.58191C4.062 2.97565 4.746 2.4993 5.508 2.1673C6.298 1.82292 7.136 1.6497 8 1.6497C8.864 1.6497 9.702 1.82292 10.49 2.1673C11.252 2.4993 11.936 2.97565 12.524 3.58191C13.112 4.18817 13.574 4.89342 13.896 5.67909C14.23 6.49156 14.398 7.35559 14.398 8.24643C14.398 9.13726 14.23 10.0013 13.896 10.8138C13.5747 11.5979 13.1088 12.3101 12.524 12.9109C12.338 13.1027 12.142 13.2821 11.938 13.4471L11.124 12.3727C11.1056 12.3482 11.0808 12.3295 11.0525 12.3188C11.0242 12.3081 10.9936 12.3058 10.9641 12.3123C10.9347 12.3188 10.9076 12.3337 10.886 12.3553C10.8644 12.3769 10.8491 12.4044 10.842 12.4346L10.05 15.7794C10.026 15.8825 10.102 15.9835 10.204 15.9835L13.544 16C13.678 16 13.754 15.8412 13.67 15.734L12.924 14.7462Z"
-        // fill={canRedo ? "#7771E8" : "#7F7F7F"}
+          // fill={canRedo ? "#7771E8" : "#7F7F7F"}
         />
       </svg>
     );
@@ -2509,6 +2512,8 @@ export default function QuillToolbar(props: any) {
         style={{
           position: "relative",
           right: "0.8rem",
+          cursor:"pointer",
+          pointerEvents:"none"
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="25"
@@ -2534,6 +2539,8 @@ export default function QuillToolbar(props: any) {
         style={{
           position: "relative",
           right: "0.8rem",
+          cursor:"pointer",
+          pointerEvents:"none"
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="36"
@@ -2559,6 +2566,8 @@ export default function QuillToolbar(props: any) {
         style={{
           position: "relative",
           right: "0.8rem",
+          cursor:"pointer",
+          pointerEvents:"none"
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="18"
@@ -2822,9 +2831,7 @@ export default function QuillToolbar(props: any) {
                 }}
                 className="ql-size select-comps"
                 IconComponent={SelectDropdownImage2}
-                onChange={(e) => {
-                  handleFontSizeChange(e);
-                }}
+                onChange={handleFontChange}
                 value={selectedFontSizeValue}
                 sx={{
                   ".MuiOutlinedInput-notchedOutline": {
@@ -3054,8 +3061,8 @@ export default function QuillToolbar(props: any) {
                       rx="2"
                       fill={
                         bgColorSvg === "#D9D9D940" ||
-                          bgColor === "#ffffff" ||
-                          bgColor == "#fefefe"
+                        bgColor === "#ffffff" ||
+                        bgColor == "#fefefe"
                           ? "#E6E6E6"
                           : bgColorSvg
                       }
@@ -3130,7 +3137,7 @@ export default function QuillToolbar(props: any) {
                     viewBox="0 0 10 10"
                     fill="none"
                   >
-                    <rect width="10" height="10" rx="2" fill={fontColorSvg == "white" || fontColorSvg === "#fefefe" || fontColorSvg == "#ffffff" ? "#E6E6E6" : fontColorSvg} />
+                    <rect width="10" height="10" rx="2" fill={fontColorSvg == "white" || fontColorSvg === "#fefefe" ||fontColorSvg == "#ffffff" ? "#E6E6E6":fontColorSvg} />
                   </svg>
                 </span>
               </span>
@@ -3487,7 +3494,7 @@ export default function QuillToolbar(props: any) {
                       width: 42,
                       padding: 0,
                       border:
-                        isListActive == "" || isListActive == "bullet"
+                        isListActive == "" || isListActive == "bullet" 
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
@@ -4177,16 +4184,16 @@ export default function QuillToolbar(props: any) {
                           {size.value == "1.5"
                             ? "1"
                             : size.value == "1.7"
-                              ? "1.15"
-                              : size.value == "2"
-                                ? "1.5"
-                                : size.value == "2.5"
-                                  ? "2"
-                                  : size.value == "3"
-                                    ? "2.5"
-                                    : size.value == "3.5"
-                                      ? "3"
-                                      : ""}
+                            ? "1.15"
+                            : size.value == "2"
+                            ? "1.5"
+                            : size.value == "2.5"
+                            ? "2"
+                            : size.value == "3"
+                            ? "2.5"
+                            : size.value == "3.5"
+                            ? "3"
+                            : ""}
                         </div>
                       </div>
                     </MenuItem>
@@ -4985,7 +4992,7 @@ export default function QuillToolbar(props: any) {
                       key={index}
                       onClick={() => handleSelectSize(size)}
                       className="page-sizing "
-                    // style={{height:39}}
+                      // style={{height:39}}
                     >
                       <div className="" style={{ padding: "0 8px" }}>
                         <div
@@ -5879,7 +5886,7 @@ export default function QuillToolbar(props: any) {
           anchorId="clean"
           className="custom-tooltip"
           place="bottom"
-          content={"Clear Format"}
+          content={"Clean"}
         />
       </div>
       <button onClick={scrollRight} className="scroll-left justify-flex-end">
