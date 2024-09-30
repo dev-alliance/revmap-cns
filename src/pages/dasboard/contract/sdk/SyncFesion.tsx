@@ -204,6 +204,7 @@ function SyncFesion() {
           let pages = data?.pages;
           return pages;
         });
+        setCurrentPage(data?.pages.length-1)
       }
 
       if (data?.pageSize) {
@@ -230,7 +231,6 @@ function SyncFesion() {
       setLifecycleData(data?.lifecycle);
       setApprovers(data?.approval), setCollaborater(data?.collaburater);
       setRecipients(data?.signature);
-
       setList(data);
     } catch (error) {
       console.log(error);
@@ -972,6 +972,9 @@ function SyncFesion() {
   const handleClick = () => {
     setEditMode(true);
     setEnabelEditing(false);
+    if(editorRefs) {
+      editorRefs.current[currentPage].getEditor().focus();
+    }
     const documentEditor = editorContainerRef.current?.documentEditor;
     // documentEditor.focusIn(); // Focusing the editor
     const buttons = document.querySelectorAll(".e-tbar-btn");
@@ -1509,11 +1512,11 @@ function SyncFesion() {
   const [isListActive, setIsListActive] = useState("");
 
   const handleChangeSelection = (range: any, source: any) => {
+  
     if (range) {
       setCurosrPosition(range?.index);
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
-
       if (source !== "api") {
         if (!selection) {
           if (format.color) {
@@ -1536,6 +1539,7 @@ function SyncFesion() {
           }
         }
       }
+      console.log(format)
       if (format.list) {
         setIsListActive(format.list);
       } else {
@@ -2241,6 +2245,7 @@ function SyncFesion() {
       </svg>
     );
   };
+
 
   return (
     <>
@@ -3249,8 +3254,8 @@ function SyncFesion() {
           style={{
             backgroundColor: "#fefefe",
             border: "1px solid #fefefe",
-            // display: editMode ? "" : "none",
-            height:38
+            height:38,
+            // position:"relative"
           }}
         >
           <QuillToolbar
@@ -3266,6 +3271,7 @@ function SyncFesion() {
             setIsScriptActive={setIsScriptActice}
             isListActive={isListActive}
             setIsListActive={setIsListActive}
+            handleChangeSelection = {handleChangeSelection}
           />
         </div>
 

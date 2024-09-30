@@ -988,7 +988,7 @@ body {
   list-style-type: none;
   counter-reset: list-item;
   /* Reset the counter to start from A */
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .ql-editor ul[data-list-type="upper-alpha"] > li:before {
@@ -999,7 +999,7 @@ body {
 
 .ql-editor ul[data-list-type="lower-alpha"] {
   list-style-type: none;
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .ql-editor ul[data-list-type="lower-alpha"] > li:before {
@@ -1010,7 +1010,7 @@ body {
 
 .ql-editor ul[data-list-type="lower-greek"] {
   list-style-type: none;
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .ql-editor ul[data-list-type="lower-greek"] > li:before {
@@ -1021,7 +1021,7 @@ body {
 
 .ql-editor ul[data-list-type="upper-roman"] {
   list-style-type: none;
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .ql-editor ul[data-list-type="upper-roman"] > li:before {
@@ -1032,7 +1032,7 @@ body {
 
 .ql-editor ul[data-list-type="lower-roman"] {
   list-style-type: none;
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .ql-editor ul[data-list-type="lower-roman"] > li:before {
@@ -1043,7 +1043,7 @@ body {
 
 .ql-editor ul[data-list-type="default"] {
   list-style-type: none;
-  margin-left: 20px;
+  /* margin-left: 20px; */
 }
 
 .ql-editor ul[data-list-type="default"] > li:before {
@@ -1059,7 +1059,7 @@ body {
 .ql-editor ul[data-list-type="bullet-dot"] > li:before {
   content: "•";
   color: black;
-  font-size: 13px;
+  font-size: 16px;
   top: 0px !important;
 
 }
@@ -1927,4 +1927,27 @@ fill: #7F7F7F;
 .css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
   box-shadow: none !important;
   border: 1px solid #EEE;
+}
+
+.ql-editor{
+  padding: 0px !important;
+}
+
+.select-comps:hover {
+  .hover-dropdown {
+    stroke: #7771e8;
+  }
+}
+
+
+.custom-tooltip{
+  background-color: #7F7F7F !important;
+  color: white !important;
+  z-index: 1 !important;
+  font-size: 13px !important;
+  padding: 3px 8px !important;
+  display: flex !important;
+  text-align: center !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
