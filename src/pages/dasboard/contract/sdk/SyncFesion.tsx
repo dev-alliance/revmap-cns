@@ -1539,7 +1539,6 @@ function SyncFesion() {
           }
         }
       }
-      console.log(format)
       if (format.list) {
         setIsListActive(format.list);
       } else {
