@@ -145,7 +145,7 @@ export default function Dashboard() {
     useContext(ContractContext);
 
   const location = useLocation();
-  const drawerWidth = leftsidebarExpanded ? 55 : 240;
+  const drawerWidth = leftsidebarExpanded ? 53 : 230;
   // console.log(leftsidebarExpanded, "leftsidebarExpandedyyy");
 
   // Split the pathname by '/' and filter out empty strings
@@ -161,7 +161,7 @@ export default function Dashboard() {
   const handleModuleClick = (moduleName: any) => {
     setSelectedModule(moduleName);
   };
-  const statuses = ["Draft", "Review", "Signing", "Signed", "Active"];
+  const statuses = ["Draft", "Review", "Signing", "Signed", "Active", "Terminated", "Deleted"];
   const expireDate = [
     "All",
     "Next 30 days",
@@ -238,6 +238,15 @@ export default function Dashboard() {
   const handleToggleExpire = () => {
     setOpen(!open);
   };
+
+  const BurgerIcon = () => {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+        <path className="hover-burger" d="M9.5625 10.8594H20.8125C20.9156 10.8594 21 10.775 21 10.6719V9.35938C21 9.25625 20.9156 9.17188 20.8125 9.17188H9.5625C9.45937 9.17188 9.375 9.25625 9.375 9.35938V10.6719C9.375 10.775 9.45937 10.8594 9.5625 10.8594ZM9.375 15.6406C9.375 15.7437 9.45937 15.8281 9.5625 15.8281H20.8125C20.9156 15.8281 21 15.7437 21 15.6406V14.3281C21 14.225 20.9156 14.1406 20.8125 14.1406H9.5625C9.45937 14.1406 9.375 14.225 9.375 14.3281V15.6406ZM21.1875 4.25H2.8125C2.70937 4.25 2.625 4.33437 2.625 4.4375V5.75C2.625 5.85312 2.70937 5.9375 2.8125 5.9375H21.1875C21.2906 5.9375 21.375 5.85312 21.375 5.75V4.4375C21.375 4.33437 21.2906 4.25 21.1875 4.25ZM21.1875 19.0625H2.8125C2.70937 19.0625 2.625 19.1469 2.625 19.25V20.5625C2.625 20.6656 2.70937 20.75 2.8125 20.75H21.1875C21.2906 20.75 21.375 20.6656 21.375 20.5625V19.25C21.375 19.1469 21.2906 19.0625 21.1875 19.0625ZM2.70469 12.6617L6.36797 15.5469C6.50391 15.6547 6.70547 15.5586 6.70547 15.3852V9.61484C6.70547 9.44141 6.50625 9.34531 6.36797 9.45312L2.70469 12.3383C2.68006 12.3574 2.66012 12.382 2.64641 12.41C2.6327 12.438 2.62557 12.4688 2.62557 12.5C2.62557 12.5312 2.6327 12.562 2.64641 12.59C2.66012 12.618 2.68006 12.6426 2.70469 12.6617Z" fill="#616161" />
+      </svg>
+    )
+  }
+
   const drawer = (
     <div>
       <img
@@ -266,7 +275,7 @@ export default function Dashboard() {
             handleDrawerToggle();
           }}
         >
-          <MenuIcon sx={{ color: "white" }} />
+          <BurgerIcon />
         </IconButton>
       </div>
       <List
@@ -295,45 +304,32 @@ export default function Dashboard() {
             component={Link}
             to="/dashboard"
             sx={{
-              height: "4vh",
-              mb: "1.3rem",
-              backgroundColor:
-                selectedModule === "home" ? "#E4EDF8" : "transparent",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
+            className="manual-list"
             onClick={() => handleModuleClick("home")}
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M22.6261 8.05678L22.6268 8.05734C23.1886 8.49334 23.5 9.12484 23.5 9.77963V21.8458C23.5 22.271 23.3174 22.6878 22.9774 23.0017C22.6361 23.3168 22.1652 23.5 21.6667 23.5H17.6667C17.1681 23.5 16.6972 23.3168 16.3559 23.0017C16.016 22.6878 15.8333 22.271 15.8333 21.8458V15.6908C15.8333 15.2999 15.6648 14.9339 15.3796 14.6706C15.0958 14.4086 14.7188 14.2676 14.3333 14.2676H9.66667C9.28116 14.2676 8.90419 14.4086 8.62039 14.6706C8.33524 14.9339 8.16667 15.2999 8.16667 15.6908V21.8458C8.16667 22.271 7.98405 22.6878 7.64408 23.0017C7.30276 23.3168 6.83188 23.5 6.33333 23.5H2.33333C2.08728 23.5 1.84444 23.4552 1.619 23.369C1.3936 23.2828 1.19125 23.1574 1.02259 23.0017C0.854012 22.846 0.72262 22.6634 0.633805 22.4655C0.545048 22.2677 0.5 22.0572 0.5 21.8458V9.7784C0.5 9.12505 0.811221 8.49325 1.37365 8.05576L1.37389 8.05558L10.3737 1.04647C10.824 0.696127 11.3998 0.5 12 0.5C12.6001 0.5 13.1759 0.696068 13.6261 1.0463C13.6261 1.04632 13.6261 1.04634 13.6261 1.04636C13.6262 1.0464 13.6262 1.04643 13.6263 1.04647L22.6261 8.05678Z"
-                  fill={selectedModule === "home" ? "#174B8B" : "white"}
-                  stroke="white"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <g clip-path="url(#clip0_3216_2515)">
+                  <path className="hover-burger" d="M19 5.5V7.5H15V5.5H19ZM9 5.5V11.5H5V5.5H9ZM19 13.5V19.5H15V13.5H19ZM9 17.5V19.5H5V17.5H9ZM21 3.5H13V9.5H21V3.5ZM11 3.5H3V13.5H11V3.5ZM21 11.5H13V21.5H21V11.5ZM11 15.5H3V21.5H11V15.5Z" fill={selectedModule == "home" ? "#5D55E3" : "#616161"} />
+                </g>
+                <defs>
+                  <clipPath id="clip0_3216_2515">
+                    <rect width="24" height="24" fill="white" transform="translate(0 0.5)" />
+                  </clipPath>
+                </defs>
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "home" ? "#155BE5" : "white",
+            <span
+              className="text-hover"
+              style={{
+                color: selectedModule === "home" ? "#5D55E3" : "",
               }}
-              primary="Home"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+            >
+              Dashboard
+            </span>
           </ListItemButton>
         </Tooltip>
         <Tooltip
@@ -357,44 +353,32 @@ export default function Dashboard() {
             component={Link}
             to="/dashboard"
             sx={{
-              height: "4vh",
-              mb: "1.3rem",
-              backgroundColor:
-                selectedModule === "inbox" ? "#E4EDF8" : "transparent",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
+            className="manual-list"
             onClick={() => handleModuleClick("inbox")}
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.3333 9.33333H14.6667V5.33333H9.33333V9.33333H6.66667L12 14.6667L17.3333 9.33333ZM21.3333 16H16C16 17.0609 15.5786 18.0783 14.8284 18.8284C14.0783 19.5786 13.0609 20 12 20C10.9391 20 9.92172 19.5786 9.17157 18.8284C8.42143 18.0783 8 17.0609 8 16H2.66667V2.66667H21.3333V16ZM21.3333 0H2.66667C1.18667 0 0 1.2 0 2.66667V21.3333C0 22.0406 0.280951 22.7189 0.781048 23.219C1.28115 23.719 1.95942 24 2.66667 24H21.3333C22.0406 24 22.7189 23.719 23.219 23.219C23.719 22.7189 24 22.0406 24 21.3333V2.66667C24 1.95942 23.719 1.28115 23.219 0.781048C22.7189 0.280951 22.0406 0 21.3333 0Z"
-                  fill={selectedModule === "inbox" ? "#174B8B" : "white"}
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <g clip-path="url(#clip0_3216_2520)">
+                  <path className="hover-burger" d="M19 3.5H5C3.9 3.5 3 4.4 3 5.5V19.5C3 20.0304 3.21071 20.5391 3.58579 20.9142C3.96086 21.2893 4.46957 21.5 5 21.5H19C20.1 21.5 21 20.6 21 19.5V5.5C21 4.4 20.1 3.5 19 3.5ZM19 19.5H5V16.5H8.56C9.25 17.69 10.53 18.5 12.01 18.5C13.49 18.5 14.76 17.69 15.46 16.5H19V19.5ZM19 14.5H14.01C14.01 15.6 13.11 16.5 12.01 16.5C10.91 16.5 10.01 15.6 10.01 14.5H5V5.5H19V14.5Z" fill={selectedModule === "inbox" ? "#5D55E3" : "#616161"} />
+                </g>
+                <defs>
+                  <clipPath id="clip0_3216_2520">
+                    <rect width="24" height="24" fill="white" transform="translate(0 0.5)" />
+                  </clipPath>
+                </defs>
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "inbox" ? "#155BE5" : "white",
+            <span
+              className="text-hover"
+              style={{
+                color: selectedModule === "inbox" ? "#5D55E3" : "",
               }}
-              primary="Inbox"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+            >
+              Inbox
+            </span>
           </ListItemButton>
         </Tooltip>
         <Tooltip
@@ -415,20 +399,10 @@ export default function Dashboard() {
           title={leftsidebarExpanded ? "Documents" : ""}
         >
           <ListItemButton
+          className="manual-list"
             sx={{
-              height: "5vh",
-              mb: "1.3rem",
-              backgroundColor:
-                selectedModule === "contract" ? "#E4EDF8" : "transparent",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
             onClick={() => handleModuleClick("contract")}
           >
@@ -437,18 +411,8 @@ export default function Dashboard() {
                 to="/dashboard/contract-list"
                 style={{ color: "inherit", textDecoration: "none" }}
               >
-                <svg
-                  width="29"
-                  height="29"
-                  viewBox="0 0 24 24"
-                  // viewBox={leftsidebarExpanded ? "-5 -5 35 35" : "0 0 24 24"}
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15.6 7H22.2L15.6 1.5V7ZM7.2 0H16.8L24 6V18C24 18.5304 23.7471 19.0391 23.2971 19.4142C22.847 19.7893 22.2365 20 21.6 20H7.2C5.868 20 4.8 19.1 4.8 18V2C4.8 1.46957 5.05286 0.960859 5.50294 0.585786C5.95303 0.210714 6.56348 0 7.2 0ZM2.4 4V22H21.6V24H2.4C1.76348 24 1.15303 23.7893 0.702944 23.4142C0.252856 23.0391 0 22.5304 0 22V4H2.4Z"
-                    fill={selectedModule === "contract" ? "#174B8B" : "white"}
-                  />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                  <path className="hover-burger" d="M19.707 7.793L15.707 3.793C15.52 3.605 15.266 3.5 15 3.5H7C5.346 3.5 4 4.846 4 6.5V18.5C4 20.154 5.346 21.5 7 21.5H17C18.654 21.5 20 20.154 20 18.5V8.5C20 8.234 19.895 7.98 19.707 7.793ZM17.586 8.5H16.5C15.673 8.5 15 7.827 15 7V5.914L17.586 8.5ZM17 19.5H7C6.448 19.5 6 19.052 6 18.5V6.5C6 5.948 6.448 5.5 7 5.5H14V7C14 8.379 15.121 9.5 16.5 9.5H18V18.5C18 19.052 17.552 19.5 17 19.5Z" fill={selectedModule === "contract" ? "#5D55E3" : "#616161"} />
                 </svg>
               </Link>
             </ListItemIcon>
@@ -457,39 +421,51 @@ export default function Dashboard() {
               style={{
                 color: "inherit",
                 textDecoration: "none",
-                width: "150px",
+                // width: "150px",
               }}
             >
-              <ListItemText
-                sx={{
-                  ml: -1.2,
-                  color: selectedModule === "contract" ? "#174B8B" : "white",
+              <span
+                style={{
+                  color: selectedModule === "contract" ? "#5D55E3" : "",
                 }}
-                primary="Documents"
-                primaryTypographyProps={{ variant: "subtitle2" }}
-              />
+                className="text-hover"
+              >
+                Document
+              </span>
+
             </Link>
 
             {openSections.contract ? (
-              <ExpandLess
+              <span style={{
+                position: "relative",
+                left: "25px"
+              }}
                 onClick={(event) => {
                   event.stopPropagation(); // Stop the click from propagating to the parent elements
+                  handleModuleClick("contract")
                   handleSectionClick("contract");
                 }}
-                sx={{
-                  color: selectedModule === "contract" ? "#174B8B" : "white",
-                }}
-              />
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="9" viewBox="0 0 13 9" fill="none">
+                  <path className="burger-hover1" d="M12 1L6.5 8L1 1" stroke={selectedModule === "contract" ? "#5D55E3" : "#616161"} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
             ) : (
-              <ExpandMore
+              <span style={{
+                position: "relative",
+                left: "25px"
+              }}
                 onClick={(event) => {
                   event.stopPropagation(); // Stop the click from propagating to the parent elements
+                  handleModuleClick("contract")
+
                   handleSectionClick("contract");
                 }}
-                sx={{
-                  color: selectedModule === "contract" ? "#174B8B" : "white",
-                }}
-              />
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="13" viewBox="0 0 9 13" fill="none">
+                  <path className="burger-hover1" d="M1 1L8 6.5L1 12" stroke={selectedModule === "contract" ? "#5D55E3" : "#616161"} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
             )}
           </ListItemButton>
         </Tooltip>
@@ -505,17 +481,17 @@ export default function Dashboard() {
                 onClick={() => handleStatusClick(statusItem)}
               >
                 <div
+                  className="bg-change"
                   style={{
                     height: leftsidebarExpanded ? "6px" : "10px",
                     width: leftsidebarExpanded ? "6px" : "10px",
-
-                    backgroundColor: statusColors[statusItem],
+                    // backgroundColor: "#D1D1D1",
                     borderRadius: leftsidebarExpanded ? "100%" : "50%",
                     marginRight: leftsidebarExpanded ? "4px" : "10px",
                     alignSelf: "center",
                   }}
                 />
-                <ListItemText
+                {/* <ListItemText
                   primary={statusItem}
                   sx={{
                     fontSize: leftsidebarExpanded ? "5px" : "10px",
@@ -529,64 +505,13 @@ export default function Dashboard() {
                     fontSize: leftsidebarExpanded ? "12px" : "14px",
                     color: "white",
                   }}
-                />
+                /> */}
+                <span className="text-status">
+                  {statusItem}
+                </span>
               </ListItemButton>
             ))}
-            {/* <ListItemButton
-              key="expireItem"
-              sx={{
-                pl: 7,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-              onClick={handleToggleExpire}
-            >
-              <ListItemText
-                primary="Expire"
-                primaryTypographyProps={{
-                  variant: "subtitle2",
-                  fontSize: "16px",
-                }}
-              />
-              {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton> */}
-            {/* <Collapse in={open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-            
-                {expireDate?.map((expireItem) => (
-                  <ListItemButton
-                    key={expireItem}
-                    sx={{ pl: 8 }}
-                    onClick={() => handleExpireClick(expireItem)}
-                  >
-                    <div
-                      style={{
-                        height: "10px",
-                        width: "10px",
-                        backgroundColor: ExpireColors[expireItem],
-                        borderRadius: "50%",
-                        marginRight: "10px",
-                        alignSelf: "center",
-                      }}
-                    />
-                    <ListItemText
-                      primary={expireItem}
-                      sx={{
-                        color:
-                          expireItem === contractStatus.expire
-                            ? "#1976d2"
-                            : "initial",
-                      }}
-                      primaryTypographyProps={{
-                        variant: "subtitle2",
-                        fontSize: "14px",
-                      }}
-                    />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Collapse> */}
+
           </List>
         </Collapse>
         <Tooltip
@@ -607,48 +532,32 @@ export default function Dashboard() {
           title={leftsidebarExpanded ? "Templates" : ""}
         >
           <ListItemButton
+          className="manual-list"
             component={Link}
             to="/dashboard/template-list"
             sx={{
-              height: "4vh",
-              mb: "1.3rem",
-              backgroundColor:
-                selectedModule === "template" ? "#E4EDF8" : "transparent",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
             onClick={() => handleModuleClick("template")}
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M14.4 4.8H24V24H14.4V4.8ZM0 2.4H24V0H0V2.4ZM0 7.2H12V4.8H0V7.2ZM8.4 24H12V9.6H8.4V24ZM0 24H6V9.6H0V24Z"
-                  fill={selectedModule === "template" ? "#174B8B" : "white"}
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <path className="hover-burger" fill-rule="evenodd" clip-rule="evenodd" d="M3 3.5V9.5H21V3.5H3ZM19 5.5H5V7.5H19V5.5Z" fill={selectedModule === "template" ? "#5D55E3" : "#616161"} />
+                <path className="hover-burger" fill-rule="evenodd" clip-rule="evenodd" d="M3 11.5V21.5H11V11.5H3ZM9 13.5H5V19.5H9V13.5Z" fill={selectedModule === "template" ? "#5D55E3" : "#616161"} />
+                <path className="hover-burger" d="M21 11.5H13V13.5H21V11.5Z" fill={selectedModule === "template" ? "#5D55E3" : "#616161"} />
+                <path className="hover-burger" d="M13 15.5H21V17.5H13V15.5Z" fill={selectedModule === "template" ? "#5D55E3" : "#616161"} />
+                <path className="hover-burger" d="M21 19.5H13V21.5H21V19.5Z" fill={selectedModule === "template" ? "#5D55E3" : "#616161"} />
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "template" ? "#174B8B" : "white",
-                fontWeight: "bold",
+            <span
+              style={{
+                color: selectedModule === "template" ? "#5D55E3" : "",
               }}
-              primary="Templates"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+              className="text-hover"
+            >
+              Templates
+            </span>
           </ListItemButton>
         </Tooltip>
         <Tooltip
@@ -672,45 +581,27 @@ export default function Dashboard() {
             component={Link}
             to="/dashboard/folder-list"
             sx={{
-              height: "4vh",
-              mb: "1.3rem",
-              backgroundColor:
-                selectedModule === "folder" ? "#E4EDF8" : "transparent",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
+            className="manual-list"
             onClick={() => handleModuleClick("folder")}
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="21"
-                viewBox="0 0 24 21"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12.8475 2.25H20.25C22.1554 2.25 23.7289 3.67105 23.9684 5.51113L23.992 5.75344L24 6V17.25C24 19.2382 22.4527 20.8651 20.4966 20.992L20.25 21H3.75C1.76177 21 0.134942 19.4527 0.00797653 17.4966L0 17.25V6.75H7.60603L7.83578 6.73825C8.29165 6.69147 8.72263 6.50645 9.07053 6.20816L9.23728 6.04969L12.8475 2.25ZM7.75 0C8.15569 0 8.55227 0.109653 8.89858 0.315243L9.1 0.45L11.0775 1.9335L8.14978 5.01656L8.0586 5.09807C7.96155 5.17151 7.84802 5.22025 7.72793 5.24003L7.60603 5.25H0V3.75C0 1.76177 1.5473 0.134942 3.50344 0.00797653L3.75 0H7.75Z"
-                  fill={selectedModule === "folder" ? "#174B8B" : "white"}
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <path className="hover-burger" d="M20.625 7.49375H12.2109L9.46172 4.86406C9.42674 4.83132 9.38073 4.81291 9.33281 4.8125H3.375C2.96016 4.8125 2.625 5.14766 2.625 5.5625V19.4375C2.625 19.8523 2.96016 20.1875 3.375 20.1875H20.625C21.0398 20.1875 21.375 19.8523 21.375 19.4375V8.24375C21.375 7.82891 21.0398 7.49375 20.625 7.49375ZM19.6875 18.5H4.3125V6.5H8.73047L11.5336 9.18125H19.6875V18.5Z" fill={
+                  selectedModule === "folder" ? "#5D55E3" : "#616161"
+                } />
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "folder" ? "#174B8B" : "white",
-                fontWeight: "bold",
+            <span
+              style={{
+                color: selectedModule === "folder" ? "#5D55E3" : "",
               }}
-              primary="Folders"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+              className="text-hover"
+            >
+              Folders
+            </span>
           </ListItemButton>
         </Tooltip>
         <Tooltip
@@ -731,50 +622,28 @@ export default function Dashboard() {
           title={leftsidebarExpanded ? "Reports" : ""}
         >
           <ListItemButton
+          className="manual-list"
             component={Link}
             to="/dashboard/folder-list"
             sx={{
-              height: "4vh",
-              mb: "1.3rem",
-              backgroundColor:
-                selectedModule === "reports" ? "#E4EDF8" : "transparent",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
             onClick={() => handleModuleClick("reports")}
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M0 4C0 2.93913 0.421427 1.92172 1.17157 1.17157C1.92172 0.421427 2.93913 0 4 0H20C21.0609 0 22.0783 0.421427 22.8284 1.17157C23.5786 1.92172 24 2.93913 24 4V20C24 21.0609 23.5786 22.0783 22.8284 22.8284C22.0783 23.5786 21.0609 24 20 24H4C2.93913 24 1.92172 23.5786 1.17157 22.8284C0.421427 22.0783 0 21.0609 0 20V4ZM6 14C6.26522 14 6.51957 14.1054 6.70711 14.2929C6.89464 14.4804 7 14.7348 7 15V18C7 18.2652 6.89464 18.5196 6.70711 18.7071C6.51957 18.8946 6.26522 19 6 19C5.73478 19 5.48043 18.8946 5.29289 18.7071C5.10536 18.5196 5 18.2652 5 18V15C5 14.7348 5.10536 14.4804 5.29289 14.2929C5.48043 14.1054 5.73478 14 6 14ZM11 12C11 11.7348 10.8946 11.4804 10.7071 11.2929C10.5196 11.1054 10.2652 11 10 11C9.73478 11 9.48043 11.1054 9.29289 11.2929C9.10536 11.4804 9 11.7348 9 12V18C9 18.2652 9.10536 18.5196 9.29289 18.7071C9.48043 18.8946 9.73478 19 10 19C10.2652 19 10.5196 18.8946 10.7071 18.7071C10.8946 18.5196 11 18.2652 11 18V12ZM14 8C14.2652 8 14.5196 8.10536 14.7071 8.29289C14.8946 8.48043 15 8.73478 15 9V18C15 18.2652 14.8946 18.5196 14.7071 18.7071C14.5196 18.8946 14.2652 19 14 19C13.7348 19 13.4804 18.8946 13.2929 18.7071C13.1054 18.5196 13 18.2652 13 18V9C13 8.73478 13.1054 8.48043 13.2929 8.29289C13.4804 8.10536 13.7348 8 14 8ZM19 6C19 5.73478 18.8946 5.48043 18.7071 5.29289C18.5196 5.10536 18.2652 5 18 5C17.7348 5 17.4804 5.10536 17.2929 5.29289C17.1054 5.48043 17 5.73478 17 6V18C17 18.2652 17.1054 18.5196 17.2929 18.7071C17.4804 18.8946 17.7348 19 18 19C18.2652 19 18.5196 18.8946 18.7071 18.7071C18.8946 18.5196 19 18.2652 19 18V6Z"
-                  fill={selectedModule === "reports" ? "#174B8B" : "white"}
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <path className="burger-hover1" d="M9 17.5V15.5M12 17.5V13.5M15 17.5V11.5M17 21.5H7C6.46957 21.5 5.96086 21.2893 5.58579 20.9142C5.21071 20.5391 5 20.0304 5 19.5V5.5C5 4.96957 5.21071 4.46086 5.58579 4.08579C5.96086 3.71071 6.46957 3.5 7 3.5H12.586C12.8512 3.50006 13.1055 3.60545 13.293 3.793L18.707 9.207C18.8946 9.39449 18.9999 9.6488 19 9.914V19.5C19 20.0304 18.7893 20.5391 18.4142 20.9142C18.0391 21.2893 17.5304 21.5 17 21.5Z" stroke={selectedModule === "reports" ? "#5D55E3" : "#616161"} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "reports" ? "#174B8B" : "white",
-                fontWeight: "bold",
+            <span
+              style={{
+                color: selectedModule === "reports" ? "#5D55E3" : "",
               }}
-              primary="Reports"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+              className="text-hover"
+            >
+              Reports
+            </span>
           </ListItemButton>
         </Tooltip>
         <Tooltip
@@ -796,50 +665,48 @@ export default function Dashboard() {
         >
           <ListItemButton
             sx={{
-              height: "4vh",
-              mb: "1.3rem",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
-            onClick={() => handleSectionClick("setting")}
-            // component={Link}
-            // to="/dashboard/contract-list"
+            className="manual-list"
+            onClick={() => {
+              handleSectionClick("setting")
+              handleModuleClick("setting")
+            }}
+          // component={Link}
+          // to="/dashboard/contract-list"
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="26"
-                viewBox="0 0 24 26"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12.0046 9.71959L12.0061 9.71958C12.3562 9.71851 12.703 9.78701 13.0264 9.9211C13.3497 10.0552 13.6432 10.2522 13.8898 10.5007L13.8903 10.5012C14.3958 11.0091 14.6736 11.6757 14.6736 12.3886C14.6736 13.1011 14.3961 13.7674 13.8912 14.2752C13.3834 14.7801 12.7171 15.0576 12.0046 15.0576C11.2921 15.0576 10.6258 14.7801 10.118 14.2752C9.61312 13.7674 9.3356 13.1011 9.3356 12.3886C9.3356 11.6759 9.61321 11.0096 10.1183 10.5018C10.625 9.99517 11.2908 9.71958 12.0046 9.71959ZM21.3353 14.2253L21.29 14.5031L21.504 14.6859L23.3546 16.2678C23.3548 16.2679 23.3549 16.268 23.355 16.2681C23.4858 16.3811 23.5319 16.5596 23.4776 16.7163L23.4775 16.7166L23.453 16.7873C22.9608 18.1541 22.2354 19.4119 21.2896 20.5292C21.2893 20.5296 21.289 20.53 21.2886 20.5304L21.2396 20.5875L21.2375 20.59C21.1843 20.6529 21.1131 20.6982 21.0335 20.7197L21.1642 21.2024L21.0335 20.7197C20.9541 20.7412 20.87 20.7381 20.7924 20.7107C20.7922 20.7107 20.7921 20.7106 20.7919 20.7106L18.4933 19.8925L18.2271 19.7977L18.0086 19.9769C17.201 20.6391 16.3027 21.1581 15.3291 21.5239L15.0647 21.6232L15.0133 21.901L14.5687 24.3052C14.5687 24.3053 14.5687 24.3053 14.5687 24.3054C14.5536 24.3867 14.5141 24.4615 14.4556 24.5198L14.8084 24.8741L14.4556 24.5198C14.3969 24.5782 14.3219 24.6174 14.2405 24.6321L14.2386 24.6325L14.1647 24.6462C14.1643 24.6462 14.1639 24.6463 14.1635 24.6464C12.7357 24.9032 11.2735 24.9032 9.84562 24.6464C9.84527 24.6463 9.84491 24.6462 9.84456 24.6462L9.77058 24.6325L9.76867 24.6321C9.68727 24.6174 9.61228 24.5782 9.55366 24.5198L9.20079 24.8741L9.55366 24.5198C9.49505 24.4614 9.45558 24.3866 9.44052 24.3052L8.94888 24.3963L9.44051 24.3052L8.99306 21.8895L8.94149 21.6112L8.67627 21.5122C7.71347 21.1528 6.82113 20.6318 6.0181 19.9716L5.79955 19.7919L5.53298 19.8868L3.21849 20.7101C3.21819 20.7103 3.21789 20.7104 3.21759 20.7105C3.13972 20.7376 3.05547 20.7406 2.97587 20.719C2.89595 20.6974 2.82447 20.6521 2.77084 20.589L2.76958 20.5875L2.71979 20.5294C2.71954 20.5291 2.7193 20.5289 2.71905 20.5286C1.77425 19.4179 1.0487 18.155 0.556187 16.7873L0.531714 16.7166L0.531753 16.7166L0.529557 16.7105C0.501511 16.6327 0.497798 16.5483 0.518912 16.4684C0.540026 16.3885 0.584966 16.3169 0.647755 16.2631L2.51688 14.663L2.73132 14.4795L2.68491 14.201C2.60194 13.7032 2.56145 13.187 2.56145 12.669C2.56145 12.1569 2.60189 11.6404 2.68506 11.1361L2.73097 10.8576L2.51631 10.6744L0.643254 9.07581C0.64303 9.07561 0.642805 9.07542 0.642581 9.07523C0.513282 8.96337 0.467176 8.78498 0.524 8.62714L0.524036 8.62715L0.526049 8.62133L0.550579 8.55047C1.04183 7.18383 1.77453 5.91652 2.71379 4.80889C2.71407 4.80856 2.71435 4.80823 2.71463 4.8079L2.76392 4.7504L2.76393 4.75041L2.76601 4.74795C2.81927 4.685 2.89042 4.63975 2.97001 4.61821C3.04953 4.59669 3.1337 4.59985 3.21138 4.62727C3.21145 4.6273 3.21153 4.62732 3.2116 4.62735L5.52732 5.45115L5.79371 5.54592L6.01222 5.36649C6.80968 4.71163 7.70841 4.19093 8.67316 3.82481L8.93616 3.725L8.98739 3.4484L9.43485 1.03271L9.43485 1.03269C9.44992 0.951343 9.48938 0.876503 9.54799 0.818116L9.19513 0.463876L9.548 0.818114C9.60661 0.759728 9.6816 0.720556 9.76301 0.705809L9.76492 0.705457L9.83928 0.691682C9.83962 0.691619 9.83996 0.691557 9.84031 0.691495C11.2535 0.436167 12.7444 0.436168 14.1576 0.6915C14.1579 0.69156 14.1583 0.691621 14.1586 0.691682L14.233 0.705461L14.2349 0.705805C14.3163 0.720556 14.3913 0.759726 14.4499 0.818114L14.8028 0.463876L14.4499 0.818116C14.5085 0.876472 14.5479 0.951263 14.563 1.03256C14.563 1.03261 14.563 1.03265 14.563 1.03269L15.0076 3.43693L15.0591 3.7155L15.3246 3.81449C16.2967 4.17701 17.1947 4.6983 18.0029 5.36105L18.2214 5.54021L18.4876 5.44547L20.7851 4.62778C20.7854 4.62767 20.7856 4.62757 20.7859 4.62747C20.8638 4.60035 20.9481 4.59736 21.0277 4.61891C21.1076 4.64054 21.1791 4.68587 21.2327 4.74894L21.234 4.7504L21.2837 4.80843C21.2839 4.80871 21.2842 4.80899 21.2844 4.80927C22.2252 5.91549 22.9579 7.18287 23.4472 8.55011C23.4475 8.55091 23.4478 8.55171 23.448 8.55251L23.4718 8.62133L23.4718 8.62134L23.474 8.62743C23.502 8.70519 23.5058 8.78964 23.4846 8.86955C23.4635 8.94937 23.4187 9.02089 23.356 9.07462C23.3559 9.07469 23.3559 9.07475 23.3558 9.07481L21.504 10.6576L21.2898 10.8407L21.3354 11.1187C21.4188 11.6272 21.4619 12.1524 21.4619 12.6718C21.4619 13.191 21.4189 13.7134 21.3353 14.2253ZM6.52595 12.3886C6.52595 15.4146 8.97859 17.8673 12.0046 17.8673C15.0306 17.8673 17.4833 15.4146 17.4833 12.3886C17.4833 9.36258 15.0306 6.90993 12.0046 6.90993C8.97859 6.90993 6.52595 9.36258 6.52595 12.3886Z"
-                  fill="white"
-                  stroke="white"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <path className="hover-burger" d="M21.6751 15.1648L20.1399 13.8523C20.2126 13.407 20.2501 12.9523 20.2501 12.4977C20.2501 12.043 20.2126 11.5883 20.1399 11.143L21.6751 9.83047C21.7908 9.73134 21.8737 9.59932 21.9127 9.45195C21.9516 9.30458 21.9447 9.14885 21.893 9.00547L21.8719 8.94453C21.4493 7.76334 20.8165 6.66836 20.004 5.7125L19.9618 5.66328C19.8632 5.54739 19.7318 5.46408 19.585 5.42433C19.4381 5.38458 19.2827 5.39026 19.1391 5.44062L17.2336 6.11797C16.5305 5.5414 15.7454 5.08672 14.8969 4.76797L14.529 2.77578C14.5012 2.62588 14.4285 2.48797 14.3205 2.38038C14.2125 2.27279 14.0743 2.20062 13.9243 2.17344L13.861 2.16172C12.6399 1.9414 11.3555 1.9414 10.1344 2.16172L10.0711 2.17344C9.92114 2.20062 9.78295 2.27279 9.67494 2.38038C9.56694 2.48797 9.49422 2.62588 9.46646 2.77578L9.09615 4.77734C8.25448 5.09616 7.47068 5.5506 6.77584 6.12265L4.8563 5.44062C4.71279 5.38986 4.55722 5.38398 4.41028 5.42375C4.26333 5.46352 4.13197 5.54706 4.03365 5.66328L3.99146 5.7125C3.17993 6.66904 2.54718 7.76383 2.12349 8.94453L2.1024 9.00547C1.99693 9.29844 2.08365 9.62656 2.32037 9.83047L3.87427 11.157C3.80162 11.5977 3.76646 12.0477 3.76646 12.4953C3.76646 12.9453 3.80162 13.3953 3.87427 13.8336L2.32037 15.1602C2.20457 15.2593 2.1217 15.3913 2.08277 15.5387C2.04383 15.686 2.05068 15.8418 2.1024 15.9852L2.12349 16.0461C2.54771 17.2273 3.17584 18.3172 3.99146 19.2781L4.03365 19.3273C4.13221 19.4432 4.26358 19.5265 4.41043 19.5663C4.55729 19.606 4.71274 19.6004 4.8563 19.55L6.77584 18.868C7.47427 19.4422 8.25474 19.8969 9.09615 20.2133L9.46646 22.2148C9.49422 22.3647 9.56694 22.5026 9.67494 22.6102C9.78295 22.7178 9.92114 22.79 10.0711 22.8172L10.1344 22.8289C11.3667 23.0504 12.6287 23.0504 13.861 22.8289L13.9243 22.8172C14.0743 22.79 14.2125 22.7178 14.3205 22.6102C14.4285 22.5026 14.5012 22.3647 14.529 22.2148L14.8969 20.2227C15.745 19.9047 16.5346 19.4486 17.2336 18.8727L19.1391 19.55C19.2826 19.6008 19.4382 19.6066 19.5851 19.5669C19.7321 19.5271 19.8634 19.4436 19.9618 19.3273L20.004 19.2781C20.8196 18.3148 21.4477 17.2273 21.8719 16.0461L21.893 15.9852C21.9985 15.6969 21.9118 15.3687 21.6751 15.1648ZM18.4758 11.4195C18.5344 11.7734 18.5649 12.1367 18.5649 12.5C18.5649 12.8633 18.5344 13.2266 18.4758 13.5805L18.3211 14.5203L20.0719 16.018C19.8065 16.6294 19.4715 17.2082 19.0735 17.743L16.8985 16.9719L16.1626 17.5766C15.6024 18.0359 14.979 18.3969 14.304 18.65L13.411 18.9852L12.9915 21.2586C12.3295 21.3336 11.6612 21.3336 10.9993 21.2586L10.5797 18.9805L9.6938 18.6406C9.02584 18.3875 8.40474 18.0266 7.84927 17.5695L7.11334 16.9625L4.92427 17.7406C4.52584 17.2039 4.19302 16.625 3.92584 16.0156L5.69537 14.5039L5.54302 13.5664C5.48677 13.2172 5.4563 12.8562 5.4563 12.5C5.4563 12.1414 5.48443 11.7828 5.54302 11.4336L5.69537 10.4961L3.92584 8.98437C4.19068 8.37265 4.52584 7.79609 4.92427 7.25937L7.11334 8.0375L7.84927 7.43047C8.40474 6.97344 9.02584 6.6125 9.6938 6.35937L10.5821 6.02422L11.0016 3.74609C11.6602 3.67109 12.3329 3.67109 12.9938 3.74609L13.4133 6.01953L14.3063 6.35469C14.979 6.60781 15.6047 6.96875 16.1649 7.42812L16.9008 8.03281L19.0758 7.26172C19.4743 7.79844 19.8071 8.37734 20.0743 8.98672L18.3235 10.4844L18.4758 11.4195ZM12.0001 8.14062C9.72193 8.14062 7.87505 9.9875 7.87505 12.2656C7.87505 14.5437 9.72193 16.3906 12.0001 16.3906C14.2782 16.3906 16.1251 14.5437 16.1251 12.2656C16.1251 9.9875 14.2782 8.14062 12.0001 8.14062ZM13.8563 14.1219C13.6128 14.366 13.3235 14.5597 13.0049 14.6916C12.6864 14.8235 12.3449 14.8912 12.0001 14.8906C11.2993 14.8906 10.6407 14.6164 10.1438 14.1219C9.89964 13.8784 9.70602 13.5891 9.57409 13.2705C9.44216 12.9519 9.37452 12.6104 9.37505 12.2656C9.37505 11.5648 9.64927 10.9062 10.1438 10.4094C10.6407 9.9125 11.2993 9.64062 12.0001 9.64062C12.7008 9.64062 13.3594 9.9125 13.8563 10.4094C14.1005 10.6528 14.2941 10.9422 14.426 11.2607C14.5579 11.5793 14.6256 11.9208 14.6251 12.2656C14.6251 12.9664 14.3508 13.625 13.8563 14.1219Z" fill={selectedModule === "setting" || selectedModule === "user" || selectedModule === "company-profile" || selectedModule === "billing" ? "#5D55E3" : "#616161"} />
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "Settings" ? "#174B8B" : "white",
-                fontWeight: "bold",
+            <span
+              style={{
+                color: selectedModule === "setting" || selectedModule === "user" || selectedModule === "company-profile" || selectedModule === "billing" ? "#5D55E3" : "",
               }}
-              primary="Settings"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+              className="text-hover"
+            >
+              Settings
+            </span>
             {openSections.setting ? (
-              <ExpandLess sx={{ color: "white" }} /> // Setting the icon color to white
+              <span style={{
+                position: "relative",
+                left: "35px"
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="9" viewBox="0 0 13 9" fill="none">
+                  <path d="M12 1L6.5 8L1 1" stroke="#5D55E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
             ) : (
-              <ExpandMore sx={{ color: "white" }} /> // Setting the icon color to white
+              <span style={{
+                position: "relative",
+                left: "35px"
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="13" viewBox="0 0 9 13" fill="none">
+                  <path className="burger-hover1" d="M1 1L8 6.5L1 12" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
             )}
           </ListItemButton>
         </Tooltip>
@@ -867,54 +734,27 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "billing" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
+                  // backgroundColor:
+                  //   selectedModule === "billing" ? "#E4EDF8" : "transparent",
                 }}
                 onClick={() => handleModuleClick("billing")}
                 component={Link}
                 to="/dashboard/billing"
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  {" "}
-                  {/* Wrapper with fixed size */}
-                  <svg
-                    width="24" // Fixed width
-                    height="24" // Fixed height
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M18.96 21.6C18.48 23.04 17.16 24 15.6 24H3.6C1.56 24 0 22.44 0 20.4V19.2H3.6H14.64C15.12 20.64 16.44 21.6 18 21.6H18.96ZM20.4 0C22.44 0 24 1.56 24 3.6V4.8H21.6V3.6C21.6 2.88 21.12 2.4 20.4 2.4C19.68 2.4 19.2 2.88 19.2 3.6V19.2H18C17.28 19.2 16.8 18.72 16.8 18V16.8H3.6V3.6C3.6 1.56 5.16 0 7.2 0H20.4ZM7.2 4.8V7.2H15.6V4.8H7.2ZM7.2 9.6V12H14.4V9.6H7.2Z"
-                      fill={selectedModule === "billing" ? "#174B8B" : "white"}
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path className="burger-hover1" d="M11.2 10.7H2.9V2.4C2.9 1.31614 3.71614 0.5 4.8 0.5H13.6C14.6839 0.5 15.5 1.31614 15.5 2.4V2.7H14.9V2.4C14.9 2.04638 14.7799 1.71284 14.5336 1.46645C14.2872 1.22006 13.9536 1.1 13.6 1.1C13.2464 1.1 12.9128 1.22006 12.6664 1.46645C12.4201 1.71284 12.3 2.04638 12.3 2.4V12.3H12C11.8736 12.3 11.8072 12.2601 11.7736 12.2264C11.7399 12.1928 11.7 12.1264 11.7 12V11.2V10.7H11.2ZM4.8 2.7H4.3V3.2V4.8V5.3H4.8H10.4H10.9V4.8V3.2V2.7H10.4H4.8ZM4.8 5.9H4.3V6.4V8V8.5H4.8H9.6H10.1V8V6.4V5.9H9.6H4.8ZM9.42428 13.3C9.86383 14.2119 10.7522 14.8198 11.7894 14.8926C11.4496 15.2718 10.9561 15.5 10.4 15.5H2.4C1.31614 15.5 0.5 14.6839 0.5 13.6V13.3H2.4H9.42428Z" stroke={selectedModule === "billing" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-
-                <ListItemText
-                  primary={"Billing"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
-                    color: selectedModule === "billing" ? "#174B8B" : "white",
+                <span
+                  style={{
+                    marginLeft: "8px",
+                    color: selectedModule === "billing" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Billing
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -939,60 +779,28 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "company-profile"
-                      ? "#E4EDF8"
-                      : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
                 }}
                 onClick={() => handleModuleClick("company-profile")}
                 component={Link}
                 to="/dashboard/update-compony"
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M0 0V24H10.2857V19.3333H13.7143V24H24V0H0ZM3.42857 2.66667H6.85714V5.33333H3.42857V2.66667ZM10.2857 2.66667H13.7143V5.33333H10.2857V2.66667ZM17.1429 2.66667H20.5714V5.33333H17.1429V2.66667ZM3.42857 8H6.85714V10.6667H3.42857V8ZM10.2857 8H13.7143V10.6667H10.2857V8ZM17.1429 8H20.5714V10.6667H17.1429V8ZM3.42857 13.3333H6.85714V16H3.42857V13.3333ZM10.2857 13.3333H13.7143V16H10.2857V13.3333ZM17.1429 13.3333H20.5714V16H17.1429V13.3333ZM3.42857 18.6667H6.85714V21.3333H3.42857V18.6667ZM17.1429 18.6667H20.5714V21.3333H17.1429V18.6667Z"
-                      fill={
-                        selectedModule === "company-profile"
-                          ? "#174B8B"
-                          : "white"
-                      }
-                    />
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path className="burger-hover1" d="M12.6667 14V3.33333C12.6667 2.97971 12.5262 2.64057 12.2761 2.39052C12.0261 2.14048 11.687 2 11.3333 2H4.66667C4.31304 2 3.97391 2.14048 3.72386 2.39052C3.47381 2.64057 3.33333 2.97971 3.33333 3.33333V14M12.6667 14H14M12.6667 14H9.33333M3.33333 14H2M3.33333 14H6.66667M9.33333 14V10.6667C9.33333 10.4899 9.2631 10.3203 9.13807 10.1953C9.01305 10.0702 8.84348 10 8.66667 10H7.33333C7.15652 10 6.98695 10.0702 6.86193 10.1953C6.7369 10.3203 6.66667 10.4899 6.66667 10.6667V14M9.33333 14H6.66667M6 4.66667H6.66667M6 7.33333H6.66667M9.33333 4.66667H10M9.33333 7.33333H10" stroke={selectedModule === "company-profile" ? "#5D55E3" : "#616161"} stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Company Profile"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
+                <span
+                  style={{
+                    marginLeft: "8px",
                     color:
                       selectedModule === "company-profile"
-                        ? "#174B8B"
-                        : "white",
+                        ? "#5D55E3"
+                        : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Company Profile
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -1017,51 +825,25 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "user" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
                 }}
                 onClick={() => handleModuleClick("user")}
                 component={Link}
                 to="/dashboard/user-list"
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="22"
-                    viewBox="0 0 24 22"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12.9913 11.9998C14.6482 11.9998 15.9913 13.3429 15.9913 14.9997L15.9897 16.4964C16.1954 20.1695 13.3664 22.0012 8.12024 22.0012C2.89098 22.0012 0 20.1934 0 16.5488V14.9997C0 13.3429 1.34312 11.9998 2.99994 11.9998H12.9913ZM20.9924 11.9998C22.6492 11.9998 23.9923 13.3429 23.9923 14.9997L23.9908 16.0528C24.1717 19.3477 21.6719 20.9996 17.1029 20.9996C16.4826 20.9996 15.8996 20.9694 15.355 20.9089C16.4284 19.9177 17.0026 18.5726 17.0007 16.8728L16.9881 16.4405L16.9913 14.9997C16.9913 13.8046 16.4671 12.7319 15.6362 11.999L20.9924 11.9998ZM7.99985 0C10.7617 0 13.0006 2.2389 13.0006 5.00072C13.0006 7.76254 10.7617 10.0014 7.99985 10.0014C5.23803 10.0014 2.99913 7.76254 2.99913 5.00072C2.99913 2.2389 5.23803 0 7.99985 0ZM17.9997 1.99996C20.2088 1.99996 21.9996 3.79079 21.9996 5.99989C21.9996 8.20899 20.2088 9.99981 17.9997 9.99981C15.7906 9.99981 13.9997 8.20899 13.9997 5.99989C13.9997 3.79079 15.7906 1.99996 17.9997 1.99996Z"
-                      fill={selectedModule === "user" ? "#174B8B" : "white"}
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path className="burger-hover1" d="M11.8275 10.6661C11.8275 10.1233 11.6907 9.61223 11.4501 9.16572L13.9948 9.16611H13.9949C14.8233 9.16611 15.4949 9.83767 15.4949 10.6661L15.4939 11.3674L15.4939 11.3815L15.4946 11.3956C15.5466 12.3418 15.2232 12.9922 14.5978 13.4317C13.9373 13.896 12.8802 14.166 11.4019 14.166C11.3485 14.166 11.2955 14.1657 11.243 14.165C11.6344 13.5284 11.8348 12.7731 11.8338 11.9142H11.834L11.8336 11.9003L11.8254 11.6199L11.8275 10.6672V10.6661ZM10.1598 11.6634L10.1598 11.6776L10.1606 11.6918C10.2204 12.7602 9.84959 13.5022 9.11686 14.0047C8.34659 14.5329 7.12014 14.8337 5.41349 14.8337C3.71376 14.8337 2.47461 14.5374 1.67466 14.01C0.907727 13.5043 0.5 12.7584 0.5 11.6988V10.6661C0.5 9.83767 1.17156 9.16611 1.99996 9.16611H8.66089C9.48912 9.16611 10.1606 9.83739 10.1609 10.6656C10.1609 10.6656 10.1609 10.6656 10.1609 10.6656C10.1609 10.6658 10.1609 10.6659 10.1609 10.6661L10.1598 11.6634ZM5.33323 1.16626C6.89831 1.16626 8.16705 2.435 8.16705 4.00007C8.16705 5.56515 6.89831 6.83389 5.33323 6.83389C3.76816 6.83389 2.49942 5.56515 2.49942 4.00007C2.49942 2.435 3.76816 1.16626 5.33323 1.16626ZM11.9998 2.49957C13.1964 2.49957 14.1664 3.4696 14.1664 4.66619C14.1664 5.86278 13.1964 6.83281 11.9998 6.83281C10.8032 6.83281 9.83316 5.86278 9.83316 4.66619C9.83316 3.4696 10.8032 2.49957 11.9998 2.49957Z" stroke={selectedModule === "user" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Users"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
-                    color: selectedModule === "user" ? "#174B8B" : "white",
+                <span
+                  style={{
+                    marginLeft: "8px",
+                    color: selectedModule === "user" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Users
+                </span>
               </ListItemButton>
             </Tooltip>
           </List>
@@ -1085,49 +867,53 @@ export default function Dashboard() {
         >
           <ListItemButton
             sx={{
-              height: "4vh",
-              mb: "1.3rem",
-
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
+              mb: "16px",
             }}
-            onClick={() => handleSectionClick("configuration")}
-            // component={Link}
-            // to="/dashboard/contract-list"
+            className="manual-list"
+            onClick={() => {
+              handleSectionClick("configuration")
+              handleModuleClick("configuration")
+            }}
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M2.41677 0C1.07546 0 0 0.981818 0 2.18182V19.6364C0 20.8473 1.07546 21.8182 2.41677 21.8182H9.66708V19.6364H2.41677V2.18182H10.8755V7.63636H16.9174V10.9091H19.3342V6.54545L12.0839 0M16.9174 13.0909C16.7603 13.0909 16.6274 13.1891 16.6032 13.32L16.3736 14.76C16.0111 14.9018 15.6607 15.0764 15.3465 15.2727L13.8481 14.7273C13.7152 14.7273 13.5581 14.7273 13.4735 14.8691L12.2651 16.7564C12.1926 16.8764 12.2168 17.0182 12.3376 17.1055L13.6185 18C13.5943 18.1855 13.5822 18.36 13.5822 18.5455C13.5822 18.7309 13.5943 18.9055 13.6185 19.0909L12.3376 19.9855C12.2289 20.0727 12.1926 20.2145 12.2651 20.3345L13.4735 22.2218C13.546 22.3636 13.7031 22.3636 13.8481 22.3636L15.3465 21.8182C15.6607 22.0145 15.999 22.2 16.3736 22.3309L16.6032 23.7709C16.6274 23.9018 16.7482 24 16.9174 24H19.3342C19.4671 24 19.6 23.9018 19.6242 23.7709L19.8538 22.3309C20.2163 22.1891 20.5425 22.0145 20.8688 21.8182L22.3551 22.3636C22.5122 22.3636 22.6693 22.3636 22.7539 22.2218L23.9623 20.3345C24.0348 20.2145 23.9985 20.0727 23.8898 19.9855L22.5968 19.0909C22.621 18.9055 22.6451 18.7309 22.6451 18.5455C22.6451 18.36 22.6331 18.1855 22.5968 18L23.8777 17.1055C23.9864 17.0182 24.0227 16.8764 23.9502 16.7564L22.7418 14.8691C22.6693 14.7273 22.5122 14.7273 22.3551 14.7273L20.8688 15.2727C20.5425 15.0764 20.2163 14.8909 19.8417 14.76L19.6121 13.32C19.6 13.1891 19.4671 13.0909 19.3342 13.0909M18.1258 16.9091C19.1287 16.9091 19.9384 17.64 19.9384 18.5455C19.9384 19.4509 19.1287 20.1818 18.1258 20.1818C17.1107 20.1818 16.3132 19.4509 16.3132 18.5455C16.3132 17.64 17.1228 16.9091 18.1258 16.9091Z"
-                  fill="white"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <g clip-path="url(#clip0_3216_1808)">
+                  <path className="burger-hover1" d="M16 15.5C20.0089 15.4355 23 12.4674 23 8.5C23 5.48813 22.0029 6.48516 21 7.5C20.0089 8.47923 18 10.5 18 10.5L14 6.5C14 6.5 16.0207 4.4911 17 3.5C18.0148 2.49703 18.0148 1.5 16 1.5C12.0326 1.5 9.05305 4.4911 8.99998 8.5C9.04152 9.47626 8.99998 11.5 8.99998 11.5C7.11484 13.397 4.65921 15.8526 2.99998 17.5C0.0682291 20.4436 4.05636 24.4317 6.99998 21.5C8.6505 19.8376 11.1127 17.3754 13 15.5C13 15.5 15.0237 15.4585 16 15.5Z" stroke={selectedModule === "configuration" ? "#5D55E3" : "#616161"} stroke-width="1.5" />
+                </g>
+                <defs>
+                  <clipPath id="clip0_3216_1808">
+                    <rect width="24" height="24" fill="white" transform="translate(0 0.5)" />
+                  </clipPath>
+                </defs>
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "Settings" ? "#174B8B" : "white",
+            <span
+              style={{
+                color: selectedModule === "configuration" ? "#5D55E3" : "",
               }}
-              primary="Configuration"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+              className="text-hover"
+            >
+              Configuration
+            </span>
             {openSections.configuration ? (
-              <ExpandLess sx={{ color: "white" }} /> // Setting the icon color to white
+              <span style={{
+                position: "relative",
+                left: "25px"
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="9" viewBox="0 0 13 9" fill="none">
+                  <path d="M12 1L6.5 8L1 1" stroke="#5D55E3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
             ) : (
-              <ExpandMore sx={{ color: "white" }} /> // Setting the icon color to white
+              <span style={{
+                position: "relative",
+                left: "25px"
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="13" viewBox="0 0 9 13" fill="none">
+                  <path className="burger-hover1" d="M1 1L8 6.5L1 12" stroke={selectedModule === "configuration" ? "#5D55E3" : "#616161"} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
             )}
           </ListItemButton>
         </Tooltip>
@@ -1155,51 +941,27 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "approval" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
+                  // mb: "1.3rem",
+
                 }}
                 onClick={() => handleModuleClick("approval")}
                 component={Link}
                 to="/dashboard/approval-list"
               >
-                <div style={{ width: "24px", height: "30px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M22.2769 12.3636L24 14.4145L15.9631 24L11.6923 18.9091L13.4154 16.8582L15.9631 19.8836L22.2769 12.3636ZM8.61539 18.9091L12.3077 23.2727H0V20.3636C0 17.1491 4.40615 14.5455 9.84615 14.5455L12.1723 14.7055L8.61539 18.9091ZM9.84615 0C11.1518 0 12.404 0.612985 13.3273 1.70411C14.2506 2.79523 14.7692 4.2751 14.7692 5.81818C14.7692 7.36126 14.2506 8.84114 13.3273 9.93226C12.404 11.0234 11.1518 11.6364 9.84615 11.6364C8.54047 11.6364 7.28827 11.0234 6.36501 9.93226C5.44176 8.84114 4.92308 7.36126 4.92308 5.81818C4.92308 4.2751 5.44176 2.79523 6.36501 1.70411C7.28827 0.612985 8.54047 0 9.84615 0Z"
-                      fill={selectedModule === "approval" ? "#174B8B" : "white"}
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path className="burger-hover1" d="M8.44771 13.1063L8.94403 12.5156L10.2596 14.0778L10.6426 14.5327L11.025 14.0773L14.8514 9.51986L15.3472 10.11L10.6419 15.7219L8.44771 13.1063ZM5.3619 12.7831L5.08861 13.1061L5.3619 13.429L7.12707 15.5152H0.5V14.0758C0.5 13.2526 1.06727 12.4186 2.17642 11.7632C3.27091 11.1164 4.81433 10.6997 6.54712 10.697L7.09517 10.7347L5.3619 12.7831ZM6.5641 1C7.27243 1 7.97249 1.33188 8.50317 1.95904C9.03598 2.58872 9.34615 3.45819 9.34615 4.37879C9.34615 5.29939 9.03598 6.16885 8.50317 6.79853C7.97249 7.4257 7.27243 7.75758 6.5641 7.75758C5.85578 7.75758 5.15571 7.4257 4.62504 6.79853C4.09223 6.16885 3.78205 5.29939 3.78205 4.37879C3.78205 3.45819 4.09223 2.58872 4.62503 1.95904C5.15571 1.33188 5.85578 1 6.5641 1Z" stroke={selectedModule === "approval" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Approvals"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
-                    color: selectedModule === "approval" ? "#174B8B" : "white",
+                <span
+                  style={{
+                    marginLeft: "8px",
+                    color: selectedModule === "approval" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Approvals
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -1224,54 +986,27 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "categories" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
+                  // mb: "1.3rem",
                 }}
                 component={Link}
                 to="/dashboard/category-list"
                 onClick={() => handleModuleClick("categories")}
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M0 0H10.8V10.8H0V0ZM18.6 0C21.6 0 24 2.4 24 5.4C24 8.4 21.6 10.8 18.6 10.8C15.6 10.8 13.2 8.4 13.2 5.4C13.2 2.4 15.6 0 18.6 0ZM5.4 14.4L10.8 24H0L5.4 14.4ZM20.4 18H24V20.4H20.4V24H18V20.4H14.4V18H18V14.4H20.4V18Z"
-                      fill={
-                        selectedModule === "categories" ? "#174B8B" : "white"
-                      }
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path className="burger-hover1" d="M13.1 12.5V13H13.6H15.5V13.6H13.6H13.1V14.1V16H12.5V14.1V13.6H12H10.1V13H12H12.5V12.5V10.6H13.1V12.5ZM0.5 1H6.7V7.2H0.5V1ZM12.4 1C14.1239 1 15.5 2.37614 15.5 4.1C15.5 5.82386 14.1239 7.2 12.4 7.2C10.6761 7.2 9.3 5.82386 9.3 4.1C9.3 2.37614 10.6761 1 12.4 1ZM3.6 11.1199L6.34508 16H0.854924L3.6 11.1199Z" stroke={selectedModule === "categories" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Categories"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
+                <span
+                  style={{
+                    marginLeft: "8px",
                     color:
-                      selectedModule === "categories" ? "#174B8B" : "white",
+                      selectedModule === "categories" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Categories
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -1296,51 +1031,26 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "clauses" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
                 }}
                 component={Link}
                 to="/dashboard/clauses-list"
                 onClick={() => handleModuleClick("clauses")}
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M19.6923 12.6316C20.5538 12.6316 21.3785 12.7958 22.1538 13.0737V7.57895L14.7692 0H2.46154C1.09538 0 0 1.12421 0 2.52632V20.2105C0 21.6126 1.10769 22.7368 2.46154 22.7368H12.7385C12.4677 21.9411 12.3077 21.0947 12.3077 20.2105C12.3077 16.0295 15.6185 12.6316 19.6923 12.6316ZM13.5385 1.89474L20.3077 8.8421H13.5385V1.89474ZM24 18L18.1538 24L14.7692 20.2105L16.1969 18.7453L18.1538 20.7537L22.5723 16.2189L24 18Z"
-                      fill={selectedModule === "clauses" ? "#174B8B" : "white"}
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path className="burger-hover1" d="M9.38376 1.41423L8.98015 1H9.63523L14.2692 5.75595V6.42827L13.8966 6.0458L9.38376 1.41423ZM8.52564 1V1.76316V6.39474V6.89474H9.02564H13.5385H14.2692V8.54995C13.9026 8.46724 13.5215 8.42105 13.1282 8.42105C10.124 8.42105 7.70513 10.9225 7.70513 13.9737C7.70513 14.3818 7.7515 14.7774 7.83449 15.1579H1.64103C1.02516 15.1579 0.5 14.643 0.5 13.9737V2.18421C0.5 1.51329 1.01856 1 1.64103 1H8.52564ZM10.7979 13.7133L11.7444 14.6847L12.1026 15.0523L12.4607 14.6847L15.0117 12.0665L15.3333 12.4677L12.1185 15.7672L10.5298 13.9885L10.7979 13.7133Z" stroke={selectedModule === "clauses" ? "#5D55E3" : "#616161"} />
+
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Clauses"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
-                    color: selectedModule === "clauses" ? "#174B8B" : "white",
+                <span
+                  style={{
+                    marginLeft: "8px",
+                    color: selectedModule === "clauses" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Clauses
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -1365,56 +1075,26 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "custom-feild"
-                      ? "#E4EDF8"
-                      : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
                 }}
                 component={Link}
                 to="/dashboard/feild-list"
                 onClick={() => handleModuleClick("custom-feild")}
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M18 6H24V18H18V20.4C18 20.7183 18.1264 21.0235 18.3515 21.2485C18.5765 21.4736 18.8817 21.6 19.2 21.6H21.6V24H18.6C17.94 24 16.8 23.46 16.8 22.8C16.8 23.46 15.66 24 15 24H12V21.6H14.4C14.7183 21.6 15.0235 21.4736 15.2485 21.2485C15.4736 21.0235 15.6 20.7183 15.6 20.4V3.6C15.6 3.28174 15.4736 2.97652 15.2485 2.75147C15.0235 2.52643 14.7183 2.4 14.4 2.4H12V0H15C15.66 0 16.8 0.54 16.8 1.2C16.8 0.54 17.94 0 18.6 0H21.6V2.4H19.2C18.8817 2.4 18.5765 2.52643 18.3515 2.75147C18.1264 2.97652 18 3.28174 18 3.6V6ZM0 6H13.2V8.4H2.4V15.6H13.2V18H0V6ZM21.6 15.6V8.4H18V15.6H21.6Z"
-                      fill={
-                        selectedModule === "custom-feild" ? "#174B8B" : "white"
-                      }
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path className="burger-hover1" d="M10.7045 15.6695C10.7031 15.6723 10.6984 15.6805 10.6872 15.6943C10.6567 15.7316 10.5989 15.7823 10.5103 15.8347C10.3243 15.9448 10.1114 16 10 16H8.5V15.4H9.6C9.94478 15.4 10.2754 15.263 10.5192 15.0192C10.763 14.7754 10.9 14.4448 10.9 14.1V2.9C10.9 2.55522 10.763 2.22456 10.5192 1.98076C10.2754 1.73696 9.94478 1.6 9.6 1.6H8.5V1H10C10.1114 1 10.3243 1.05518 10.5103 1.16529C10.5989 1.21769 10.6567 1.26841 10.6872 1.30572C10.7014 1.32315 10.7051 1.33166 10.705 1.33165C10.7049 1.33165 10.7 1.3209 10.7 1.3H11.2H11.7C11.7 1.3209 11.6951 1.33165 11.695 1.33165C11.6949 1.33166 11.6986 1.32315 11.7128 1.30572C11.7433 1.26841 11.8011 1.21769 11.8897 1.16529C12.0757 1.05518 12.2886 1 12.4 1H13.9V1.6H12.8C12.4552 1.6 12.1246 1.73696 11.8808 1.98076C11.637 2.22456 11.5 2.55522 11.5 2.9V4.5V5H12H15.5V12H12H11.5V12.5V14.1C11.5 14.4448 11.637 14.7754 11.8808 15.0192C12.1246 15.263 12.4552 15.4 12.8 15.4H13.9V16H12.4C12.2886 16 12.0757 15.9448 11.8897 15.8347C11.8011 15.7823 11.7433 15.7316 11.7128 15.6943C11.6986 15.6769 11.6949 15.6684 11.695 15.6683C11.6951 15.6683 11.7 15.6791 11.7 15.7H11.2H10.7C10.7 15.683 10.7032 15.6728 10.7045 15.6695ZM10.7045 15.6695C10.7049 15.6687 10.705 15.6683 10.705 15.6683L10.7045 15.6695ZM0.5 5H8.3V5.6H1.6H1.1V6.1V10.9V11.4H1.6H8.3V12H0.5V5ZM14.4 11.4H14.9V10.9V6.1V5.6H14.4H12H11.5V6.1V10.9V11.4H12H14.4Z" stroke={selectedModule === "custom-feild" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Custom Fields"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
+                <span
+                  style={{
+                    marginLeft: "8px",
                     color:
-                      selectedModule === "custom-feild" ? "#174B8B" : "white",
+                      selectedModule === "custom-feild" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Custom Fields
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -1439,52 +1119,26 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "roles" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
+
                 }}
                 component={Link}
                 to="/dashboard/role-list"
                 onClick={() => handleModuleClick("roles")}
               >
-                {" "}
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M11 9V12H9V15H7V12H5.8C5.4 13.8 4.3 15 3 15C1.3 15 0 13.05 0 10.5C0 7.95 1.3 6 3 6C4.3 6 5.4 7.2 5.8 9H11ZM3 9C2.4 9 2 9.6 2 10.5C2 11.4 2.4 12 3 12C3.6 12 4 11.4 4 10.5C4 9.6 3.6 9 3 9ZM16 15C18.7 15 24 16.95 24 21V24H8V21C8 16.95 13.3 15 16 15ZM16 12C13.8 12 12 9.3 12 6C12 2.7 13.8 0 16 0C18.2 0 20 2.7 20 6C20 9.3 18.2 12 16 12Z"
-                      fill={selectedModule === "roles" ? "#174B8B" : "white"}
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path className="burger-hover1" d="M3.86667 7H6.83333V8H6H5.5V8.5V10H5.16667V8.5V8H4.66667H3.86667H3.46558L3.37857 8.39153C3.13324 9.49555 2.51907 10 2 10C1.64421 10 1.28381 9.79933 0.991025 9.36015C0.697205 8.91942 0.5 8.27048 0.5 7.5C0.5 6.72952 0.697205 6.08058 0.991025 5.63985C1.28381 5.20067 1.64421 5 2 5C2.51907 5 3.13324 5.50445 3.37857 6.60847L3.46558 7H3.86667ZM2 6C1.60944 6 1.29627 6.2042 1.10064 6.49765C0.91379 6.77793 0.833333 7.13336 0.833333 7.5C0.833333 7.86664 0.91379 8.22207 1.10064 8.50235C1.29627 8.7958 1.60944 9 2 9C2.39056 9 2.70373 8.7958 2.89936 8.50235C3.08621 8.22207 3.16667 7.86664 3.16667 7.5C3.16667 7.13336 3.08621 6.77793 2.89936 6.49765C2.70373 6.2042 2.39056 6 2 6ZM10.6667 11C11.4734 11 12.7184 11.299 13.7518 11.9167C14.785 12.5343 15.5 13.3993 15.5 14.5V16H5.83333V14.5C5.83333 13.3993 6.54832 12.5343 7.58154 11.9167C8.61491 11.299 9.85997 11 10.6667 11ZM10.6667 8C10.1538 8 9.62405 7.68469 9.19936 7.04765C8.77753 6.41491 8.5 5.5142 8.5 4.5C8.5 3.4858 8.77753 2.58509 9.19936 1.95235C9.62405 1.31531 10.1538 1 10.6667 1C11.1795 1 11.7093 1.31531 12.134 1.95235C12.5558 2.58509 12.8333 3.4858 12.8333 4.5C12.8333 5.5142 12.5558 6.41491 12.134 7.04765C11.7093 7.68469 11.1795 8 10.6667 8Z" stroke={selectedModule === "roles" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Roles"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
-                    color: selectedModule === "roles" ? "#174B8B" : "white",
+                <span
+                  style={{
+                    marginLeft: "8px",
+                    color: selectedModule === "roles" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Roles
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -1509,71 +1163,30 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "teams" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
                 }}
                 onClick={() => handleModuleClick("teams")}
                 component={Link}
                 to="/dashboard/teamlist"
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M3.42874 3.42852C3.42874 1.535 4.96374 0 6.85726 0C8.75077 0 10.2858 1.535 10.2858 3.42852C10.2858 4.5338 9.76275 5.51693 8.95071 6.1439C8.92628 6.16192 8.90201 6.18016 8.8779 6.19859C8.31127 6.61263 7.6128 6.85703 6.85726 6.85703C4.96374 6.85703 3.42874 5.32203 3.42874 3.42852Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M15.049 6.1439C15.0734 6.16192 15.0977 6.18016 15.1218 6.1986C15.6884 6.61265 16.3869 6.85703 17.1424 6.85703C19.036 6.85703 20.5709 5.32203 20.5709 3.42852C20.5709 1.535 19.036 0 17.1424 0C15.2489 0 13.7139 1.535 13.7139 3.42852C13.7139 4.5338 14.2369 5.51693 15.049 6.1439Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M9.02971 8.57128C9.62252 7.5465 10.7305 6.85703 11.9996 6.85703C13.2686 6.85703 14.3766 7.5465 14.9694 8.57128C15.2611 9.07557 15.4281 9.66105 15.4281 10.2855C15.4281 12.1791 13.8931 13.7141 11.9996 13.7141C10.106 13.7141 8.57104 12.1791 8.57104 10.2855C8.57104 9.66105 8.738 9.07557 9.02971 8.57128Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M2.57135 8.57126H7.14967C6.96014 9.10744 6.85703 9.68443 6.85703 10.2855C6.85703 11.6027 7.35219 12.8042 8.16654 13.714H7.71413C5.85392 13.714 4.27056 14.8993 3.67789 16.5556C3.09511 16.3185 2.55592 16.0087 2.07794 15.6251C0.786793 14.5888 0 13.0559 0 11.1426C0 9.72257 1.15123 8.57126 2.57135 8.57126Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M16.2858 13.714C18.1459 13.714 19.7294 14.8992 20.322 16.5556C20.9048 16.3185 21.444 16.0087 21.9221 15.6251C23.2131 14.5888 23.9999 13.0559 23.9999 11.1426C23.9999 9.7225 22.8486 8.57126 21.4285 8.57126H16.8503C17.0397 9.10744 17.1429 9.68443 17.1429 10.2855C17.1429 11.6027 16.6476 12.8042 15.8334 13.714H16.2858Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M18.6628 17.0192C18.7875 17.3214 18.8564 17.6526 18.8564 17.9997C18.8564 19.913 18.0695 21.4459 16.7785 22.4822C15.5077 23.5022 13.8046 23.9996 11.9993 23.9996C10.1941 23.9996 8.49097 23.5022 7.22024 22.4822C5.9291 21.4459 5.1423 19.913 5.1423 17.9997C5.1423 17.6526 5.21113 17.3214 5.33588 17.0192C5.72135 16.0854 6.64075 15.4283 7.71366 15.4283H16.285C17.3579 15.4283 18.2773 16.0854 18.6628 17.0192Z"
-                      fill={selectedModule === "teams" ? "#174B8B" : "white"}
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path className="burger-hover1" d="M2.78583 2.78581C2.78583 1.7996 3.5853 1.00013 4.5715 1.00013C5.55771 1.00013 6.35718 1.7996 6.35718 2.78581C6.35718 3.35941 6.08727 3.86975 5.66551 4.19725C5.65008 4.20867 5.63479 4.22016 5.61963 4.23171C5.32534 4.44552 4.96385 4.57148 4.5715 4.57148C3.5853 4.57148 2.78583 3.77201 2.78583 2.78581Z" stroke={selectedModule === "teams" ? "#5D55E3" : "#616161"} />
+                    <path className="burger-hover1" d="M10.3802 4.23178C10.365 4.22017 10.3497 4.20865 10.3343 4.19725C9.91249 3.86975 9.64258 3.35941 9.64258 2.78581C9.64258 1.7996 10.4421 1.00013 11.4283 1.00013C12.4145 1.00013 13.2139 1.7996 13.2139 2.78581C13.2139 3.77201 12.4145 4.57148 11.4283 4.57148C11.036 4.57148 10.6745 4.44554 10.3802 4.23178Z" stroke={selectedModule === "teams" ? "#5D55E3" : "#616161"} />
+                    <path className="burger-hover1" d="M6.45263 6.46468L6.45263 6.46468C6.76214 5.92964 7.33941 5.57148 7.99973 5.57148C8.66005 5.57148 9.23732 5.92964 9.54682 6.46468L9.54682 6.46468C9.69846 6.72681 9.7854 7.03107 9.7854 7.35716C9.7854 8.34336 8.98593 9.14283 7.99973 9.14283C7.01352 9.14283 6.21405 8.34336 6.21405 7.35716C6.21405 7.03107 6.30099 6.72681 6.45263 6.46468Z" stroke={selectedModule === "teams" ? "#5D55E3" : "#616161"} />
+                    <path className="burger-hover1" d="M1.71424 6.7143H4.12377C4.08927 6.92367 4.07135 7.13843 4.07135 7.35714C4.07135 8.02236 4.23698 8.64942 4.52902 9.19879C3.52994 9.38334 2.68648 10.0102 2.20842 10.8681C2.0268 10.7675 1.85624 10.6537 1.69827 10.5269C0.957328 9.93222 0.5 9.0545 0.5 7.92856C0.5 7.25797 1.04364 6.7143 1.71424 6.7143Z" stroke={selectedModule === "teams" ? "#5D55E3" : "#616161"} />
+                    <path className="burger-hover1" d="M11.8762 6.7143H14.2857C14.9563 6.7143 15.5 7.25795 15.5 7.92856C15.5 9.05446 15.0426 9.93217 14.3018 10.5269C14.1438 10.6537 13.9732 10.7675 13.7915 10.8681C13.3135 10.0102 12.47 9.38334 11.4709 9.19878C11.763 8.64943 11.9286 8.02237 11.9286 7.35714C11.9286 7.13842 11.9107 6.92365 11.8762 6.7143Z" stroke={selectedModule === "teams" ? "#5D55E3" : "#616161"} />
+                    <path className="burger-hover1" d="M5.12648 15.0983L5.1265 15.0983C5.86567 15.6916 6.88252 15.9999 7.99958 15.9999C9.11663 15.9999 10.1335 15.6916 10.8727 15.0983C11.6136 14.5036 12.0709 13.6259 12.0709 12.4999C12.0709 12.3353 12.0383 12.1792 11.9797 12.0371L5.12648 15.0983ZM5.12648 15.0983C4.38555 14.5036 3.92822 13.6259 3.92822 12.4999M5.12648 15.0983L3.92822 12.4999M3.92822 12.4999C3.92822 12.3351 3.96081 12.1791 4.01944 12.037L3.92822 12.4999ZM4.01945 12.037C4.20187 11.5951 4.63661 11.2857 5.14246 11.2857H10.8567C11.3625 11.2857 11.7971 11.595 11.9797 12.0369L4.01945 12.037Z" stroke={selectedModule === "teams" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Teams"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
-                    color: selectedModule === "teams" ? "#174B8B" : "white",
+                <span
+                  style={{
+                    marginLeft: "8px",
+                    color: selectedModule === "teams" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Teams
+                </span>
               </ListItemButton>
             </Tooltip>
             <Tooltip
@@ -1598,51 +1211,26 @@ export default function Dashboard() {
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
                   height: "4vh",
-                  mb: "1.3rem",
-                  backgroundColor:
-                    selectedModule === "tags" ? "#E4EDF8" : "transparent",
-                  "&:hover": {
-                    backgroundColor: leftsidebarExpanded
-                      ? "initial"
-                      : "#FFFFFF", // Only change background color on hover if sidebar is not expanded
-                    "& .MuiListItemText-root": {
-                      color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                    },
-                    "& svg path": {
-                      fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                    },
-                  },
+
                 }}
                 onClick={() => handleModuleClick("tags")}
                 component={Link}
                 to="/dashboard/tags-list"
               >
-                <div style={{ width: "24px", height: "24px" }}>
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.2 7.5C4.67739 7.5 5.13523 7.26295 5.47279 6.84099C5.81036 6.41903 6 5.84674 6 5.25C6 4.65326 5.81036 4.08097 5.47279 3.65901C5.13523 3.23705 4.67739 3 4.2 3C3.72261 3 3.26477 3.23705 2.92721 3.65901C2.58964 4.08097 2.4 4.65326 2.4 5.25C2.4 5.84674 2.58964 6.41903 2.92721 6.84099C3.26477 7.26295 3.72261 7.5 4.2 7.5ZM18.492 11.37C18.924 11.91 19.2 12.66 19.2 13.5C19.2 14.325 18.936 15.075 18.492 15.615L12.492 23.115C12.06 23.655 11.46 24 10.8 24C10.14 24 9.54 23.67 9.096 23.115L0.708 12.63C0.264 12.075 0 11.325 0 10.5V3C0 1.335 1.068 0 2.4 0H8.4C9.06 0 9.66 0.33 10.092 0.87L18.492 11.37ZM13.848 2.565L15.048 1.065L23.292 11.37C23.736 11.91 24 12.675 24 13.5C24 14.325 23.736 15.075 23.304 15.615L16.848 23.685L15.648 22.185L22.5 13.5L13.848 2.565Z"
-                      fill={selectedModule === "tags" ? "#174B8B" : "white"}
-                    />
+                <div >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                    <path className="burger-hover1" d="M11.9418 10.5924L11.9418 10.5924L11.9376 10.5977L7.93757 15.5977C7.72294 15.8659 7.45672 16 7.2 16C6.93837 16 6.67343 15.8714 6.45443 15.5977L0.862434 8.60765C0.642512 8.33275 0.5 7.945 0.5 7.5V2.5C0.5 1.55626 1.08649 1 1.6 1H5.6C5.86365 1 6.12805 1.13045 6.33757 1.39235L11.9376 8.39235C12.1511 8.65925 12.3 9.04772 12.3 9.5C12.3 9.94648 12.1568 10.331 11.9418 10.5924ZM10.032 2.01039L15.1376 8.39235L15.1375 8.39238L15.1418 8.39755C15.3256 8.62115 15.4583 8.94398 15.4918 9.31572L15.3921 9.18976L9.87094 2.21172L10.032 2.01039ZM15.3925 9.80969L15.4918 9.68392C15.4585 10.0526 15.327 10.3708 15.1456 10.5977L11.232 15.4896L11.0706 15.2878L15.3925 9.80969ZM2.8 6C3.29146 6 3.73319 5.75522 4.03896 5.37301C4.34242 4.99369 4.5 4.49877 4.5 4C4.5 3.50123 4.34241 3.00631 4.03896 2.62699C3.73319 2.24478 3.29146 2 2.8 2C2.30854 2 1.86681 2.24478 1.56104 2.62699C1.25759 3.00631 1.1 3.50123 1.1 4C1.1 4.49877 1.25759 4.99369 1.56104 5.37301C1.86681 5.75522 2.30854 6 2.8 6Z" stroke={selectedModule === "tags" ? "#5D55E3" : "#616161"} />
                   </svg>
                 </div>
-                <ListItemText
-                  primary={"Tags"}
-                  sx={{
-                    marginLeft: "0.9rem",
-                    fontSize: "12px",
-                    color: selectedModule === "tags" ? "#174B8B" : "white",
+                <span
+                  style={{
+                    marginLeft: "8px",
+                    color: selectedModule === "tags" ? "#5D55E3" : "",
                   }}
-                  primaryTypographyProps={{
-                    variant: "subtitle2",
-                    fontSize: "15px",
-                  }}
-                />
+                  className="text-status"
+                >
+                  Tags
+                </span>
               </ListItemButton>
             </Tooltip>
           </List>
@@ -1666,21 +1254,9 @@ export default function Dashboard() {
           title={leftsidebarExpanded ? "Logout" : ""}
         >
           <ListItemButton
+          className="manual-list"
             sx={{
-              height: "4vh",
-
-              backgroundColor:
-                selectedModule === "logout" ? "#E4EDF8" : "transparent",
-              "&:hover": {
-                backgroundColor: leftsidebarExpanded ? "initial" : "#FFFFFF",
-                // Only change background color on hover if sidebar is not expanded
-                "& .MuiListItemText-root": {
-                  color: leftsidebarExpanded ? "initial" : "#174B8B", // Only change text color on hover if sidebar is not expanded
-                },
-                "& svg path": {
-                  fill: leftsidebarExpanded ? "white" : "#174B8B", // Only change SVG fill on hover if sidebar is not expanded
-                },
-              },
+              height: "35px",
             }}
             onClick={() => {
               navigate(`/`);
@@ -1689,36 +1265,17 @@ export default function Dashboard() {
             }}
           >
             <ListItemIcon>
-              <svg
-                width="24"
-                height="23"
-                viewBox="0 0 24 23"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12.8 0.800006C12.8 0.566726 12.6982 0.345078 12.5211 0.193094C12.3442 0.0411103 12.1098 -0.0260579 11.879 0.00919006L0.67912 1.72119C0.288512 1.7809 0 2.11685 0 2.51201V19.888C0 20.283 0.288448 20.619 0.679008 20.6789L11.879 22.3925C12.1096 22.4277 12.3442 22.3606 12.5211 22.2086C12.6981 22.0566 12.8 21.8349 12.8 21.6016V11.2H21.0755L19.4805 12.5979C19.1486 12.889 19.1149 13.3942 19.4054 13.7269C19.6958 14.0594 20.2005 14.093 20.5325 13.8021L23.7272 11.0021C23.9006 10.8502 24 10.6307 24 10.4C24 10.1693 23.9006 9.94986 23.7272 9.79796L20.5325 6.99796C20.2005 6.70701 19.6958 6.74071 19.4054 7.07321C19.1149 7.40572 19.1486 7.91113 19.4805 8.20209L21.0757 9.60002H12.8V0.800006ZM8.8 13.2C8.13726 13.2 7.6 12.6627 7.6 12C7.6 11.3373 8.13726 10.8 8.8 10.8C9.46274 10.8 10 11.3373 10 12C10 12.6627 9.46274 13.2 8.8 13.2Z"
-                  fill={selectedModule === "logout" ? "#174B8B" : "white"}
-                />
-                <path
-                  d="M15.1999 20.8H14.3999V12.8H15.9999V20C15.9999 20.4418 15.6417 20.8 15.1999 20.8Z"
-                  fill={selectedModule === "logout" ? "#174B8B" : "white"}
-                />
-                <path
-                  d="M14.3999 7.99998V1.59998H15.1999C15.6417 1.59998 15.9999 1.95815 15.9999 2.39998V7.99998H14.3999Z"
-                  fill={selectedModule === "logout" ? "#174B8B" : "white"}
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                <path className="burger-hover1" d="M9 21.5H5C4.46957 21.5 3.96086 21.2893 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V5.5C3 4.96957 3.21071 4.46086 3.58579 4.08579C3.96086 3.71071 4.46957 3.5 5 3.5H9" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path className="burger-hover1" d="M16 17.5L21 12.5L16 7.5" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path className="burger-hover1" d="M21 12.5H9" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </ListItemIcon>
-            <ListItemText
-              sx={{
-                ml: -1.2,
-                color: selectedModule === "logout" ? "#174B8B" : "white",
-                fontWeight: "bold",
-              }}
-              primary="Logout"
-              primaryTypographyProps={{ variant: "subtitle2" }}
-            />
+            <span
+              className="text-hover"
+            >
+              Logout
+            </span>
           </ListItemButton>
         </Tooltip>
       </List>
@@ -1857,9 +1414,10 @@ export default function Dashboard() {
               borderRight: "none",
               boxSizing: "border-box",
               width: drawerWidth,
-              background: "#174B8B",
+              background: "#FFF",
               overflowX: "hidden",
               msOverflowY: "hidden",
+
             },
           }}
           open={leftSideBar}

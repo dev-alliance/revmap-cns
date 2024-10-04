@@ -178,7 +178,7 @@ function SyncFesion() {
     setLeftSidebarExpanded(true);
   }, []);
 
-  const [oldPages, setOldPages] = useState([])
+  const [oldPages,setOldPages] = useState([])
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -205,7 +205,7 @@ function SyncFesion() {
           let pages = data?.pages;
           return pages;
         });
-        setCurrentPage(data?.pages.length - 1);
+        setCurrentPage(data?.pages.length-1);
         setOldPages(data?.pages)
       }
 
@@ -253,7 +253,7 @@ function SyncFesion() {
     try {
       if (!documentName) {
         toast.error("Please enter the name of the document");
-        return;
+        return ;
       }
       setAuditTrails([
         ...(auditTrails || []),
@@ -341,14 +341,14 @@ function SyncFesion() {
         if (response.contract._id) {
           setNewId(response.contract._id);
         }
-
+      
       }
 
       if (response.ok === true) {
         toast.success(response.message);
         setEditMode(false)
 
-        if (response?.contract?.pages) {
+        if(response?.contract?.pages) {
           console.log(response.contract.pages)
           setOldPages(response.contract.pages)
         }
@@ -380,7 +380,7 @@ function SyncFesion() {
 
   //   console.log("I am called")
 
-
+   
 
   //   createPayload();
   // }, [documentReady]);
@@ -927,7 +927,7 @@ function SyncFesion() {
               (highlightStep === "" && step === "Draft")
           )
           .map(({ label, step }) => (
-            <li key={step} className="btn-steps d-flex align-items-center" style={{ width: label == "Draft" ? "68px" : "80px" }}>
+            <li key={step} className="btn-steps d-flex align-items-center" style={{width:label == "Draft"? "68px":"80px"}}>
               <div className="color mx-2"></div>
               <div className="text-[14px]">{label}</div>
             </li>
@@ -981,7 +981,7 @@ function SyncFesion() {
   const handleClick = () => {
     setEditMode(true);
     setEnabelEditing(false);
-    if (editorRefs) {
+    if(editorRefs) {
       editorRefs.current[currentPage].getEditor().focus();
     }
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1006,11 +1006,11 @@ function SyncFesion() {
     console.log(id);
     console.log(newId)
 
-    if (!id && newId === "") {
-      setPages([{ content: "" }])
+    if(!id && newId === "") {
+      setPages([{content:""}])
     }
 
-    if (id || newId) {
+    if(id || newId) {
       setPages(oldPages)
     }
 
@@ -1217,8 +1217,8 @@ function SyncFesion() {
           // Find the point where content fits within the page size
           while (fitIndex > 0) {
             currentEditor.setContents(contentToFit, "silent"); // Use setContents to replace content silently
-
-
+            
+          
             if (currentEditor.root.scrollHeight <= documentHeight) {
               break; // Content fits within the current page size
             }
@@ -1267,13 +1267,13 @@ function SyncFesion() {
             if (nextPageIndex >= updatedPages.length) {
               // Add a new page for overflow content
               updatedPages.push({ content: overflow });
-              setCurrentPage(updatedPages.length - 1);
+              setCurrentPage(updatedPages.length - 1); 
 
               const nextEditor =
                 editorRefs.current[updatedPages.length - 1]?.getEditor();
               if (nextEditor) {
                 nextEditor.focus();
-                nextEditor.setSelection(nextEditor.getLength() - 1, 0);
+                nextEditor.setSelection(nextEditor.getLength()-1, 0); 
               }
             } else {
               // Add to the next page if it already exists
@@ -1344,8 +1344,8 @@ function SyncFesion() {
   useEffect(() => {
     setEditorRefContext(editorRefs.current[currentPage]);
     const editor = editorRefs?.current[currentPage]?.getEditor();
-    if (editor) {
-      editor.setSelection(editor.getLength() - 1, 0)
+    if(editor) {
+      editor.setSelection(editor.getLength()-1,0)
       editor.focus();
     }
   }, [currentPage]);
@@ -1519,7 +1519,7 @@ function SyncFesion() {
   const [isListActive, setIsListActive] = useState("");
 
   const handleChangeSelection = (range: any, source: any) => {
-
+  
     if (range) {
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
@@ -1540,11 +1540,11 @@ function SyncFesion() {
             }
             setBgColorSvg(format.background);
           } else {
-            if (range.length === 0) {
-              editor.format("background", bgColor);
-              setBgColorSvg(bgColor)
-            }
-            setBgColorSvg("#D9D9D940")
+           if(range.length === 0) {
+            editor.format("background", bgColor);
+            setBgColorSvg(bgColor)
+           }
+           setBgColorSvg("#D9D9D940")
           }
         }
       }
@@ -1588,14 +1588,14 @@ function SyncFesion() {
         setSpacing(format.lineHeight);
       }
 
-      console.log("format.font", format.font)
-      console.log("format.size", format.size)
-
+      console.log("format.font",format.font)
+      console.log("format.size",format.size)
+      
 
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
-        if (range.length === 0) {
+        if(range.length === 0) {
           editor.format("font", selectedFont);
           setSelectedFontValue(selectedFont);
         }
@@ -1857,7 +1857,7 @@ function SyncFesion() {
       }
 
       if (bgColorSelection) {
-        quill.setSelection(bgColorSelection.index + bgColorSelection.length, 0);
+        quill.setSelection(bgColorSelection.index + bgColorSelection.length, 0); 
       } else if (range) {
         quill.setSelection(range.index, 0);
       }
@@ -2315,12 +2315,12 @@ function SyncFesion() {
                 outline: "none",
                 width: 168,
               }}
-            // onFocus={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-            // }}
-            // onBlur={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-            // }}
+              // onFocus={(e) => {
+              //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
+              // }}
+              // onBlur={(e) => {
+              //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
+              // }}
             />
 
             <div
@@ -3030,7 +3030,7 @@ function SyncFesion() {
             borderTop:
               showBlock == "uploadTrack" ? "1px solid #174B8B" : "none",
             background: "#f7f7f7",
-            padding: "5px 0"
+            padding:"5px 0"
           }}
         >
           {IsTemplate ? (
@@ -3140,10 +3140,10 @@ function SyncFesion() {
                     background: "#fefefe",
                     border: "1px solid #EEE",
                     height: 30,
-                    width: 55,
-                    minWidth: 55,
-                    minHeight: 30,
-                    fontSize: "13px"
+                    width:55,
+                    minWidth:55,
+                    minHeight:30,
+                    fontSize:"13px"
                   }}
                   onClick={() => {
                     handleClickCencel();
@@ -3160,10 +3160,10 @@ function SyncFesion() {
                     background: "#fefefe",
                     border: "1px solid #EEE",
                     height: 30,
-                    width: 40,
-                    minWidth: 40,
-                    minHeight: 30,
-                    fontSize: "13px"
+                    width:40,
+                    minWidth:40,
+                    minHeight:30,
+                    fontSize:"13px"
 
                   }}
                   className="save-btn"
@@ -3207,20 +3207,20 @@ function SyncFesion() {
                   background: "#fefefe",
                   border: "1px solid #EEE",
                   height: 30,
-                  width: 52,
-                  padding: "4px",
-                  fontSize: "13px",
-                  minHeight: 30,
-                  minWidth: 52
+                  width:52,
+                  padding:"4px",
+                  fontSize:"13px",
+                  minHeight:30,
+                  minWidth:52
                 }}
                 onClick={() => {
                   handleClick();
                 }}
               >
-                <span style={{ paddingRight: "8px" }}>
+                <span style={{paddingRight:"8px"}}>
                   <EditIconSvg />
                 </span>
-                <span style={{ fontSize: 13, position: "relative", right: "3px" }}>Edit</span>
+                <span style={{fontSize:13,position:"relative",right:"3px"}}>Edit</span>
               </Button>
             )}
           </div>
@@ -3263,7 +3263,7 @@ function SyncFesion() {
           style={{
             backgroundColor: "#fefefe",
             border: "1px solid #fefefe",
-            height: 38,
+            height:38,
             // position:"relative"
           }}
         >
@@ -3280,7 +3280,7 @@ function SyncFesion() {
             setIsScriptActive={setIsScriptActice}
             isListActive={isListActive}
             setIsListActive={setIsListActive}
-            handleChangeSelection={handleChangeSelection}
+            handleChangeSelection = {handleChangeSelection}
           />
         </div>
 
@@ -3445,17 +3445,17 @@ function SyncFesion() {
                         <div className="icon-person mx-2">
                           {user?.firstName
                             ? user.firstName
-                              .split(" ")
-                              .map((name: string) => name.charAt(0))
-                              .slice(0, 2)
-                              .join("")
-                              .toUpperCase()
+                                .split(" ")
+                                .map((name: string) => name.charAt(0))
+                                .slice(0, 2)
+                                .join("")
+                                .toUpperCase()
                             : user?.email
-                              ?.split(" ")
-                              .map((e: string) => e.charAt(0))
-                              .join("")
-                              .substring(0, 2)
-                              .toUpperCase()}
+                                ?.split(" ")
+                                .map((e: string) => e.charAt(0))
+                                .join("")
+                                .substring(0, 2)
+                                .toUpperCase()}
                         </div>
                         <div
                           style={{ position: "relative", bottom: 3, right: 3 }}
@@ -3679,7 +3679,7 @@ function SyncFesion() {
                               </div>
                             </div>
                             {editComment &&
-                              editCommentIndex === indexComment ? (
+                            editCommentIndex === indexComment ? (
                               <>
                                 <div className="px-3" style={{ width: "100%" }}>
                                   <textarea
@@ -3788,14 +3788,14 @@ function SyncFesion() {
                                           </div>
                                           {editCommentIndex !==
                                             indexComment && (
-                                              <span
-                                                style={{
-                                                  color: "#00000080",
-                                                }}
-                                              >
-                                                {reply?.date?.toLocaleString()}
-                                              </span>
-                                            )}
+                                            <span
+                                              style={{
+                                                color: "#00000080",
+                                              }}
+                                            >
+                                              {reply?.date?.toLocaleString()}
+                                            </span>
+                                          )}
                                         </div>
                                         <div>
                                           <img
@@ -3836,7 +3836,7 @@ function SyncFesion() {
                                       </div>
                                     </div>
                                     {editComment &&
-                                      editCommentIndex === indexComment ? (
+                                    editCommentIndex === indexComment ? (
                                       <>
                                         <div
                                           className="px-3"
@@ -3862,7 +3862,7 @@ function SyncFesion() {
                                             style={{
                                               backgroundColor:
                                                 currentComment.trim().length ===
-                                                  0
+                                                0
                                                   ? "#174B8B80"
                                                   : "#174B8B",
                                               border: "1px solid #174B8B80",
