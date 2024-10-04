@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import React, {
   ChangeEvent,
+  DOMElement,
   useCallback,
   useContext,
   useEffect,
@@ -82,8 +83,9 @@ class CheckboxContainerBlot extends BlockEmbed {
 
     let node = super.create();
     node.setAttribute("contenteditable", "false");
-    node.innerHTML = `<input type="checkbox" id="${value.id}" name="${value.name
-      }" ${value.checked ? "checked" : ""} data-id="${value.id}"> ${value.label}`;
+    node.innerHTML = `<input type="checkbox" id="${value.id}" name="${
+      value.name
+    }" ${value.checked ? "checked" : ""} data-id="${value.id}"> ${value.label}`;
     node.classList.add("checkbox-container");
     node.setAttribute("draggable", "true");
 
@@ -346,19 +348,21 @@ class SignatureBlot extends BlockEmbed {
     recipients.forEach((recipient: any, index: number) => {
       const initials = recipient.label
         ? recipient.label
-          .split(" ")
-          .map((word: any) => word.charAt(0))
-          .join("")
-          .substring(0, 2)
+            .split(" ")
+            .map((word: any) => word.charAt(0))
+            .join("")
+            .substring(0, 2)
         : recipient.email
-          ? recipient.email.charAt(0)
-          : "P";
+        ? recipient.email.charAt(0)
+        : "P";
 
       const child = document.createElement("div");
       child.className = "col-6";
-      child.innerHTML = ` <div style="background-color: ${bubbleColors[index % bubbleColors.length]
-        }; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-align: center; margin-left:50%">${initials.toUpperCase()}</div>    <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Full Name</label> <input type="text" value=${recipient.label || recipient.email
-        } /> </div>  <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Company</label> <input type="text"/> </div> <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;" className='px-2'>Title</label> <input type="text" /> </div> `;
+      child.innerHTML = ` <div style="background-color: ${
+        bubbleColors[index % bubbleColors.length]
+      }; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: white; text-align: center; margin-left:50%">${initials.toUpperCase()}</div>    <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Full Name</label> <input type="text" value=${
+        recipient.label || recipient.email
+      } /> </div>  <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;">Company</label> <input type="text"/> </div> <div style="margin-left:15%;"><label style="color:#aaa;font-size:14px;" className='px-2'>Title</label> <input type="text" /> </div> `;
       rowDiv.appendChild(child);
     });
     node.appendChild(outerDiv);
@@ -433,6 +437,48 @@ Font.whitelist = [
 
 Quill.register(Font, true);
 
+const oldFonts = [
+    "algerian",
+    "arial",
+    "calibri",
+    "cambria",
+    "cambria-math",
+    "candara",
+    "comic-sans",
+    "courier-new",
+    "georgia",
+    "helvetica",
+    "impact",
+    "segoe-print",
+    "segoe-script",
+    "segoe-ui",
+    "lucida",
+    "times-new-roman",
+    "verdana",
+    "wingdings",
+];
+
+const oldSize = [
+    "8px",
+    "10px",
+    "12px",
+    "13px",
+    "14px",
+    "16px",
+    "18px",
+    "20px",
+    "24px",
+    "26px",
+    "28px",
+    "32px",
+    "36px",
+    "40px",
+    "44px",
+    "48px",
+    "54px",
+    "60px",
+    "72px",
+]
 const listHandler = function (value: any) {
   // @ts-ignore
   const formats = this.quill.getFormat();
@@ -460,6 +506,7 @@ export const modules = {
     maxStack: 100,
     userOnly: true,
   },
+
 };
 
 // Formats objects for setting up the Quill editor
@@ -662,6 +709,9 @@ export default function QuillToolbar(props: any) {
 
   const [anchorElLink, setAnchorElLink] = React.useState(null);
   const openLink = Boolean(anchorElLink);
+
+  const [anchorElFormula, setAnchorElFormula] = React.useState<any>(null);
+  const openFormula = Boolean(anchorElFormula);
 
   const [anchorElLinkPicture, setAnchorElLinkPicture] = React.useState(null);
   const openLinkPicture = Boolean(anchorElLinkPicture);
@@ -1081,14 +1131,6 @@ export default function QuillToolbar(props: any) {
     setBgColorSvg(color.hex);
   };
 
-  const handleFontColor = () => {
-    const editor = editorRefContext.getEditor();
-    setFontColor(fontColor);
-    setFontColorSvg(fontColor);
-    setTimeout(() => {
-      editor.focus();
-    }, 0);
-  };
 
   const toSentenceCase = (text: any) => {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -1363,6 +1405,18 @@ export default function QuillToolbar(props: any) {
     setAnchorElLink(event.currentTarget);
   };
 
+  const handleOpenFormula = (event:any) => {
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+    setCursorIndex(range.index);
+
+    if (range && range.length > 0) {
+      setSelection(range);
+      editor.setSelection(range.index, range.length);
+    } 
+    setAnchorElFormula(event.currentTarget);
+  };
+
   const handleAddLink = () => {
     const editor = editorRefContext.getEditor();
 
@@ -1547,7 +1601,7 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext?.getEditor();
     editor.history.undo();
     const range = editor.getSelection(true);
-    handleChangeSelection(range, "user")
+    handleChangeSelection(range,"user")
     // editor.focus();
   };
 
@@ -1555,7 +1609,7 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext?.getEditor();
     editor.history.redo();
     const range = editor.getSelection(true);
-    handleChangeSelection(range, "user")
+    handleChangeSelection(range,"user")
   };
 
 
@@ -1632,7 +1686,7 @@ export default function QuillToolbar(props: any) {
         <path
           className={canRedo ? "history-svg-selected" : "history-svg"}
           d="M12.924 14.7462C14.796 13.2368 16 10.8859 16 8.24643C16 3.6912 12.43 0.00619412 8.012 7.76047e-06C3.588 -0.0061786 0 3.68708 0 8.24643C0 10.8282 1.15 13.1316 2.952 14.6431C3.022 14.7009 3.124 14.6885 3.18 14.6163L3.968 13.5749C4.022 13.5048 4.01 13.4038 3.944 13.3461C3.782 13.21 3.626 13.0635 3.476 12.9089C2.89124 12.308 2.42527 11.5958 2.104 10.8117C1.768 10.0013 1.6 9.13726 1.6 8.24643C1.6 7.35559 1.768 6.49156 2.102 5.67909C2.424 4.89342 2.886 4.18817 3.474 3.58191C4.062 2.97565 4.746 2.4993 5.508 2.1673C6.298 1.82292 7.136 1.6497 8 1.6497C8.864 1.6497 9.702 1.82292 10.49 2.1673C11.252 2.4993 11.936 2.97565 12.524 3.58191C13.112 4.18817 13.574 4.89342 13.896 5.67909C14.23 6.49156 14.398 7.35559 14.398 8.24643C14.398 9.13726 14.23 10.0013 13.896 10.8138C13.5747 11.5979 13.1088 12.3101 12.524 12.9109C12.338 13.1027 12.142 13.2821 11.938 13.4471L11.124 12.3727C11.1056 12.3482 11.0808 12.3295 11.0525 12.3188C11.0242 12.3081 10.9936 12.3058 10.9641 12.3123C10.9347 12.3188 10.9076 12.3337 10.886 12.3553C10.8644 12.3769 10.8491 12.4044 10.842 12.4346L10.05 15.7794C10.026 15.8825 10.102 15.9835 10.204 15.9835L13.544 16C13.678 16 13.754 15.8412 13.67 15.734L12.924 14.7462Z"
-        // fill={canRedo ? "#7771E8" : "#7F7F7F"}
+          // fill={canRedo ? "#7771E8" : "#7F7F7F"}
         />
       </svg>
     );
@@ -2483,12 +2537,12 @@ export default function QuillToolbar(props: any) {
         style={{
           position: "relative",
           right: "0.8rem",
-          cursor: "pointer",
-          pointerEvents: "none"
+          cursor:"pointer",
+          pointerEvents:"none"
         }}
         xmlns="http://www.w3.org/2000/svg"
-        width="25"
-        height="25"
+        width="21"
+        height="21"
         viewBox="0 0 11 8"
         fill="none"
       >
@@ -2510,8 +2564,8 @@ export default function QuillToolbar(props: any) {
         style={{
           position: "relative",
           right: "0.8rem",
-          cursor: "pointer",
-          pointerEvents: "none"
+          cursor:"pointer",
+          pointerEvents:"none"
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="36"
@@ -2537,12 +2591,12 @@ export default function QuillToolbar(props: any) {
         style={{
           position: "relative",
           right: "0.8rem",
-          cursor: "pointer",
-          pointerEvents: "none"
+          cursor:"pointer",
+          pointerEvents:"none"
         }}
         xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="18"
+        width="21"
+        height="21"
         viewBox="0 0 11 8"
         fill="none"
       >
@@ -2627,8 +2681,7 @@ export default function QuillToolbar(props: any) {
   const handleInsertFormula = () => {
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
-      const range = editor.getSelection();
-
+      const range = editor.getSelection(true);
       if (range) {
         editor.format("formula", true, "user");
       }
@@ -2645,12 +2698,96 @@ export default function QuillToolbar(props: any) {
 
         if (currentFormat["code-block"]) {
           editor.format("code-block", false, "user");
+
         } else {
           editor.format("code-block", true, "user");
         }
+        
       }
     }
   };
+
+  useEffect(() => {
+    if (!editorRefContext) return;
+    const quill = editorRefContext.getEditor();
+   
+      const loadGoogleFont = (fontName:string) => {
+      const link = document.createElement('link');
+      link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;700&display=swap`;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    };
+  
+    const makeClass = (fontClass: string, fontFamily: string) => {
+      const cleanedFontClass = fontClass.split(',')[0]; 
+      
+      const style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML = `.${cleanedFontClass} { font-family: "${fontFamily}"; }`;
+      document.head.appendChild(style);      
+    };
+  
+    quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node:HTMLElement, delta:any) => {
+      console.log(Node.ELEMENT_NODE)
+      const range = quill.getSelection(true);
+      
+      let fontFamily = node.style.fontFamily
+        ? node.style.fontFamily.toLowerCase().replace(/['"]/g, '') // Remove quotes
+        : '';
+  
+      const fontClass = fontFamily.replace(/\s+/g, '-').split(',')[0];
+
+      const fontSize = node.style.fontSize;
+      if(fontSize && !oldSize.includes(fontSize)) {
+
+      if(!SizeStyle.whitelist.includes(fontSize)){
+        SizeStyle.whitelist.push(fontSize);
+      } 
+    }
+
+      if (fontFamily && !oldFonts.includes(fontClass)) {
+        if(!Font.whitelist.includes(fontClass)) {
+          Font.whitelist.push(fontClass);
+          makeClass(`ql-font-${fontClass}`, fontFamily);
+          loadGoogleFont(fontFamily);
+        };
+        delta.ops.forEach((op:any) => {
+          if (op.insert) {
+            if (!op.attributes) {
+              op.attributes = {};
+            }
+            op.attributes.font = fontClass;  
+            op.attributes.size = fontSize;
+            op.attributes.style = op.attributes.style
+              ? `${op.attributes.style}; font-family: ${fontFamily};`
+              : `font-family: ${fontFamily};`;
+          }
+        });
+
+        if(range.length === 0) {
+          range.length = node.textContent?.length;
+          setTimeout(() => {
+            formatFont(range.index,fontClass,node.textContent?.length)
+          }, 200);
+        }
+      
+      }    
+      console.log(delta)
+      
+      return delta;
+    });
+  }, [editorRefContext]);
+  
+
+  const formatFont = (index:number,selectedFont:string,length?:number) => {
+    if(length) {
+      if(!editorRefContext) return ;
+      const quill = editorRefContext.getEditor();
+      quill.formatText(index, length, {font:selectedFont});
+      setSelectedFont(selectedFont)
+      setSelectedFontValue(selectedFont)
+    }
+  }
 
   return (
     <div
@@ -2828,6 +2965,14 @@ export default function QuillToolbar(props: any) {
                     height: "360px",
                   },
                 }}
+                renderValue={()=>(
+                  <div style={{
+                    position:"relative",
+                    left:"-0.2rem"
+                  }}>
+                    {selectedFontSizeValue}
+                  </div>
+                )}
               >
                 {SizeStyle.whitelist.map((size: any) => (
                   <MenuItem
@@ -2862,6 +3007,7 @@ export default function QuillToolbar(props: any) {
                   borderColor: "#D9D9D9",
                   borderRadius: 5,
                   color: "#626469",
+                  width:"118px"
                 }}
                 IconComponent={SelectDropdownImage3}
                 sx={{
@@ -2888,6 +3034,17 @@ export default function QuillToolbar(props: any) {
                 onChange={(e) => {
                   handleHeaderChange(e);
                 }}
+                renderValue={() => (
+                  <div
+                    style={{
+                      position:"relative",
+                      left:"-0.2rem",
+                      fontSize:"13px"
+                    }}
+                  >
+                     {selectedHeadersValue == 0 ? "Paragraph" : selectedHeadersValue == 1 ? "Heading 1": selectedHeadersValue == 2 ? "Heading 2": selectedHeadersValue == 3 ? "Heading 3": selectedHeadersValue == 4 ? "Heading 4":""}
+                  </div>
+                )}
                 value={selectedHeadersValue}
               >
                 <MenuItem
@@ -2967,17 +3124,20 @@ export default function QuillToolbar(props: any) {
         </span>
         <ReactTooltip
           id="my-tooltip"
-          className="custom-tooltip"
+          className="custom-tooltip tooltip-select"
           place="bottom"
+          style={{
+            position:"absolute"
+          }}
         />
         <ReactTooltip
           id="tooltip-font-size"
-          className="custom-tooltip"
+          className="custom-tooltip tooltip-select"
           place="bottom"
         />
         <ReactTooltip
           id="tooltip-header"
-          className="custom-tooltip"
+          className="custom-tooltip tooltip-select"
           place="bottom"
         />
         <span className="ql-formats ql-text-highlight">
@@ -3032,8 +3192,8 @@ export default function QuillToolbar(props: any) {
                       rx="2"
                       fill={
                         bgColorSvg === "#D9D9D940" ||
-                          bgColorSvg === "#ffffff" ||
-                          bgColorSvg == "#fefefe"
+                        bgColorSvg === "#ffffff" ||
+                        bgColorSvg == "#fefefe"
                           ? "#E6E6E6"
                           : bgColorSvg
                       }
@@ -3108,7 +3268,7 @@ export default function QuillToolbar(props: any) {
                     viewBox="0 0 10 10"
                     fill="none"
                   >
-                    <rect width="10" height="10" rx="2" fill={fontColorSvg == "white" || fontColorSvg === "#fefefe" || fontColorSvg == "#ffffff" ? "#E6E6E6" : fontColorSvg} />
+                    <rect width="10" height="10" rx="2" fill={fontColorSvg == "white" || fontColorSvg === "#fefefe" ||fontColorSvg == "#ffffff" ? "#E6E6E6":fontColorSvg} />
                   </svg>
                 </span>
               </span>
@@ -3272,29 +3432,49 @@ export default function QuillToolbar(props: any) {
               >
                 <MenuItem
                   className="margins-color select-fonts"
+                  style={{
+                    color:"#7F7F7F",
+                    fontSize:"13px"
+                  }}
                   onClick={() => handleTextTransformation(toSentenceCase)}
                 >
                   Sentence case
                 </MenuItem>
                 <MenuItem
+                  style={{
+                    color:"#7F7F7F",
+                    fontSize:"13px"
+                  }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toLowerCase)}
                 >
                   lowercase
                 </MenuItem>
                 <MenuItem
+                  style={{
+                    color:"#7F7F7F",
+                    fontSize:"13px"
+                  }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toUpperCase)}
                 >
                   UPPERCASE
                 </MenuItem>
                 <MenuItem
+                  style={{
+                    color:"#7F7F7F",
+                    fontSize:"13px"
+                  }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toCapitalizeEachWord)}
                 >
                   Capitalize Each Word
                 </MenuItem>
                 <MenuItem
+                  style={{
+                    color:"#7F7F7F",
+                    fontSize:"13px"
+                  }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toToggleCase)}
                 >
@@ -3464,7 +3644,7 @@ export default function QuillToolbar(props: any) {
                       width: 42,
                       padding: 0,
                       border:
-                        isListActive == "" || isListActive == "bullet"
+                        isListActive == "" || isListActive == "bullet" 
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
@@ -3820,7 +4000,7 @@ export default function QuillToolbar(props: any) {
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 30, cursor: "pointer" }}
-                onMouseDown={() => handleListClick("bullet")}
+                onMouseDown={() => handleListClick("bullet-dot")}
               >
                 <BulletSvg />
               </span>
@@ -4154,16 +4334,16 @@ export default function QuillToolbar(props: any) {
                           {size.value == "1.5"
                             ? "1"
                             : size.value == "1.7"
-                              ? "1.15"
-                              : size.value == "2"
-                                ? "1.5"
-                                : size.value == "2.5"
-                                  ? "2"
-                                  : size.value == "3"
-                                    ? "2.5"
-                                    : size.value == "3.5"
-                                      ? "3"
-                                      : ""}
+                            ? "1.15"
+                            : size.value == "2"
+                            ? "1.5"
+                            : size.value == "2.5"
+                            ? "2"
+                            : size.value == "3"
+                            ? "2.5"
+                            : size.value == "3.5"
+                            ? "3"
+                            : ""}
                         </div>
                       </div>
                     </MenuItem>
@@ -4962,7 +5142,7 @@ export default function QuillToolbar(props: any) {
                       key={index}
                       onClick={() => handleSelectSize(size)}
                       className="page-sizing "
-                    // style={{height:39}}
+                      // style={{height:39}}
                     >
                       <div className="" style={{ padding: "0 8px" }}>
                         <div
@@ -5511,7 +5691,7 @@ export default function QuillToolbar(props: any) {
 
         <span className="ql-formats">
           <a
-            data-tooltip-id="menu-item-14"
+            data-tooltip-id="menu-item-picture"
             data-tooltip-content="Insert Picture"
             data-tooltip-place="bottom"
           >
@@ -5706,7 +5886,7 @@ export default function QuillToolbar(props: any) {
         {openPicutre ? null : (
           <ReactTooltip
             className="custom-tooltip"
-            id="menu-item-14"
+            id="menu-item-picture"
             place="bottom"
           />
         )}
@@ -5823,10 +6003,94 @@ export default function QuillToolbar(props: any) {
           <button
             className=" btn-undo mr-2"
             id="formula"
-            onClick={handleInsertFormula}
+            onClick={handleOpenFormula}
           >
             <FormulaSvg />
           </button>
+            <Menu
+                id="openFormula-menu"
+                anchorEl={anchorElFormula}
+                open={openFormula}
+                closeAfterTransition
+                onClose={()=>setAnchorElFormula(null)}
+                MenuListProps={{
+                  "aria-labelledby": "openFormula-button",
+                }}
+              >
+                <div
+                  style={{
+                    width: 300,
+                    color: "#000000",
+                  }}
+                >
+                  <div
+                    className="text-center margins-color"
+                    style={{
+                      borderBottom: "0.5px solid #EEEEEE",
+                      fontSize: 14,
+                      fontWeight: 400,
+                    }}
+                  >
+                    Add Formula
+                  </div>
+                  <div className="d-flex container py-1 align-items-center margins-color">
+                    <label style={{ fontSize: 14, fontWeight: 400 }}>
+                      Text:
+                    </label>
+                    <input
+                      type="text"
+                      onChange={handleDisplayTextChange}
+                      defaultValue={displayText}
+                      className="input-link"
+                      style={{
+                        width: "100%",
+                        border: "1px solid #EEE",
+                        height: 30,
+                        fontSize: 12,
+                        marginLeft: 4,
+                        padding: "0 3px",
+                        outline: "none",
+                        borderRadius: 8,
+                      }}
+                    />
+                  </div>
+                  <div className="d-flex container py-1 align-items-center justify-content-end">
+                    <div>
+                      <button
+                        className="btn-cancel-link"
+                        style={{
+                          width: 55,
+                          height: 30,
+                          border: "1px solid #EEE",
+                          fontSize: 12,
+                          borderRadius: 8,
+                          fontWeight: 400,
+                        }}
+                        onClick={()=>setAnchorElFormula(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        className="ml-2 btn-save-link"
+                        style={{
+                          width: 40,
+                          height: 30,
+                          border: "1px solid #EEE",
+                          fontSize: 12,
+                          borderRadius: 8,
+                          color: "black",
+                          fontWeight: 400,
+                        }}
+                        onClick={()=>setAnchorElFormula(null)}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </Menu>
           <button
             className=" btn-undo mr-2"
             id="code"
@@ -5855,7 +6119,7 @@ export default function QuillToolbar(props: any) {
           anchorId="clean"
           className="custom-tooltip"
           place="bottom"
-          content={"Clear Format"}
+          content={"Clean"}
         />
       </div>
       <button onClick={scrollRight} className="scroll-left justify-flex-end">

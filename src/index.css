@@ -818,7 +818,6 @@ body {
 /* Define your font classes */
 .ql-font-arial {
   font-family: "Arial", sans-serif !important;
-  /* Ensure 'Arial' is available on client */
 }
 
 .ql-font-comic-sans {
@@ -1054,31 +1053,37 @@ body {
 /* Custom styles for bullet list items */
 .ql-editor ul[data-list-type="bullet-dot"] {
   list-style-type: none;
+
 }
 
 .ql-editor ul[data-list-type="bullet-dot"] > li:before {
   content: "•";
   color: black;
-  font-size: 16px;
-  top: 0px !important;
-
+  font-size: 13px;
+  margin-right: 12px;
+  width: 11px;
+  height: 6px;
+  margin-top: 0px !important;
+  position: relative;
+  top: 1.5sypx !important;
 }
 
 .ql-editor ul[data-list-type="bullet-dot-large"] {
   list-style-type: none;
+  /* margin-left: 4px; */
 }
 
 .ql-editor ul[data-list-type="bullet-dot-large"] > li:before {
   content: '';
   display: inline-block; /* Make it inline */
-  width: 14px; /* Size of the SVG */
-  height: 8px; /* Size of the SVG */
-  background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\' viewBox=\'0 0 8 8\' fill=\'none\'%3E%3Cpath d=\'M1.52513 1.52513C2.1815 0.868749 3.07174 0.5 4 0.5C4.92826 0.5 5.8185 0.868749 6.47487 1.52513C7.13125 2.1815 7.5 3.07174 7.5 4C7.5 5.94386 5.94386 7.5 4 7.5C2.07451 7.5 0.5 5.94223 0.5 4C0.5 3.07174 0.868749 2.1815 1.52513 1.52513Z\' fill=\'%237F7F7F\' stroke=\'%237F7F7F\'/%3E%3C/svg%3E');
+  width: 15px; /* Size of the SVG */
+  height: 6px; /* Size of the SVG */
+  background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'\' height=\'\' viewBox=\'0 0 8 8\' fill=\'none\'%3E%3Cpath d=\'M1.52513 1.52513C2.1815 0.868749 3.07174 0.5 4 0.5C4.92826 0.5 5.8185 0.868749 6.47487 1.52513C7.13125 2.1815 7.5 3.07174 7.5 4C7.5 5.94386 5.94386 7.5 4 7.5C2.07451 7.5 0.5 5.94223 0.5 4C0.5 3.07174 0.868749 2.1815 1.52513 1.52513Z\' fill=\'%237F7F7F\' stroke=\'%237F7F7F\'/%3E%3C/svg%3E');
   background-size: contain; /* Fit SVG in the box */
   background-repeat: no-repeat; /* Prevent repeat */
   margin-right: 3px; /* Space between SVG and text */
   vertical-align: middle; /* Align with text */
-  top: 0px !important;
+  /* top: -2px !important; */
 
 }
 
@@ -1090,14 +1095,14 @@ body {
 .ql-editor ul[data-list-type="bullet-circle"] > li:before {
   content: '';
   display: inline-block;
-  width: 14px;
-  height: 8px;
+  width: 15px;
+  height: 6px;
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\' viewBox=\'0 0 8 8\' fill=\'none\'%3E%3Cpath d=\'M4 7.2C3.15131 7.2 2.33737 6.86286 1.73726 6.26274C1.13714 5.66263 0.8 4.84869 0.8 4C0.8 3.15131 1.13714 2.33737 1.73726 1.73726C2.33737 1.13714 3.15131 0.8 4 0.8C4.84869 0.8 5.66263 1.13714 6.26274 1.73726C6.86286 2.33737 7.2 3.15131 7.2 4C7.2 4.84869 6.86286 5.66263 6.26274 6.26274C5.66263 6.86286 4.84869 7.2 4 7.2ZM4 0C3.47471 0 2.95457 0.103463 2.46927 0.304482C1.98396 0.505501 1.54301 0.800139 1.17157 1.17157C0.421427 1.92172 0 2.93913 0 4C0 5.06087 0.421427 6.07828 1.17157 6.82843C1.54301 7.19986 1.98396 7.4945 2.46927 7.69552C2.95457 7.89654 3.47471 8 4 8C5.06087 8 6.07828 7.57857 6.82843 6.82843C7.57857 6.07828 8 5.06087 8 4C8 3.47471 7.89654 2.95457 7.69552 2.46927C7.4945 1.98396 7.19986 1.54301 6.82843 1.17157C6.45699 0.800139 6.01604 0.505501 5.53073 0.304482C5.04543 0.103463 4.52529 0 4 0Z\' fill=\'%237F7F7F\'/%3E%3C/svg%3E');
   background-size: contain;
   background-repeat: no-repeat;
   margin-right: 3px;
   vertical-align: middle;
-  top: 0px !important;
+  /* top: -2px !important; */
 }
 
 
@@ -1109,14 +1114,14 @@ body {
 .ql-editor ul[data-list-type="bullet-square"] > li:before {
   content: '';
   display: inline-block;
-  width: 14px; /* Size of the SVG */
-  height: 8px; /* Size of the SVG */
+  width: 15px; /* Size of the SVG */
+  height: 6px; /* Size of the SVG */
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\' viewBox=\'0 0 8 8\' fill=\'none\'%3E%3Cpath d=\'M8 0H0V8H8V0Z\' fill=\'%237F7F7F\'/%3E%3C/svg%3E');
   background-size: contain; /* Fit SVG in the box */
   background-repeat: no-repeat; /* Prevent repeat */
   margin-right: 3px; /* Space between SVG and text */
   vertical-align: middle; /* Align with text */
-  top: 0px !important;
+  /* top: -2px !important; */
 
 }
 
@@ -1129,8 +1134,8 @@ body {
 .ql-editor ul[data-list-type="bullet-flower"] > li:before {
   content: '';
   display: inline-block;
-  height: 14px; /* Adjust size as needed */
-  width: 14px; /* Set width to match height for square */
+  height: 12px; /* Adjust size as needed */
+  width: 18px; /* Set width to match height for square */
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\' fill=\'black\'%3E%3Cpath d=\'M2.5 0C2.37503 0 2.25006 0.047494 2.14759 0.147482L1.32279 0.969879L2.5 2.14473L3.67721 0.969879L2.85241 0.147482C2.74994 0.047494 2.62497 0 2.5 0ZM0.970382 1.32233L0.148088 2.14723C-0.0493627 2.34221 -0.0493627 2.65717 0.148088 2.85214L0.970382 3.67704L2.14509 2.49969L0.970382 1.32233ZM4.02962 1.32233L2.85491 2.49969L4.02962 3.67704L4.85191 2.85214C5.04936 2.65717 5.04936 2.34221 4.85191 2.14723L4.02962 1.32233ZM2.5 2.85464L1.32279 4.0295L2.14759 4.85189C2.34254 5.04937 2.65746 5.04937 2.85241 4.85189L3.67721 4.0295L2.5 2.85464Z\'/%3E%3C/svg%3E');
   background-size: contain;
   background-repeat: no-repeat;
@@ -1138,10 +1143,8 @@ body {
   position: relative;
   /* margin-right: 4px; Space between SVG and text */
   left: -4px !important;
-  top: 2px !important;
+  top: 1px !important;
   margin-right: 0px;
-
-
 }
 
 .ql-editor ul[data-list-type="bullet-arrow"] {
@@ -1152,15 +1155,15 @@ body {
 .ql-editor ul[data-list-type="bullet-arrow"] > li:before {
   content: '';
   display: inline-block;
-  height: 8px; /* Adjust height */
-  width: 14px; /* Set width to match height for square */
+  height: 6px; /* Adjust height */
+  width: 18px; /* Set width to match height for square */
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'13\' viewBox=\'0 0 8 8\' fill=\'none\'%3E%3Cpath d=\'M5.6 4L2.4 4L1.6 1.6L5.6 4ZM8 4L0 0L1.26316 4L0 8L8 4Z\' fill=\'%237F7F7F\'/%3E%3C/svg%3E');
   background-size: contain; /* Fit the SVG */
   background-repeat: no-repeat; /* Prevent repeat */
   vertical-align: middle; /* Align with text */
   position: relative; /* Positioning */
   left: -4px !important;
-  top: 0px !important;
+  /* top: -2px !important; */
   margin-right: 0px;
 
 
@@ -1175,15 +1178,15 @@ body {
 .ql-editor ul[data-list-type="bullet-tick"] > li:before {
   content: '';
   display: inline-block;
-  height: 8px; /* Adjust height */
-  width: 14px; /* Set width to match height */
+  height: 6px; /* Adjust height */
+  width: 18px; /* Set width to match height */
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\' viewBox=\'0 0 8 8\' fill=\'none\'%3E%3Cpath d=\'M0.647036 4.80309L1.19605 4.13467L2.23896 5.40817L2.62542 5.88008L3.01233 5.40854L6.80358 0.788006L7.35296 1.45689L2.62579 7.21223L0.647036 4.80309Z\' fill=\'%237F7F7F\' stroke=\'%237F7F7F\'/%3E%3C/svg%3E');
   background-size: contain; /* Fit the SVG */
   background-repeat: no-repeat; /* Prevent repeat */
   vertical-align: middle; /* Align with text */
   position: relative; /* Positioning */
   left: -4px !important;
-  top: 0px !important;
+  /* top: 0px !important; */
   margin-right: 0px;
 
 }
@@ -1191,7 +1194,7 @@ body {
 
 .ql-editor li:not(.ql-direction-rtl)::before {
   position: relative !important;
-  top: 1px !important;
+  top: -1px !important;
 }
 
 .css-6hp17o-MuiList-root-MuiMenu-list {
@@ -1710,7 +1713,7 @@ body {
   background-color: #fefefe;
   color: #000000;
   height: 24px;
-  width: 80px;
+  /* width: 80px; */
   border: 1px solid #eeeeee;
   border-radius: 5px;
 }
@@ -1950,4 +1953,14 @@ fill: #7F7F7F;
   text-align: center !important;
   align-items: center !important;
   justify-content: center !important;
+}
+
+.tooltip-select{
+  position: absolute !important;
+  top: 9.4rem !important;
+}
+
+
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select{
+  text-align: start;
 }

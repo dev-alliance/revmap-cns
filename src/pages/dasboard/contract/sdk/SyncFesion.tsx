@@ -178,6 +178,7 @@ function SyncFesion() {
     setLeftSidebarExpanded(true);
   }, []);
 
+  const [oldPages, setOldPages] = useState([])
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -204,7 +205,8 @@ function SyncFesion() {
           let pages = data?.pages;
           return pages;
         });
-        setCurrentPage(data?.pages.length-1)
+        setCurrentPage(data?.pages.length - 1);
+        setOldPages(data?.pages)
       }
 
       if (data?.pageSize) {
@@ -247,6 +249,7 @@ function SyncFesion() {
   const editorContainerRef: any = useRef(null);
 
   const handleSubmit = async () => {
+    console.log("handle submit")
     try {
       if (!documentName) {
         toast.error("Please enter the name of the document");
@@ -260,12 +263,8 @@ function SyncFesion() {
           message: "has added the new version",
         },
       ]);
-      setDocumentReady(false); // Reset the document ready state
-      // saveDocumentToState(); // Start saving the document to state
-      // if (uplodTrackFile) {
-      setDocumentReady(true);
-      // }
-      console.log(documentReady);
+
+      createPayload();
     } catch (error: any) {
       console.log(error);
 
@@ -282,99 +281,109 @@ function SyncFesion() {
     }
   };
 
-  useEffect(() => {
-    if (!documentReady) return;
+  const createPayload = async () => {
+    try {
+      let status = "Draft";
 
-    const createPayload = async () => {
-      try {
-        let status = "Draft";
+      const hasReqOption = recipients.some(
+        (recipient: any) => recipient.ReqOption
+      );
 
-        const hasReqOption = recipients.some(
-          (recipient: any) => recipient.ReqOption
-        );
+      const hasSignature = recipients.some(
+        (recipient: any) => recipient.signature
+      );
 
-        const hasSignature = recipients.some(
-          (recipient: any) => recipient.signature
-        );
+      // Determine which step to highlight
+      if (recipients.length > 0) {
+        status = "Review";
+      }
+      if (hasReqOption) {
+        status = "Signing";
+        // Update status to 'pending' when there's a ReqOption
+      }
+      if (hasSignature) {
+        status = "Signed";
+        // Update status to 'completed' when all required signatures are present
+      }
 
-        // Determine which step to highlight
-        if (recipients.length > 0) {
-          status = "Review";
-        }
-        if (hasReqOption) {
-          status = "Signing";
-          // Update status to 'pending' when there's a ReqOption
-        }
-        if (hasSignature) {
-          status = "Signed";
-          // Update status to 'completed' when all required signatures are present
-        }
+      const payload: any = {
+        userId: user._id,
+        overview: { ...formState, name: documentName },
+        lifecycle: lifecycleData,
+        collaburater: collaborater,
+        approval: approvers,
+        signature: recipients,
+        status: status,
 
-        const payload: any = {
-          userId: user._id,
-          overview: { ...formState, name: documentName },
-          lifecycle: lifecycleData,
-          collaburater: collaborater,
-          approval: approvers,
-          signature: recipients,
-          status: status,
+        createdBy: user.firstName,
+        contractType: IsTemplate ? "template" : "",
+        wordDocumentData: showBlock == "" ? documentData : null,
+        pdfData: uplodTrackFile,
+        uploadedWordData: showBlock === "uploadTrack" ? documentData : null,
+        pages: pages,
+        pageSize: documentPageSize,
+        pageMargins: documentPageMargins,
+      };
 
-          createdBy: user.firstName,
-          contractType: IsTemplate ? "template" : "",
-          wordDocumentData: showBlock == "" ? documentData : null,
-          pdfData: uplodTrackFile,
-          uploadedWordData: showBlock === "uploadTrack" ? documentData : null,
-          pages: pages,
-          pageSize: documentPageSize,
-          pageMargins: documentPageMargins,
-        };
+      if (comments.length > 0) {
+        payload.comments = comments;
+      }
 
-        if (comments.length > 0) {
-          payload.comments = comments;
-        }
 
-        console.log(payload);
+      let response;
 
-        let response;
-
-        if (newId) {
-          response = await updateDocument(newId, payload);
-        } else if (id) {
-          response = await updateDocument(id, payload);
-        } else {
-          response = await create(payload);
-          if (response.contract._id) {
-            setNewId(response.contract._id);
-          }
+      if (newId) {
+        response = await updateDocument(newId, payload);
+      } else if (id) {
+        response = await updateDocument(id, payload);
+      } else {
+        response = await create(payload);
+        if (response.contract._id) {
+          setNewId(response.contract._id);
         }
 
-        if (response.ok === true) {
-          toast.success(response.message);
-          if (showBlock == "uploadTrack") {
-            navigate("/dashboard/contract-list");
-          }
-        } else {
-          const errorMessage = response.message || "An error occurred";
-          toast.error(errorMessage);
-        }
-      } catch (error: any) {
-        console.log(error);
+      }
 
-        let errorMessage = "Failed to create clause.";
-        if (error.response && error.response.data) {
-          errorMessage =
-            error.response.data.message ||
-            error.response.data ||
-            "An error occurred";
-        } else if (error.message) {
-          errorMessage = error.message;
+      if (response.ok === true) {
+        toast.success(response.message);
+        setEditMode(false)
+
+        if (response?.contract?.pages) {
+          console.log(response.contract.pages)
+          setOldPages(response.contract.pages)
         }
+        if (showBlock == "uploadTrack") {
+          navigate("/dashboard/contract-list");
+        }
+      } else {
+        const errorMessage = response.message || "An error occurred";
         toast.error(errorMessage);
       }
-    };
+    } catch (error: any) {
+      console.log(error);
 
-    createPayload();
-  }, [documentReady]);
+      let errorMessage = "Failed to create clause.";
+      if (error.response && error.response.data) {
+        errorMessage =
+          error.response.data.message ||
+          error.response.data ||
+          "An error occurred";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (!documentReady) return;
+
+  //   console.log("I am called")
+
+
+
+  //   createPayload();
+  // }, [documentReady]);
   // console.log(showBlock), "block show";
 
   const [openDropdowns, setOpenDropdowns] = useState({
@@ -918,7 +927,7 @@ function SyncFesion() {
               (highlightStep === "" && step === "Draft")
           )
           .map(({ label, step }) => (
-            <li key={step} className="btn-steps d-flex align-items-center">
+            <li key={step} className="btn-steps d-flex align-items-center" style={{ width: label == "Draft" ? "68px" : "80px" }}>
               <div className="color mx-2"></div>
               <div className="text-[14px]">{label}</div>
             </li>
@@ -972,7 +981,7 @@ function SyncFesion() {
   const handleClick = () => {
     setEditMode(true);
     setEnabelEditing(false);
-    if(editorRefs) {
+    if (editorRefs) {
       editorRefs.current[currentPage].getEditor().focus();
     }
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -993,6 +1002,17 @@ function SyncFesion() {
   };
   const handleClickCencel = () => {
     // navigate("/dashboard/contract-list");
+
+    console.log(id);
+    console.log(newId)
+
+    if (!id && newId === "") {
+      setPages([{ content: "" }])
+    }
+
+    if (id || newId) {
+      setPages(oldPages)
+    }
 
     setEditMode(false);
     setEnabelEditing(true);
@@ -1197,10 +1217,7 @@ function SyncFesion() {
           // Find the point where content fits within the page size
           while (fitIndex > 0) {
             currentEditor.setContents(contentToFit, "silent"); // Use setContents to replace content silently
-            setTimeout(() => {
-              currentEditor.setSelecion(cursorPosition, 0);
-              currentEditor.focus();
-            }, 0);
+
 
             if (currentEditor.root.scrollHeight <= documentHeight) {
               break; // Content fits within the current page size
@@ -1250,13 +1267,13 @@ function SyncFesion() {
             if (nextPageIndex >= updatedPages.length) {
               // Add a new page for overflow content
               updatedPages.push({ content: overflow });
-              setCurrentPage(updatedPages.length - 1); // Set current page to the newly created page
+              setCurrentPage(updatedPages.length - 1);
 
               const nextEditor =
                 editorRefs.current[updatedPages.length - 1]?.getEditor();
               if (nextEditor) {
                 nextEditor.focus();
-                nextEditor.setSelection(0, 0); // Set cursor to the start
+                nextEditor.setSelection(nextEditor.getLength() - 1, 0);
               }
             } else {
               // Add to the next page if it already exists
@@ -1264,7 +1281,7 @@ function SyncFesion() {
               if (nextEditor) {
                 const nextPageContent = nextEditor.getContents();
                 const newContent = overflow.concat(nextPageContent);
-                nextEditor.setContents(newContent, "silent"); // Use setContents to replace content
+                nextEditor.setContents(newContent, "user"); // Use setContents to replace content
 
                 // Check for further overflow
                 if (nextEditor.root.scrollHeight > documentHeight) {
@@ -1325,12 +1342,13 @@ function SyncFesion() {
   };
 
   useEffect(() => {
-    const editor = editorRefs.current[currentPage]?.getEditor();
     setEditorRefContext(editorRefs.current[currentPage]);
+    const editor = editorRefs?.current[currentPage]?.getEditor();
     if (editor) {
+      editor.setSelection(editor.getLength() - 1, 0)
       editor.focus();
     }
-  }, [currentPage, editorRefs]);
+  }, [currentPage]);
 
   const [toMinus, setToMinus] = useState<number>(0);
   const [commentLeftButton, setCommentLeftButton] = useState("97.8%");
@@ -1448,16 +1466,6 @@ function SyncFesion() {
   //   }
   // }, [documentPageSize]);
 
-  useEffect(() => {
-    // Cleanup function to remove all event listeners if necessary
-    return () => {
-      editorRefs.current.forEach((editor: any) => {
-        if (editor) {
-          editor.getEditor().off("text-change", handleChange);
-        }
-      });
-    };
-  }, [handleChange]);
 
   const rejectChange = (changeToReject: any) => {
     const { action, changes } = changeToReject;
@@ -1497,12 +1505,11 @@ function SyncFesion() {
     if (!editorRefs.current[currentPage]) return;
     const editor = editorRefs.current[currentPage].getEditor();
     if (editor && selection) {
-      const bounds = editor.getBounds(selection.index);
+      const bounds = editor?.getBounds(selection.index);
       setButtonPosition({ top: bounds.bottom + 20 });
     }
   }, [selection]);
 
-  const [cursorPosition, setCurosrPosition] = useState<number>(0);
 
   const [isBoldActive, setIsBoldActive] = useState(false);
   const [isItalicActive, setIsItalicActive] = useState(false);
@@ -1512,9 +1519,8 @@ function SyncFesion() {
   const [isListActive, setIsListActive] = useState("");
 
   const handleChangeSelection = (range: any, source: any) => {
-  
+
     if (range) {
-      setCurosrPosition(range?.index);
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
       if (source !== "api") {
@@ -1523,7 +1529,7 @@ function SyncFesion() {
             setFontColorSvg(format.color);
           } else {
             editor.format("color", prevFontColor);
-            setFontColorSvg(prevFontColor);
+            setFontColorSvg(fontColor);
           }
           if (format.background) {
             if (
@@ -1534,11 +1540,15 @@ function SyncFesion() {
             }
             setBgColorSvg(format.background);
           } else {
-            editor.format("background", prevBgColor);
-            setBgColorSvg(prevBgColor);
+            if (range.length === 0) {
+              editor.format("background", bgColor);
+              setBgColorSvg(bgColor)
+            }
+            setBgColorSvg("#D9D9D940")
           }
         }
       }
+
       if (format.list) {
         setIsListActive(format.list);
       } else {
@@ -1578,11 +1588,17 @@ function SyncFesion() {
         setSpacing(format.lineHeight);
       }
 
+      console.log("format.font", format.font)
+      console.log("format.size", format.size)
+
+
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
-        editor.format("font", selectedFont);
-        setSelectedFontValue(selectedFont);
+        if (range.length === 0) {
+          editor.format("font", selectedFont);
+          setSelectedFontValue(selectedFont);
+        }
       }
       if (format.size) {
         setSelectedFontSizeValue(format.size);
@@ -1603,9 +1619,9 @@ function SyncFesion() {
       if (format.header) {
         setSelectedHeadersValue(format.header);
         if (format.header === 1) {
-          setSelectedFontSizeValue("26px");
+          setSelectedFontSizeValue("24px");
         } else if (format.header === 2) {
-          setSelectedFontSizeValue("20px");
+          setSelectedFontSizeValue("18px");
         } else if (format.header === 3) {
           setSelectedFontSizeValue("14px");
         } else if (format.header === 4) {
@@ -1826,13 +1842,7 @@ function SyncFesion() {
       if (isFormatting) return;
 
       const range = quill.getSelection(true);
-
-      if (!bgColorSelection) {
-        if (range?.length == 0) {
-          setPrevBgColor(bgColor);
-        }
-      }
-
+      setPrevBgColor(bgColor)
       if (!bgColorSelection) {
         isFormatting = true;
         quill.format("background", bgColor, "user");
@@ -1847,9 +1857,9 @@ function SyncFesion() {
       }
 
       if (bgColorSelection) {
-        quill.setSelection(bgColorSelection.index + bgColorSelection.length, 0); // Move cursor to end of selection
+        quill.setSelection(bgColorSelection.index + bgColorSelection.length, 0);
       } else if (range) {
-        quill.setSelection(range.index, 0); // Keep the cursor where it was
+        quill.setSelection(range.index, 0);
       }
       quill.focus();
     };
@@ -1858,7 +1868,6 @@ function SyncFesion() {
 
     const checkForBlank = () => {
       const editor = quill.root;
-
       // Check if the editor content is empty (HTML is blank or contains only empty tags)
       if (editor.innerHTML.trim() === "" || editor.textContent.trim() === "") {
         handleTextChange(); // Apply handleTextChange if the editor is blank
@@ -1908,6 +1917,7 @@ function SyncFesion() {
       const handleTextChange = () => {
         if (isFormatting) return;
         setFontColorSvg(fontColor);
+        setPrevFontColor(fontColor)
 
         const range = quill.getSelection(true);
         if (range?.length == 0) {
@@ -2061,10 +2071,10 @@ function SyncFesion() {
 
       const fontChange = () => {
         if (selectedHeaders === 1) {
-          setSelectedFontSizeValue("26px");
+          setSelectedFontSizeValue("24px");
         }
         if (selectedHeaders === 2) {
-          setSelectedFontSizeValue("20px");
+          setSelectedFontSizeValue("18px");
         }
         if (selectedHeaders === 3) {
           setSelectedFontSizeValue("14px");
@@ -2305,12 +2315,12 @@ function SyncFesion() {
                 outline: "none",
                 width: 168,
               }}
-              // onFocus={(e) => {
-              //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-              // }}
-              // onBlur={(e) => {
-              //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-              // }}
+            // onFocus={(e) => {
+            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
+            // }}
+            // onBlur={(e) => {
+            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
+            // }}
             />
 
             <div
@@ -3020,7 +3030,7 @@ function SyncFesion() {
             borderTop:
               showBlock == "uploadTrack" ? "1px solid #174B8B" : "none",
             background: "#f7f7f7",
-            padding:"5px 0"
+            padding: "5px 0"
           }}
         >
           {IsTemplate ? (
@@ -3130,10 +3140,10 @@ function SyncFesion() {
                     background: "#fefefe",
                     border: "1px solid #EEE",
                     height: 30,
-                    width:55,
-                    minWidth:55,
-                    minHeight:30,
-                    fontSize:"13px"
+                    width: 55,
+                    minWidth: 55,
+                    minHeight: 30,
+                    fontSize: "13px"
                   }}
                   onClick={() => {
                     handleClickCencel();
@@ -3150,18 +3160,18 @@ function SyncFesion() {
                     background: "#fefefe",
                     border: "1px solid #EEE",
                     height: 30,
-                    width:40,
-                    minWidth:40,
-                    minHeight:30,
-                    fontSize:"13px"
+                    width: 40,
+                    minWidth: 40,
+                    minHeight: 30,
+                    fontSize: "13px"
 
                   }}
                   className="save-btn"
                   onClick={() => {
                     handleSubmit();
-                    if (showBlock !== "uploadTrack") {
-                      handleClickCencel();
-                    }
+                    // if (showBlock !== "uploadTrack") {
+                    //   handleClickCencel();
+                    // }
                   }}
                   variant="outlined"
                   color="success"
@@ -3197,20 +3207,20 @@ function SyncFesion() {
                   background: "#fefefe",
                   border: "1px solid #EEE",
                   height: 30,
-                  width:52,
-                  padding:"4px",
-                  fontSize:"13px",
-                  minHeight:30,
-                  minWidth:52
+                  width: 52,
+                  padding: "4px",
+                  fontSize: "13px",
+                  minHeight: 30,
+                  minWidth: 52
                 }}
                 onClick={() => {
                   handleClick();
                 }}
               >
-                <span style={{paddingRight:"8px"}}>
+                <span style={{ paddingRight: "8px" }}>
                   <EditIconSvg />
                 </span>
-                <span style={{fontSize:13,position:"relative",right:"3px"}}>Edit</span>
+                <span style={{ fontSize: 13, position: "relative", right: "3px" }}>Edit</span>
               </Button>
             )}
           </div>
@@ -3253,7 +3263,7 @@ function SyncFesion() {
           style={{
             backgroundColor: "#fefefe",
             border: "1px solid #fefefe",
-            height:38,
+            height: 38,
             // position:"relative"
           }}
         >
@@ -3270,7 +3280,7 @@ function SyncFesion() {
             setIsScriptActive={setIsScriptActice}
             isListActive={isListActive}
             setIsListActive={setIsListActive}
-            handleChangeSelection = {handleChangeSelection}
+            handleChangeSelection={handleChangeSelection}
           />
         </div>
 
@@ -3435,17 +3445,17 @@ function SyncFesion() {
                         <div className="icon-person mx-2">
                           {user?.firstName
                             ? user.firstName
-                                .split(" ")
-                                .map((name: string) => name.charAt(0))
-                                .slice(0, 2)
-                                .join("")
-                                .toUpperCase()
+                              .split(" ")
+                              .map((name: string) => name.charAt(0))
+                              .slice(0, 2)
+                              .join("")
+                              .toUpperCase()
                             : user?.email
-                                ?.split(" ")
-                                .map((e: string) => e.charAt(0))
-                                .join("")
-                                .substring(0, 2)
-                                .toUpperCase()}
+                              ?.split(" ")
+                              .map((e: string) => e.charAt(0))
+                              .join("")
+                              .substring(0, 2)
+                              .toUpperCase()}
                         </div>
                         <div
                           style={{ position: "relative", bottom: 3, right: 3 }}
@@ -3669,7 +3679,7 @@ function SyncFesion() {
                               </div>
                             </div>
                             {editComment &&
-                            editCommentIndex === indexComment ? (
+                              editCommentIndex === indexComment ? (
                               <>
                                 <div className="px-3" style={{ width: "100%" }}>
                                   <textarea
@@ -3778,14 +3788,14 @@ function SyncFesion() {
                                           </div>
                                           {editCommentIndex !==
                                             indexComment && (
-                                            <span
-                                              style={{
-                                                color: "#00000080",
-                                              }}
-                                            >
-                                              {reply?.date?.toLocaleString()}
-                                            </span>
-                                          )}
+                                              <span
+                                                style={{
+                                                  color: "#00000080",
+                                                }}
+                                              >
+                                                {reply?.date?.toLocaleString()}
+                                              </span>
+                                            )}
                                         </div>
                                         <div>
                                           <img
@@ -3826,7 +3836,7 @@ function SyncFesion() {
                                       </div>
                                     </div>
                                     {editComment &&
-                                    editCommentIndex === indexComment ? (
+                                      editCommentIndex === indexComment ? (
                                       <>
                                         <div
                                           className="px-3"
@@ -3852,7 +3862,7 @@ function SyncFesion() {
                                             style={{
                                               backgroundColor:
                                                 currentComment.trim().length ===
-                                                0
+                                                  0
                                                   ? "#174B8B80"
                                                   : "#174B8B",
                                               border: "1px solid #174B8B80",
