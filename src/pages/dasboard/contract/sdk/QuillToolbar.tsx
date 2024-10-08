@@ -3003,12 +3003,13 @@ export default function QuillToolbar(props: any) {
                   height: 30,
                   borderRadius: 5,
                   color: "#626469",
-                  width: "104px",
+                  width: "134px",
                   textAlign: "center",
                 }}
                 sx={{
                   ".MuiOutlinedInput-notchedOutline": {
                     borderColor: "#d9d9d9",
+                    textAlign:"start"
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#7771e8",
@@ -3025,6 +3026,19 @@ export default function QuillToolbar(props: any) {
                   },
                   fontSize: "13px",
                 }}
+                renderValue={() => (
+                  <div style={{
+                    // position: "relative",
+                    // left: "-0.2rem"
+                    textAlign:'start',
+                    whiteSpace:"nowrap",
+                    overflow:"hidden",
+                    textOverflow: 'ellipsis'
+                  }}>
+                    {selectedFontValue.charAt(0).toUpperCase() +
+                      selectedFontValue.slice(1).replace("-", " ")}
+                  </div>
+                )}
                 onChange={handleFontChange}
                 value={selectedFontValue}
                 MenuProps={{

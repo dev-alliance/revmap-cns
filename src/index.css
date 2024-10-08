@@ -1811,12 +1811,10 @@ body {
 
 .column-color{
   color: #43464C;
-
 }
 
 .column-color-selected {
   color: #7771e8;
-
 }
 
 
@@ -1837,7 +1835,6 @@ body {
   color: #43464C;
 }
 
-
 .btn-cancel-link:hover {
   background-color: #ea5c7d !important;
   color: #fefefe;
@@ -1853,8 +1850,6 @@ body {
 .input-link:focus{
   border: 1px solid #7771e8 !important;
 }
-
-
 
 .history-svg{
 fill: #7F7F7F;
@@ -1877,8 +1872,6 @@ fill: #7F7F7F;
   color: #7771e8 !important;
   background-color: transparent !important;
 }
-
-
 
 .css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
   box-shadow: none !important;
@@ -1915,7 +1908,7 @@ fill: #7F7F7F;
 
 
 .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select{
-  text-align: start;
+  /* text-align: start; */
 }
 
 .pointer-cursor {
@@ -1928,7 +1921,6 @@ fill: #7F7F7F;
     fill: #7771e8;
   }
 }
-
 
 .css-hwh1qn-MuiPaper-root-MuiAppBar-root{
   box-shadow: none !important;
@@ -2060,5 +2052,3 @@ fill: #7F7F7F;
 .ql-snow .ql-editor h4 {
   font-size: 13px !important;
 }
-
-
