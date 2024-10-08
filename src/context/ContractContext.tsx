@@ -195,7 +195,10 @@ interface ContractContextProps {
   bgColorSelection:any | null;
   setBgColorSelection:Dispatch<SetStateAction<any>>;
 
-
+  prevBgColor :string ;
+  setPrevBgColor : Dispatch<SetStateAction<any>>;
+  prevFontColor :string ;
+  setPrevFontColor : Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -323,7 +326,11 @@ export const ContractContext = createContext<ContractContextProps>({
   spacing:"",
   setSpacing:()=>{},
   bgColorSelection:{},
-  setBgColorSelection:()=>{}
+  setBgColorSelection:()=>{},
+  prevBgColor:"",
+  setPrevBgColor:() => {},
+  prevFontColor:"",
+  setPrevFontColor:() => {},
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -673,6 +680,8 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [spacing, setSpacing] = useState("1.5");
 
   const [bgColorSelection,setBgColorSelection] = useState(null)
+  const [prevBgColor,setPrevBgColor] = useState("#fefefe");
+  const [prevFontColor,setPrevFontColor] = useState("black");
 
   return (
     <ContractContext.Provider
@@ -801,7 +810,11 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         spacing,
         setSpacing,
         bgColorSelection,
-        setBgColorSelection
+        setBgColorSelection,
+        prevBgColor,
+        setPrevBgColor,
+        prevFontColor,
+        setPrevFontColor
       }}
     >
       {children}
