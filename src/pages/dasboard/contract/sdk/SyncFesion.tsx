@@ -1558,7 +1558,7 @@ function SyncFesion() {
       "cambria",
       "cambria-math",
       "candara",
-      "comic-sans",
+      "comic-sans-ms",
       "courier-new",
       "georgia",
       "helvetica",
@@ -1566,7 +1566,7 @@ function SyncFesion() {
       "segoe-print",
       "segoe-script",
       "segoe-ui",
-      "lucida",
+      "lucida-sans",
       "times-new-roman",
       "verdana",
       "wingdings",
@@ -1606,7 +1606,6 @@ function SyncFesion() {
       if (format.lineHeight) {
         setSpacing(format.lineHeight);
       }
-      console.log(format.font)
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
@@ -1627,7 +1626,9 @@ function SyncFesion() {
             }
           }
         } else {
-          editor.format("size",selectedFontSize)
+          if(selectedFontSize !== "12px") {
+            editor.format("size",selectedFontSize)
+          }
           setSelectedFontSizeValue(selectedFontSize);
         }
       }

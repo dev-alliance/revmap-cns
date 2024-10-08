@@ -418,7 +418,7 @@ Font.whitelist = [
   "cambria",
   "cambria-math",
   "candara",
-  "comic-sans",
+  "comic-sans-ms",
   "courier-new",
   "georgia",
   "helvetica",
@@ -426,7 +426,7 @@ Font.whitelist = [
   "segoe-print",
   "segoe-script",
   "segoe-ui",
-  "lucida",
+  "lucida-sans",
   "times-new-roman",
   "verdana",
   "wingdings",
@@ -441,7 +441,7 @@ const oldFonts = [
   "cambria",
   "cambria-math",
   "candara",
-  "comic-sans",
+  "comic-sans-ms",
   "courier-new",
   "georgia",
   "helvetica",
@@ -449,7 +449,7 @@ const oldFonts = [
   "segoe-print",
   "segoe-script",
   "segoe-ui",
-  "lucida",
+  "lucida-sans",
   "times-new-roman",
   "verdana",
   "wingdings",
@@ -810,7 +810,7 @@ export default function QuillToolbar(props: any) {
       editor.setSelection(range.index, 0);
     } else {
       editor.formatText(range.index, range.length, { color: textColor }, "user");
-      setPrevFontColor(textColor);
+      // setPrevFontColor(textColor);
       editor.setSelection(range.index + range.length, 0);
     }
 
@@ -986,6 +986,7 @@ export default function QuillToolbar(props: any) {
 
     // Get the current selection range
     const range = editor.getSelection();
+    setSelectedFontSize("12px")
 
     if (range) {
       // If there is a selection, format the selected text
@@ -1661,7 +1662,7 @@ export default function QuillToolbar(props: any) {
       },
       "user"
     );
-    
+
     setPrevBgColor("#fefefe");
     setPrevFontColor("black");
     setSelectedFont("arial");
@@ -2781,7 +2782,6 @@ export default function QuillToolbar(props: any) {
   useEffect(() => {
     if (!editorRefContext) return;
     const quill = editorRefContext.getEditor();
-    console.log("Hello")
 
     const loadGoogleFont = (fontName: string) => {
       const link = document.createElement('link');
@@ -2800,18 +2800,36 @@ export default function QuillToolbar(props: any) {
     };
 
     quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node: HTMLElement, delta: any) => {
-      const range = quill.getSelection(true);
-      console.log(range);
       let fontFamily = node.style.fontFamily
         ? node.style.fontFamily.toLowerCase().replace(/['"]/g, '') // Remove quotes
         : '';
 
-      const fontClass = fontFamily.replace(/\s+/g, '-').split(',')[0];
+      var fontClass = fontFamily.replace(/\s+/g, '-').split(',')[0];
+      var fontSize = node.style.fontSize;
 
-      const fontSize = node.style.fontSize;
+      if (!fontClass) {
+        if (node.tagName === "UL") {
+          node.querySelectorAll('li').forEach((li: HTMLElement) => {
+            li.childNodes.forEach((child: any) => {
+              fontSize = child?.style?.fontSize
+              fontClass = child?.className?.replace("ql-font-", '')
+              fontFamily = child?.className?.replace("ql-font-", '')
+            })
+          });
+        }
+        else {
+          node.childNodes.forEach((child?: any) => {
+            fontSize = child?.style?.fontSize
+            fontClass = child?.className?.replace("ql-font-", '')
+            fontFamily = child?.className?.replace("ql-font-", '')
+          })
+        }
+
+      }
+
       if (fontSize && !oldSize.includes(fontSize)) {
 
-       if (!SizeStyle.whitelist.includes(fontSize)) {
+        if (!SizeStyle.whitelist.includes(fontSize)) {
           SizeStyle.whitelist.push(fontSize);
         }
       }
@@ -2825,35 +2843,68 @@ export default function QuillToolbar(props: any) {
           makeClass(`ql-font-${fontClass}`, fontFamily);
           loadGoogleFont(fontFamily);
         };
-
-        delta.ops.forEach((op: any) => {
-          if (op.insert) {
-            if (!op.attributes) {
-              op.attributes = {};
-            }
-            op.attributes.font = fontClass;
-            op.attributes.size = fontSize;
-            op.attributes.style = op.attributes.style
-              ? `${op.attributes.style}; font-family: ${fontFamily};`
-              : `font-family: ${fontFamily};`;
-              if(!op.attributes.color) {
-                op.attributes.color = "black";
-              }
-              if(!op.attributes.background) {
-                op.attributes.background = "#fefefe";
-              }
-          }
-        });
-        setSelectedFont(fontClass)
-        setSelectedFontSize(fontSize)
-        setSelectedFontSizeValue(fontSize)
-        setSelectedFontValue(fontClass)
       }
-      
-       return delta;
+
+      delta.ops.forEach((op: any) => {
+        if (op.insert) {
+          if (!op.attributes) {
+            op.attributes = {};
+          }
+          op.attributes.font = fontClass;
+          if (!op.attributes.header) {
+            op.attributes.size = fontSize;
+          }
+          op.attributes.style = op.attributes.style
+            ? `${op.attributes.style}; font-family: ${fontFamily};`
+            : `font-family: ${fontFamily};`;
+          if (!op.attributes.color) {
+            op.attributes.color = "black";
+          }
+          if (!op.attributes.background) {
+            op.attributes.background = "#fefefe";
+          }
+        }
+      });
+
+      console.log(delta);
+      setSelectedFont(fontClass)
+      // setSelectedFontSize(fontSize)
+      // setSelectedFontSizeValue(fontSize)
+      setSelectedFontValue(fontClass)
+
+      return delta;
     });
   }, [editorRefContext]);
 
+
+  useEffect(() => {
+    if (!editorRefContext) return;
+    // Function to update the list marker color based on the text color
+    const editor = editorRefContext.getEditor();
+
+    const updateListMarkerColor = () => {
+      const listItems: any = document.querySelectorAll('.ql-editor ul');
+      console.log(listItems)
+
+      listItems.forEach((ul: HTMLElement) => {
+        // console.log(li)
+        ul.childNodes.forEach((li: any) => {
+          li.childNodes.forEach((child: any) => {
+            const textColor = child?.style?.color;
+            li.style.setProperty('--list-marker-color', textColor);
+          })
+        })
+        // Get the computed text color of the li element
+        // const textColor = window.getComputedStyle(li).color;
+
+        // Set the CSS variable --list-marker-color for the li element
+      });
+    };
+
+    // Call the function after component mounts or updates
+    updateListMarkerColor();
+    editor.on("text-change", updateListMarkerColor)
+  }, [editorRefContext]); // Empty dependency array means this will run once after the
 
   const formatFont = (index: number, selectedFont: string, length?: number) => {
     if (length) {
@@ -2861,14 +2912,14 @@ export default function QuillToolbar(props: any) {
       const quill = editorRefContext.getEditor();
       setTimeout(() => {
         quill.formatText(index, length, { font: selectedFont });
-        quill.setSelection(length,0)
+        quill.setSelection(length, 0)
         quill.focus()
       }, 200);
       setSelectedFont(selectedFont)
       setSelectedFontValue(selectedFont)
     }
   };
-  
+
   return (
     <div
       className="d-flex align-items-center justify-content-between"
