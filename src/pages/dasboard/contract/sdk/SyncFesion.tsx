@@ -1355,6 +1355,7 @@ function SyncFesion() {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
+    console.log(event.key)
     if (event.key === "Backspace") {
       const currentEditor = editorRefs.current[index]?.getEditor();
       const content = currentEditor?.root.innerHTML;

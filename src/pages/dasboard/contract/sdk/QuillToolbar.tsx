@@ -1233,38 +1233,47 @@ export default function QuillToolbar(props: any) {
       .join("");
   };
 
-  const handleTextTransformation = (transformationFunction: Function) => {
+const handleTextTransformation = (transformationFunction: Function) => {
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection();
 
     if (selection && selection.length > 0) {
-      const { index, length } = selection;
+        const { index, length } = selection;
 
-      const contents = editor.getContents(index, length);
+        // Get the contents of the selection
+        const contents = editor.getContents(index, length);
+        let delta = new editor.constructor.imports.delta();
 
-      let transformedText = "";
-      let delta = new editor.constructor.imports.delta();
+        // Create a transformation result array
+        const transformedOps = contents.ops.map((op: any) => {
+            if (op.insert && typeof op.insert === "string") {
+                const transformedSegment = transformationFunction(op.insert);
 
-      contents.ops.forEach((op: any, i: number) => {
-        if (op.insert && typeof op.insert === "string") {
-          const segment = op.insert;
-          const transformedSegment = transformationFunction(segment);
-          transformedText += transformedSegment;
-          delta = delta
-            .retain(index)
-            .delete(length)
-            .insert(transformedSegment, op.attributes || {});
+                // Return a new operation with transformed text but keep the original attributes
+                return {
+                    insert: transformedSegment,
+                    attributes: op.attributes
+                };
+            } else {
+                // Handle non-string inserts (like images or embeds)
+                return op;
+            }
+        });
 
-          console.log(`Transformed segment #${i}:`, transformedSegment);
-        }
-      });
+        // Step 1: Delete the selected text
+        delta = delta.delete(length);
 
-      editor.updateContents(delta, "user");
+        // Step 2: Insert the transformed ops into the delta
+        transformedOps.forEach((op: any) => {
+            delta = delta.insert(op.insert, op.attributes);
+        });
 
-      editor.setSelection(index, transformedText.length);
+        editor.updateContents(delta, "user");
     }
-    handleCloseCase();
-  };
+
+    handleCloseCase(); // Close any UI elements related to the transformation
+};
+
 
   const [selectedColumn, setSelectedColumn] = useState("one");
 
@@ -3544,7 +3553,7 @@ export default function QuillToolbar(props: any) {
         <span className="ql-formats b-r">
           <a
             data-tooltip-id="menu-item-3"
-            data-tooltip-content="Shading"
+            data-tooltip-content="Change Case"
             data-tooltip-place="bottom"
           >
             <span
