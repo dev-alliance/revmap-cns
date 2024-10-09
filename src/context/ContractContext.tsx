@@ -199,6 +199,15 @@ interface ContractContextProps {
   setPrevBgColor : Dispatch<SetStateAction<any>>;
   prevFontColor :string ;
   setPrevFontColor : Dispatch<SetStateAction<any>>;
+
+  contractNewFont:any | null;
+  setContractNewFont :Dispatch<SetStateAction<any>>;
+
+  contractNewFontStyles : any | null; 
+  setContractNewFontStyles :Dispatch<SetStateAction<any>>
+
+  contractNewFontSize:any | null ;
+  setContractNewFontSize : Dispatch<SetStateAction<any>>;
 }
 
 export const ContractContext = createContext<ContractContextProps>({
@@ -331,6 +340,12 @@ export const ContractContext = createContext<ContractContextProps>({
   setPrevBgColor:() => {},
   prevFontColor:"",
   setPrevFontColor:() => {},
+  contractNewFont:[],
+  setContractNewFont:()=>{},
+  setContractNewFontStyles:()=>{},
+  contractNewFontStyles:{},
+  contractNewFontSize:[],
+  setContractNewFontSize:()=>{}
 });
 
 export const ContractProvider: React.FC<{ children: ReactNode }> = ({
@@ -683,6 +698,10 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
   const [prevBgColor,setPrevBgColor] = useState("#fefefe");
   const [prevFontColor,setPrevFontColor] = useState("black");
 
+  const [contractNewFont,setContractNewFont] = useState<any>([]);
+  const [contractNewFontStyles,setContractNewFontStyles] = useState<any>([]);
+
+  const [contractNewFontSize,setContractNewFontSize] = useState<any>([])
   return (
     <ContractContext.Provider
       value={{
@@ -814,7 +833,13 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
         prevBgColor,
         setPrevBgColor,
         prevFontColor,
-        setPrevFontColor
+        setPrevFontColor,
+        contractNewFont,
+        setContractNewFont,
+        setContractNewFontStyles,
+        contractNewFontStyles,
+        contractNewFontSize,
+        setContractNewFontSize
       }}
     >
       {children}

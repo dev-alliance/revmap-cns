@@ -579,7 +579,6 @@ export default function QuillToolbar(props: any) {
     isListActive,
     setIsListActive,
     handleChangeSelection,
-    setFonts
   } = props;
 
   const {
@@ -615,7 +614,13 @@ export default function QuillToolbar(props: any) {
     setBgColorSelection,
     editMode,
     setPrevBgColor,
-    setPrevFontColor
+    setPrevFontColor,
+    setContractNewFont,
+    setContractNewFontStyles,
+    contractNewFont,
+    contractNewFontStyles,
+    setContractNewFontSize,
+    contractNewFontSize
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
@@ -1233,47 +1238,48 @@ export default function QuillToolbar(props: any) {
       .join("");
   };
 
-const handleTextTransformation = (transformationFunction: Function) => {
+  const handleTextTransformation = (transformationFunction: Function) => {
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection();
 
     if (selection && selection.length > 0) {
-        const { index, length } = selection;
+      const { index, length } = selection;
 
-        // Get the contents of the selection
-        const contents = editor.getContents(index, length);
-        let delta = new editor.constructor.imports.delta();
+      // Get the contents of the selection
+      const contents = editor.getContents(index, length);
+      let delta = new editor.constructor.imports.delta();
 
-        // Create a transformation result array
-        const transformedOps = contents.ops.map((op: any) => {
-            if (op.insert && typeof op.insert === "string") {
-                const transformedSegment = transformationFunction(op.insert);
+      // Create a transformation result array
+      const transformedOps = contents.ops.map((op: any) => {
+        if (op.insert && typeof op.insert === "string") {
+          const transformedSegment = transformationFunction(op.insert);
 
-                // Return a new operation with transformed text but keep the original attributes
-                return {
-                    insert: transformedSegment,
-                    attributes: op.attributes
-                };
-            } else {
-                // Handle non-string inserts (like images or embeds)
-                return op;
-            }
-        });
+          // Return a new operation with transformed text but keep the original attributes
+          return {
+            insert: transformedSegment,
+            attributes: op.attributes || {} // Handle undefined attributes
+          };
+        } else {
+          // Handle non-string inserts (like images or embeds)
+          return op;
+        }
+      });
 
-        // Step 1: Delete the selected text
-        delta = delta.delete(length);
+      // Step 1: Construct the Delta to replace selected text
+      delta.retain(index); // Retain everything before the selection
+      delta.delete(length); // Delete the selected content
 
-        // Step 2: Insert the transformed ops into the delta
-        transformedOps.forEach((op: any) => {
-            delta = delta.insert(op.insert, op.attributes);
-        });
+      // Step 2: Insert the transformed ops into the delta
+      transformedOps.forEach((op: any) => {
+        delta = delta.insert(op.insert, op.attributes);
+      });
 
-        editor.updateContents(delta, "user");
+      // Step 3: Apply the delta
+      editor.updateContents(delta, "user");
     }
 
     handleCloseCase(); // Close any UI elements related to the transformation
-};
-
+  };
 
   const [selectedColumn, setSelectedColumn] = useState("one");
 
@@ -2792,19 +2798,18 @@ const handleTextTransformation = (transformationFunction: Function) => {
     if (!editorRefContext) return;
     const quill = editorRefContext.getEditor();
 
-    const loadGoogleFont = (fontName: string) => {
-      const link = document.createElement('link');
-      link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, '+')}:wght@400;700&display=swap`;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    };
-
     const makeClass = (fontClass: string, fontFamily: string) => {
       const cleanedFontClass = fontClass.split(',')[0];
-
+      const cssRule = `.${cleanedFontClass} { font-family: "${fontFamily}"; }`;
       const style = document.createElement('style');
       style.type = 'text/css';
       style.innerHTML = `.${cleanedFontClass} { font-family: "${fontFamily}"; }`;
+      setContractNewFontStyles((prevValues:any)=>{
+        if(!prevValues.includes(cssRule)){
+          return [...prevValues,cssRule]
+        }
+        else return prevValues
+      })
       document.head.appendChild(style);
     };
 
@@ -2829,40 +2834,48 @@ const handleTextTransformation = (transformationFunction: Function) => {
         else {
           if (node.childNodes) {
             node.childNodes.forEach((child: any) => {
-              if (child.nodeType === 1) { 
+              if (child.nodeType === 1) {
                 fontSize = child?.style?.fontSize;
                 fontClass = child?.className?.replace("ql-font-", '');
                 fontFamily = child?.className?.replace("ql-font-", '');
-              } else if (child.nodeType === 3) { 
+              } else if (child.nodeType === 3) {
                 fontSize = node?.style?.fontSize;
                 fontClass = node?.className?.replace("ql-font-", '');
                 fontFamily = node?.className?.replace("ql-font-", '');
               }
             });
           }
-        }          
+        }
       }
 
-      if(!fontClass) {
+      if (!fontClass) {
         fontFamily = "arial";
-        fontClass="arial"
+        fontClass = "arial"
       }
 
       if (fontSize && !oldSize.includes(fontSize)) {
 
         if (!SizeStyle.whitelist.includes(fontSize)) {
           SizeStyle.whitelist.push(fontSize);
+          setContractNewFontSize((prevValues:string[])=>{
+            if(!prevValues.includes(fontSize)){
+              return [...prevValues,fontSize]
+            }
+            else return [prevValues]
+          })
         }
       }
 
       if (fontFamily && !oldFonts.includes(fontClass)) {
         if (!Font.whitelist.includes(fontClass)) {
           Font.whitelist.push(fontClass);
-          setFonts((prevValues: any) => {
-            return { ...prevValues, [prevValues.length]: fontClass }
+          setContractNewFont((prevValues:string[])=>{
+            if(!prevValues.includes(fontClass)){
+              return [...prevValues,fontClass]
+            }
+            else return prevValues
           })
           makeClass(`ql-font-${fontClass}`, fontFamily);
-          loadGoogleFont(fontFamily);
         };
       }
 
@@ -2941,6 +2954,35 @@ const handleTextTransformation = (transformationFunction: Function) => {
     }
   };
 
+
+  useEffect(()=>{
+    contractNewFont?.forEach((newFont:string)=>{
+      if(!Font.whitelist.includes(newFont) || newFont != "ql-cursor"){
+        Font.whitelist.push(newFont)
+      }
+    })
+  },[contractNewFont])
+
+  useEffect(()=>{
+    contractNewFontSize?.forEach((newFont:string)=>{
+      if(!SizeStyle.whitelist.includes(newFont)){
+        SizeStyle.whitelist.push(newFont)
+      }
+    })
+  },[contractNewFontSize])
+
+
+  useEffect(()=>{
+     contractNewFontStyles.forEach((styleRule:any) => {
+      if (!document.querySelector(styleRule.split(' ')[0])) {
+        const style = document.createElement('style');
+        style.type = 'text/css';
+        style.innerHTML = styleRule;
+        document.head.appendChild(style);
+      }
+    });
+  },[contractNewFontStyles])
+  
   return (
     <div
       className="d-flex align-items-center justify-content-between"
@@ -3030,7 +3072,7 @@ const handleTextTransformation = (transformationFunction: Function) => {
                 sx={{
                   ".MuiOutlinedInput-notchedOutline": {
                     borderColor: "#d9d9d9",
-                    textAlign:"start"
+                    textAlign: "start"
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#7771e8",
@@ -3051,9 +3093,9 @@ const handleTextTransformation = (transformationFunction: Function) => {
                   <div style={{
                     // position: "relative",
                     // left: "-0.2rem"
-                    textAlign:'start',
-                    whiteSpace:"nowrap",
-                    overflow:"hidden",
+                    textAlign: 'start',
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                     textOverflow: 'ellipsis'
                   }}>
                     {selectedFontValue.charAt(0).toUpperCase() +

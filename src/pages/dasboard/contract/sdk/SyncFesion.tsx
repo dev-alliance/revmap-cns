@@ -174,7 +174,13 @@ function SyncFesion() {
     prevFontColor,
     setPrevBgColor,
     setSelectedFont,
-    setPrevFontColor
+    setPrevFontColor,
+    contractNewFont,
+    contractNewFontSize,
+    contractNewFontStyles,
+    setContractNewFont,
+    setContractNewFontSize,
+    setContractNewFontStyles
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -261,6 +267,21 @@ function SyncFesion() {
         setComments(() => {
           return data.comments;
         });
+      }
+      if(data?.newFontSize) {
+        setContractNewFontSize(()=>{
+          return data.newFontSize
+        })
+      }
+      if(data?.newFonts) {
+        setContractNewFont(()=>{
+          return data.newFonts
+        })
+      }
+      if(data?.newFontStyles) {
+        setContractNewFontStyles(()=>{
+          return data.newFontStyles
+        })
       }
       setFormState(data?.overview);
       setDucomentName(data?.overview?.name);
@@ -364,6 +385,9 @@ function SyncFesion() {
         pages: pages,
         pageSize: documentPageSize,
         pageMargins: documentPageMargins,
+        newFonts:contractNewFont,
+        newFontStyles:contractNewFontStyles,
+        newFontSize:contractNewFontSize
       };
 
       if (comments.length > 0) {
@@ -1584,29 +1608,6 @@ function SyncFesion() {
   };
 
 
-  const [fonts, setFonts] = useState(
-    [
-      "algerian",
-      "arial",
-      "calibri",
-      "cambria",
-      "cambria-math",
-      "candara",
-      "comic-sans-ms",
-      "courier-new",
-      "georgia",
-      "helvetica",
-      "impact",
-      "segoe-print",
-      "segoe-script",
-      "segoe-ui",
-      "lucida-sans",
-      "times-new-roman",
-      "verdana",
-      "wingdings",
-    ]
-  )
-
   const handleChangeSelection = (range: any, source: any) => {
     // const editor = editorRefs.current[currentPage].getEditor();
 
@@ -1874,9 +1875,9 @@ function SyncFesion() {
   useEffect(() => {
     if(!editorRefs) return ;
     if (editorRefs) {
-      const quill = editorRefs.current[currentPage].getEditor();
-      const length = quill.getLength();
-      quill.formatText(0, length, "lineHeight", "1.5");
+      const quill = editorRefs?.current[currentPage]?.getEditor();
+      const length = quill?.getLength();
+      quill?.formatText(0, length, "lineHeight", "1.5");
     }
   }, []);
 
@@ -3098,7 +3099,6 @@ function SyncFesion() {
             isListActive={isListActive}
             setIsListActive={setIsListActive}
             handleChangeSelection={handleChangeSelection}
-            setFonts={setFonts}
           />
         </div>
 

@@ -48,6 +48,14 @@ const CreateContract = () => {
     setFormState,
     setEditMode,
     setIsTemplate,
+    setPages,
+    setBgColorSvg,
+    setSelectedFont,
+    setSelectedFontValue,
+    setSelectedFontSize,
+    setSelectedFontSizeValue,
+    setPrevBgColor,
+    setPrevFontColor
   } = useContext(ContractContext);
 
   // const workerUrl =
@@ -129,7 +137,20 @@ const CreateContract = () => {
   const handleBack = () => {
     navigate(-1);
   };
-  console.log(selectedTemplate?._id, "selectedTemplate");
+  // console.log(selectedTemplate?._id, "selectedTemplate");
+
+  const handleCreateDocument = () => {
+    setShowBlock("")
+    setPages([{ content: "" }]);
+    setBgColorSvg("#fefefe");
+    setPrevBgColor("#fefefe");
+    setSelectedFontSize("12px")
+    setSelectedFontSizeValue("12px")
+    setSelectedFontValue("arial")
+    setSelectedFont("arial")
+    setPrevFontColor("black")
+    setDucomentName("")
+  }
 
   return (
     <>
@@ -245,7 +266,7 @@ const CreateContract = () => {
                   variant="outlined"
                   component={Link}
                   to="/dashboard/editor-dahsbord"
-                  onClick={() => setShowBlock("")}
+                  onClick={handleCreateDocument}
                   sx={{
                     display: "table-cell",
                     padding: "15px",
