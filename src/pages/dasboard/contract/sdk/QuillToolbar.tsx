@@ -2818,13 +2818,25 @@ export default function QuillToolbar(props: any) {
           });
         }
         else {
-          node.childNodes.forEach((child?: any) => {
-            fontSize = child?.style?.fontSize
-            fontClass = child?.className?.replace("ql-font-", '')
-            fontFamily = child?.className?.replace("ql-font-", '')
-          })
-        }
+          if (node.childNodes) {
+            node.childNodes.forEach((child: any) => {
+              if (child.nodeType === 1) { 
+                fontSize = child?.style?.fontSize;
+                fontClass = child?.className?.replace("ql-font-", '');
+                fontFamily = child?.className?.replace("ql-font-", '');
+              } else if (child.nodeType === 3) { 
+                fontSize = node?.style?.fontSize;
+                fontClass = node?.className?.replace("ql-font-", '');
+                fontFamily = node?.className?.replace("ql-font-", '');
+              }
+            });
+          }
+        }          
+      }
 
+      if(!fontClass) {
+        fontFamily = "arial";
+        fontClass="arial"
       }
 
       if (fontSize && !oldSize.includes(fontSize)) {

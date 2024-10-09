@@ -171,7 +171,10 @@ function SyncFesion() {
     setDocumentPageSize,
     setDocumentPageMargins,
     prevBgColor,
-    prevFontColor
+    prevFontColor,
+    setPrevBgColor,
+    setSelectedFont,
+    setPrevFontColor
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -184,9 +187,29 @@ function SyncFesion() {
 
 
   useEffect(() => {
-    if (!id || !newId) {
-      setPages([{ content: "" }])
+   
+    setTimeout(() => {
+      setEditMode(false);
+    }, 0);
+    setDucomentName("")
+    if (!id && !newId) {
+      setTimeout(() => {
+        setPages([{ content: "" }]);
+        setBgColorSvg("#fefefe");
+        setPrevBgColor("#fefefe");
+        setSelectedFontSize("12px")
+        setSelectedFontSizeValue("12px")
+        setSelectedFontValue("arial")
+        setSelectedFont("arial")
+        setPrevFontColor("black")
+      }, 0);
     }
+    if (!editorRefs) return;
+    const editor = editorRefs?.current[currentPage]?.getEditor();
+    setTimeout(() => {
+      editor.history.stack.redo = [];
+      editor.history.stack.undo = [];
+    }, 100);
   }, [])
 
   const [oldPages, setOldPages] = useState([])
@@ -275,7 +298,14 @@ function SyncFesion() {
         },
       ]);
 
-      createPayload();
+      await createPayload();
+      setBgColorSvg("#fefefe");
+      setPrevBgColor("#fefefe");
+      setSelectedFontSize("12px")
+      setSelectedFontSizeValue("12px")
+      setSelectedFontValue("arial")
+      setSelectedFont("arial")
+      setPrevFontColor("black")
     } catch (error: any) {
       console.log(error);
 
@@ -1012,19 +1042,22 @@ function SyncFesion() {
     });
   };
   const handleClickCencel = () => {
-    // navigate("/dashboard/contract-list");
-
-    console.log(id);
-    console.log(newId)
-
+    const editor = editorRefs.current[currentPage].getEditor();
+    editor.history.stack.undo = [];
+    editor.history.stack.redo = [];
     if (!id && newId === "") {
       setPages([{ content: "" }])
     }
-
+    setBgColorSvg("#fefefe");
+    setPrevBgColor("#fefefe");
+    setSelectedFontSize("12px")
+    setSelectedFontSizeValue("12px")
+    setSelectedFontValue("arial")
+    setSelectedFont("arial")
+    setPrevFontColor("black")
     if (id || newId) {
       setPages(oldPages)
     }
-
     setEditMode(false);
     setEnabelEditing(true);
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1575,7 +1608,7 @@ function SyncFesion() {
 
   const handleChangeSelection = (range: any, source: any) => {
     // const editor = editorRefs.current[currentPage].getEditor();
-    
+
     if (range) {
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
@@ -1626,8 +1659,8 @@ function SyncFesion() {
             }
           }
         } else {
-          if(selectedFontSize !== "12px") {
-            editor.format("size",selectedFontSize)
+          if (selectedFontSize !== "12px") {
+            editor.format("size", selectedFontSize)
           }
           setSelectedFontSizeValue(selectedFontSize);
         }
@@ -1838,6 +1871,7 @@ function SyncFesion() {
   };
 
   useEffect(() => {
+    if(!editorRefs) return ;
     if (editorRefs) {
       const quill = editorRefs.current[currentPage].getEditor();
       const length = quill.getLength();
