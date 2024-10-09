@@ -2957,8 +2957,8 @@ export default function QuillToolbar(props: any) {
 
   useEffect(()=>{
     contractNewFont?.forEach((newFont:string)=>{
-      if(!Font.whitelist.includes(newFont) || newFont != "ql-cursor"){
-        Font.whitelist.push(newFont)
+      if(!Font.whitelist.includes(newFont) && newFont != "ql-cursor"){
+        Font?.whitelist?.push(newFont)
       }
     })
   },[contractNewFont])
@@ -2966,14 +2966,14 @@ export default function QuillToolbar(props: any) {
   useEffect(()=>{
     contractNewFontSize?.forEach((newFont:string)=>{
       if(!SizeStyle.whitelist.includes(newFont)){
-        SizeStyle.whitelist.push(newFont)
+        SizeStyle?.whitelist?.push(newFont)
       }
     })
   },[contractNewFontSize])
 
 
   useEffect(()=>{
-     contractNewFontStyles.forEach((styleRule:any) => {
+     contractNewFontStyles?.forEach((styleRule:any) => {
       if (!document.querySelector(styleRule.split(' ')[0])) {
         const style = document.createElement('style');
         style.type = 'text/css';
