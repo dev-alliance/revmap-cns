@@ -675,11 +675,11 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const [bgColor, setBgColor] = useState("#fefefe");
   const [shadeColor, setShadeColor] = useState("");
-  const [fontColor, setFontColor] = useState("black");
+  const [fontColor, setFontColor] = useState("#000000");
 
   const [bgColorSvg, setBgColorSvg] = useState("#D9D9D940");
   const [shadeColorSvg, setShadeColorSvg] = useState("");
-  const [fontColorSvg, setFontColorSvg] = useState("#43464C");
+  const [fontColorSvg, setFontColorSvg] = useState("#000000");
 
   const selectionRef: any = useRef();
 
@@ -696,7 +696,7 @@ export const ContractProvider: React.FC<{ children: ReactNode }> = ({
 
   const [bgColorSelection,setBgColorSelection] = useState(null)
   const [prevBgColor,setPrevBgColor] = useState("#fefefe");
-  const [prevFontColor,setPrevFontColor] = useState("black");
+  const [prevFontColor,setPrevFontColor] = useState("#000000");
 
   const [contractNewFont,setContractNewFont] = useState<any>([]);
   const [contractNewFontStyles,setContractNewFontStyles] = useState<any>([]);

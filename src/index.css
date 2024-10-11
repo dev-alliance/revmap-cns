@@ -9,12 +9,129 @@
 @import url("https://fonts.googleapis.com/css2?family=Georgia&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Helvetica&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lucida+Sans&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Calibri&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Cambria&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Impact&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Verdana&display=swap");
+
+
+@font-face {
+  font-family: 'Cambria';
+  src: url('./assets/fonts/Cambria-Font-For-Windows.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Courier Now';
+  src: url('./assets/fonts/COURIERO.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Impact';
+  src: url('./assets/fonts/impact.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Georgia';
+  src: url('./assets/fonts/georgia.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Halvetica';
+  src: url('./assets/fonts/Helvetica.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Segoe Print';
+  src: url('./assets/fonts/segoepr.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Segoe Script';
+  src: url('./assets/fonts/segoesc.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Segoe UI';
+  src: url('./assets/fonts/segoeuithibd.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Times New Roman';
+  src: url('./assets/fonts/timesnewroman.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Verdana';
+  src: url('./assets/fonts/verdana.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Wingdings';
+  src: url('./assets/fonts/wingding.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Algerian Regular';
+  src: url('./assets/fonts/algerian-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'Candara';
+  src: url('./assets/fonts/Candara.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Calibri';
+  src: url('./assets/fonts/calibri-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Luicda Sans';
+  src: url('./assets/fonts/LSANS.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
+@font-face {
+  font-family: 'Comic Sans MS';
+  src: url('./assets/fonts/ComicSansMS3.ttf') format('opentype'); /* Specify format as 'opentype' */
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 
 /* for now  */
 /* Works on Chrome, Edge, and Safari */
@@ -815,137 +932,81 @@ body {
 
 /* Example of integrating fonts */
 
-/* Define your font classes */
-.ql-font-arial {
-  font-family: "Arial", sans-serif !important;
-}
+
 
 .ql-font-comic-sans-ms {
-  font-family: "Comic Sans MS", cursive !important;
-  /* Ensure 'Comic Sans MS' is available on client */
+  font-family: "Comic Sans MS" !important;
 }
 
 .ql-font-courier-new {
-  font-family: "Courier New", Courier, monospace !important;
+  font-family: "Courier Now" !important;
 }
 
-.ql-editor .ql-font-arial {
+
+.ql-font-arial {
   font-family: "Arial", sans-serif !important;
   /* Ensure 'Arial' is available on client */
 }
 
-.ql-editor .ql-font-comic-sans {
-  font-family: "Comic Sans MS", cursive !important;
-  /* Ensure 'Comic Sans MS' is available on client */
-}
 
 .ql-font-georgia {
-  font-family: Georgia, "Times New Roman", Times, serif !important;
+  font-family: "Georgia" !important;
 }
 
 .ql-font-helvetica {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: "Halvetica" !important;
 }
 
 .ql-font-lucida-sans {
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif !important;
-}
-
-.ql-font-algerian {
-  font-family: "Algerian", serif !important;
+  font-family: "Lucida Sans" !important;
 }
 
 .ql-font-calibri {
-  font-family: "Calibri", sans-serif !important;
+  font-family: "Calibri" !important;
 }
 
 .ql-font-cambria {
-  font-family: "Cambria", serif !important;
+  font-family: "Cambria" !important;
 }
 
 .ql-font-cambria-math {
-  font-family: "Cambria Math", serif !important;
+  font-family: "Cambria Math" !important;
 }
 
 .ql-font-candara {
-  font-family: "Candara", sans-serif !important;
+  font-family: "Candara" !important;
 }
 
 .ql-font-impact {
-  font-family: "Impact", Charcoal, sans-serif !important;
+  font-family: "Impact" !important;
 }
 
 .ql-font-segoe-print {
-  font-family: "Segoe Print", sans-serif !important;
+  font-family: "Segoe Print" !important;
 }
 
 .ql-font-segoe-script {
-  font-family: "Segoe Script", sans-serif !important;
+  font-family: "Segoe Script" !important;
 }
 
 .ql-font-segoe-ui {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-family: "Segoe UI" !important;
 }
 
 .ql-font-times-new-roman {
-  font-family: "Times New Roman", Times, serif !important;
+  font-family: "Times New Roman" !important;
 }
 
 .ql-font-verdana {
-  font-family: Verdana, Geneva, sans-serif !important;
+  font-family: "Verdana" !important;
 }
 
 .ql-font-wingdings {
-  font-family: "Wingdings", serif !important;
+  font-family: "Wingdings" !important;
 }
 
-.ql-editor .ql-font-algerian {
-  font-family: "Algerian", serif !important;
-}
-
-.ql-editor .ql-font-calibri {
-  font-family: "Calibri", sans-serif !important;
-}
-
-.ql-editor .ql-font-cambria {
-  font-family: "Cambria", serif !important;
-}
-
-.ql-editor .ql-font-cambria-math {
-  font-family: "Cambria Math", serif !important;
-}
-
-.ql-editor .ql-font-candara {
-  font-family: "Candara", sans-serif !important;
-}
-
-.ql-editor .ql-font-impact {
-  font-family: "Impact", Charcoal, sans-serif !important;
-}
-
-.ql-editor .ql-font-segoe-print {
-  font-family: "Segoe Print", sans-serif !important;
-}
-
-.ql-editor .ql-font-segoe-script {
-  font-family: "Segoe Script", sans-serif !important;
-}
-
-.ql-editor .ql-font-segoe-ui {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
-}
-
-.ql-editor .ql-font-times-new-roman {
-  font-family: "Times New Roman", Times, serif !important;
-}
-
-.ql-editor .ql-font-verdana {
-  font-family: Verdana, Geneva, sans-serif !important;
-}
-
-.ql-editor .ql-font-wingdings {
-  font-family: "Wingdings", serif !important;
+.ql-font-algerian {
+  font-family: "Algerian Regular" !important;
 }
 
 .css-1ms7hib-MuiTimelineItem-root::before {

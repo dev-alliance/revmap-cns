@@ -1379,9 +1379,15 @@ function SyncFesion() {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
-    console.log(event.key)
+    const currentEditor = editorRefs?.current[index]?.getEditor();
+
+    if (event.key === "Enter") {
+        currentEditor.format("font", selectedFont);
+        currentEditor.format("size",selectedFontSize) 
+        currentEditor.format("background",prevBgColor)
+        currentEditor.format("color",prevFontColor)
+    }
     if (event.key === "Backspace") {
-      const currentEditor = editorRefs.current[index]?.getEditor();
       const content = currentEditor?.root.innerHTML;
 
       if (isContentEmpty(content) && index > 0) {
@@ -1616,6 +1622,7 @@ function SyncFesion() {
       const format = editor.getFormat(range.index);
       if (format.color) {
         setFontColorSvg(format.color);
+        setPrevFontColor(format.color)
       } else {
         if (range.length === 0) {
           editor.format("color", prevFontColor);
@@ -1624,6 +1631,7 @@ function SyncFesion() {
       }
       if (format.background) {
         setBgColorSvg(format.background);
+        setPrevBgColor(format.background)
       } else {
         if (range.length === 0) {
           editor.format("background", prevBgColor);
@@ -1643,6 +1651,7 @@ function SyncFesion() {
       }
       if (format.font) {
         setSelectedFontValue(format.font);
+        setSelectedFont(format.font)
       } else {
         if (range.length === 0) {
           editor.format("font", selectedFont)
@@ -1651,6 +1660,7 @@ function SyncFesion() {
       }
       if (format.size) {
         setSelectedFontSizeValue(format.size);
+        setSelectedFontSize(format.size)
       } else {
         if (range.length > 0) {
           const format = editor.getFormat(range.index, range.length);
@@ -1661,7 +1671,7 @@ function SyncFesion() {
             }
           }
         } else {
-          if (selectedFontSize !== "12px") {
+          if (selectedFontSize !== "12px"  && (!format.header || format.header === 0)) {
             editor.format("size", selectedFontSize)
           }
           setSelectedFontSizeValue(selectedFontSize);
