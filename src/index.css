@@ -24,8 +24,8 @@
 
 
 @font-face {
-  font-family: 'Courier Now';
-  src: url('./assets/fonts/COURIERO.TTF') format('truetype');
+  font-family: 'Courier New';
+  src: url('./assets/fonts/cour.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -939,7 +939,7 @@ body {
 }
 
 .ql-font-courier-new {
-  font-family: "Courier Now" !important;
+  font-family: "Courier New" !important;
 }
 
 

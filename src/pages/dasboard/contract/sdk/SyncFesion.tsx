@@ -1047,7 +1047,9 @@ function SyncFesion() {
     setEditMode(true);
     setEnabelEditing(false);
     if (editorRefs) {
-      editorRefs.current[currentPage].getEditor().focus();
+      const editor =editorRefs.current[currentPage].getEditor()
+      handleChangeSelection(editor.getSelection(true),"user")
+      editor.focus();
     }
     const documentEditor = editorContainerRef.current?.documentEditor;
     // documentEditor.focusIn(); // Focusing the editor
@@ -1615,9 +1617,9 @@ function SyncFesion() {
 
 
   const handleChangeSelection = (range: any, source: any) => {
-    // const editor = editorRefs.current[currentPage].getEditor();
+    const selection = editorRefs.current[currentPage].getEditor().getSelection(true);
 
-    if (range) {
+    if (selection) {
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
       if (format.color) {
@@ -1671,10 +1673,10 @@ function SyncFesion() {
             }
           }
         } else {
-          if (selectedFontSize !== "12px"  && (!format.header || format.header === 0)) {
+          if (!format.header || format.header === 0){
             editor.format("size", selectedFontSize)
+            setSelectedFontSizeValue(selectedFontSize);
           }
-          setSelectedFontSizeValue(selectedFontSize);
         }
       }
 

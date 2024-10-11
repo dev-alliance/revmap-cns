@@ -822,6 +822,7 @@ export default function QuillToolbar(props: any) {
   const handleOpenTextColor = (event: any) => {
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
+    setIndexCursor(range)
     if (range.length > 0) {
       setTimeout(() => {
         editor.setSelection(range.index, range.length);
@@ -856,7 +857,18 @@ export default function QuillToolbar(props: any) {
   };
 
   const handleCloseFontColor = () => {
+    const editor = editorRefContext.getEditor();
     setAnchorElFontColor(null);
+    if(indexCursor) {
+      if(indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index+indexCursor.length,0)
+      }else {
+        editor.setSelection(indexCursor.index,0)
+      }
+      setTimeout(() => {
+        editor.focus()
+      }, 0);
+    }
   };
 
   const handleSaveFontColor = () => {
@@ -882,9 +894,16 @@ export default function QuillToolbar(props: any) {
 
   const handleCancelFontColor = () => {
     const editor = editorRefContext.getEditor();
-    setTimeout(() => {
-      editor.focus();
-    }, 0);
+    if(indexCursor) {
+      if(indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index+indexCursor.length,0)
+      }else {
+        editor.setSelection(indexCursor.index,0)
+      }
+      setTimeout(() => {
+        editor.focus()
+      }, 0);
+    }
     setAnchorElFontColor(null);
   };
 
@@ -3682,7 +3701,7 @@ export default function QuillToolbar(props: any) {
                 className="text-center"
               >
                 <Sketch
-                  color={"#000000"}
+                  color={fontColorSvg}
                   onChange={handleFontColorChange}
                   id="menu-color"
                 />
