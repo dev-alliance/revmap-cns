@@ -1617,9 +1617,7 @@ function SyncFesion() {
 
 
   const handleChangeSelection = (range: any, source: any) => {
-    const selection = editorRefs.current[currentPage].getEditor().getSelection(true);
-
-    if (selection) {
+    if (range) {
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
       if (format.color) {

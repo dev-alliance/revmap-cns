@@ -835,12 +835,6 @@ export default function QuillToolbar(props: any) {
   const handleCloseTextColor = () => {
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection(true);
-    setPrevSelectionBg(null);
-    if (selection.length) {
-      setTimeout(() => {
-        editor.setSelection(selection.length, 0);
-      }, 0);
-    }
     setAnchorElTextColor(null);
     editor.focus();
   };
@@ -848,6 +842,7 @@ export default function QuillToolbar(props: any) {
   const handleOpenFontColor = (event: any) => {
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
+    setIndexCursor(range);
     if (range.length > 0) {
       setTimeout(() => {
         editor.setSelection(range.index, range.length);
@@ -876,19 +871,14 @@ export default function QuillToolbar(props: any) {
     if (!editor) return;
 
     const range = editor.getSelection(true);
-
+    
+    setPrevFontColor(textColor);
     if (range.length === 0) {
       editor.format("color", textColor, "user");
-      setPrevFontColor(textColor);
-      editor.setSelection(range.index, 0);
     } else {
       editor.formatText(range.index, range.length, { color: textColor }, "user");
-      // setPrevFontColor(textColor);
-      editor.setSelection(range.index + range.length, 0);
     }
-
     setAnchorElFontColor(null);
-    editor.focus();
   };
 
 
@@ -1162,6 +1152,34 @@ export default function QuillToolbar(props: any) {
     }, 0);
   };
 
+
+  useEffect(() => {
+    if(!editorRefContext) return ;
+    const editor = editorRefContext.getEditor();
+  
+    // Add a listener for text-change event
+    editor.on("text-change", () => {
+      const range = editor.getSelection();
+      if (range) {
+        // Get the format of the current line
+        const [line, offset] = editor.getLine(range.index);
+        const lineFormats = editor.getFormat(range.index);
+  
+        // Check if the current line is a header
+        if (lineFormats.header) {
+          // Apply blue color to the entire line if it's a header
+          editor.formatText(range.index - offset, line.length(), { color: "blue" }, "user");
+        }
+      }
+    });
+  
+    return () => {
+      // Clean up the listener when the component is unmounted
+      editor.off("text-change");
+    };
+  }, [editorRefContext]);
+  
+
   // setSelectedFontSize("12px")
   const handleHeaderChange = (event: any) => {
     const editor = editorRefContext.getEditor();
@@ -1169,10 +1187,16 @@ export default function QuillToolbar(props: any) {
   
     const range = editor.getSelection();
     
+    // Define the styles for headers
+    const headerStyle = {
+      header: event.target.value, // Apply the selected header
+      color: "blue",              // Set font color to blue
+    };
+  
     if (range && range.length > 0) {
-      // Apply header to the selected range after clearing font size
+      // Apply header and font color to the selected range after clearing font size
       editor.formatText(range.index, range.length, { size: false });
-      editor.format("header", event.target.value, "user");
+      editor.formatText(range.index, range.length, headerStyle, "user");
     } else {
       // No text is selected; apply to the entire current line
       const [line, offset] = editor.getLine(range.index); // Get the current line and offset
@@ -1181,15 +1205,18 @@ export default function QuillToolbar(props: any) {
       // Clear font size from the entire line
       editor.formatText(range.index - offset, lineLength, { size: false });
   
-      editor.formatLine(range.index - offset, lineLength, { header: event.target.value }, "user");
+      // Apply header and blue font color to the current line
+      editor.formatLine(range.index - offset, lineLength, headerStyle, "user");
     }
   
     setSelectedHeadersValue(event.target.value);
   
+    // Focus back on the editor
     setTimeout(() => {
       editor.focus();
     }, 0);
   };
+  
   
   const handleSelectOrientation = (value: any) => {
     if (value === "landscape") {
@@ -1341,9 +1368,6 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
-    if (prevSelectionBg) {
-
-    }
     if (range.length === 0 && !prevSelectionBg) {
       editor.format("background", color, "user");
       setPrevBgColor(color);
@@ -1359,7 +1383,7 @@ export default function QuillToolbar(props: any) {
           , "user"
         );
         setPrevSelectionBg(range);
-        editor.setSelection(range.index + range.length, 0);
+        // editor.setSelection(range.index + range.length, 0);
       }
       else {
         editor.formatText(range.index, range.length,
@@ -1369,7 +1393,7 @@ export default function QuillToolbar(props: any) {
           , "user"
         );
         setPrevSelectionBg(range);
-        editor.setSelection(range.index + range.length, 0);
+        // editor.setSelection(range.index + range.length, 0);
       }
     }
   }
