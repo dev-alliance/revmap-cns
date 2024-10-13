@@ -500,7 +500,7 @@ export const modules = {
   },
   history: {
     delay: 0,
-    maxStack: 100,
+    maxStack: 1000,
     userOnly: true,
   },
 
@@ -3191,6 +3191,10 @@ export default function QuillToolbar(props: any) {
     });
   }, [contractNewFontStyles])
 
+  useEffect(()=>{
+    setTextColor(fontColorSvg)
+  },[fontColorSvg])
+
   return (
     <div
       className="d-flex align-items-center justify-content-between"
@@ -3699,7 +3703,7 @@ export default function QuillToolbar(props: any) {
                 className="text-center"
               >
                 <Sketch
-                  color={fontColorSvg}
+                  color={textColor}
                   onChange={handleFontColorChange}
                   id="menu-color"
                 />
