@@ -1383,11 +1383,22 @@ function SyncFesion() {
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
+    const range = currentEditor.getSelection(true);
+    const format = currentEditor.getFormat(range.index);
+    
     if (event.key === "Enter") {
-        currentEditor.format("font", selectedFont);
-        currentEditor.format("size",selectedFontSize) 
-        currentEditor.format("background",prevBgColor)
-        currentEditor.format("color",prevFontColor)
+      if(format.color) {
+        setFontColorSvg(format.color)
+      }
+      if(format.font){
+        setSelectedFontValue(format.font);
+      }
+      if(format.size){
+        setSelectedFontSizeValue(format.size)
+      }
+      if(format.background){
+        setBgColorSvg(format.background)
+      }
     }
     if (event.key === "Backspace") {
       const content = currentEditor?.root.innerHTML;
@@ -1617,12 +1628,13 @@ function SyncFesion() {
 
 
   const handleChangeSelection = (range: any, source: any) => {
-    if (range) {
+    const selection = editorRefs.current[currentPage].getEditor().getSelection(true);
+
+    if (selection) {
       const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
       if (format.color) {
         setFontColorSvg(format.color);
-        setPrevFontColor(format.color)
       } else {
         if (range.length === 0) {
           editor.format("color", prevFontColor);
@@ -1631,7 +1643,6 @@ function SyncFesion() {
       }
       if (format.background) {
         setBgColorSvg(format.background);
-        setPrevBgColor(format.background)
       } else {
         if (range.length === 0) {
           editor.format("background", prevBgColor);
@@ -1651,7 +1662,6 @@ function SyncFesion() {
       }
       if (format.font) {
         setSelectedFontValue(format.font);
-        setSelectedFont(format.font)
       } else {
         if (range.length === 0) {
           editor.format("font", selectedFont)
@@ -1660,7 +1670,6 @@ function SyncFesion() {
       }
       if (format.size) {
         setSelectedFontSizeValue(format.size);
-        setSelectedFontSize(format.size)
       } else {
         if (range.length > 0) {
           const format = editor.getFormat(range.index, range.length);

@@ -306,11 +306,12 @@ export default function Dashboard() {
             sx={{
               height: "35px",
               mb: "16px",
+
             }}
             className="manual-list"
             onClick={() => handleModuleClick("home")}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <g clip-path="url(#clip0_3216_2515)">
                   <path className="hover-burger" d="M19 5.5V7.5H15V5.5H19ZM9 5.5V11.5H5V5.5H9ZM19 13.5V19.5H15V13.5H19ZM9 17.5V19.5H5V17.5H9ZM21 3.5H13V9.5H21V3.5ZM11 3.5H3V13.5H11V3.5ZM21 11.5H13V21.5H21V11.5ZM11 15.5H3V21.5H11V15.5Z" fill={selectedModule == "home" ? "#5D55E3" : "#616161"} />
@@ -359,7 +360,7 @@ export default function Dashboard() {
             className="manual-list"
             onClick={() => handleModuleClick("inbox")}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <g clip-path="url(#clip0_3216_2520)">
                   <path className="hover-burger" d="M19 3.5H5C3.9 3.5 3 4.4 3 5.5V19.5C3 20.0304 3.21071 20.5391 3.58579 20.9142C3.96086 21.2893 4.46957 21.5 5 21.5H19C20.1 21.5 21 20.6 21 19.5V5.5C21 4.4 20.1 3.5 19 3.5ZM19 19.5H5V16.5H8.56C9.25 17.69 10.53 18.5 12.01 18.5C13.49 18.5 14.76 17.69 15.46 16.5H19V19.5ZM19 14.5H14.01C14.01 15.6 13.11 16.5 12.01 16.5C10.91 16.5 10.01 15.6 10.01 14.5H5V5.5H19V14.5Z" fill={selectedModule === "inbox" ? "#5D55E3" : "#616161"} />
@@ -406,7 +407,7 @@ export default function Dashboard() {
             }}
             onClick={() => handleModuleClick("contract")}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <Link
                 to="/dashboard/contract-list"
                 style={{ color: "inherit", textDecoration: "none" }}
@@ -473,6 +474,7 @@ export default function Dashboard() {
           <List component="div" disablePadding sx={{ mt: -2 }}>
             {statuses?.map((statusItem) => (
               <ListItemButton
+              className="dropdowns-icons"
                 key={statusItem}
                 sx={{
                   pl: leftsidebarExpanded ? 0.4 : 7,
@@ -541,7 +543,7 @@ export default function Dashboard() {
             }}
             onClick={() => handleModuleClick("template")}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <path className="hover-burger" fill-rule="evenodd" clip-rule="evenodd" d="M3 3.5V9.5H21V3.5H3ZM19 5.5H5V7.5H19V5.5Z" fill={selectedModule === "template" ? "#5D55E3" : "#616161"} />
                 <path className="hover-burger" fill-rule="evenodd" clip-rule="evenodd" d="M3 11.5V21.5H11V11.5H3ZM9 13.5H5V19.5H9V13.5Z" fill={selectedModule === "template" ? "#5D55E3" : "#616161"} />
@@ -587,7 +589,7 @@ export default function Dashboard() {
             className="manual-list"
             onClick={() => handleModuleClick("folder")}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <path className="hover-burger" d="M20.625 7.49375H12.2109L9.46172 4.86406C9.42674 4.83132 9.38073 4.81291 9.33281 4.8125H3.375C2.96016 4.8125 2.625 5.14766 2.625 5.5625V19.4375C2.625 19.8523 2.96016 20.1875 3.375 20.1875H20.625C21.0398 20.1875 21.375 19.8523 21.375 19.4375V8.24375C21.375 7.82891 21.0398 7.49375 20.625 7.49375ZM19.6875 18.5H4.3125V6.5H8.73047L11.5336 9.18125H19.6875V18.5Z" fill={
                   selectedModule === "folder" ? "#5D55E3" : "#616161"
@@ -631,7 +633,7 @@ export default function Dashboard() {
             }}
             onClick={() => handleModuleClick("reports")}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <path className="burger-hover1" d="M9 17.5V15.5M12 17.5V13.5M15 17.5V11.5M17 21.5H7C6.46957 21.5 5.96086 21.2893 5.58579 20.9142C5.21071 20.5391 5 20.0304 5 19.5V5.5C5 4.96957 5.21071 4.46086 5.58579 4.08579C5.96086 3.71071 6.46957 3.5 7 3.5H12.586C12.8512 3.50006 13.1055 3.60545 13.293 3.793L18.707 9.207C18.8946 9.39449 18.9999 9.6488 19 9.914V19.5C19 20.0304 18.7893 20.5391 18.4142 20.9142C18.0391 21.2893 17.5304 21.5 17 21.5Z" stroke={selectedModule === "reports" ? "#5D55E3" : "#616161"} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
@@ -676,7 +678,7 @@ export default function Dashboard() {
           // component={Link}
           // to="/dashboard/contract-list"
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <path className="hover-burger" d="M21.6751 15.1648L20.1399 13.8523C20.2126 13.407 20.2501 12.9523 20.2501 12.4977C20.2501 12.043 20.2126 11.5883 20.1399 11.143L21.6751 9.83047C21.7908 9.73134 21.8737 9.59932 21.9127 9.45195C21.9516 9.30458 21.9447 9.14885 21.893 9.00547L21.8719 8.94453C21.4493 7.76334 20.8165 6.66836 20.004 5.7125L19.9618 5.66328C19.8632 5.54739 19.7318 5.46408 19.585 5.42433C19.4381 5.38458 19.2827 5.39026 19.1391 5.44062L17.2336 6.11797C16.5305 5.5414 15.7454 5.08672 14.8969 4.76797L14.529 2.77578C14.5012 2.62588 14.4285 2.48797 14.3205 2.38038C14.2125 2.27279 14.0743 2.20062 13.9243 2.17344L13.861 2.16172C12.6399 1.9414 11.3555 1.9414 10.1344 2.16172L10.0711 2.17344C9.92114 2.20062 9.78295 2.27279 9.67494 2.38038C9.56694 2.48797 9.49422 2.62588 9.46646 2.77578L9.09615 4.77734C8.25448 5.09616 7.47068 5.5506 6.77584 6.12265L4.8563 5.44062C4.71279 5.38986 4.55722 5.38398 4.41028 5.42375C4.26333 5.46352 4.13197 5.54706 4.03365 5.66328L3.99146 5.7125C3.17993 6.66904 2.54718 7.76383 2.12349 8.94453L2.1024 9.00547C1.99693 9.29844 2.08365 9.62656 2.32037 9.83047L3.87427 11.157C3.80162 11.5977 3.76646 12.0477 3.76646 12.4953C3.76646 12.9453 3.80162 13.3953 3.87427 13.8336L2.32037 15.1602C2.20457 15.2593 2.1217 15.3913 2.08277 15.5387C2.04383 15.686 2.05068 15.8418 2.1024 15.9852L2.12349 16.0461C2.54771 17.2273 3.17584 18.3172 3.99146 19.2781L4.03365 19.3273C4.13221 19.4432 4.26358 19.5265 4.41043 19.5663C4.55729 19.606 4.71274 19.6004 4.8563 19.55L6.77584 18.868C7.47427 19.4422 8.25474 19.8969 9.09615 20.2133L9.46646 22.2148C9.49422 22.3647 9.56694 22.5026 9.67494 22.6102C9.78295 22.7178 9.92114 22.79 10.0711 22.8172L10.1344 22.8289C11.3667 23.0504 12.6287 23.0504 13.861 22.8289L13.9243 22.8172C14.0743 22.79 14.2125 22.7178 14.3205 22.6102C14.4285 22.5026 14.5012 22.3647 14.529 22.2148L14.8969 20.2227C15.745 19.9047 16.5346 19.4486 17.2336 18.8727L19.1391 19.55C19.2826 19.6008 19.4382 19.6066 19.5851 19.5669C19.7321 19.5271 19.8634 19.4436 19.9618 19.3273L20.004 19.2781C20.8196 18.3148 21.4477 17.2273 21.8719 16.0461L21.893 15.9852C21.9985 15.6969 21.9118 15.3687 21.6751 15.1648ZM18.4758 11.4195C18.5344 11.7734 18.5649 12.1367 18.5649 12.5C18.5649 12.8633 18.5344 13.2266 18.4758 13.5805L18.3211 14.5203L20.0719 16.018C19.8065 16.6294 19.4715 17.2082 19.0735 17.743L16.8985 16.9719L16.1626 17.5766C15.6024 18.0359 14.979 18.3969 14.304 18.65L13.411 18.9852L12.9915 21.2586C12.3295 21.3336 11.6612 21.3336 10.9993 21.2586L10.5797 18.9805L9.6938 18.6406C9.02584 18.3875 8.40474 18.0266 7.84927 17.5695L7.11334 16.9625L4.92427 17.7406C4.52584 17.2039 4.19302 16.625 3.92584 16.0156L5.69537 14.5039L5.54302 13.5664C5.48677 13.2172 5.4563 12.8562 5.4563 12.5C5.4563 12.1414 5.48443 11.7828 5.54302 11.4336L5.69537 10.4961L3.92584 8.98437C4.19068 8.37265 4.52584 7.79609 4.92427 7.25937L7.11334 8.0375L7.84927 7.43047C8.40474 6.97344 9.02584 6.6125 9.6938 6.35937L10.5821 6.02422L11.0016 3.74609C11.6602 3.67109 12.3329 3.67109 12.9938 3.74609L13.4133 6.01953L14.3063 6.35469C14.979 6.60781 15.6047 6.96875 16.1649 7.42812L16.9008 8.03281L19.0758 7.26172C19.4743 7.79844 19.8071 8.37734 20.0743 8.98672L18.3235 10.4844L18.4758 11.4195ZM12.0001 8.14062C9.72193 8.14062 7.87505 9.9875 7.87505 12.2656C7.87505 14.5437 9.72193 16.3906 12.0001 16.3906C14.2782 16.3906 16.1251 14.5437 16.1251 12.2656C16.1251 9.9875 14.2782 8.14062 12.0001 8.14062ZM13.8563 14.1219C13.6128 14.366 13.3235 14.5597 13.0049 14.6916C12.6864 14.8235 12.3449 14.8912 12.0001 14.8906C11.2993 14.8906 10.6407 14.6164 10.1438 14.1219C9.89964 13.8784 9.70602 13.5891 9.57409 13.2705C9.44216 12.9519 9.37452 12.6104 9.37505 12.2656C9.37505 11.5648 9.64927 10.9062 10.1438 10.4094C10.6407 9.9125 11.2993 9.64062 12.0001 9.64062C12.7008 9.64062 13.3594 9.9125 13.8563 10.4094C14.1005 10.6528 14.2941 10.9422 14.426 11.2607C14.5579 11.5793 14.6256 11.9208 14.6251 12.2656C14.6251 12.9664 14.3508 13.625 13.8563 14.1219Z" fill={selectedModule === "setting" || selectedModule === "user" || selectedModule === "company-profile" || selectedModule === "billing" ? "#5D55E3" : "#616161"} />
               </svg>
@@ -737,6 +739,7 @@ export default function Dashboard() {
                   // backgroundColor:
                   //   selectedModule === "billing" ? "#E4EDF8" : "transparent",
                 }}
+                className="settings"
                 onClick={() => handleModuleClick("billing")}
                 component={Link}
                 to="/dashboard/billing"
@@ -783,6 +786,7 @@ export default function Dashboard() {
                 onClick={() => handleModuleClick("company-profile")}
                 component={Link}
                 to="/dashboard/update-compony"
+                className="settings"
               >
                 <div>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -826,6 +830,7 @@ export default function Dashboard() {
                   fontSize: "12px",
                   height: "4vh",
                 }}
+                className="settings"
                 onClick={() => handleModuleClick("user")}
                 component={Link}
                 to="/dashboard/user-list"
@@ -876,7 +881,7 @@ export default function Dashboard() {
               handleModuleClick("configuration")
             }}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <g clip-path="url(#clip0_3216_1808)">
                   <path className="burger-hover1" d="M16 15.5C20.0089 15.4355 23 12.4674 23 8.5C23 5.48813 22.0029 6.48516 21 7.5C20.0089 8.47923 18 10.5 18 10.5L14 6.5C14 6.5 16.0207 4.4911 17 3.5C18.0148 2.49703 18.0148 1.5 16 1.5C12.0326 1.5 9.05305 4.4911 8.99998 8.5C9.04152 9.47626 8.99998 11.5 8.99998 11.5C7.11484 13.397 4.65921 15.8526 2.99998 17.5C0.0682291 20.4436 4.05636 24.4317 6.99998 21.5C8.6505 19.8376 11.1127 17.3754 13 15.5C13 15.5 15.0237 15.4585 16 15.5Z" stroke={selectedModule === "configuration" ? "#5D55E3" : "#616161"} stroke-width="1.5" />
@@ -942,8 +947,8 @@ export default function Dashboard() {
                   fontSize: "12px",
                   height: "4vh",
                   // mb: "1.3rem",
-
                 }}
+                className="settings"
                 onClick={() => handleModuleClick("approval")}
                 component={Link}
                 to="/dashboard/approval-list"
@@ -982,6 +987,7 @@ export default function Dashboard() {
               title={leftsidebarExpanded ? "Categories" : ""}
             >
               <ListItemButton
+                className="settings"
                 sx={{
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
@@ -1027,6 +1033,7 @@ export default function Dashboard() {
               title={leftsidebarExpanded ? "Clauses" : ""}
             >
               <ListItemButton
+                className="settings"
                 sx={{
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
@@ -1071,6 +1078,7 @@ export default function Dashboard() {
               title={leftsidebarExpanded ? "Custom Fields" : ""}
             >
               <ListItemButton
+                className="settings"
                 sx={{
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
@@ -1115,6 +1123,7 @@ export default function Dashboard() {
               title={leftsidebarExpanded ? "Roles" : ""}
             >
               <ListItemButton
+                className="settings"
                 sx={{
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
@@ -1159,6 +1168,7 @@ export default function Dashboard() {
               title={leftsidebarExpanded ? "Teams" : ""}
             >
               <ListItemButton
+                className="settings"
                 sx={{
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
@@ -1207,6 +1217,7 @@ export default function Dashboard() {
               title={leftsidebarExpanded ? "Tags" : ""}
             >
               <ListItemButton
+                className="settings"
                 sx={{
                   pl: leftsidebarExpanded ? 2 : 7,
                   fontSize: "12px",
@@ -1264,7 +1275,7 @@ export default function Dashboard() {
               handleModuleClick("logout");
             }}
           >
-            <ListItemIcon>
+            <ListItemIcon sx={{minWidth:"1px"}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                 <path className="burger-hover1" d="M9 21.5H5C4.46957 21.5 3.96086 21.2893 3.58579 20.9142C3.21071 20.5391 3 20.0304 3 19.5V5.5C3 4.96957 3.21071 4.46086 3.58579 4.08579C3.96086 3.71071 4.46957 3.5 5 3.5H9" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 <path className="burger-hover1" d="M16 17.5L21 12.5L16 7.5" stroke="#616161" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />

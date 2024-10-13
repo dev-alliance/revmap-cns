@@ -2002,24 +2002,6 @@ fill: #7F7F7F;
   margin-left: 12px;
 }
 
-.css-cveggr-MuiListItemIcon-root{
-  min-width: 1px !important;
-}
-
-
-
-.css-16tquxw-MuiButtonBase-root-MuiListItemButton-root:hover{
-  background-color:transparent !important;
-  .hover-burger{
-    fill: #5D55E3;
-  }
-  .text-hover {
-    color: #5D55E3 ;
-  }
-  .burger-hover1 {
-    stroke: #5D55E3;
-  }
-}
 
 .text-status{
   color: #43464C;
@@ -2027,13 +2009,16 @@ fill: #7F7F7F;
   font-weight: 500;
 }
 
-.css-wceisb-MuiButtonBase-root-MuiListItemButton-root:hover{
+.dropdowns-icons:hover{
   background-color: transparent !important;
   .text-status{
    color: #5D55E3; 
   }
   .bg-change{
     background-color: #5D55E3;
+  }
+  .burger-hover1 {
+    stroke: #5D55E3;
   }
   
 }
@@ -2042,18 +2027,7 @@ fill: #7F7F7F;
   background-color: #D1D1D1;
 }
 
-.css-znqurh-MuiButtonBase-root-MuiListItemButton-root:hover{
-  background-color: transparent !important;
-  .text-status{
-    color: #5D55E3; 
-   }
-   .burger-hover1 {
-    stroke: #5D55E3;
-  }
-}
-
-
-.css-168appd-MuiButtonBase-root-MuiListItemButton-root:hover{
+.settings:hover{
   background-color: transparent !important;
   .text-status{
     color: #5D55E3; 
@@ -2108,7 +2082,3 @@ fill: #7F7F7F;
 .ql-snow .ql-editor h4 {
   font-size: 13px !important;
 }
-
-/* .ql-cursor{
-  font-size: 12px !important;
-} */
