@@ -193,7 +193,7 @@ function SyncFesion() {
 
 
   useEffect(() => {
-       setTimeout(() => {
+    setTimeout(() => {
       setEditMode(false);
     }, 0);
     setDucomentName("")
@@ -267,18 +267,18 @@ function SyncFesion() {
           return data.comments;
         });
       }
-      if(data?.newFontSize) {
-        setContractNewFontSize(()=>{
+      if (data?.newFontSize) {
+        setContractNewFontSize(() => {
           return data.newFontSize
         })
       }
-      if(data?.newFonts) {
-        setContractNewFont(()=>{
+      if (data?.newFonts) {
+        setContractNewFont(() => {
           return data.newFonts
         })
       }
-      if(data?.newFontStyles) {
-        setContractNewFontStyles(()=>{
+      if (data?.newFontStyles) {
+        setContractNewFontStyles(() => {
           return data.newFontStyles
         })
       }
@@ -384,9 +384,9 @@ function SyncFesion() {
         pages: pages,
         pageSize: documentPageSize,
         pageMargins: documentPageMargins,
-        newFonts:contractNewFont,
-        newFontStyles:contractNewFontStyles,
-        newFontSize:contractNewFontSize
+        newFonts: contractNewFont,
+        newFontStyles: contractNewFontStyles,
+        newFontSize: contractNewFontSize
       };
 
       if (comments.length > 0) {
@@ -1046,8 +1046,8 @@ function SyncFesion() {
     setEditMode(true);
     setEnabelEditing(false);
     if (editorRefs) {
-      const editor =editorRefs.current[currentPage].getEditor()
-      handleChangeSelection(editor.getSelection(true),"user")
+      const editor = editorRefs.current[currentPage].getEditor()
+      handleChangeSelection(editor.getSelection(true), "user")
       editor.focus();
     }
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1379,42 +1379,63 @@ function SyncFesion() {
     });
   };
 
+
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
+    // Ensure there's a valid selection range
     const range = currentEditor.getSelection(true);
-    const format = currentEditor.getFormat(range.index);
-    
-    if (event.key === "Enter") {
-      if(format.color) {
-        setFontColorSvg(format.color)
-      }
-      if(format.font){
-        setSelectedFontValue(format.font);
-      }
-      if(format.size){
-        setSelectedFontSizeValue(format.size)
-      }
-      if(format.background){
-        setBgColorSvg(format.background)
-      }
-    }
-    if (event.key === "Backspace") {
-      const content = currentEditor?.root.innerHTML;
+    if (!range) return;
 
+    const format = currentEditor.getFormat(range.index);
+
+    if (event.key === "Backspace") {
+      // Get formatting for the character before the current selection
+      const backspaceFormatting = currentEditor.getFormat(range.index - 1);
+
+      if (backspaceFormatting.size) {
+        setTimeout(() => {
+          currentEditor.format("size", backspaceFormatting.size);
+        }, 0);
+        setSelectedFontSizeValue(backspaceFormatting.size);
+      }
+
+      if (backspaceFormatting.font) {
+        console.log("I changed font")
+        setTimeout(() => {
+          currentEditor.format("font", backspaceFormatting.font);
+        }, 0);
+        setSelectedFontValue(backspaceFormatting.font);
+      }
+
+      if (backspaceFormatting.color) {
+        setTimeout(() => {
+          currentEditor.format("color", backspaceFormatting.color);
+        }, 0);
+        setFontColorSvg(backspaceFormatting.color);
+      }
+
+      if (backspaceFormatting.background) {
+        setTimeout(() => {
+          currentEditor.format("background", backspaceFormatting.background);
+        }, 0);
+        setBgColorSvg(backspaceFormatting.background);
+      }
+
+      // Check if the current content is empty and whether we need to remove the page
+      const content = currentEditor.root.innerHTML;
       if (isContentEmpty(content) && index > 0) {
-        // Prevent default backspace action
+        // Prevent the default backspace behavior only if the page is empty
         event.preventDefault();
 
-        // Remove the empty page and shift focus to the previous page
+        // Logic to remove the empty page and shift focus
         setPages((prevPages: any) => {
           const updatedPages = [...prevPages];
-          updatedPages.splice(index, 1);
+          updatedPages.splice(index, 1); // Remove the empty page
           setCurrentPage(Math.max(0, index - 1));
 
           setTimeout(() => {
-            const editor =
-              editorRefs.current[Math.max(0, index - 1)]?.getEditor();
+            const editor = editorRefs.current[Math.max(0, index - 1)]?.getEditor();
             editor.setSelection(editor.getLength() - 1);
             editor.focus();
             containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({
@@ -1422,11 +1443,38 @@ function SyncFesion() {
             });
           }, 100);
 
-          return updatedPages;
+          return updatedPages; // Return the updated pages
         });
       }
     }
+
+    // Handle Enter key
+    if (event.key === "Enter") {
+      const range = currentEditor.getSelection(true);
+      const child: HTMLElement = currentEditor.root.lastChild;
+      const lastChild = child.lastChild;
+      // console.log(lastChild?.textContent)
+      // if (lastChild?.textContent?.length == 1) {
+      //   currentEditor.insertText({ index: range.index - 1, length: 0 }, '\u200B', { size: selectedFontSize, color: prevFontColor, background: prevBgColor, font: selectedFont });
+      // }
+      // Update formats for the new line
+      if (format.color) {
+        setFontColorSvg(format.color);
+      }
+      if (format.font) {
+        setSelectedFontValue(format.font);
+      }
+      if (format.size) {
+        setSelectedFontSizeValue(format.size);
+      }
+      if (format.background) {
+        setBgColorSvg(format.background);
+      }
+
+    }
+
   };
+
 
   useEffect(() => {
     setEditorRefContext(editorRefs.current[currentPage]);
@@ -1628,9 +1676,10 @@ function SyncFesion() {
 
   const handleChangeSelection = (range: any, source: any) => {
 
+    const editor = editorRefs.current[currentPage].getEditor();
     if (range) {
-      const editor = editorRefs.current[currentPage].getEditor();
       const format = editor.getFormat(range.index);
+      const newFormat = editor.getFormat(range.index-1);
       if (format.color) {
         setFontColorSvg(format.color);
       } else {
@@ -1658,13 +1707,21 @@ function SyncFesion() {
       if (format.lineHeight) {
         setSpacing(format.lineHeight);
       }
+      console.log(format.font,newFormat.font)
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
-        if (range.length === 0) {
-          editor.format("font", selectedFont)
-          setSelectedFontValue(selectedFont);
+        if(newFormat.font) {
+          setSelectedFontValue(newFormat.font);
+          editor.format("font", newFormat.font)
+
         }
+        else {
+          if(range.length === 0) {
+            editor.format("font", selectedFont)
+            setSelectedFontValue(selectedFont);
+          }
+        } 
       }
       if (format.size) {
         setSelectedFontSizeValue(format.size);
@@ -1678,7 +1735,7 @@ function SyncFesion() {
             }
           }
         } else {
-          if (!format.header || format.header === 0){
+          if (!format.header || format.header === 0) {
             editor.format("size", selectedFontSize)
             setSelectedFontSizeValue(selectedFontSize);
           }
@@ -1695,6 +1752,24 @@ function SyncFesion() {
     }
 
     if (range && range.length > 0) {
+      const format = editor.getFormat(range);
+      console.log(format)
+
+      if (format.font.constructor == Array) {
+        setSelectedFontValue("")
+      }
+      if (!format.size && !format.header || format.size.constructor == Array) {
+        setSelectedFontSizeValue("")
+      }
+      if(format.size || format?.size?.constructor == Array) {
+        setSelectedHeadersValue(0)
+      }else {
+        setSelectedHeadersValue("")
+      }
+      if(format.header && format.header.constructor != Array)  {
+        setSelectedHeadersValue(format.header)
+      }
+
       setSelection(range);
       // selectionRef.current = range;
       const existingComment = comments?.find(
@@ -1890,7 +1965,7 @@ function SyncFesion() {
   };
 
   useEffect(() => {
-    if(!editorRefs) return ;
+    if (!editorRefs) return;
     if (editorRefs) {
       const quill = editorRefs?.current[currentPage]?.getEditor();
       const length = quill?.getLength();

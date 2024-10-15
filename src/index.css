@@ -1077,7 +1077,7 @@ body {
   content: counter(list-item, upper-roman) ". ";
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -15px;
 }
 
 .ql-editor ul[data-list-type="lower-roman"] {
@@ -1088,7 +1088,7 @@ body {
   content: counter(list-item, lower-roman) ". ";
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -14px;
 }
 
 .ql-editor ul[data-list-type="default"] {
@@ -1114,7 +1114,8 @@ body {
   font-size: 5px;
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -16px;
+  bottom: 1px;
 }
 
 .ql-editor ul[data-list-type="bullet-dot-large"] {
@@ -1122,13 +1123,14 @@ body {
 }
 
 .ql-editor ul[data-list-type="bullet-dot-large"]>li:before {
-  content: "\e747"; /* Correct escaping */
+  content: "\e747";
   display: inline-block;
   font-family: 'e-icons';
   font-size: 6px;
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -15px;
+  bottom: 1px;
 }
 
 
@@ -1143,7 +1145,8 @@ body {
   font-size: 6px;
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -15px;
+  bottom: 1px;
 }
 
 
@@ -1159,7 +1162,8 @@ body {
   font-size: 6px;
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -15px;
+  bottom: 1px;
 }
 
 
@@ -1175,7 +1179,8 @@ body {
   font-size: 7px;
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -15px;
+  bottom: 1px;
 }
 
 
@@ -1192,7 +1197,8 @@ body {
   font-size: 7px;
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -15px;
+  bottom: 1px;
 }
 
 
@@ -1208,7 +1214,8 @@ body {
   font-size: 7px;
   color: var(--list-marker-color);
   position: relative;
-  left: -11px;
+  left: -15px;
+  bottom: 1px;
 }
 
 .css-6hp17o-MuiList-root-MuiMenu-list {
@@ -2002,6 +2009,24 @@ fill: #7F7F7F;
   margin-left: 12px;
 }
 
+.css-cveggr-MuiListItemIcon-root{
+  min-width: 1px !important;
+}
+
+
+
+.css-16tquxw-MuiButtonBase-root-MuiListItemButton-root:hover{
+  background-color:transparent !important;
+  .hover-burger{
+    fill: #5D55E3;
+  }
+  .text-hover {
+    color: #5D55E3 ;
+  }
+  .burger-hover1 {
+    stroke: #5D55E3;
+  }
+}
 
 .text-status{
   color: #43464C;
@@ -2009,16 +2034,13 @@ fill: #7F7F7F;
   font-weight: 500;
 }
 
-.dropdowns-icons:hover{
+.css-wceisb-MuiButtonBase-root-MuiListItemButton-root:hover{
   background-color: transparent !important;
   .text-status{
    color: #5D55E3; 
   }
   .bg-change{
     background-color: #5D55E3;
-  }
-  .burger-hover1 {
-    stroke: #5D55E3;
   }
   
 }
@@ -2027,7 +2049,18 @@ fill: #7F7F7F;
   background-color: #D1D1D1;
 }
 
-.settings:hover{
+.css-znqurh-MuiButtonBase-root-MuiListItemButton-root:hover{
+  background-color: transparent !important;
+  .text-status{
+    color: #5D55E3; 
+   }
+   .burger-hover1 {
+    stroke: #5D55E3;
+  }
+}
+
+
+.css-168appd-MuiButtonBase-root-MuiListItemButton-root:hover{
   background-color: transparent !important;
   .text-status{
     color: #5D55E3; 
@@ -2082,3 +2115,5 @@ fill: #7F7F7F;
 .ql-snow .ql-editor h4 {
   font-size: 13px !important;
 }
+
+/* sy */

@@ -536,6 +536,8 @@ export const formats = [
 ];
 
 const List = Quill.import("formats/list");
+const ListItems = Quill.import("formats/list/list-items")
+
 
 // Custom Lists
 class FlowerList extends List {
@@ -620,7 +622,8 @@ export default function QuillToolbar(props: any) {
     contractNewFont,
     contractNewFontStyles,
     setContractNewFontSize,
-    contractNewFontSize
+    contractNewFontSize,
+    prevFontColor
   } = useContext(ContractContext);
 
 
@@ -633,30 +636,39 @@ export default function QuillToolbar(props: any) {
     const range = editor.getSelection(true); // Get the current selection
     if (!range) return;
 
-    // Get the current index of the selection
-    const { index } = range;
-
     // Get the block (line) at the current cursor position
-    let [block] = editor.scroll.descendant(Quill.import("blots/block"), index);
+    let [block] = editor.scroll.descendant(Quill.import("blots/block"), range.index);
+    console.log(block)
 
     // Ensure we're in a list item (LI)
     if (block && block.domNode.tagName === "LI") {
       const list = block.parent; // Get the parent list (OL or UL)
 
-      // Loop through all list items (children of the list)
-      list.children.forEach((listItem: any) => {
-        const itemIndex = editor.getIndex(listItem); // Get the index of each list item
+      // If we're switching list types (from OL to UL or vice versa), we want to split the list
+      if (list && list.domNode.tagName !== value.toUpperCase()) {
+        // Remove the existing list format from the current selection
+        editor.format("list", false, "user");
 
-        // Apply or remove the list type based on the selected value
-        if (value === "none") {
-          setIsListActive("none");
-          editor.formatLine(itemIndex, 1, { list: false }, "user"); // Remove list format
-        } else {
-          setIsListActive(value);
-          editor.formatLine(itemIndex, 1, { list: value }, "user"); // Apply the new list type
-        }
-      });
+        // Then apply the new list type to the current selection, starting a new list
+        setIsListActive(value);
+        editor.format("list", value, "user");
+      } else {
+        // We're already in a list of the same type; apply or remove the list type to each list item
+        list.children.forEach((listItem: any) => {
+          const itemIndex = editor.getIndex(listItem); // Get the index of each list item
+
+          // Apply or remove the list type based on the selected value
+          if (value === "none") {
+            setIsListActive("none");
+            editor.formatLine(itemIndex, 1, { list: false }, "user"); // Remove list format
+          } else {
+            setIsListActive(value);
+            editor.formatLine(itemIndex, 1, { list: value }, "user"); // Apply the new list type
+          }
+        });
+      }
     } else {
+      // If we're not in a list already, apply the list formatting to the current line
       if (value === "none") {
         setIsListActive("none");
         editor.format("list", false, "user"); // Remove list format
@@ -666,12 +678,12 @@ export default function QuillToolbar(props: any) {
       }
     }
 
-    // Close any dropdowns or menus
     setAnchorEl2(null);
     setAnchorEl(null);
   };
 
-  const [indexCursor ,setIndexCursor] = useState<any>(null);
+
+  const [indexCursor, setIndexCursor] = useState<any>(null);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open1 = Boolean(anchorEl);
@@ -738,11 +750,11 @@ export default function QuillToolbar(props: any) {
   const handleClose2 = () => {
     const editor = editorRefContext.getEditor();
     setAnchorEl2(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -763,11 +775,11 @@ export default function QuillToolbar(props: any) {
   const handleClose = () => {
     const editor = editorRefContext.getEditor();
     setAnchorEl(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -784,17 +796,17 @@ export default function QuillToolbar(props: any) {
   const handleCloseMargins = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElMargins(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
       }, 0);
     }
-    
+
   };
 
   const handleOpenOrientation = (event: any) => {
@@ -806,11 +818,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseOrientation = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElOrientation(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -858,11 +870,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseFontColor = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElFontColor(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -877,11 +889,11 @@ export default function QuillToolbar(props: any) {
     const range = editor.getSelection(true);
 
     if (range.length === 0) {
-      editor.format("color", textColor, "user");
-      setPrevFontColor(textColor);
-      editor.setSelection(range.index, 0);
+      editor.format("color", TextColor, "user");
+      setPrevFontColor(TextColor);
+      setFontColorList(TextColor);
     } else {
-      editor.formatText(range.index, range.length, { color: textColor }, "user");
+      editor.formatText(range.index, range.length, { color: TextColor }, "user");
       editor.setSelection(range.index + range.length, 0);
     }
 
@@ -892,11 +904,11 @@ export default function QuillToolbar(props: any) {
 
   const handleCancelFontColor = () => {
     const editor = editorRefContext.getEditor();
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -922,11 +934,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseSize = (event: any) => {
     const editor = editorRefContext.getEditor();
     setAnchorElSize(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -949,11 +961,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseAlignment = (event: any) => {
     const editor = editorRefContext.getEditor();
     setAnchorElAlignment(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -972,11 +984,11 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext.getEditor();
 
     setAnchorElPicture(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -995,11 +1007,11 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext.getEditor();
 
     setAnchorElMedia(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -1019,11 +1031,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseColumns = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElColumns(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -1046,11 +1058,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseSpacing = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElSpacing(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -1068,11 +1080,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseLinkPicture = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElLinkPicture(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -1096,11 +1108,11 @@ export default function QuillToolbar(props: any) {
   const handleCloseCase = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElCase(null);
-    if(indexCursor) {
-      if(indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index+indexCursor.length,0)
-      }else {
-        editor.setSelection(indexCursor.index,0)
+    if (indexCursor) {
+      if (indexCursor.length > 0) {
+        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+      } else {
+        editor.setSelection(indexCursor.index, 0)
       }
       setTimeout(() => {
         editor.focus()
@@ -1119,6 +1131,8 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext.getEditor();
     editor.focus();
   };
+
+  const [fontColorList, setFontColorList] = useState("black");
 
   const handleFontChange = (event: any) => {
     const editor = editorRefContext.getEditor();
@@ -1160,13 +1174,15 @@ export default function QuillToolbar(props: any) {
     }, 0);
   };
 
+
+
   // setSelectedFontSize("12px")
   const handleHeaderChange = (event: any) => {
     const editor = editorRefContext.getEditor();
     setSelectedHeaders(event.target.value);
-  
+
     const range = editor.getSelection();
-    
+
     if (range && range.length > 0) {
       // Apply header to the selected range after clearing font size
       editor.formatText(range.index, range.length, { size: false });
@@ -1175,20 +1191,20 @@ export default function QuillToolbar(props: any) {
       // No text is selected; apply to the entire current line
       const [line, offset] = editor.getLine(range.index); // Get the current line and offset
       const lineLength = line.length();
-  
+
       // Clear font size from the entire line
       editor.formatText(range.index - offset, lineLength, { size: false });
-  
+
       editor.formatLine(range.index - offset, lineLength, { header: event.target.value }, "user");
     }
-  
+
     setSelectedHeadersValue(event.target.value);
-  
+
     setTimeout(() => {
       editor.focus();
     }, 0);
   };
-  
+
   const handleSelectOrientation = (value: any) => {
     if (value === "landscape") {
       setDocumentPageSize({
@@ -1330,7 +1346,6 @@ export default function QuillToolbar(props: any) {
   const [prevSelectionBg, setPrevSelectionBg] = useState<any>(null);
 
   const handleTextHighlightColorChange = (color: any) => {
-    // setBgColor(color.hex);
     handletTextHighlightColor(color.hex);
     setBgColorSvg(color.hex);
   };
@@ -1339,9 +1354,6 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
-    if (prevSelectionBg) {
-
-    }
     if (range.length === 0 && !prevSelectionBg) {
       editor.format("background", color, "user");
       setPrevBgColor(color);
@@ -1372,11 +1384,12 @@ export default function QuillToolbar(props: any) {
     }
   }
 
-  const [textColor, setTextColor] = useState("");
+  const [TextColor, setTextColor] = useState("");
+
 
   const handleFontColorChange = (color: any) => {
-    setFontColorSvg(color.hex)
     setTextColor(color.hex);
+    setFontColorSvg(color.hex)
   };
 
   const handleBgColorChange = (color: any) => {
@@ -3014,7 +3027,7 @@ export default function QuillToolbar(props: any) {
                 fontSize = child?.style?.fontSize;
                 fontClass = child?.className?.replace("ql-font-", '');
                 fontFamily = child?.className?.replace("ql-font-", '');
-                console.log(fontClass,child);
+                console.log(fontClass, child);
               } else if (child.nodeType === 3) {
                 fontSize = node?.style?.fontSize;
                 fontClass = node?.className?.replace("ql-font-", '');
@@ -3032,9 +3045,9 @@ export default function QuillToolbar(props: any) {
 
       if (fontSize && !oldSize.includes(fontSize)) {
 
-        if(fontSize.includes("pt")) {
-          const fs = fontSize.replace("pt",'');
-          const pt = Math.floor(Number(fs)*1.333);
+        if (fontSize.includes("pt")) {
+          const fs = fontSize.replace("pt", '');
+          const pt = Math.floor(Number(fs) * 1.333);
           fontSize = `${pt}px`
         }
 
@@ -3121,32 +3134,29 @@ export default function QuillToolbar(props: any) {
 
   useEffect(() => {
     if (!editorRefContext) return;
-    // Function to update the list marker color based on the text color
     const editor = editorRefContext.getEditor();
 
     const updateListMarkerColor = () => {
       const listItems: any = document.querySelectorAll('.ql-editor ul');
-      console.log(listItems)
 
       listItems.forEach((ul: HTMLElement) => {
-        // console.log(li)
         ul.childNodes.forEach((li: any) => {
           li.childNodes.forEach((child: any) => {
-            const textColor = child?.style?.color;
-            li.style.setProperty('--list-marker-color', textColor);
+            var textColor = child?.style?.color;
+            if (textColor) {
+              li.style.setProperty('--list-marker-color', textColor);
+            }
+            else {
+              li.style.setProperty('--list-marker-color', fontColorSvg);
+            }
           })
         })
-        // Get the computed text color of the li element
-        // const textColor = window.getComputedStyle(li).color;
-
-        // Set the CSS variable --list-marker-color for the li element
       });
     };
 
-    // Call the function after component mounts or updates
     updateListMarkerColor();
     editor.on("text-change", updateListMarkerColor)
-  }, [editorRefContext]); // Empty dependency array means this will run once after the
+  }, [editorRefContext,fontColorSvg]);
 
   const formatFont = (index: number, selectedFont: string, length?: number) => {
     if (length) {
@@ -3191,9 +3201,6 @@ export default function QuillToolbar(props: any) {
     });
   }, [contractNewFontStyles])
 
-  useEffect(()=>{
-    setTextColor(fontColorSvg)
-  },[fontColorSvg])
 
   return (
     <div
@@ -3390,11 +3397,11 @@ export default function QuillToolbar(props: any) {
                     position: "relative",
                     left: "-0.2rem"
                   }}>
-                    {selectedFontSizeValue.replace("px",'')}
+                    {selectedFontSizeValue.replace("px", '')}
                   </div>
                 )}
               >
-                {SizeStyle.whitelist.sort((a:any,b:any)=>parseInt(a)-parseInt(b)).map((size: any) => (
+                {SizeStyle.whitelist.sort((a: any, b: any) => parseInt(a) - parseInt(b)).map((size: any) => (
                   <MenuItem
                     style={{
                       color: "#7F7F7F",
@@ -3408,7 +3415,7 @@ export default function QuillToolbar(props: any) {
                     key={size}
                     value={size}
                   >
-                    {size.replace("px",'')}
+                    {size.replace("px", '')}
                   </MenuItem>
                 ))}
               </Select>
@@ -3703,7 +3710,7 @@ export default function QuillToolbar(props: any) {
                 className="text-center"
               >
                 <Sketch
-                  color={textColor}
+                  color={fontColorSvg}
                   onChange={handleFontColorChange}
                   id="menu-color"
                 />
