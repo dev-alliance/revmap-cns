@@ -1388,6 +1388,9 @@ function SyncFesion() {
     if (!range) return;
 
     const format = currentEditor.getFormat(range.index);
+    const nextFormat = currentEditor.getFormat(range.index + !1);
+    console.log(nextFormat);
+
 
     if (event.key === "Backspace") {
       // Get formatting for the character before the current selection
@@ -1450,14 +1453,6 @@ function SyncFesion() {
 
     // Handle Enter key
     if (event.key === "Enter") {
-      const range = currentEditor.getSelection(true);
-      const child: HTMLElement = currentEditor.root.lastChild;
-      const lastChild = child.lastChild;
-      // console.log(lastChild?.textContent)
-      // if (lastChild?.textContent?.length == 1) {
-      //   currentEditor.insertText({ index: range.index - 1, length: 0 }, '\u200B', { size: selectedFontSize, color: prevFontColor, background: prevBgColor, font: selectedFont });
-      // }
-      // Update formats for the new line
       if (format.color) {
         setFontColorSvg(format.color);
       }
@@ -1470,7 +1465,9 @@ function SyncFesion() {
       if (format.background) {
         setBgColorSvg(format.background);
       }
-
+      if (format.header) {
+        currentEditor.format("header", format.header)
+      }
     }
 
   };
@@ -1674,12 +1671,13 @@ function SyncFesion() {
   };
 
 
-  const handleChangeSelection = (range: any, source: any) => {
+  const handleChangeSelection = (range: any, source: string) => {
 
     const editor = editorRefs.current[currentPage].getEditor();
-    if (range) {
+    if (range.length == 0) {
       const format = editor.getFormat(range.index);
-      const newFormat = editor.getFormat(range.index-1);
+      const newFormat = editor.getFormat(range.index - 1);
+      // console.log(format);
       if (format.color) {
         setFontColorSvg(format.color);
       } else {
@@ -1707,22 +1705,22 @@ function SyncFesion() {
       if (format.lineHeight) {
         setSpacing(format.lineHeight);
       }
-      console.log(format.font,newFormat.font)
+
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
-        if(newFormat.font) {
+        if (newFormat.font) {
           setSelectedFontValue(newFormat.font);
           editor.format("font", newFormat.font)
-
         }
         else {
-          if(range.length === 0) {
+          if (range.length === 0) {
             editor.format("font", selectedFont)
             setSelectedFontValue(selectedFont);
           }
-        } 
+        }
       }
+
       if (format.size) {
         setSelectedFontSizeValue(format.size);
       } else {
@@ -1735,39 +1733,63 @@ function SyncFesion() {
             }
           }
         } else {
-          if (!format.header || format.header === 0) {
+          if (!format.header) {
             editor.format("size", selectedFontSize)
             setSelectedFontSizeValue(selectedFontSize);
+          }
+          else {
+            editor.format("size", format.header == 1 ? "24px" : format.header == 2 ? "18px" : format.header == 3 ? "14px" : "13px")
           }
         }
       }
 
       if (format.header) {
         setSelectedHeadersValue(format.header);
-        setSelectedFontSizeValue(format.header === 0 ? "12px" : format.header === 1 ? "24px" : format.header === 2 ? "18px" : format.header === 3 ? "14px" : format.header === 4 && "13px")
+        setSelectedFontSizeValue(format.size)
+        editor.format("header", format.header);
+
       } else {
         setSelectedHeadersValue(0);
       }
-      editor.setSelection(range.index, range.length)
+
     }
 
     if (range && range.length > 0) {
       const format = editor.getFormat(range);
       console.log(format)
 
-      if (format.font.constructor == Array) {
+      if (!format.font || format.font.constructor == Array) {
         setSelectedFontValue("")
       }
       if (!format.size && !format.header || format.size.constructor == Array) {
         setSelectedFontSizeValue("")
       }
-      if(format.size || format?.size?.constructor == Array) {
-        setSelectedHeadersValue(0)
-      }else {
+      if (format.size || format?.size?.constructor == Array) {
+        if (format.size.constructor == Array && format.size.includes("24px") || format.size.includes("18px") || format.size.includes("14px")  ||format.size.includes("13px")  ){
+          setSelectedHeadersValue("")
+        } else {
+          setSelectedHeadersValue(0)
+        }
+      } else {
         setSelectedHeadersValue("")
       }
-      if(format.header && format.header.constructor != Array)  {
+      if (format.header && format.header.constructor != Array) {
         setSelectedHeadersValue(format.header)
+      } else {
+        if (format.header && format.header.constructor !== Array) {
+          setSelectedHeadersValue(format.header);
+        } else {
+          const delta = editor.getContents(range);
+          let foundHeader = false;
+          delta.ops.forEach((op:any)=>{
+            if(op.attributes.header) {
+              foundHeader = true ;
+            }
+          })
+          if(foundHeader) {
+            setSelectedHeadersValue("")
+          }
+        }
       }
 
       setSelection(range);

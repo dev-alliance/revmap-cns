@@ -1176,34 +1176,67 @@ export default function QuillToolbar(props: any) {
 
 
 
-  // setSelectedFontSize("12px")
   const handleHeaderChange = (event: any) => {
     const editor = editorRefContext.getEditor();
-    setSelectedHeaders(event.target.value);
-
+    const selectedHeaderValue = event.target.value;
+    setSelectedHeaders(selectedHeaderValue);
+  
     const range = editor.getSelection();
-
-    if (range && range.length > 0) {
-      // Apply header to the selected range after clearing font size
-      editor.formatText(range.index, range.length, { size: false });
-      editor.format("header", event.target.value, "user");
-    } else {
-      // No text is selected; apply to the entire current line
-      const [line, offset] = editor.getLine(range.index); // Get the current line and offset
-      const lineLength = line.length();
-
-      // Clear font size from the entire line
-      editor.formatText(range.index - offset, lineLength, { size: false });
-
-      editor.formatLine(range.index - offset, lineLength, { header: event.target.value }, "user");
+  
+    // Define sizes for headers and paragraphs
+    const headerSizes: Record<string, string> = {
+      1: "24px",
+      2: "18px",
+      3: "14px",
+      4: "13px",
+      default: "12px", // Default for paragraphs
+    };
+  
+    const getSizeForHeader = (headerValue: string) => {
+      return headerSizes[headerValue] || headerSizes.default;
+    };
+  
+    if (range) {
+      if (range.length > 0) {
+        // Case 1: When text is selected
+        // Clear any previous size before applying the header
+        editor.formatText(range.index, range.length, { size: false });
+        // Apply the header format to the selected range
+        editor.format("header", selectedHeaderValue, "user");
+  
+        // Apply the correct size for the header
+        const size = getSizeForHeader(selectedHeaderValue);
+        setTimeout(() => {
+          editor.formatText(range.index, range.length, { size });
+        }, 0);
+      } else {
+        // Case 2: No selection; apply to the entire current line
+        const [line, offset] = editor.getLine(range.index); // Get the current line and offset
+        const lineLength = line.length();
+  
+        // Clear any previous font size for the entire line
+        editor.formatText(range.index - offset, lineLength, { size: false });
+  
+        // Apply the header format to the entire line
+        editor.formatLine(range.index - offset, lineLength, { header: selectedHeaderValue }, "user");
+  
+        // Apply the correct size for the header after setting the header
+        const size = getSizeForHeader(selectedHeaderValue);
+        setTimeout(() => {
+          editor.formatText(range.index - offset, lineLength, { size });
+          editor.format("size",size)
+        }, 0);
+      }
     }
-
-    setSelectedHeadersValue(event.target.value);
-
+  
+    setSelectedHeadersValue(selectedHeaderValue);
+  
+    // Ensure the editor retains focus
     setTimeout(() => {
       editor.focus();
     }, 0);
   };
+  
 
   const handleSelectOrientation = (value: any) => {
     if (value === "landscape") {
