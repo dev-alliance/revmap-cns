@@ -533,11 +533,10 @@ export const formats = [
   "lineHeight",
   "video",
   "audio",
+  "customHeading"
 ];
 
 const List = Quill.import("formats/list");
-const ListItems = Quill.import("formats/list/list-items")
-
 
 // Custom Lists
 class FlowerList extends List {
@@ -555,15 +554,28 @@ class FlowerList extends List {
 Quill.register(FlowerList, true);
 
 const Parchment = Quill.import("parchment");
+
 const lineHeightConfig = {
   scope: Parchment.Scope.BLOCK,
   whitelist: ["1.5", "1.7", "2", "2.5", "3", "3.5"],
 };
+
 const LineHeightStyle = new Parchment.Attributor.Style(
   "lineHeight",
   "line-height",
   lineHeightConfig
 );
+
+const customHeading = {
+  scope: Parchment.Scope.INLINE, 
+  whitelist: ['heading-1', 'heading-2', 'heading-3', 'heading-4', 'paragraph'] 
+};
+const CustomHeadingAttribute = new Parchment.Attributor.Class(
+  'customHeading',
+  'class',
+  customHeading
+);
+Quill.register(CustomHeadingAttribute, true);
 Quill.register(LineHeightStyle, true);
 
 export default function QuillToolbar(props: any) {
@@ -591,15 +603,10 @@ export default function QuillToolbar(props: any) {
     documentPageMargins,
     setDocumentPageMargins,
     setBgColor,
-    setShadeColor,
-    setFontColor,
-    fontColor,
-    bgColor,
     bgColorSvg,
     setBgColorSvg,
     fontColorSvg,
     setFontColorSvg,
-    shadeColor,
     setSelectedFont,
     setSelectedHeaders,
     setSelectedFontSize,
@@ -618,13 +625,11 @@ export default function QuillToolbar(props: any) {
     editMode,
     setPrevBgColor,
     setPrevFontColor,
-    setContractNewFont,
     setContractNewFontStyles,
     contractNewFont,
     contractNewFontStyles,
     setContractNewFontSize,
     contractNewFontSize,
-    prevFontColor
   } = useContext(ContractContext);
 
 
@@ -639,7 +644,6 @@ export default function QuillToolbar(props: any) {
 
     // Get the block (line) at the current cursor position
     let [block] = editor.scroll.descendant(Quill.import("blots/block"), range.index);
-    console.log(block)
 
     // Ensure we're in a list item (LI)
     if (block && block.domNode.tagName === "LI") {
@@ -682,7 +686,6 @@ export default function QuillToolbar(props: any) {
     setAnchorEl2(null);
     setAnchorEl(null);
   };
-
 
   const [indexCursor, setIndexCursor] = useState<any>(null);
 
@@ -1256,45 +1259,48 @@ export default function QuillToolbar(props: any) {
   const handleHeaderChange = (event: SelectChangeEvent<any>) => {
     const editor = editorRefContext?.getEditor();
     const selectedHeaderValue = event.target.value;
-    setSelectedHeaders(selectedHeaderValue);
+    setSelectedHeadersValue(selectedHeaderValue);
 
     const range = editor.getSelection();
 
-    // Define sizes for headers and paragraphs
     const headerSizes: Record<string, string> = {
       1: '24px',
       2: '18px',
       3: '14px',
       4: '13px',
-      default: '12px', // Default for paragraphs
+      default: '12px', 
     };
+
+    const getClass :Record<string ,string> = {
+      1:"heading-1",
+      2:"heading-2",
+      3:"heading-3",
+      4:"heading-4",
+      0:"paragraph"
+    }
 
     // Get the corresponding font size for the selected header
     const size = headerSizes[selectedHeaderValue] || headerSizes.default;
 
     if (range) {
-      editor.history.cutoff(); // Reset history to prevent merging of other changes
-
-      // If text is selected, apply both header and size
       if (range.length > 0) {
-        // Apply header
-        editor.format("header", selectedHeaderValue, "user")
-        // Then apply size
-        editor.formatText(range.index, range.length, { size }, "user");
+        editor.formatText(range.index, range.length, { size , customHeading:getClass[selectedHeaderValue] }, "user");
+       
       } else {
-        // If no text is selected, apply to the current line
         const [line, offset] = editor.getLine(range.index);
         const lineLength = line.length();
-
-        // Apply header to the entire line
-        editor.formatLine(range.index - offset, lineLength, { header: selectedHeaderValue }, "user");
-
-        // Apply size to the entire line
-        editor.formatText(range.index - offset, lineLength, { size }, "user");
+        if(lineLength >1 ) {
+          editor.formatText(range.index - offset, lineLength, { size ,customHeading:getClass[selectedHeaderValue]}, "user");
+        }else {
+          editor.format("customHeading",getClass[selectedHeaderValue],"user")
+          editor.format("size",size,"user")
+        }
+        
       }
     }
 
-    // Ensure editor is focused
+    setSelectedFontSizeValue(size)
+
     setTimeout(() => {
       editor.focus();
     }, 0);

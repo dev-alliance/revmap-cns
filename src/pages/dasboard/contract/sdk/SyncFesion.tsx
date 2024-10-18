@@ -1378,20 +1378,19 @@ function SyncFesion() {
     });
   };
 
+
+  const [tempFont, setTempFont] = useState("")
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
     const range = currentEditor.getSelection(true);
     if (!range) return;
-    
+
     const format = currentEditor.getFormat(range.index);
-    
-    if (event.key === "Backspace") {     
-      event.preventDefault() 
-      event.stopPropagation()
-      const newRange = currentEditor.getSelection(true);
-      console.log(newRange)
+
+    if (event.key === "Backspace") {
       const backspaceFormatting = currentEditor.getFormat(range.index - 1);
+      console.log(backspaceFormatting)
       const [line] = currentEditor.getLine(range.index);
       const lineText = line ? line.domNode.innerText : "";
 
@@ -1404,16 +1403,15 @@ function SyncFesion() {
         }
 
         if (backspaceFormatting.size) {
-         setTimeout(() => {
-           currentEditor.format("size", backspaceFormatting.size);
-         }, 0);
+          setTimeout(() => {
+            currentEditor.format("size", backspaceFormatting.size);
+          }, 0);
           setSelectedFontSizeValue(backspaceFormatting.size);
         }
 
         if (backspaceFormatting.font) {
-          setTimeout(() => {
-            currentEditor.format("font", backspaceFormatting.font);
-          }, 0);
+          setTempFont(backspaceFormatting.font);
+          currentEditor.format("font", backspaceFormatting.font);
           setSelectedFontValue(backspaceFormatting.font);
         }
 
@@ -1423,9 +1421,9 @@ function SyncFesion() {
           }, 0);
           setBgColorSvg(backspaceFormatting.background);
         }
-      }else {
-        if(format.list){
-          currentEditor.format("list",false,"user")
+      } else {
+        if (format.list) {
+          currentEditor.format("list", false, "user")
         }
       }
 
@@ -1435,7 +1433,7 @@ function SyncFesion() {
 
         setPages((prevPages: any) => {
           const updatedPages = [...prevPages];
-          updatedPages.splice(index, 1); 
+          updatedPages.splice(index, 1);
           setCurrentPage(Math.max(0, index - 1));
 
           setTimeout(() => {
@@ -1453,8 +1451,17 @@ function SyncFesion() {
       }
     }
 
-    // Handle Enter key
     if (event.key === "Enter") {
+      const [line] = currentEditor.getLine(range.index);
+      const lineText = line ? line.domNode.innerText : "";
+      if (lineText.length === 1) {
+        if (format.customHeading !== "paragraph") {
+          console.log("i worked")
+          currentEditor.format("customHeading", "paragraph");
+          currentEditor.format("size", selectedFontSize)
+          setSelectedHeadersValue(0)
+        }
+      }
       if (format.color) {
         setFontColorSvg(format.color);
       }
@@ -1648,36 +1655,11 @@ function SyncFesion() {
   const [isScriptActive, setIsScriptActice] = useState("");
   const [isListActive, setIsListActive] = useState("");
 
-  const getParentFont = (index: number) => {
-    // Get the element at the current selection index
-    const blot = editorRefs.current[currentPage]
-      .getEditor()
-      .getLeaf(index)[0]?.domNode; // `getLeaf` gives the DOM node at the index
-
-    if (blot) {
-      let parentNode: HTMLElement | null = blot.parentElement;
-
-      // Traverse up the DOM tree and find the parent with a font style
-      while (parentNode) {
-        const computedFont = window.getComputedStyle(parentNode).fontFamily;
-        if (
-          computedFont &&
-          computedFont !== "initial" &&
-          computedFont !== "inherit"
-        ) {
-          return computedFont;
-        }
-        parentNode = parentNode.parentElement;
-      }
-    }
-    return null; // Return null if no parent with font style is found
-  };
-
 
   const handleChangeSelection = (range: any, source: string) => {
-    // console.log("range.index from onchange", range.index);
     const editor = editorRefs.current[currentPage].getEditor();
     if (range && range.length == 0) {
+      const [line] = editor.getLine(range.index);
       const format = editor.getFormat(range.index);
       if (format.color) {
         setFontColorSvg(format.color);
@@ -1710,11 +1692,12 @@ function SyncFesion() {
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
+        if (line?.domNode?.innerText?.length <= 1) {
           if (range.length === 0) {
             editor.format("font", selectedFont);
             setSelectedFontValue(selectedFont);
           }
-        
+        }
       }
 
       if (format.size) {
@@ -1738,70 +1721,86 @@ function SyncFesion() {
               format.header == 1
                 ? "24px"
                 : format.header == 2
-                ? "18px"
-                : format.header == 3
-                ? "14px"
-                : "13px"
+                  ? "18px"
+                  : format.header == 3
+                    ? "14px"
+                    : "13px"
             );
           }
         }
       }
 
-      if (format.header) {
-        setSelectedHeadersValue(format.header);
-        setSelectedFontSizeValue(format.size);
-        editor.format("header", format.header);
-      } else {
+      if (format.customHeading) {
+        setSelectedHeadersValue(format.customHeading == "heading-1" ? 1 : format.customHeading == "heading-2" ? 2 : format.customHeading == "heading-3" ? 3 : format.customHeading == "heading-4" ? 4 : format.customHeading == "paragraph" ? 0 : 0)
+      }
+      else {
+        editor.format("customHeading", "paragraph");
         setSelectedHeadersValue(0);
       }
+
     }
 
     if (range && range.length > 0) {
       const format = editor.getFormat(range);
-      // console.log(format);
+      console.log(format);
 
-      if (!format.font || format.font.constructor == Array) {
+      if (format.font && format.font.constructor == Array) {
         setSelectedFontValue("");
+      } else {
+        const [line, offset] = editor.getLine(range.index); // Get the line where the selection is
+        const innerHTML = line.domNode.innerHTML; // Get the HTML of the line
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(innerHTML, 'text/html'); // Parse the HTML to access spans
+
+        const spans = doc.querySelectorAll('span'); // Get all <span> elements in the line
+        let formatFonts: string[] = []; // To store unique fonts
+        let isMultiFormatted = false; // Flag for multiple formats
+
+        spans.forEach(span => {
+          const fontClass = span?.className?.split(" ")?.filter(className => className.startsWith("ql-font-"))[0].replace("ql-font-",'');
+          if (fontClass && !formatFonts.includes(fontClass)) {
+              formatFonts.push(fontClass); // Add unique font to the array
+          }
+
+          // Check for multiple fonts
+          if (formatFonts.length > 1) {
+            console.log('Multiple fonts found, stopping...');
+            setSelectedFontValue(""); // Set to empty if multiple fonts found
+            isMultiFormatted = true;
+            return; // Exit the loop
+          }
+        });
+
+        // If only one font was found, set it
+        if (!isMultiFormatted && formatFonts.length === 1) {
+          setSelectedFontValue(formatFonts[0]); // Set to the single font found
+        }
+
+        // If no fonts are found, set it to an empty string as a fallback
+        if (formatFonts.length === 0) {
+          setSelectedFontValue("");
+        }
+
       }
+
       if (
-        (!format.size && !format.header) ||
+        (!format.size) ||
         format.size.constructor == Array
       ) {
         setSelectedFontSizeValue("");
       }
-      if (format.size || format?.size?.constructor == Array) {
-        if (
-          format.size.constructor == Array &&
-          (format.size.includes("24px") ||
-            format.size.includes("18px") ||
-            format.size.includes("14px") ||
-            format.size.includes("13px"))
-        ) {
-          setSelectedHeadersValue("");
-        } else {
-          setSelectedHeadersValue(0);
-        }
-      } else {
+
+
+      if (
+        (!format.customHeading) ||
+        format.customHeading.constructor == Array
+      ) {
         setSelectedHeadersValue("");
       }
-      if (format.header && format.header.constructor != Array) {
-        setSelectedHeadersValue(format.header);
-      } else {
-        if (format.header && format.header.constructor !== Array) {
-          setSelectedHeadersValue(format.header);
-        } else {
-          const delta = editor.getContents(range);
-          let foundHeader = false;
-          delta.ops.forEach((op: any) => {
-            if (op.attributes.header) {
-              foundHeader = true;
-            }
-          });
-          if (foundHeader) {
-            setSelectedHeadersValue("");
-          }
-        }
+      else {
+        setSelectedHeadersValue(format.customHeading == "heading-1" ? 1 : format.customHeading == "heading-2" ? 2 : format.customHeading == "heading-3" ? 3 : format.customHeading == "heading-4" ? 4 : format.customHeading == "paragraph" ? 0 : "")
       }
+
 
       setSelection(range);
       // selectionRef.current = range;
@@ -2254,12 +2253,12 @@ function SyncFesion() {
                 outline: "none",
                 width: 168,
               }}
-              // onFocus={(e) => {
-              //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-              // }}
-              // onBlur={(e) => {
-              //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-              // }}
+            // onFocus={(e) => {
+            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
+            // }}
+            // onBlur={(e) => {
+            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
+            // }}
             />
 
             <div
@@ -3223,7 +3222,7 @@ function SyncFesion() {
             isListActive={isListActive}
             setIsListActive={setIsListActive}
             handleChangeSelection={handleChangeSelection}
-            scrollPageRef = {scrollPageRef}
+            scrollPageRef={scrollPageRef}
           />
         </div>
 
@@ -3264,7 +3263,7 @@ function SyncFesion() {
                   height: "100%",
                   overflowX: "auto",
                 }}
-            ref={scrollPageRef}
+                ref={scrollPageRef}
               >
                 <Grid
                   item
@@ -3284,6 +3283,11 @@ function SyncFesion() {
                           borderRadius: "5px",
                           width: "100%",
                           minHeight: `${documentPageSize.height}`,
+                        }}
+                        onClick={() => {
+                          if (!editorRefs) return;
+                          const editor = editorRefs.current[currentPage].getEditor();
+                          editor.focus()
                         }}
                       >
                         <ReactQuill
@@ -3387,17 +3391,17 @@ function SyncFesion() {
                         <div className="icon-person mx-2">
                           {user?.firstName
                             ? user.firstName
-                                .split(" ")
-                                .map((name: string) => name.charAt(0))
-                                .slice(0, 2)
-                                .join("")
-                                .toUpperCase()
+                              .split(" ")
+                              .map((name: string) => name.charAt(0))
+                              .slice(0, 2)
+                              .join("")
+                              .toUpperCase()
                             : user?.email
-                                ?.split(" ")
-                                .map((e: string) => e.charAt(0))
-                                .join("")
-                                .substring(0, 2)
-                                .toUpperCase()}
+                              ?.split(" ")
+                              .map((e: string) => e.charAt(0))
+                              .join("")
+                              .substring(0, 2)
+                              .toUpperCase()}
                         </div>
                         <div
                           style={{ position: "relative", bottom: 3, right: 3 }}
@@ -3621,7 +3625,7 @@ function SyncFesion() {
                               </div>
                             </div>
                             {editComment &&
-                            editCommentIndex === indexComment ? (
+                              editCommentIndex === indexComment ? (
                               <>
                                 <div className="px-3" style={{ width: "100%" }}>
                                   <textarea
@@ -3730,14 +3734,14 @@ function SyncFesion() {
                                           </div>
                                           {editCommentIndex !==
                                             indexComment && (
-                                            <span
-                                              style={{
-                                                color: "#00000080",
-                                              }}
-                                            >
-                                              {reply?.date?.toLocaleString()}
-                                            </span>
-                                          )}
+                                              <span
+                                                style={{
+                                                  color: "#00000080",
+                                                }}
+                                              >
+                                                {reply?.date?.toLocaleString()}
+                                              </span>
+                                            )}
                                         </div>
                                         <div>
                                           <img
@@ -3778,7 +3782,7 @@ function SyncFesion() {
                                       </div>
                                     </div>
                                     {editComment &&
-                                    editCommentIndex === indexComment ? (
+                                      editCommentIndex === indexComment ? (
                                       <>
                                         <div
                                           className="px-3"
@@ -3804,7 +3808,7 @@ function SyncFesion() {
                                             style={{
                                               backgroundColor:
                                                 currentComment.trim().length ===
-                                                0
+                                                  0
                                                   ? "#174B8B80"
                                                   : "#174B8B",
                                               border: "1px solid #174B8B80",
