@@ -10,9 +10,10 @@ import React, {
   useRef,
   useState,
   useCallback,
+  MutableRefObject,
 } from "react";
 
-// import 
+// import
 
 import {
   DocumentEditorContainerComponent,
@@ -180,7 +181,7 @@ function SyncFesion() {
     contractNewFontStyles,
     setContractNewFont,
     setContractNewFontSize,
-    setContractNewFontStyles
+    setContractNewFontStyles,
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -191,22 +192,21 @@ function SyncFesion() {
     setLeftSidebarExpanded(true);
   }, []);
 
-
   useEffect(() => {
     setTimeout(() => {
       setEditMode(false);
     }, 0);
-    setDucomentName("")
+    setDucomentName("");
     if (!id && !newId) {
       setTimeout(() => {
         setPages([{ content: "" }]);
         setBgColorSvg("#fefefe");
         setPrevBgColor("#fefefe");
-        setSelectedFontSize("12px")
-        setSelectedFontSizeValue("12px")
-        setSelectedFontValue("arial")
-        setSelectedFont("arial")
-        setPrevFontColor("black")
+        setSelectedFontSize("12px");
+        setSelectedFontSizeValue("12px");
+        setSelectedFontValue("arial");
+        setSelectedFont("arial");
+        setPrevFontColor("black");
       }, 0);
     }
     if (!editorRefs) return;
@@ -215,9 +215,9 @@ function SyncFesion() {
       editor.history.stack.redo = [];
       editor.history.stack.undo = [];
     }, 100);
-  }, [])
+  }, []);
 
-  const [oldPages, setOldPages] = useState([])
+  const [oldPages, setOldPages] = useState([]);
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -245,7 +245,7 @@ function SyncFesion() {
           return pages;
         });
         setCurrentPage(data?.pages.length - 1);
-        setOldPages(data?.pages)
+        setOldPages(data?.pages);
       }
 
       if (data?.pageSize) {
@@ -269,18 +269,18 @@ function SyncFesion() {
       }
       if (data?.newFontSize) {
         setContractNewFontSize(() => {
-          return data.newFontSize
-        })
+          return data.newFontSize;
+        });
       }
       if (data?.newFonts) {
         setContractNewFont(() => {
-          return data.newFonts
-        })
+          return data.newFonts;
+        });
       }
       if (data?.newFontStyles) {
         setContractNewFontStyles(() => {
-          return data.newFontStyles
-        })
+          return data.newFontStyles;
+        });
       }
       setFormState(data?.overview);
       setDucomentName(data?.overview?.name);
@@ -303,7 +303,7 @@ function SyncFesion() {
   const editorContainerRef: any = useRef(null);
 
   const handleSubmit = async () => {
-    console.log("handle submit")
+    console.log("handle submit");
     try {
       if (!documentName) {
         toast.error("Please enter the name of the document");
@@ -321,11 +321,11 @@ function SyncFesion() {
       await createPayload();
       setBgColorSvg("#fefefe");
       setPrevBgColor("#fefefe");
-      setSelectedFontSize("12px")
-      setSelectedFontSizeValue("12px")
-      setSelectedFontValue("arial")
-      setSelectedFont("arial")
-      setPrevFontColor("black")
+      setSelectedFontSize("12px");
+      setSelectedFontSizeValue("12px");
+      setSelectedFontValue("arial");
+      setSelectedFont("arial");
+      setPrevFontColor("black");
     } catch (error: any) {
       console.log(error);
 
@@ -386,13 +386,12 @@ function SyncFesion() {
         pageMargins: documentPageMargins,
         newFonts: contractNewFont,
         newFontStyles: contractNewFontStyles,
-        newFontSize: contractNewFontSize
+        newFontSize: contractNewFontSize,
       };
 
       if (comments.length > 0) {
         payload.comments = comments;
       }
-
 
       let response;
 
@@ -405,16 +404,15 @@ function SyncFesion() {
         if (response.contract._id) {
           setNewId(response.contract._id);
         }
-
       }
 
       if (response.ok === true) {
         toast.success(response.message);
-        setEditMode(false)
+        setEditMode(false);
 
         if (response?.contract?.pages) {
-          console.log(response.contract.pages)
-          setOldPages(response.contract.pages)
+          console.log(response.contract.pages);
+          setOldPages(response.contract.pages);
         }
         if (showBlock == "uploadTrack") {
           navigate("/dashboard/contract-list");
@@ -443,8 +441,6 @@ function SyncFesion() {
   //   if (!documentReady) return;
 
   //   console.log("I am called")
-
-
 
   //   createPayload();
   // }, [documentReady]);
@@ -991,7 +987,11 @@ function SyncFesion() {
               (highlightStep === "" && step === "Draft")
           )
           .map(({ label, step }) => (
-            <li key={step} className="btn-steps d-flex align-items-center" style={{ width: label == "Draft" ? "68px" : "80px" }}>
+            <li
+              key={step}
+              className="btn-steps d-flex align-items-center"
+              style={{ width: label == "Draft" ? "68px" : "80px" }}
+            >
               <div className="color mx-2"></div>
               <div className="text-[14px]">{label}</div>
             </li>
@@ -1046,8 +1046,8 @@ function SyncFesion() {
     setEditMode(true);
     setEnabelEditing(false);
     if (editorRefs) {
-      const editor = editorRefs.current[currentPage].getEditor()
-      handleChangeSelection(editor.getSelection(true), "user")
+      const editor = editorRefs.current[currentPage].getEditor();
+      handleChangeSelection(editor.getSelection(true), "user");
       editor.focus();
     }
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1071,17 +1071,17 @@ function SyncFesion() {
     editor.history.stack.undo = [];
     editor.history.stack.redo = [];
     if (!id && newId === "") {
-      setPages([{ content: "" }])
+      setPages([{ content: "" }]);
     }
     setBgColorSvg("#fefefe");
     setPrevBgColor("#fefefe");
-    setSelectedFontSize("12px")
-    setSelectedFontSizeValue("12px")
-    setSelectedFontValue("arial")
-    setSelectedFont("arial")
-    setPrevFontColor("black")
+    setSelectedFontSize("12px");
+    setSelectedFontSizeValue("12px");
+    setSelectedFontValue("arial");
+    setSelectedFont("arial");
+    setPrevFontColor("black");
     if (id || newId) {
-      setPages(oldPages)
+      setPages(oldPages);
     }
     setEditMode(false);
     setEnabelEditing(true);
@@ -1287,7 +1287,6 @@ function SyncFesion() {
           while (fitIndex > 0) {
             currentEditor.setContents(contentToFit, "silent"); // Use setContents to replace content silently
 
-
             if (currentEditor.root.scrollHeight <= documentHeight) {
               break; // Content fits within the current page size
             }
@@ -1379,66 +1378,69 @@ function SyncFesion() {
     });
   };
 
-
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
-    // Ensure there's a valid selection range
     const range = currentEditor.getSelection(true);
     if (!range) return;
-
+    
     const format = currentEditor.getFormat(range.index);
-    const nextFormat = currentEditor.getFormat(range.index + !1);
-    console.log(nextFormat);
-
-
-    if (event.key === "Backspace") {
-      // Get formatting for the character before the current selection
+    
+    if (event.key === "Backspace") {     
+      event.preventDefault() 
+      event.stopPropagation()
+      const newRange = currentEditor.getSelection(true);
+      console.log(newRange)
       const backspaceFormatting = currentEditor.getFormat(range.index - 1);
+      const [line] = currentEditor.getLine(range.index);
+      const lineText = line ? line.domNode.innerText : "";
 
-      if (backspaceFormatting.size) {
-        setTimeout(() => {
-          currentEditor.format("size", backspaceFormatting.size);
-        }, 0);
-        setSelectedFontSizeValue(backspaceFormatting.size);
+      if (lineText.trim().length > 0) {
+        if (backspaceFormatting.color) {
+          setFontColorSvg(backspaceFormatting.color);
+          setTimeout(() => {
+            currentEditor.format("color", backspaceFormatting.color);
+          }, 0);
+        }
+
+        if (backspaceFormatting.size) {
+         setTimeout(() => {
+           currentEditor.format("size", backspaceFormatting.size);
+         }, 0);
+          setSelectedFontSizeValue(backspaceFormatting.size);
+        }
+
+        if (backspaceFormatting.font) {
+          setTimeout(() => {
+            currentEditor.format("font", backspaceFormatting.font);
+          }, 0);
+          setSelectedFontValue(backspaceFormatting.font);
+        }
+
+        if (backspaceFormatting.background) {
+          setTimeout(() => {
+            currentEditor.format("background", backspaceFormatting.background);
+          }, 0);
+          setBgColorSvg(backspaceFormatting.background);
+        }
+      }else {
+        if(format.list){
+          currentEditor.format("list",false,"user")
+        }
       }
 
-      if (backspaceFormatting.font) {
-        console.log("I changed font")
-        setTimeout(() => {
-          currentEditor.format("font", backspaceFormatting.font);
-        }, 0);
-        setSelectedFontValue(backspaceFormatting.font);
-      }
-
-      if (backspaceFormatting.color) {
-        setTimeout(() => {
-          currentEditor.format("color", backspaceFormatting.color);
-        }, 0);
-        setFontColorSvg(backspaceFormatting.color);
-      }
-
-      if (backspaceFormatting.background) {
-        setTimeout(() => {
-          currentEditor.format("background", backspaceFormatting.background);
-        }, 0);
-        setBgColorSvg(backspaceFormatting.background);
-      }
-
-      // Check if the current content is empty and whether we need to remove the page
       const content = currentEditor.root.innerHTML;
       if (isContentEmpty(content) && index > 0) {
-        // Prevent the default backspace behavior only if the page is empty
         event.preventDefault();
 
-        // Logic to remove the empty page and shift focus
         setPages((prevPages: any) => {
           const updatedPages = [...prevPages];
-          updatedPages.splice(index, 1); // Remove the empty page
+          updatedPages.splice(index, 1); 
           setCurrentPage(Math.max(0, index - 1));
 
           setTimeout(() => {
-            const editor = editorRefs.current[Math.max(0, index - 1)]?.getEditor();
+            const editor =
+              editorRefs.current[Math.max(0, index - 1)]?.getEditor();
             editor.setSelection(editor.getLength() - 1);
             editor.focus();
             containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({
@@ -1446,7 +1448,7 @@ function SyncFesion() {
             });
           }, 100);
 
-          return updatedPages; // Return the updated pages
+          return updatedPages;
         });
       }
     }
@@ -1466,18 +1468,16 @@ function SyncFesion() {
         setBgColorSvg(format.background);
       }
       if (format.header) {
-        currentEditor.format("header", format.header)
+        currentEditor.format("header", format.header);
       }
     }
-
   };
-
 
   useEffect(() => {
     setEditorRefContext(editorRefs.current[currentPage]);
     const editor = editorRefs?.current[currentPage]?.getEditor();
     if (editor) {
-      editor.setSelection(editor.getLength() - 1, 0)
+      editor.setSelection(editor.getLength() - 1, 0);
       editor.focus();
     }
   }, [currentPage]);
@@ -1598,7 +1598,6 @@ function SyncFesion() {
   //   }
   // }, [documentPageSize]);
 
-
   const rejectChange = (changeToReject: any) => {
     const { action, changes } = changeToReject;
 
@@ -1642,7 +1641,6 @@ function SyncFesion() {
     }
   }, [selection]);
 
-
   const [isBoldActive, setIsBoldActive] = useState(false);
   const [isItalicActive, setIsItalicActive] = useState(false);
   const [isStrikeActive, setIsStrikeActive] = useState(false);
@@ -1650,10 +1648,11 @@ function SyncFesion() {
   const [isScriptActive, setIsScriptActice] = useState("");
   const [isListActive, setIsListActive] = useState("");
 
-
   const getParentFont = (index: number) => {
     // Get the element at the current selection index
-    const blot = editorRefs.current[currentPage].getEditor().getLeaf(index)[0]?.domNode; // `getLeaf` gives the DOM node at the index
+    const blot = editorRefs.current[currentPage]
+      .getEditor()
+      .getLeaf(index)[0]?.domNode; // `getLeaf` gives the DOM node at the index
 
     if (blot) {
       let parentNode: HTMLElement | null = blot.parentElement;
@@ -1661,7 +1660,11 @@ function SyncFesion() {
       // Traverse up the DOM tree and find the parent with a font style
       while (parentNode) {
         const computedFont = window.getComputedStyle(parentNode).fontFamily;
-        if (computedFont && computedFont !== 'initial' && computedFont !== 'inherit') {
+        if (
+          computedFont &&
+          computedFont !== "initial" &&
+          computedFont !== "inherit"
+        ) {
           return computedFont;
         }
         parentNode = parentNode.parentElement;
@@ -1672,12 +1675,10 @@ function SyncFesion() {
 
 
   const handleChangeSelection = (range: any, source: string) => {
-
+    // console.log("range.index from onchange", range.index);
     const editor = editorRefs.current[currentPage].getEditor();
-    if (range.length == 0) {
+    if (range && range.length == 0) {
       const format = editor.getFormat(range.index);
-      const newFormat = editor.getFormat(range.index - 1);
-      // console.log(format);
       if (format.color) {
         setFontColorSvg(format.color);
       } else {
@@ -1691,7 +1692,7 @@ function SyncFesion() {
       } else {
         if (range.length === 0) {
           editor.format("background", prevBgColor);
-          setBgColorSvg(prevBgColor)
+          setBgColorSvg(prevBgColor);
         }
       }
 
@@ -1709,16 +1710,11 @@ function SyncFesion() {
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
-        if (newFormat.font) {
-          setSelectedFontValue(newFormat.font);
-          editor.format("font", newFormat.font)
-        }
-        else {
           if (range.length === 0) {
-            editor.format("font", selectedFont)
+            editor.format("font", selectedFont);
             setSelectedFontValue(selectedFont);
           }
-        }
+        
       }
 
       if (format.size) {
@@ -1734,60 +1730,75 @@ function SyncFesion() {
           }
         } else {
           if (!format.header) {
-            editor.format("size", selectedFontSize)
+            editor.format("size", selectedFontSize);
             setSelectedFontSizeValue(selectedFontSize);
-          }
-          else {
-            editor.format("size", format.header == 1 ? "24px" : format.header == 2 ? "18px" : format.header == 3 ? "14px" : "13px")
+          } else {
+            editor.format(
+              "size",
+              format.header == 1
+                ? "24px"
+                : format.header == 2
+                ? "18px"
+                : format.header == 3
+                ? "14px"
+                : "13px"
+            );
           }
         }
       }
 
       if (format.header) {
         setSelectedHeadersValue(format.header);
-        setSelectedFontSizeValue(format.size)
+        setSelectedFontSizeValue(format.size);
         editor.format("header", format.header);
-
       } else {
         setSelectedHeadersValue(0);
       }
-
     }
 
     if (range && range.length > 0) {
       const format = editor.getFormat(range);
-      console.log(format)
+      // console.log(format);
 
       if (!format.font || format.font.constructor == Array) {
-        setSelectedFontValue("")
+        setSelectedFontValue("");
       }
-      if (!format.size && !format.header || format.size.constructor == Array) {
-        setSelectedFontSizeValue("")
+      if (
+        (!format.size && !format.header) ||
+        format.size.constructor == Array
+      ) {
+        setSelectedFontSizeValue("");
       }
       if (format.size || format?.size?.constructor == Array) {
-        if (format.size.constructor == Array && format.size.includes("24px") || format.size.includes("18px") || format.size.includes("14px")  ||format.size.includes("13px")  ){
-          setSelectedHeadersValue("")
+        if (
+          format.size.constructor == Array &&
+          (format.size.includes("24px") ||
+            format.size.includes("18px") ||
+            format.size.includes("14px") ||
+            format.size.includes("13px"))
+        ) {
+          setSelectedHeadersValue("");
         } else {
-          setSelectedHeadersValue(0)
+          setSelectedHeadersValue(0);
         }
       } else {
-        setSelectedHeadersValue("")
+        setSelectedHeadersValue("");
       }
       if (format.header && format.header.constructor != Array) {
-        setSelectedHeadersValue(format.header)
+        setSelectedHeadersValue(format.header);
       } else {
         if (format.header && format.header.constructor !== Array) {
           setSelectedHeadersValue(format.header);
         } else {
           const delta = editor.getContents(range);
           let foundHeader = false;
-          delta.ops.forEach((op:any)=>{
-            if(op.attributes.header) {
-              foundHeader = true ;
+          delta.ops.forEach((op: any) => {
+            if (op.attributes.header) {
+              foundHeader = true;
             }
-          })
-          if(foundHeader) {
-            setSelectedHeadersValue("")
+          });
+          if (foundHeader) {
+            setSelectedHeadersValue("");
           }
         }
       }
@@ -1995,12 +2006,8 @@ function SyncFesion() {
     }
   }, []);
 
-
-
   useEffect(() => {
     if (editorRefs.current[currentPage]) {
-      const editor = editorRefs.current[currentPage].getEditor();
-
       const fontChange = () => {
         if (selectedHeaders === 1) {
           setSelectedFontSizeValue("24px");
@@ -2017,8 +2024,6 @@ function SyncFesion() {
         if (selectedHeaders === 0) {
           setSelectedFontSizeValue("12px");
         }
-        editor.format("size", false, "user");
-        editor.format("header", selectedHeaders, "user");
       };
 
       fontChange();
@@ -2170,6 +2175,9 @@ function SyncFesion() {
     return () => window.removeEventListener("resize", calculateRemainingVh);
   }, [handleClick]);
 
+  const scrollPageRef = useRef<any>(null);
+
+
   const EditIconSvg = () => {
     return (
       <svg
@@ -2186,7 +2194,6 @@ function SyncFesion() {
       </svg>
     );
   };
-
 
   return (
     <>
@@ -2247,12 +2254,12 @@ function SyncFesion() {
                 outline: "none",
                 width: 168,
               }}
-            // onFocus={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-            // }}
-            // onBlur={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-            // }}
+              // onFocus={(e) => {
+              //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
+              // }}
+              // onBlur={(e) => {
+              //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
+              // }}
             />
 
             <div
@@ -2962,7 +2969,7 @@ function SyncFesion() {
             borderTop:
               showBlock == "uploadTrack" ? "1px solid #174B8B" : "none",
             background: "#f7f7f7",
-            padding: "5px 0"
+            padding: "5px 0",
           }}
         >
           {IsTemplate ? (
@@ -3075,7 +3082,7 @@ function SyncFesion() {
                     width: 55,
                     minWidth: 55,
                     minHeight: 30,
-                    fontSize: "13px"
+                    fontSize: "13px",
                   }}
                   onClick={() => {
                     handleClickCencel();
@@ -3095,8 +3102,7 @@ function SyncFesion() {
                     width: 40,
                     minWidth: 40,
                     minHeight: 30,
-                    fontSize: "13px"
-
+                    fontSize: "13px",
                   }}
                   className="save-btn"
                   onClick={() => {
@@ -3143,7 +3149,7 @@ function SyncFesion() {
                   padding: "4px",
                   fontSize: "13px",
                   minHeight: 30,
-                  minWidth: 52
+                  minWidth: 52,
                 }}
                 onClick={() => {
                   handleClick();
@@ -3152,7 +3158,11 @@ function SyncFesion() {
                 <span style={{ paddingRight: "8px" }}>
                   <EditIconSvg />
                 </span>
-                <span style={{ fontSize: 13, position: "relative", right: "3px" }}>Edit</span>
+                <span
+                  style={{ fontSize: 13, position: "relative", right: "3px" }}
+                >
+                  Edit
+                </span>
               </Button>
             )}
           </div>
@@ -3213,6 +3223,7 @@ function SyncFesion() {
             isListActive={isListActive}
             setIsListActive={setIsListActive}
             handleChangeSelection={handleChangeSelection}
+            scrollPageRef = {scrollPageRef}
           />
         </div>
 
@@ -3238,7 +3249,6 @@ function SyncFesion() {
                 if (editorRefs && commentSelection) {
                   const editor = editorRefs.current[currentPage].getEditor();
                   const { index, length } = commentSelection;
-                  console.log(commentPrevBg);
                   editor.formatText(index, length, {
                     background: commentPrevBg,
                   });
@@ -3254,7 +3264,7 @@ function SyncFesion() {
                   height: "100%",
                   overflowX: "auto",
                 }}
-                ref={parentContainerRef}
+            ref={scrollPageRef}
               >
                 <Grid
                   item
@@ -3377,17 +3387,17 @@ function SyncFesion() {
                         <div className="icon-person mx-2">
                           {user?.firstName
                             ? user.firstName
-                              .split(" ")
-                              .map((name: string) => name.charAt(0))
-                              .slice(0, 2)
-                              .join("")
-                              .toUpperCase()
+                                .split(" ")
+                                .map((name: string) => name.charAt(0))
+                                .slice(0, 2)
+                                .join("")
+                                .toUpperCase()
                             : user?.email
-                              ?.split(" ")
-                              .map((e: string) => e.charAt(0))
-                              .join("")
-                              .substring(0, 2)
-                              .toUpperCase()}
+                                ?.split(" ")
+                                .map((e: string) => e.charAt(0))
+                                .join("")
+                                .substring(0, 2)
+                                .toUpperCase()}
                         </div>
                         <div
                           style={{ position: "relative", bottom: 3, right: 3 }}
@@ -3611,7 +3621,7 @@ function SyncFesion() {
                               </div>
                             </div>
                             {editComment &&
-                              editCommentIndex === indexComment ? (
+                            editCommentIndex === indexComment ? (
                               <>
                                 <div className="px-3" style={{ width: "100%" }}>
                                   <textarea
@@ -3720,14 +3730,14 @@ function SyncFesion() {
                                           </div>
                                           {editCommentIndex !==
                                             indexComment && (
-                                              <span
-                                                style={{
-                                                  color: "#00000080",
-                                                }}
-                                              >
-                                                {reply?.date?.toLocaleString()}
-                                              </span>
-                                            )}
+                                            <span
+                                              style={{
+                                                color: "#00000080",
+                                              }}
+                                            >
+                                              {reply?.date?.toLocaleString()}
+                                            </span>
+                                          )}
                                         </div>
                                         <div>
                                           <img
@@ -3768,7 +3778,7 @@ function SyncFesion() {
                                       </div>
                                     </div>
                                     {editComment &&
-                                      editCommentIndex === indexComment ? (
+                                    editCommentIndex === indexComment ? (
                                       <>
                                         <div
                                           className="px-3"
@@ -3794,7 +3804,7 @@ function SyncFesion() {
                                             style={{
                                               backgroundColor:
                                                 currentComment.trim().length ===
-                                                  0
+                                                0
                                                   ? "#174B8B80"
                                                   : "#174B8B",
                                               border: "1px solid #174B8B80",
