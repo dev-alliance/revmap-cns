@@ -1264,6 +1264,24 @@ function SyncFesion() {
     editor: any,
     index: number
   ) => {
+    // if (delta.ops[0].insert === '\n') {
+    //   const range = editor.getSelection();
+    //   const [line] = editor.getLine(range.index);
+    //   const lineText = line.domNode.innerText;
+
+    //   if (lineText.trim() === '') {
+    //     editor.updateContents([
+    //       {
+    //         retain: range.index,
+    //       },
+    //       {
+    //         insert: '\n',
+    //         attributes: { span: {} },
+    //       },
+    //     ]);
+    //   }
+    // }
+  
     setPages((prevPages: any[]) => {
       const updatedPages = [...prevPages];
       if (index < 0 || index >= updatedPages.length) {
@@ -1378,8 +1396,6 @@ function SyncFesion() {
     });
   };
 
-
-  const [tempFont, setTempFont] = useState("")
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
@@ -1388,13 +1404,28 @@ function SyncFesion() {
 
     const format = currentEditor.getFormat(range.index);
 
+    const backspaceFormatting = currentEditor.getFormat(range.index - 1);
     if (event.key === "Backspace") {
-      const backspaceFormatting = currentEditor.getFormat(range.index - 1);
-      console.log(backspaceFormatting)
       const [line] = currentEditor.getLine(range.index);
-      const lineText = line ? line.domNode.innerText : "";
+      const charBeforeCursor = currentEditor.getText(range.index - 1, 1); 
+      const charAtCursor = currentEditor.getText(range.index);
 
-      if (lineText.trim().length > 0) {
+      if((charAtCursor == '\n'|| charAtCursor.includes('\n')) && range.index !==0) {
+        currentEditor.deleteText(range.index ,"user");
+      }
+      if(charBeforeCursor == "\u200B" &&  charAtCursor != "\u200B") {
+        currentEditor.deleteText(range.index - 1, 1,"user");
+      }
+      if(charAtCursor == "\u200B") {
+        currentEditor.deleteText(range.index , 1,"user");
+        currentEditor.deleteText(range.index-1 , 1,"user");
+      }
+
+      const text = currentEditor.getText(range.index,0)
+      const lineText = line ? line?.domNode?.innerText : "";
+    
+      // if (lineText.trim().length > 0) {
+        // debugger;
         if (backspaceFormatting.color) {
           setFontColorSvg(backspaceFormatting.color);
           setTimeout(() => {
@@ -1410,7 +1441,6 @@ function SyncFesion() {
         }
 
         if (backspaceFormatting.font) {
-          setTempFont(backspaceFormatting.font);
           currentEditor.format("font", backspaceFormatting.font);
           setSelectedFontValue(backspaceFormatting.font);
         }
@@ -1421,11 +1451,12 @@ function SyncFesion() {
           }, 0);
           setBgColorSvg(backspaceFormatting.background);
         }
-      } else {
-        if (format.list) {
+      // } else {
+        if (format.list && lineText.trim().length <=0 ) {
           currentEditor.format("list", false, "user")
         }
-      }
+      // }
+      
 
       const content = currentEditor.root.innerHTML;
       if (isContentEmpty(content) && index > 0) {
@@ -1452,21 +1483,28 @@ function SyncFesion() {
     }
 
     if (event.key === "Enter") {
-      const [line] = currentEditor.getLine(range.index);
+      const [line] = currentEditor.getLine(range.index-1);
       const lineText = line ? line.domNode.innerText : "";
+
       if (lineText.length === 1) {
         if (format.customHeading !== "paragraph") {
-          console.log("i worked")
           currentEditor.format("customHeading", "paragraph");
           currentEditor.format("size", selectedFontSize)
           setSelectedHeadersValue(0)
         }
       }
+
       if (format.color) {
         setFontColorSvg(format.color);
       }
+      console.log(backspaceFormatting.font)
+
       if (format.font) {
         setSelectedFontValue(format.font);
+      }else {
+        if(backspaceFormatting.font) {
+          currentEditor.format("font",backspaceFormatting.font)
+        }
       }
       if (format.size) {
         setSelectedFontSizeValue(format.size);
@@ -1477,6 +1515,11 @@ function SyncFesion() {
       if (format.header) {
         currentEditor.format("header", format.header);
       }
+
+      if (lineText.trim() === '') {
+        currentEditor.insertText(range.index-1, "\u200B", format);
+      }
+      currentEditor.insertText(range.index, "\u200B", format);
     }
   };
 
@@ -1742,52 +1785,31 @@ function SyncFesion() {
 
     if (range && range.length > 0) {
       const format = editor.getFormat(range);
-      console.log(format);
 
-      if (format.font && format.font.constructor == Array) {
+      if (format.font && Array.isArray(format.font)) {
         setSelectedFontValue("");
       } else {
-        const [line, offset] = editor.getLine(range.index); // Get the line where the selection is
-        const innerHTML = line.domNode.innerHTML; // Get the HTML of the line
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(innerHTML, 'text/html'); // Parse the HTML to access spans
-
-        const spans = doc.querySelectorAll('span'); // Get all <span> elements in the line
-        let formatFonts: string[] = []; // To store unique fonts
-        let isMultiFormatted = false; // Flag for multiple formats
-
-        spans.forEach(span => {
-          const fontClass = span?.className?.split(" ")?.filter(className => className.startsWith("ql-font-"))[0].replace("ql-font-",'');
-          if (fontClass && !formatFonts.includes(fontClass)) {
-              formatFonts.push(fontClass); // Add unique font to the array
-          }
-
-          // Check for multiple fonts
-          if (formatFonts.length > 1) {
-            console.log('Multiple fonts found, stopping...');
-            setSelectedFontValue(""); // Set to empty if multiple fonts found
-            isMultiFormatted = true;
-            return; // Exit the loop
-          }
-        });
-
-        // If only one font was found, set it
-        if (!isMultiFormatted && formatFonts.length === 1) {
-          setSelectedFontValue(formatFonts[0]); // Set to the single font found
+       const content = editor.getContents(range.index,range.length)
+       console.log(content)
+       const extractedFonts :string[] = [];
+       content.ops.forEach((op:any)=>{
+        if(op?.attributes?.font && !extractedFonts.includes(op?.attributes?.font)) {
+          extractedFonts.push(op.attributes.font);
         }
-
-        // If no fonts are found, set it to an empty string as a fallback
-        if (formatFonts.length === 0) {
-          setSelectedFontValue("");
-        }
-
+       })
+       
+       if(extractedFonts.length ===1) {
+        setSelectedFontValue(extractedFonts[0]);
+       }else {
+        setSelectedFontValue("")
+       }
       }
-
-      if (
-        (!format.size) ||
-        format.size.constructor == Array
-      ) {
+      
+      if (!format.size ||format.size.constructor == Array) {
         setSelectedFontSizeValue("");
+      }
+      else {
+        setSelectedFontValue(format.font);
       }
 
 

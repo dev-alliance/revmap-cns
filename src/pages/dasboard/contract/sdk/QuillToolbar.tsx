@@ -506,6 +506,8 @@ export const modules = {
 
 };
 
+
+
 // Formats objects for setting up the Quill editor
 export const formats = [
   "header",
@@ -533,7 +535,7 @@ export const formats = [
   "lineHeight",
   "video",
   "audio",
-  "customHeading"
+  "customHeading",
 ];
 
 const List = Quill.import("formats/list");
@@ -3417,8 +3419,8 @@ export default function QuillToolbar(props: any) {
                     overflow: "hidden",
                     textOverflow: 'ellipsis'
                   }}>
-                    {selectedFontValue.charAt(0).toUpperCase() +
-                      selectedFontValue.slice(1).replace("-", " ")}
+                    {selectedFontValue?.charAt(0)?.toUpperCase() +
+                      selectedFontValue?.slice(1)?.replace("-", " ")}
                   </div>
                 )}
                 onChange={handleFontChange}
