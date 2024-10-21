@@ -960,6 +960,8 @@ export default function QuillToolbar(props: any) {
       editor.setSelection(range.index + range.length, 0);
     }
 
+    setFontColorSvg(TextColor)
+    
     setAnchorElFontColor(null);
     editor.focus();
   };
@@ -3814,9 +3816,9 @@ export default function QuillToolbar(props: any) {
                 className="text-center"
               >
                 <Sketch
-                  color={fontColorSvg}
+                  color={fontColorSvg == "black" ? "#000000":fontColorSvg}
                   onChange={handleFontColorChange}
-                  id="menu-color"
+                  // id="menu-color"
                 />
                 <div className="d-flex justify-content-between pt-2">
                   <button
