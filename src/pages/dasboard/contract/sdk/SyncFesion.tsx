@@ -1407,28 +1407,18 @@ function SyncFesion() {
     const backspaceFormatting = currentEditor.getFormat(range.index - 1);
     if (event.key === "Backspace") {
       const [line] = currentEditor.getLine(range.index);
-      const charBeforeCursor = currentEditor.getText(range.index - 1, 1); 
       const charAtCursor = currentEditor.getText(range.index);
-
-      if((charAtCursor == '\n'|| charAtCursor.includes('\n')) && range.index !==0) {
-        currentEditor.deleteText(range.index ,"user");
-      }
-      if(charBeforeCursor == "\u200B" &&  charAtCursor != "\u200B") {
-        currentEditor.deleteText(range.index - 1, 1,"user");
-      }
-      if(charAtCursor == "\u200B") {
-        currentEditor.deleteText(range.index , 1,"user");
-        currentEditor.deleteText(range.index-1 , 1,"user");
-      }
-
-      const text = currentEditor.getText(range.index,0)
       const lineText = line ? line?.domNode?.innerText : "";
-    
-      // if (lineText.trim().length > 0) {
-        // debugger;
+
+
+      if((charAtCursor == '\n'|| charAtCursor.includes('\n')) && range.index !==0 && lineText.trim().length <=0) {
+        setTimeout(() => {
+          currentEditor.deleteText(range.index-1,1 ,"user");
+        }, 0);
+      }
         if (backspaceFormatting.color) {
-          setFontColorSvg(backspaceFormatting.color);
           setTimeout(() => {
+            setFontColorSvg(backspaceFormatting.color);
             currentEditor.format("color", backspaceFormatting.color);
           }, 0);
         }
@@ -1436,20 +1426,22 @@ function SyncFesion() {
         if (backspaceFormatting.size) {
           setTimeout(() => {
             currentEditor.format("size", backspaceFormatting.size);
+            setSelectedFontSizeValue(backspaceFormatting.size);
           }, 0);
-          setSelectedFontSizeValue(backspaceFormatting.size);
         }
 
         if (backspaceFormatting.font) {
-          currentEditor.format("font", backspaceFormatting.font);
-          setSelectedFontValue(backspaceFormatting.font);
+         setTimeout(() => {
+           currentEditor.format("font", backspaceFormatting.font);
+           setSelectedFontValue(backspaceFormatting.font);
+         }, 0);
         }
 
         if (backspaceFormatting.background) {
           setTimeout(() => {
             currentEditor.format("background", backspaceFormatting.background);
+            setBgColorSvg(backspaceFormatting.background);
           }, 0);
-          setBgColorSvg(backspaceFormatting.background);
         }
       // } else {
         if (format.list && lineText.trim().length <=0 ) {
@@ -1483,6 +1475,7 @@ function SyncFesion() {
     }
 
     if (event.key === "Enter") {
+      console.log(backspaceFormatting)
       const [line] = currentEditor.getLine(range.index-1);
       const lineText = line ? line.domNode.innerText : "";
 
@@ -1497,7 +1490,7 @@ function SyncFesion() {
       if (format.color) {
         setFontColorSvg(format.color);
       }
-      console.log(backspaceFormatting.font)
+      console.log(format)
 
       if (format.font) {
         setSelectedFontValue(format.font);
@@ -1809,7 +1802,7 @@ function SyncFesion() {
         setSelectedFontSizeValue("");
       }
       else {
-        setSelectedFontValue(format.font);
+        setSelectedFontSizeValue(format.size);
       }
 
 

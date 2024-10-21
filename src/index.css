@@ -1,19 +1,6 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
-/* Import Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Arial&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Comic+Sans+MS&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Courier+New&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Georgia&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Helvetica&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lucida+Sans&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Impact&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Verdana&display=swap");
-
 
 @font-face {
   font-family: 'Cambria';
@@ -123,12 +110,13 @@
 }
 
 
-
 @font-face {
   font-family: 'Comic Sans MS';
-  src: url('./assets/fonts/ComicSansMS3.ttf') format('opentype'); /* Specify format as 'opentype' */
+  src: url('./assets/fonts/ComicSansMS3.ttf') format('truetype'); /* Specify format as 'opentype' */
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
+
 }
 
 
