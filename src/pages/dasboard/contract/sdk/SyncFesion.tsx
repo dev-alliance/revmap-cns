@@ -1475,7 +1475,6 @@ function SyncFesion() {
     }
 
     if (event.key === "Enter") {
-      console.log(backspaceFormatting)
       const [line] = currentEditor.getLine(range.index-1);
       const lineText = line ? line.domNode.innerText : "";
 
@@ -1490,14 +1489,17 @@ function SyncFesion() {
       if (format.color) {
         setFontColorSvg(format.color);
       }
-      console.log(format)
+      const htmlSpan = line?.domNode?.innerHTML;
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlSpan;
+      const lastSpan = tempDiv?.querySelectorAll('span:last-of-type');
+      const fontClass = Array?.from(lastSpan[0].classList)?.find(cls => cls.startsWith('ql-font'));
 
-      if (format.font) {
-        setSelectedFontValue(format.font);
-      }else {
-        if(backspaceFormatting.font) {
-          currentEditor.format("font",backspaceFormatting.font)
-        }
+      if(fontClass) {
+        setTimeout(() => {
+          currentEditor.format("font",fontClass.replace("ql-font-",''))
+          setSelectedFontValue(fontClass.replace("ql-font-",''))
+        }, 0);
       }
       if (format.size) {
         setSelectedFontSizeValue(format.size);
@@ -1512,7 +1514,17 @@ function SyncFesion() {
       if (lineText.trim() === '') {
         currentEditor.insertText(range.index-1, "\u200B", format);
       }
-      currentEditor.insertText(range.index, "\u200B", format);
+      let font = '';
+      if(fontClass ) {font = fontClass.replace("ql-font-",'')}
+      else {
+        font = format?.font
+      }
+      currentEditor.insertText(range.index, "\u200B", {
+        size:format?.size,
+        font:font,
+        color:format.color,
+        background:format.background
+      });
     }
   };
 
@@ -3302,7 +3314,11 @@ function SyncFesion() {
                         onClick={() => {
                           if (!editorRefs) return;
                           const editor = editorRefs.current[currentPage].getEditor();
-                          editor.focus()
+                          const range = editor.getSelection(true);
+                          if(range.length > 0) {
+                            editor.setSelection(range.index+range.length,0)
+                          }
+                           editor.focus();
                         }}
                       >
                         <ReactQuill
