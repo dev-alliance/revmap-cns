@@ -1410,24 +1410,22 @@ function SyncFesion() {
       const cursorPosition = currentEditor.getBounds(range.index);
       const container = scrollPageRef.current;
       const containerTop = container.scrollTop;
-      const containerBottom = containerTop + container.clientHeight;
 
-      // If the cursor is above the visible area, scroll up to bring it into view
       if (cursorPosition.top < containerTop) {
-        container.scrollTop = cursorPosition.top - container.offsetTop; // Scroll up
+        container.scrollTop = cursorPosition.top - container.offsetTop; 
       }
+      
       const [line] = currentEditor.getLine(range.index);
       const charAtCursor = currentEditor.getText(range.index);
       const lineText = line ? line?.domNode?.innerText : "";
-
       if (
         (charAtCursor == "\n" || charAtCursor.includes("\n")) &&
         range.index !== 0 &&
         lineText.trim().length <= 0
       ) {
-        setTimeout(() => {
-          currentEditor.deleteText(range.index - 1, 1, "user");
-        }, 0);
+        // setTimeout(() => {
+          currentEditor.deleteText(range.index -1,1, "user");
+        
       }
 
       if (!format.color) {
@@ -1756,6 +1754,7 @@ function SyncFesion() {
     const editor = editorRefs.current[currentPage].getEditor();
     if (range && range.length == 0) {
       const [line] = editor.getLine(range.index - 1);
+      console.log(line?.domNode?.innerText == "\u200B");
       const format = editor.getFormat(range.index);
       if (format.color) {
         setFontColorSvg(format.color);
