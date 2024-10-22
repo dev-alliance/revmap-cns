@@ -11,6 +11,7 @@ import React, {
   useState,
   useCallback,
   MutableRefObject,
+  ChangeEvent,
 } from "react";
 
 // import
@@ -1281,7 +1282,7 @@ function SyncFesion() {
     //     ]);
     //   }
     // }
-  
+
     setPages((prevPages: any[]) => {
       const updatedPages = [...prevPages];
       if (index < 0 || index >= updatedPages.length) {
@@ -1406,49 +1407,65 @@ function SyncFesion() {
 
     const backspaceFormatting = currentEditor.getFormat(range.index - 1);
     if (event.key === "Backspace") {
+      const cursorPosition = currentEditor.getBounds(range.index);
+      const container = scrollPageRef.current;
+      const containerTop = container.scrollTop;
+      const containerBottom = containerTop + container.clientHeight;
+
+      // If the cursor is above the visible area, scroll up to bring it into view
+      if (cursorPosition.top < containerTop) {
+        container.scrollTop = cursorPosition.top - container.offsetTop; // Scroll up
+      }
       const [line] = currentEditor.getLine(range.index);
       const charAtCursor = currentEditor.getText(range.index);
       const lineText = line ? line?.domNode?.innerText : "";
 
-
-      if((charAtCursor == '\n'|| charAtCursor.includes('\n')) && range.index !==0 && lineText.trim().length <=0) {
+      if (
+        (charAtCursor == "\n" || charAtCursor.includes("\n")) &&
+        range.index !== 0 &&
+        lineText.trim().length <= 0
+      ) {
         setTimeout(() => {
-          currentEditor.deleteText(range.index-1,1 ,"user");
+          currentEditor.deleteText(range.index - 1, 1, "user");
         }, 0);
       }
+
+      if (!format.color) {
         if (backspaceFormatting.color) {
           setTimeout(() => {
             setFontColorSvg(backspaceFormatting.color);
             currentEditor.format("color", backspaceFormatting.color);
           }, 0);
         }
+      }
 
+
+      if (!format.size) {
         if (backspaceFormatting.size) {
           setTimeout(() => {
             currentEditor.format("size", backspaceFormatting.size);
             setSelectedFontSizeValue(backspaceFormatting.size);
           }, 0);
         }
+      }
 
+      if (!format.font) {
         if (backspaceFormatting.font) {
-         setTimeout(() => {
-           currentEditor.format("font", backspaceFormatting.font);
-           setSelectedFontValue(backspaceFormatting.font);
-         }, 0);
+          setTimeout(() => {
+            currentEditor.format("font", backspaceFormatting.font);
+            setSelectedFontValue(backspaceFormatting.font);
+          }, 0);
         }
+      }
 
+      if (!format.background) {
         if (backspaceFormatting.background) {
           setTimeout(() => {
             currentEditor.format("background", backspaceFormatting.background);
             setBgColorSvg(backspaceFormatting.background);
           }, 0);
         }
-      // } else {
-        if (format.list && lineText.trim().length <=0 ) {
-          currentEditor.format("list", false, "user")
-        }
-      // }
-      
+      }
 
       const content = currentEditor.root.innerHTML;
       if (isContentEmpty(content) && index > 0) {
@@ -1475,14 +1492,26 @@ function SyncFesion() {
     }
 
     if (event.key === "Enter") {
-      const [line] = currentEditor.getLine(range.index-1);
-      const lineText = line ? line.domNode.innerText : "";
+      const cursorPosition = currentEditor.getBounds(range.index);
+      const container = scrollPageRef.current;
+      const containerTop = scrollPageRef.current.scrollTop;
+      const containerBottom = containerTop + scrollPageRef.current.clientHeight;
 
-      if (lineText.length === 1) {
+      if (cursorPosition.top < containerTop || cursorPosition.bottom > containerBottom - 34) {
+        container.scrollTop = cursorPosition.top + 34 - container.offsetTop;
+      }
+
+      const [line] = currentEditor.getLine(range.index - 1);
+      const lineText = line ? line.domNode.innerText : "";
+      const [currentLine] = currentEditor.getLine(range.index);
+      const currentLineText = currentLine ? currentLine.domNode.innerText : "";
+      var customHeading = format?.customHeading;
+      var size = format?.size;
+      if (currentLineText.trim().length < 1) {
         if (format.customHeading !== "paragraph") {
-          currentEditor.format("customHeading", "paragraph");
-          currentEditor.format("size", selectedFontSize)
-          setSelectedHeadersValue(0)
+          customHeading = "paragraph";
+          size = selectedFontSize;
+          setSelectedHeadersValue(0);
         }
       }
 
@@ -1490,15 +1519,19 @@ function SyncFesion() {
         setFontColorSvg(format.color);
       }
       const htmlSpan = line?.domNode?.innerHTML;
-      const tempDiv = document.createElement('div');
+      const tempDiv = document.createElement("div");
       tempDiv.innerHTML = htmlSpan;
-      const lastSpan = tempDiv?.querySelectorAll('span:last-of-type');
-      const fontClass = Array?.from(lastSpan[0].classList)?.find(cls => cls.startsWith('ql-font'));
+      const lastSpan = tempDiv?.querySelectorAll("span:last-of-type");
+      if (lastSpan.length > 0 && lastSpan[0]) {
+        var fontClass = Array?.from(lastSpan[0].classList)?.find((cls) =>
+          cls.startsWith("ql-font")
+        );
+      }
 
-      if(fontClass) {
+      if (fontClass) {
         setTimeout(() => {
-          currentEditor.format("font",fontClass.replace("ql-font-",''))
-          setSelectedFontValue(fontClass.replace("ql-font-",''))
+          currentEditor.format("font", fontClass?.replace("ql-font-", ""));
+          setSelectedFontValue(fontClass?.replace("ql-font-", ""));
         }, 0);
       }
       if (format.size) {
@@ -1511,20 +1544,30 @@ function SyncFesion() {
         currentEditor.format("header", format.header);
       }
 
-      if (lineText.trim() === '') {
-        currentEditor.insertText(range.index-1, "\u200B", format);
+      let font = "";
+      if (fontClass) {
+        font = fontClass.replace("ql-font-", "");
+      } else {
+        font = format?.font;
       }
-      let font = '';
-      if(fontClass ) {font = fontClass.replace("ql-font-",'')}
-      else {
-        font = format?.font
+
+      if (lineText.trim() === "") {
+        currentEditor.insertText(range.index - 1, "\u200B", format);
       }
       currentEditor.insertText(range.index, "\u200B", {
-        size:format?.size,
-        font:font,
-        color:format.color,
-        background:format.background
+        size: size,
+        font: font,
+        color: format.color,
+        background: format.background,
+        customHeading: customHeading,
       });
+
+      if (lineText.trim().length <= 1 && currentLineText.trim().length <= 0) {
+        if (format.list) {
+          currentEditor.formatText(range.index - 1, 1, { list: null }, "user");
+          currentEditor.format("list", false)
+        }
+      }
     }
   };
 
@@ -1703,26 +1746,35 @@ function SyncFesion() {
   const [isScriptActive, setIsScriptActice] = useState("");
   const [isListActive, setIsListActive] = useState("");
 
+  type range = {
+    index: number;
+    length: number;
+  };
 
-  const handleChangeSelection = (range: any, source: string) => {
+  const handleChangeSelection = (range: range, source: string) => {
+    // console.log()
     const editor = editorRefs.current[currentPage].getEditor();
     if (range && range.length == 0) {
-      const [line] = editor.getLine(range.index);
+      const [line] = editor.getLine(range.index - 1);
       const format = editor.getFormat(range.index);
       if (format.color) {
         setFontColorSvg(format.color);
       } else {
-        if (range.length === 0) {
-          editor.format("color", prevFontColor);
-          setFontColorSvg(prevFontColor);
+        if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
+          if (range.length === 0) {
+            editor.format("color", prevFontColor);
+            setFontColorSvg(prevFontColor);
+          }
         }
       }
       if (format.background) {
         setBgColorSvg(format.background);
       } else {
-        if (range.length === 0) {
-          editor.format("background", prevBgColor);
-          setBgColorSvg(prevBgColor);
+        if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
+          if (range.length === 0) {
+            editor.format("background", prevBgColor);
+            setBgColorSvg(prevBgColor);
+          }
         }
       }
 
@@ -1740,7 +1792,7 @@ function SyncFesion() {
       if (format.font) {
         setSelectedFontValue(format.font);
       } else {
-        if (line?.domNode?.innerText?.length <= 1) {
+        if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
           if (range.length === 0) {
             editor.format("font", selectedFont);
             setSelectedFontValue(selectedFont);
@@ -1761,8 +1813,10 @@ function SyncFesion() {
           }
         } else {
           if (!format.header) {
-            editor.format("size", selectedFontSize);
-            setSelectedFontSizeValue(selectedFontSize);
+            if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
+              editor.format("size", selectedFontSize);
+              setSelectedFontSizeValue(selectedFontSize);
+            }
           } else {
             editor.format(
               "size",
@@ -1779,13 +1833,23 @@ function SyncFesion() {
       }
 
       if (format.customHeading) {
-        setSelectedHeadersValue(format.customHeading == "heading-1" ? 1 : format.customHeading == "heading-2" ? 2 : format.customHeading == "heading-3" ? 3 : format.customHeading == "heading-4" ? 4 : format.customHeading == "paragraph" ? 0 : 0)
-      }
-      else {
+        setSelectedHeadersValue(
+          format.customHeading == "heading-1"
+            ? 1
+            : format.customHeading == "heading-2"
+              ? 2
+              : format.customHeading == "heading-3"
+                ? 3
+                : format.customHeading == "heading-4"
+                  ? 4
+                  : format.customHeading == "paragraph"
+                    ? 0
+                    : 0
+        );
+      } else {
         editor.format("customHeading", "paragraph");
         setSelectedHeadersValue(0);
       }
-
     }
 
     if (range && range.length > 0) {
@@ -1794,40 +1858,47 @@ function SyncFesion() {
       if (format.font && Array.isArray(format.font)) {
         setSelectedFontValue("");
       } else {
-       const content = editor.getContents(range.index,range.length)
-       console.log(content)
-       const extractedFonts :string[] = [];
-       content.ops.forEach((op:any)=>{
-        if(op?.attributes?.font && !extractedFonts.includes(op?.attributes?.font)) {
-          extractedFonts.push(op.attributes.font);
+        const content = editor.getContents(range.index, range.length);
+        const extractedFonts: string[] = [];
+        content.ops.forEach((op: any) => {
+          if (
+            op?.attributes?.font &&
+            !extractedFonts.includes(op?.attributes?.font)
+          ) {
+            extractedFonts.push(op.attributes.font);
+          }
+        });
+
+        if (extractedFonts.length === 1) {
+          setSelectedFontValue(extractedFonts[0]);
+        } else {
+          setSelectedFontValue("");
         }
-       })
-       
-       if(extractedFonts.length ===1) {
-        setSelectedFontValue(extractedFonts[0]);
-       }else {
-        setSelectedFontValue("")
-       }
       }
-      
-      if (!format.size ||format.size.constructor == Array) {
+
+      if (!format.size || format.size.constructor == Array) {
         setSelectedFontSizeValue("");
-      }
-      else {
+      } else {
         setSelectedFontSizeValue(format.size);
       }
 
-
-      if (
-        (!format.customHeading) ||
-        format.customHeading.constructor == Array
-      ) {
+      if (!format.customHeading || format.customHeading.constructor == Array) {
         setSelectedHeadersValue("");
+      } else {
+        setSelectedHeadersValue(
+          format.customHeading == "heading-1"
+            ? 1
+            : format.customHeading == "heading-2"
+              ? 2
+              : format.customHeading == "heading-3"
+                ? 3
+                : format.customHeading == "heading-4"
+                  ? 4
+                  : format.customHeading == "paragraph"
+                    ? 0
+                    : ""
+        );
       }
-      else {
-        setSelectedHeadersValue(format.customHeading == "heading-1" ? 1 : format.customHeading == "heading-2" ? 2 : format.customHeading == "heading-3" ? 3 : format.customHeading == "heading-4" ? 4 : format.customHeading == "paragraph" ? 0 : "")
-      }
-
 
       setSelection(range);
       // selectionRef.current = range;
@@ -2201,9 +2272,6 @@ function SyncFesion() {
     return () => window.removeEventListener("resize", calculateRemainingVh);
   }, [handleClick]);
 
-  const scrollPageRef = useRef<any>(null);
-
-
   const EditIconSvg = () => {
     return (
       <svg
@@ -2220,6 +2288,8 @@ function SyncFesion() {
       </svg>
     );
   };
+
+  const scrollPageRef = useRef<any>(null);
 
   return (
     <>
@@ -3288,7 +3358,7 @@ function SyncFesion() {
                 alignItems="center"
                 style={{
                   height: "100%",
-                  overflowX: "auto",
+                  overflowY: "auto",
                 }}
                 ref={scrollPageRef}
               >
@@ -3310,15 +3380,6 @@ function SyncFesion() {
                           borderRadius: "5px",
                           width: "100%",
                           minHeight: `${documentPageSize.height}`,
-                        }}
-                        onClick={() => {
-                          if (!editorRefs) return;
-                          const editor = editorRefs.current[currentPage].getEditor();
-                          const range = editor.getSelection(true);
-                          if(range.length > 0) {
-                            editor.setSelection(range.index+range.length,0)
-                          }
-                           editor.focus();
                         }}
                       >
                         <ReactQuill
@@ -3348,7 +3409,7 @@ function SyncFesion() {
                         />
                         <style>
                           {`
-                            .ql-container.ql-snow {
+                            .ql-editor {
                              min-height: 375px;
                              padding-top: ${documentPageMargins.top} !important;
                              padding-bottom: ${documentPageMargins.bottom} !important;

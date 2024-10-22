@@ -1022,72 +1022,111 @@ body {
   stroke-linejoin: round;
   stroke-width: 2;
 }
-
 .ql-editor ul[data-list-type="upper-alpha"] {
   list-style-type: none;
   counter-reset: list-item;
 }
 
+.ql-editor ul[data-list-type="upper-alpha"] > li {
+  counter-increment: list-item;
+}
+
 .ql-editor ul[data-list-type="upper-alpha"] > li:before {
   content: counter(list-item, upper-alpha) ". ";
   color: var(--list-marker-color);
+  font-size: var(--list-size);
   position: relative;
-  left: -11px;
+  left: -17px;
 }
 
+/* Lower Alpha List */
 .ql-editor ul[data-list-type="lower-alpha"] {
   list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-alpha"] > li {
+  counter-increment: list-item;
 }
 
 .ql-editor ul[data-list-type="lower-alpha"] > li:before {
   content: counter(list-item, lower-alpha) ". ";
   color: var(--list-marker-color);
+  font-size: var(--list-size);
   position: relative;
-  left: -11px;
+  left: -17px;
 }
 
+/* Lower Greek List */
 .ql-editor ul[data-list-type="lower-greek"] {
   list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-greek"] > li {
+  counter-increment: list-item;
 }
 
 .ql-editor ul[data-list-type="lower-greek"] > li:before {
   content: counter(list-item, lower-greek) ". ";
   color: var(--list-marker-color);
+  font-size: var(--list-size);
   position: relative;
-  left: -11px;
+  left: -17px;
 }
 
+/* Upper Roman List */
 .ql-editor ul[data-list-type="upper-roman"] {
   list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="upper-roman"] > li {
+  counter-increment: list-item;
 }
 
 .ql-editor ul[data-list-type="upper-roman"] > li:before {
   content: counter(list-item, upper-roman) ". ";
   color: var(--list-marker-color);
+  font-size: var(--list-size);
   position: relative;
-  left: -15px;
+  left: -17px;
 }
 
+/* Lower Roman List */
 .ql-editor ul[data-list-type="lower-roman"] {
   list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-roman"] > li {
+  counter-increment: list-item;
 }
 
 .ql-editor ul[data-list-type="lower-roman"] > li:before {
   content: counter(list-item, lower-roman) ". ";
   color: var(--list-marker-color);
+  font-size: var(--list-size);
   position: relative;
-  left: -14px;
+  left: -17px;
 }
 
 .ql-editor ul[data-list-type="default"] {
   list-style-type: none;
+  counter-reset: list-counter; /* Reset the list counter */
+
+}
+
+.ql-editor ul[data-list-type="default"] > li {
+  counter-increment: list-counter; /* Increment the counter for each list item */
 }
 
 .ql-editor ul[data-list-type="default"] > li:before {
-  content: counter(list-item, ordered) ". ";
+  content: counter(list-counter) ". "; /* Display the counter */
   color: var(--list-marker-color);
+  font-size: var(--list-size);
   position: relative;
-  left: -11px;
+  left: -17px;
 }
 
 .ql-editor ul[data-list-type="bullet-dot"] {
@@ -1099,7 +1138,7 @@ body {
   content: "\e747"; /* Correct escaping */
   display: inline-block;
   font-family: 'e-icons';
-  font-size: 5px;
+  font-size: var(--list-size);
   color: var(--list-marker-color);
   position: relative;
   left: -16px;
@@ -1114,7 +1153,7 @@ body {
   content: "\e747";
   display: inline-block;
   font-family: 'e-icons';
-  font-size: 6px;
+  font-size: var(--list-size);
   color: var(--list-marker-color);
   position: relative;
   left: -15px;
@@ -1130,7 +1169,7 @@ body {
   content: "\e7d0"; /* Correct escaping */
   display: inline-block;
   font-family: 'e-icons';
-  font-size: 6px;
+  font-size: var(--list-size);
   color: var(--list-marker-color);
   position: relative;
   left: -15px;
@@ -1147,7 +1186,7 @@ body {
   content: "\e7be"; /* Correct escaping */
   display: inline-block;
   font-family: 'e-icons';
-  font-size: 6px;
+  font-size: var(--list-size);
   color: var(--list-marker-color);
   position: relative;
   left: -15px;
@@ -1164,7 +1203,7 @@ body {
   content: "\e79b"; /* Correct escaping */
   display: inline-block;
   font-family: 'e-icons';
-  font-size: 7px;
+  font-size: var(--list-size);
   color: var(--list-marker-color);
   position: relative;
   left: -15px;
@@ -1182,7 +1221,7 @@ body {
   content: "\e763"; /* Correct escaping */
   display: inline-block;
   font-family: 'e-icons';
-  font-size: 7px;
+  font-size: var(--list-size);
   color: var(--list-marker-color);
   position: relative;
   left: -15px;
@@ -1199,7 +1238,7 @@ body {
   content: "\e7fc"; /* Correct escaping */
   display: inline-block;
   font-family: 'e-icons';
-  font-size: 7px;
+  font-size: var(--list-size);
   color: var(--list-marker-color);
   position: relative;
   left: -15px;
@@ -2105,3 +2144,8 @@ fill: #7F7F7F;
 }
 
 /* sy */
+
+.ql-editor li:not(.ql-direction-rtl)::before{
+  margin-left: -0.5em !important;
+  margin-right: 0.3em !important;
+}

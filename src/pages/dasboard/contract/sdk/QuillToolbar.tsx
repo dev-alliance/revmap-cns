@@ -1,12 +1,9 @@
 import { ContractContext } from "@/context/ContractContext";
 import useStore from "@/context/ZustandStore";
-import { Menu, MenuItem, Select, SelectChangeEvent, Tooltip } from "@mui/material";
-import Form from "react-bootstrap/Form";
+import { Menu, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import React, {
   ChangeEvent,
-  DOMElement,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -475,7 +472,7 @@ const oldSize = [
   "54px",
   "60px",
   "72px",
-]
+];
 const listHandler = function (value: any) {
   // @ts-ignore
   const formats = this.quill.getFormat();
@@ -503,10 +500,7 @@ export const modules = {
     maxStack: 1000,
     userOnly: true,
   },
-
 };
-
-
 
 // Formats objects for setting up the Quill editor
 export const formats = [
@@ -569,12 +563,12 @@ const LineHeightStyle = new Parchment.Attributor.Style(
 );
 
 const customHeading = {
-  scope: Parchment.Scope.INLINE, 
-  whitelist: ['heading-1', 'heading-2', 'heading-3', 'heading-4', 'paragraph'] 
+  scope: Parchment.Scope.INLINE,
+  whitelist: ["heading-1", "heading-2", "heading-3", "heading-4", "paragraph"],
 };
 const CustomHeadingAttribute = new Parchment.Attributor.Class(
-  'customHeading',
-  'class',
+  "customHeading",
+  "class",
   customHeading
 );
 Quill.register(CustomHeadingAttribute, true);
@@ -595,7 +589,7 @@ export default function QuillToolbar(props: any) {
     isListActive,
     setIsListActive,
     handleChangeSelection,
-    scrollPageRef
+    scrollPageRef,
   } = props;
 
   const {
@@ -634,54 +628,48 @@ export default function QuillToolbar(props: any) {
     contractNewFontSize,
   } = useContext(ContractContext);
 
-
   const toolbarRef: any = useRef(null);
 
   const handleListClick = (value: string) => {
-    const editor = editorRefContext.getEditor(); // Access the editor instance
+    const editor = editorRefContext.getEditor();
     if (!editor) return;
 
-    const range = editor.getSelection(true); // Get the current selection
+    const range = editor.getSelection(true);
     if (!range) return;
 
-    // Get the block (line) at the current cursor position
-    let [block] = editor.scroll.descendant(Quill.import("blots/block"), range.index);
+    let [block] = editor.scroll.descendant(
+      Quill.import("blots/block"),
+      range.index
+    );
 
-    // Ensure we're in a list item (LI)
     if (block && block.domNode.tagName === "LI") {
-      const list = block.parent; // Get the parent list (OL or UL)
+      const list = block.parent;
 
-      // If we're switching list types (from OL to UL or vice versa), we want to split the list
       if (list && list.domNode.tagName !== value.toUpperCase()) {
-        // Remove the existing list format from the current selection
         editor.format("list", false, "user");
 
-        // Then apply the new list type to the current selection, starting a new list
         setIsListActive(value);
         editor.format("list", value, "user");
       } else {
-        // We're already in a list of the same type; apply or remove the list type to each list item
         list.children.forEach((listItem: any) => {
-          const itemIndex = editor.getIndex(listItem); // Get the index of each list item
+          const itemIndex = editor.getIndex(listItem);
 
-          // Apply or remove the list type based on the selected value
           if (value === "none") {
             setIsListActive("none");
-            editor.formatLine(itemIndex, 1, { list: false }, "user"); // Remove list format
+            editor.formatLine(itemIndex, 1, { list: false }, "user");
           } else {
             setIsListActive(value);
-            editor.formatLine(itemIndex, 1, { list: value }, "user"); // Apply the new list type
+            editor.formatLine(itemIndex, 1, { list: value }, "user");
           }
         });
       }
     } else {
-      // If we're not in a list already, apply the list formatting to the current line
       if (value === "none") {
         setIsListActive("none");
-        editor.format("list", false, "user"); // Remove list format
+        editor.format("list", false, "user");
       } else {
         setIsListActive(value);
-        editor.format("list", value, "user"); // Apply the new list type
+        editor.format("list", value, "user");
       }
     }
 
@@ -746,7 +734,7 @@ export default function QuillToolbar(props: any) {
     setAnchorEl2(event.currentTarget);
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
-    setIndexCursor(range)
+    setIndexCursor(range);
     if (range.length > 0) {
       setTimeout(() => {
         editor.setSelection(range.index, range.length);
@@ -774,7 +762,6 @@ export default function QuillToolbar(props: any) {
       }, 0);
     }
     setAnchorEl2(null);
-
   };
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -793,7 +780,7 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext.getEditor();
 
     // Save the current scroll position of the scrollable container
-    const scrollContainer = scrollPageRef.current;  // Ensure scrollPageRef is defined and points to the correct container
+    const scrollContainer = scrollPageRef.current; // Ensure scrollPageRef is defined and points to the correct container
     const scrollY = scrollContainer ? scrollContainer.scrollTop : 0; // Get scroll position of scrollPageRef
     // console.log
 
@@ -815,18 +802,16 @@ export default function QuillToolbar(props: any) {
       }, 0);
     }
     setAnchorEl(null);
-
   };
 
-
   const handleOpenMargins = (event: any) => {
-    if(openMargins) return ;
+    if (openMargins) return;
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
     setIndexCursor(range);
     const scrollContainer = scrollPageRef.current;
     setAnchorElMargins(event.currentTarget);
-    if(scrollPosition) {
+    if (scrollPosition) {
       scrollContainer.scrollTop = scrollPosition;
     }
   };
@@ -835,15 +820,14 @@ export default function QuillToolbar(props: any) {
     setAnchorElMargins(null);
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
-
   };
 
   const handleOpenOrientation = (event: any) => {
@@ -857,21 +841,21 @@ export default function QuillToolbar(props: any) {
     setAnchorElOrientation(null);
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
   };
 
   const handleOpenTextColor = (event: any) => {
-    if(openTextColor) return ;
+    if (openTextColor) return;
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
-    setIndexCursor(range)
+    setIndexCursor(range);
     const scrollContainer = scrollPageRef.current;
     const scrollY = scrollContainer ? scrollContainer.scrollTop : 0;
     setScrollPosition(scrollY);
@@ -893,7 +877,6 @@ export default function QuillToolbar(props: any) {
     if (selection.length) {
       setTimeout(() => {
         editor.setSelection(selection.length, 0);
-
       }, 0);
     }
     setTimeout(() => {
@@ -905,10 +888,10 @@ export default function QuillToolbar(props: any) {
     editor.focus();
   };
 
-  const [scrollPosition, setScrollPosition] = useState<number>(0)
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
 
   const handleOpenFontColor = (event: any) => {
-    if(openFontColor) return 
+    if (openFontColor) return;
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
     const scrollContainer = scrollPageRef.current;
@@ -937,13 +920,12 @@ export default function QuillToolbar(props: any) {
       editor.focus();
     }
 
-    if(scrollPosition){
+    if (scrollPosition) {
       scrollContainer.scrollTop = scrollPosition;
     }
 
     setAnchorElFontColor(null);
   };
-
 
   const handleSaveFontColor = () => {
     const editor = editorRefContext.getEditor();
@@ -952,31 +934,41 @@ export default function QuillToolbar(props: any) {
     const range = editor.getSelection(true);
 
     if (range.length === 0) {
-      editor.format("color", TextColor, "user");
       setPrevFontColor(TextColor);
       setFontColorList(TextColor);
+      const [line] = editor.getLine(range.index);
+      const text = line?.domNode?.innerText;
+      if (text == "\u200B") {
+        editor.formatText(range.index - 1, 1, { color: TextColor }, "user");
+      } else {
+        editor.format("color", TextColor, "user");
+      }
     } else {
-      editor.formatText(range.index, range.length, { color: TextColor }, "user");
+      editor.formatText(
+        range.index,
+        range.length,
+        { color: TextColor },
+        "user"
+      );
       editor.setSelection(range.index + range.length, 0);
     }
 
-    setFontColorSvg(TextColor)
-    
+    setFontColorSvg(TextColor);
+
     setAnchorElFontColor(null);
     editor.focus();
   };
-
 
   const handleCancelFontColor = () => {
     const editor = editorRefContext.getEditor();
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
     setAnchorElFontColor(null);
@@ -1001,12 +993,12 @@ export default function QuillToolbar(props: any) {
     setAnchorElSize(null);
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
   };
@@ -1029,19 +1021,18 @@ export default function QuillToolbar(props: any) {
     const scrollY = scrollContainer ? scrollContainer.scrollTop : 0;
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
         if (scrollContainer) {
           scrollContainer.scrollTop = scrollY;
         }
-        editor.focus()
+        editor.focus();
       }, 0);
     }
     setAnchorElAlignment(null);
-
   };
 
   const handleOpenPicture = (event: any) => {
@@ -1057,12 +1048,12 @@ export default function QuillToolbar(props: any) {
     setAnchorElPicture(null);
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
   };
@@ -1080,12 +1071,12 @@ export default function QuillToolbar(props: any) {
     setAnchorElMedia(null);
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
   };
@@ -1104,12 +1095,12 @@ export default function QuillToolbar(props: any) {
     setAnchorElColumns(null);
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
   };
@@ -1132,15 +1123,15 @@ export default function QuillToolbar(props: any) {
     const scrollY = scrollContainer ? scrollContainer.scrollTop : 0;
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
         if (scrollContainer) {
           scrollContainer.scrollTop = scrollY;
         }
-        editor.focus()
+        editor.focus();
       }, 0);
     }
     setAnchorElSpacing(null);
@@ -1158,16 +1149,15 @@ export default function QuillToolbar(props: any) {
     setAnchorElLinkPicture(null);
     if (indexCursor) {
       if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0)
+        editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
-        editor.setSelection(indexCursor.index, 0)
+        editor.setSelection(indexCursor.index, 0);
       }
       setTimeout(() => {
-        editor.focus()
+        editor.focus();
       }, 0);
     }
   };
-
 
   const handleOpenCase = (event: any) => {
     const editor = editorRefContext.getEditor();
@@ -1224,13 +1214,28 @@ export default function QuillToolbar(props: any) {
     const range = editor.getSelection(true);
     if (range.length === 0) {
       setSelectedFont(event.target.value);
-      editor.format("font", event.target.value, "user")
-    }
-    else {
+      const [line] = editor.getLine(range.index);
+      const text = line?.domNode?.innerText;
+      if (text == "\u200B") {
+        editor.formatText(
+          range.index - 1,
+          1,
+          { font: event.target.value },
+          "user"
+        );
+      } else {
+        editor.format("font", event.target.value, "user");
+      }
+    } else {
       // setSelectedFont(event.target.value);
-      editor.formatText(range.index, range.length, {
-        font: event.target.value
-      }, "user")
+      editor.formatText(
+        range.index,
+        range.length,
+        {
+          font: event.target.value,
+        },
+        "user"
+      );
     }
     setSelectedFontValue(event.target.value);
     setTimeout(() => {
@@ -1244,21 +1249,33 @@ export default function QuillToolbar(props: any) {
     const range = editor.getSelection(true);
     if (range.length === 0) {
       setSelectedFontSize(event.target.value);
-      editor.format("size", event.target.value, "user")
-    }
-    else {
-      // setSelectedFontSize(event.target.value);
-      editor.formatText(range.index, range.length, {
-        size: event.target.value
-      }, "user")
+      const [line] = editor.getLine(range.index);
+      const text = line?.domNode?.innerText;
+      if (text == "\u200B") {
+        editor.formatText(
+          range.index - 1,
+          1,
+          { size: event.target.value },
+          "user"
+        );
+      } else {
+        editor.format("size", event.target.value, "user");
+      }
+    } else {
+      editor.formatText(
+        range.index,
+        range.length,
+        {
+          size: event.target.value,
+        },
+        "user"
+      );
     }
     setSelectedFontSizeValue(event.target.value);
     setTimeout(() => {
       editor.focus();
     }, 0);
   };
-
-
 
   const handleHeaderChange = (event: SelectChangeEvent<any>) => {
     const editor = editorRefContext?.getEditor();
@@ -1268,42 +1285,50 @@ export default function QuillToolbar(props: any) {
     const range = editor.getSelection();
 
     const headerSizes: Record<string, string> = {
-      1: '24px',
-      2: '18px',
-      3: '14px',
-      4: '13px',
-      default: '12px', 
+      1: "24px",
+      2: "18px",
+      3: "14px",
+      4: "13px",
+      default: "12px",
     };
 
-    const getClass :Record<string ,string> = {
-      1:"heading-1",
-      2:"heading-2",
-      3:"heading-3",
-      4:"heading-4",
-      0:"paragraph"
-    }
+    const getClass: Record<string, string> = {
+      1: "heading-1",
+      2: "heading-2",
+      3: "heading-3",
+      4: "heading-4",
+      0: "paragraph",
+    };
 
     // Get the corresponding font size for the selected header
     const size = headerSizes[selectedHeaderValue] || headerSizes.default;
 
     if (range) {
       if (range.length > 0) {
-        editor.formatText(range.index, range.length, { size , customHeading:getClass[selectedHeaderValue] }, "user");
-       
+        editor.formatText(
+          range.index,
+          range.length,
+          { size, customHeading: getClass[selectedHeaderValue] },
+          "user"
+        );
       } else {
         const [line, offset] = editor.getLine(range.index);
         const lineLength = line.length();
-        if(lineLength >1 ) {
-          editor.formatText(range.index - offset, lineLength, { size ,customHeading:getClass[selectedHeaderValue]}, "user");
-        }else {
-          editor.format("customHeading",getClass[selectedHeaderValue],"user")
-          editor.format("size",size,"user")
+        if (lineLength > 1) {
+          editor.formatText(
+            range.index - offset,
+            lineLength,
+            { size, customHeading: getClass[selectedHeaderValue] },
+            "user"
+          );
+        } else {
+          editor.format("customHeading", getClass[selectedHeaderValue], "user");
+          editor.format("size", size, "user");
         }
-        
       }
     }
 
-    setSelectedFontSizeValue(size)
+    setSelectedFontSizeValue(size);
 
     setTimeout(() => {
       editor.focus();
@@ -1447,7 +1472,6 @@ export default function QuillToolbar(props: any) {
     },
   ];
 
-
   const [prevSelectionBg, setPrevSelectionBg] = useState<any>(null);
 
   const handleTextHighlightColorChange = (color: any) => {
@@ -1460,48 +1484,54 @@ export default function QuillToolbar(props: any) {
     if (!editor) return;
     const range = editor.getSelection(true);
     if (range.length === 0 && !prevSelectionBg) {
-      editor.format("background", color, "user");
+      const [line] = editor.getLine(range.index);
+      const text = line?.domNode?.innerText;
+      if (text == "\u200B") {
+        editor.formatText(range.index - 1, 1, { background: color }, "user");
+      } else {
+        editor.format("background", color, "user");
+      }
       setPrevBgColor(color);
-    }
-    else {
+    } else {
       // setPrevBgColor(color);
       if (prevSelectionBg) {
         const range = prevSelectionBg;
-        editor.formatText(range.index, range.length,
+        editor.formatText(
+          range.index,
+          range.length,
           {
-            background: color
-          }
-          , "user"
+            background: color,
+          },
+          "user"
         );
         setPrevSelectionBg(range);
         editor.setSelection(range.index + range.length, 0);
-      }
-      else {
-        editor.formatText(range.index, range.length,
+      } else {
+        editor.formatText(
+          range.index,
+          range.length,
           {
-            background: color
-          }
-          , "user"
+            background: color,
+          },
+          "user"
         );
         setPrevSelectionBg(range);
         editor.setSelection(range.index + range.length, 0);
       }
     }
-  }
+  };
 
   const [TextColor, setTextColor] = useState("");
 
-
   const handleFontColorChange = (color: any) => {
     setTextColor(color.hex);
-    setFontColorSvg(color.hex)
+    setFontColorSvg(color.hex);
   };
 
   const handleBgColorChange = (color: any) => {
     setBgColor(color.hex);
     setBgColorSvg(color.hex);
   };
-
 
   const toSentenceCase = (text: any) => {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
@@ -1550,7 +1580,7 @@ export default function QuillToolbar(props: any) {
           // Return a new operation with transformed text but keep the original attributes
           return {
             insert: transformedSegment,
-            attributes: op.attributes || {} // Handle undefined attributes
+            attributes: op.attributes || {}, // Handle undefined attributes
           };
         } else {
           // Handle non-string inserts (like images or embeds)
@@ -1642,7 +1672,6 @@ export default function QuillToolbar(props: any) {
 
     // Get all paragraphs
     const paragraphs = editorContainer.querySelectorAll("p");
-    console.log("Paragraphs:", paragraphs);
 
     paragraphs.forEach((p: HTMLElement) => {
       // Remove text nodes containing '¶'
@@ -1981,16 +2010,15 @@ export default function QuillToolbar(props: any) {
     const editor = editorRefContext?.getEditor();
     editor.history.undo();
     const range = editor.getSelection(true);
-    handleChangeSelection(range, "user")
+    handleChangeSelection(range, "user");
   };
 
   const handleRedo = () => {
     const editor = editorRefContext?.getEditor();
     editor.history.redo();
     const range = editor.getSelection(true);
-    handleChangeSelection(range, "user")
+    handleChangeSelection(range, "user");
   };
-
 
   const ScrollLeftSvg = () => {
     return (
@@ -2917,7 +2945,7 @@ export default function QuillToolbar(props: any) {
           position: "relative",
           right: "0.8rem",
           cursor: "pointer",
-          pointerEvents: "none"
+          pointerEvents: "none",
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="21"
@@ -2944,7 +2972,7 @@ export default function QuillToolbar(props: any) {
           position: "relative",
           right: "0.8rem",
           cursor: "pointer",
-          pointerEvents: "none"
+          pointerEvents: "none",
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="36"
@@ -2971,7 +2999,7 @@ export default function QuillToolbar(props: any) {
           position: "relative",
           right: "0.8rem",
           cursor: "pointer",
-          pointerEvents: "none"
+          pointerEvents: "none",
         }}
         xmlns="http://www.w3.org/2000/svg"
         width="21"
@@ -3077,7 +3105,6 @@ export default function QuillToolbar(props: any) {
 
         if (currentFormat["code-block"]) {
           editor.format("code-block", false, "user");
-
         } else {
           editor.format("code-block", true, "user");
         }
@@ -3090,128 +3117,126 @@ export default function QuillToolbar(props: any) {
     const quill = editorRefContext.getEditor();
 
     const makeClass = (fontClass: string, fontFamily: string) => {
-      const cleanedFontClass = fontClass.split(',')[0];
+      const cleanedFontClass = fontClass.split(",")[0];
       const cssRule = `.${cleanedFontClass} { font-family: "${fontFamily}"; }`;
-      const style = document.createElement('style');
-      style.type = 'text/css';
+      const style = document.createElement("style");
+      style.type = "text/css";
       style.innerHTML = `.${cleanedFontClass} { font-family: "${fontFamily}"; }`;
       setContractNewFontStyles((prevValues: any) => {
         if (!prevValues.includes(cssRule)) {
-          return [...prevValues, cssRule]
-        }
-        else return prevValues
-      })
+          return [...prevValues, cssRule];
+        } else return prevValues;
+      });
       document.head.appendChild(style);
     };
 
-    quill.clipboard.addMatcher(Node.ELEMENT_NODE, (node: HTMLElement, delta: any) => {
-      // console.log(range)
-      // console.log(node,delta)
-      let fontFamily = node.style.fontFamily
-        ? node.style.fontFamily.toLowerCase().replace(/['"]/g, '') // Remove quotes
-        : '';
+    quill.clipboard.addMatcher(
+      Node.ELEMENT_NODE,
+      (node: HTMLElement, delta: any) => {
+        // console.log(range)
+        // console.log(node,delta)
+        let fontFamily = node.style.fontFamily
+          ? node.style.fontFamily.toLowerCase().replace(/['"]/g, "") // Remove quotes
+          : "";
 
-      var fontClass = fontFamily.replace(/\s+/g, '-').split(',')[0];
-      var fontSize = node.style.fontSize;
+        var fontClass = fontFamily.replace(/\s+/g, "-").split(",")[0];
+        var fontSize = node.style.fontSize;
 
-      if (!fontClass) {
-        if (node.tagName === "UL") {
-          node.querySelectorAll('li').forEach((li: HTMLElement) => {
-            li.childNodes.forEach((child: any) => {
-              fontSize = child?.style?.fontSize
-              fontClass = child?.className?.replace("ql-font-", '')
-              fontFamily = child?.className?.replace("ql-font-", '')
-            })
-          });
-        }
-        else {
-          if (node.childNodes) {
-            node.childNodes.forEach((child: any) => {
-              if (child.nodeType === 1) {
+        if (!fontClass) {
+          if (node.tagName === "UL") {
+            node.querySelectorAll("li").forEach((li: HTMLElement) => {
+              li.childNodes.forEach((child: any) => {
                 fontSize = child?.style?.fontSize;
-                fontClass = child?.className?.replace("ql-font-", '');
-                fontFamily = child?.className?.replace("ql-font-", '');
-                console.log(fontClass, child);
-              } else if (child.nodeType === 3) {
-                fontSize = node?.style?.fontSize;
-                fontClass = node?.className?.replace("ql-font-", '');
-                fontFamily = node?.className?.replace("ql-font-", '');
-              }
+                fontClass = child?.className?.replace("ql-font-", "");
+                fontFamily = child?.className?.replace("ql-font-", "");
+              });
+            });
+          } else {
+            if (node.childNodes) {
+              node.childNodes.forEach((child: any) => {
+                if (child.nodeType === 1) {
+                  fontSize = child?.style?.fontSize;
+                  fontClass = child?.className?.replace("ql-font-", "");
+                  fontFamily = child?.className?.replace("ql-font-", "");
+                  console.log(fontClass, child);
+                } else if (child.nodeType === 3) {
+                  fontSize = node?.style?.fontSize;
+                  fontClass = node?.className?.replace("ql-font-", "");
+                  fontFamily = node?.className?.replace("ql-font-", "");
+                }
+              });
+            }
+          }
+        }
+
+        if (!fontClass) {
+          fontFamily = "arial";
+          fontClass = "arial";
+        }
+
+        if (fontSize && !oldSize.includes(fontSize)) {
+          if (fontSize.includes("pt")) {
+            const fs = fontSize.replace("pt", "");
+            const pt = Math.floor(Number(fs) * 1.333);
+            fontSize = `${pt}px`;
+          }
+
+          if (!SizeStyle.whitelist.includes(fontSize)) {
+            SizeStyle.whitelist.push(fontSize);
+            setContractNewFontSize((prevValues: string[]) => {
+              if (!prevValues.includes(fontSize)) {
+                return [...prevValues, fontSize];
+              } else return [prevValues];
             });
           }
         }
-      }
 
-      if (!fontClass) {
-        fontFamily = "arial";
-        fontClass = "arial"
-      }
-
-      if (fontSize && !oldSize.includes(fontSize)) {
-
-        if (fontSize.includes("pt")) {
-          const fs = fontSize.replace("pt", '');
-          const pt = Math.floor(Number(fs) * 1.333);
-          fontSize = `${pt}px`
+        if (fontFamily && !oldFonts.includes(fontClass)) {
+          if (!Font.whitelist.includes(fontClass)) {
+            fontClass = "arial";
+            fontFamily = "arial";
+            makeClass(`ql-font-${fontClass}`, fontFamily);
+          }
         }
 
-        if (!SizeStyle.whitelist.includes(fontSize)) {
-          SizeStyle.whitelist.push(fontSize);
-          setContractNewFontSize((prevValues: string[]) => {
-            if (!prevValues.includes(fontSize)) {
-              return [...prevValues, fontSize]
+        delta.ops.forEach((op: any) => {
+          console.log(quill.getSelection(true).index);
+          if (op.insert) {
+            if (!op.attributes) {
+              op.attributes = {};
             }
-            else return [prevValues]
-          })
+            op.attributes.font = fontClass;
+            if (!op.attributes.header) {
+              op.attributes.size = fontSize;
+            }
+            op.attributes.style = op.attributes.style
+              ? `${op.attributes.style}; font-family: ${fontFamily};`
+              : `font-family: ${fontFamily};`;
+            if (!op.attributes.color) {
+              op.attributes.color = "black";
+            }
+            if (!op.attributes.background) {
+              op.attributes.background = "#fefefe";
+            }
+            delete op.attributes.bold;
+          }
+        });
+
+        if (fontSize !== "18px" && fontSize !== "24px" && fontSize) {
+          setSelectedFontSize(fontSize);
+          setSelectedFontSizeValue(fontSize);
         }
+        setSelectedFont(fontClass);
+        setSelectedFontValue(fontClass);
+        return delta;
       }
-
-      if (fontFamily && !oldFonts.includes(fontClass)) {
-        if (!Font.whitelist.includes(fontClass)) {
-          fontClass = "arial";
-          fontFamily = "arial"
-          makeClass(`ql-font-${fontClass}`, fontFamily);
-        };
-
-      }
-
-      delta.ops.forEach((op: any) => {
-        console.log(quill.getSelection(true).index)
-        if (op.insert) {
-          if (!op.attributes) {
-            op.attributes = {};
-          }
-          op.attributes.font = fontClass;
-          if (!op.attributes.header) {
-            op.attributes.size = fontSize;
-          }
-          op.attributes.style = op.attributes.style
-            ? `${op.attributes.style}; font-family: ${fontFamily};`
-            : `font-family: ${fontFamily};`;
-          if (!op.attributes.color) {
-            op.attributes.color = "black";
-          }
-          if (!op.attributes.background) {
-            op.attributes.background = "#fefefe";
-          }
-          delete op.attributes.bold;
-        }
-      });
-
-      if (fontSize !== "18px" && fontSize !== "24px" && fontSize) {
-        setSelectedFontSize(fontSize)
-        setSelectedFontSizeValue(fontSize)
-      }
-      setSelectedFont(fontClass)
-      setSelectedFontValue(fontClass)
-      return delta;
-    });
+    );
 
     let initialLength = quill.getLength();
     let startRange = null;
 
-    quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
-      if (source === 'user') {
+    quill.on("text-change", (delta: any, oldDelta: any, source: any) => {
+      if (source === "user") {
         let newLength = quill.getLength();
 
         // If the text length has increased, it's likely due to pasting
@@ -3221,7 +3246,7 @@ export default function QuillToolbar(props: any) {
           // Calculate the full range of the pasted text
           let pasteRange = {
             index: startRange, // Where the paste started
-            length: insertedTextLength // Length of the inserted content
+            length: insertedTextLength, // Length of the inserted content
           };
 
           // console.log('Pasted range:', pasteRange);
@@ -3235,32 +3260,79 @@ export default function QuillToolbar(props: any) {
     });
   }, [editorRefContext]);
 
-
   useEffect(() => {
     if (!editorRefContext) return;
     const editor = editorRefContext.getEditor();
 
     const updateListMarkerColor = () => {
-      const listItems: any = document.querySelectorAll('.ql-editor ul');
+      const listItems: any = document.querySelectorAll(".ql-editor ul");
 
       listItems.forEach((ul: HTMLElement) => {
+        const dataList = ul.getAttribute("data-list-type");
         ul.childNodes.forEach((li: any) => {
           li.childNodes.forEach((child: any) => {
             var textColor = child?.style?.color;
+            var fontSize = child?.style?.fontSize;
+            const size = Number(fontSize.replace("px", ""));
+      
+            // Set text color for list marker
             if (textColor) {
-              li.style.setProperty('--list-marker-color', textColor);
+              li.style.setProperty("--list-marker-color", textColor);
+            } else {
+              li.style.setProperty("--list-marker-color", fontColorSvg);
             }
-            else {
-              li.style.setProperty('--list-marker-color', fontColorSvg);
+      
+            // Calculate and set the list size
+            let listSize;
+      
+            switch (dataList) {
+              case "bullet-dot":
+                listSize = size / 2 - 1;
+                break;
+              case "bullet-dot-large":
+              case "bullet-circle":
+              case "bullet-square":
+              case "bullet-flower":
+              case "bullet-arrow":
+              case "bullet-tick":
+                listSize = size / 2;
+                break;
+              default:
+                listSize = size;
             }
-          })
-        })
+      
+            // Check if the calculated listSize is -1 and set to 0 if true
+            listSize = listSize < 0 ? 0 : listSize; // Ensures no negative values
+      
+            // Set the calculated size to the CSS variable
+            li.style.setProperty("--list-size", listSize + "px");
+          });
+        });
       });
+      
     };
-
     updateListMarkerColor();
-    editor.on("text-change", updateListMarkerColor)
-  }, [editorRefContext, fontColorSvg]);
+    // Update marker color on text change
+    editor.on("text-change", updateListMarkerColor);
+
+    // Update marker color on selection change (captures backspace behavior)
+    editor.on("selection-change", updateListMarkerColor);
+
+    // Use MutationObserver to capture DOM changes directly
+    const observer = new MutationObserver(updateListMarkerColor);
+    const targetNode = document.querySelector(".ql-editor");
+
+    if (targetNode) {
+      observer.observe(targetNode, { childList: true, subtree: true });
+    }
+
+    // Cleanup observer and event listeners on unmount
+    return () => {
+      editor.off("text-change", updateListMarkerColor);
+      editor.off("selection-change", updateListMarkerColor);
+      observer.disconnect();
+    };
+  }, [editorRefContext, fontColorSvg, selectedFontSizeValue]);
 
   const formatFont = (index: number, selectedFont: string, length?: number) => {
     if (length) {
@@ -3268,43 +3340,40 @@ export default function QuillToolbar(props: any) {
       const quill = editorRefContext.getEditor();
       setTimeout(() => {
         quill.formatText(index, length, { font: selectedFont });
-        quill.setSelection(length, 0)
-        quill.focus()
+        quill.setSelection(length, 0);
+        quill.focus();
       }, 200);
-      setSelectedFont(selectedFont)
-      setSelectedFontValue(selectedFont)
+      setSelectedFont(selectedFont);
+      setSelectedFontValue(selectedFont);
     }
   };
-
 
   useEffect(() => {
     contractNewFont?.forEach((newFont: string) => {
       if (!Font.whitelist.includes(newFont) && newFont != "ql-cursor") {
-        Font?.whitelist?.push(newFont)
+        Font?.whitelist?.push(newFont);
       }
-    })
-  }, [contractNewFont])
+    });
+  }, [contractNewFont]);
 
   useEffect(() => {
     contractNewFontSize?.forEach((newFont: string) => {
       if (!SizeStyle.whitelist.includes(newFont)) {
-        SizeStyle?.whitelist?.push(newFont)
+        SizeStyle?.whitelist?.push(newFont);
       }
-    })
-  }, [contractNewFontSize])
-
+    });
+  }, [contractNewFontSize]);
 
   useEffect(() => {
     contractNewFontStyles?.forEach((styleRule: any) => {
-      if (!document.querySelector(styleRule.split(' ')[0])) {
-        const style = document.createElement('style');
-        style.type = 'text/css';
+      if (!document.querySelector(styleRule.split(" ")[0])) {
+        const style = document.createElement("style");
+        style.type = "text/css";
         style.innerHTML = styleRule;
         document.head.appendChild(style);
       }
     });
-  }, [contractNewFontStyles])
-
+  }, [contractNewFontStyles]);
 
   return (
     <div
@@ -3395,7 +3464,7 @@ export default function QuillToolbar(props: any) {
                 sx={{
                   ".MuiOutlinedInput-notchedOutline": {
                     borderColor: "#d9d9d9",
-                    textAlign: "start"
+                    textAlign: "start",
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: "#7771e8",
@@ -3413,14 +3482,16 @@ export default function QuillToolbar(props: any) {
                   fontSize: "13px",
                 }}
                 renderValue={() => (
-                  <div style={{
-                    // position: "relative",
-                    // left: "-0.2rem"
-                    textAlign: 'start',
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: 'ellipsis'
-                  }}>
+                  <div
+                    style={{
+                      // position: "relative",
+                      // left: "-0.2rem"
+                      textAlign: "start",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
                     {selectedFontValue?.charAt(0)?.toUpperCase() +
                       selectedFontValue?.slice(1)?.replace("-", " ")}
                   </div>
@@ -3497,31 +3568,35 @@ export default function QuillToolbar(props: any) {
                   },
                 }}
                 renderValue={() => (
-                  <div style={{
-                    position: "relative",
-                    left: "-0.2rem"
-                  }}>
-                    {selectedFontSizeValue.replace("px", '')}
+                  <div
+                    style={{
+                      position: "relative",
+                      left: "-0.2rem",
+                    }}
+                  >
+                    {selectedFontSizeValue.replace("px", "")}
                   </div>
                 )}
               >
-                {SizeStyle.whitelist.sort((a: any, b: any) => parseInt(a) - parseInt(b)).map((size: any) => (
-                  <MenuItem
-                    style={{
-                      color: "#7F7F7F",
-                      fontSize: "13px",
-                    }}
-                    className={
-                      selectedFontSizeValue === size
-                        ? `selected-font select-fonts `
-                        : ` select-fonts`
-                    }
-                    key={size}
-                    value={size}
-                  >
-                    {size.replace("px", '')}
-                  </MenuItem>
-                ))}
+                {SizeStyle.whitelist
+                  .sort((a: any, b: any) => parseInt(a) - parseInt(b))
+                  .map((size: any) => (
+                    <MenuItem
+                      style={{
+                        color: "#7F7F7F",
+                        fontSize: "13px",
+                      }}
+                      className={
+                        selectedFontSizeValue === size
+                          ? `selected-font select-fonts `
+                          : ` select-fonts`
+                      }
+                      key={size}
+                      value={size}
+                    >
+                      {size.replace("px", "")}
+                    </MenuItem>
+                  ))}
               </Select>
             </span>
           </a>
@@ -3538,7 +3613,7 @@ export default function QuillToolbar(props: any) {
                   borderColor: "#D9D9D9",
                   borderRadius: 5,
                   color: "#626469",
-                  width: "118px"
+                  width: "118px",
                 }}
                 IconComponent={SelectDropdownImage3}
                 sx={{
@@ -3570,10 +3645,20 @@ export default function QuillToolbar(props: any) {
                     style={{
                       position: "relative",
                       left: "-0.2rem",
-                      fontSize: "13px"
+                      fontSize: "13px",
                     }}
                   >
-                    {selectedHeadersValue == 0 ? "Paragraph" : selectedHeadersValue == 1 ? "Heading 1" : selectedHeadersValue == 2 ? "Heading 2" : selectedHeadersValue == 3 ? "Heading 3" : selectedHeadersValue == 4 ? "Heading 4" : ""}
+                    {selectedHeadersValue == 0
+                      ? "Paragraph"
+                      : selectedHeadersValue == 1
+                        ? "Heading 1"
+                        : selectedHeadersValue == 2
+                          ? "Heading 2"
+                          : selectedHeadersValue == 3
+                            ? "Heading 3"
+                            : selectedHeadersValue == 4
+                              ? "Heading 4"
+                              : ""}
                   </div>
                 )}
                 value={selectedHeadersValue}
@@ -3658,7 +3743,7 @@ export default function QuillToolbar(props: any) {
           className="custom-tooltip tooltip-select"
           place="bottom"
           style={{
-            position: "absolute"
+            position: "absolute",
           }}
         />
         <ReactTooltip
@@ -3800,7 +3885,18 @@ export default function QuillToolbar(props: any) {
                     viewBox="0 0 10 10"
                     fill="none"
                   >
-                    <rect width="10" height="10" rx="2" fill={fontColorSvg == "white" || fontColorSvg === "#fefefe" || fontColorSvg == "#ffffff" ? "#E6E6E6" : fontColorSvg} />
+                    <rect
+                      width="10"
+                      height="10"
+                      rx="2"
+                      fill={
+                        fontColorSvg == "white" ||
+                          fontColorSvg === "#fefefe" ||
+                          fontColorSvg == "#ffffff"
+                          ? "#E6E6E6"
+                          : fontColorSvg
+                      }
+                    />
                   </svg>
                 </span>
               </span>
@@ -3816,9 +3912,9 @@ export default function QuillToolbar(props: any) {
                 className="text-center"
               >
                 <Sketch
-                  color={fontColorSvg == "black" ? "#000000":fontColorSvg}
+                  color={fontColorSvg == "black" ? "#000000" : fontColorSvg}
                   onChange={handleFontColorChange}
-                  // id="menu-color"
+                // id="menu-color"
                 />
                 <div className="d-flex justify-content-between pt-2">
                   <button
@@ -3963,13 +4059,12 @@ export default function QuillToolbar(props: any) {
                 MenuListProps={{
                   "aria-labelledby": "openCase-button",
                 }}
-
               >
                 <MenuItem
                   className="margins-color select-fonts"
                   style={{
                     color: "#7F7F7F",
-                    fontSize: "13px"
+                    fontSize: "13px",
                   }}
                   onClick={() => handleTextTransformation(toSentenceCase)}
                 >
@@ -3978,7 +4073,7 @@ export default function QuillToolbar(props: any) {
                 <MenuItem
                   style={{
                     color: "#7F7F7F",
-                    fontSize: "13px"
+                    fontSize: "13px",
                   }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toLowerCase)}
@@ -3988,7 +4083,7 @@ export default function QuillToolbar(props: any) {
                 <MenuItem
                   style={{
                     color: "#7F7F7F",
-                    fontSize: "13px"
+                    fontSize: "13px",
                   }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toUpperCase)}
@@ -3998,7 +4093,7 @@ export default function QuillToolbar(props: any) {
                 <MenuItem
                   style={{
                     color: "#7F7F7F",
-                    fontSize: "13px"
+                    fontSize: "13px",
                   }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toCapitalizeEachWord)}
@@ -4008,7 +4103,7 @@ export default function QuillToolbar(props: any) {
                 <MenuItem
                   style={{
                     color: "#7F7F7F",
-                    fontSize: "13px"
+                    fontSize: "13px",
                   }}
                   className="margins-color select-fonts"
                   onClick={() => handleTextTransformation(toToggleCase)}
@@ -4579,7 +4674,9 @@ export default function QuillToolbar(props: any) {
                       height: 24,
                       width: 42,
                       border:
-                        isListActive == "" || isListActive == "bullet" || isListActive == "default"
+                        isListActive == "" ||
+                          isListActive == "bullet" ||
+                          isListActive == "default"
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
@@ -5179,7 +5276,9 @@ export default function QuillToolbar(props: any) {
                 aria-expanded={openMargins ? "true" : undefined}
                 onClick={(e) => {
                   const scrollContainer = scrollPageRef.current;
-                  const scrollY = scrollContainer ? scrollContainer.scrollTop : 0;
+                  const scrollY = scrollContainer
+                    ? scrollContainer.scrollTop
+                    : 0;
                   setScrollPosition(scrollY);
                   handleOpenMargins(e);
                 }}
@@ -6574,9 +6673,7 @@ export default function QuillToolbar(props: any) {
                 Add Formula
               </div>
               <div className="d-flex container py-1 align-items-center margins-color">
-                <label style={{ fontSize: 14, fontWeight: 400 }}>
-                  Text:
-                </label>
+                <label style={{ fontSize: 14, fontWeight: 400 }}>Text:</label>
                 <input
                   type="text"
                   onChange={handleDisplayTextChange}
