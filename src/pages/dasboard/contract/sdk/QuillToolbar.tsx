@@ -1370,7 +1370,7 @@ export default function QuillToolbar(props: any) {
         const quill = editorRefContext.getEditor();
         const undoStack = quill.history.stack.undo;
         const redoStack = quill.history.stack.redo;
-        console.log(redoStack[redoStack.length-1])
+        console.log(redoStack[redoStack.length - 1])
         // console.log(undoStack[undoStack.length-1]);
         // console.log(redoStack);
         setCanUndo(undoStack.length > 0);
@@ -2012,45 +2012,45 @@ export default function QuillToolbar(props: any) {
 
   const handleUndo = () => {
     const editor = editorRefContext?.getEditor();
-    
+
     const undoStack = editor.history.stack.undo;
 
-    const lastOp = undoStack[undoStack.length-1];
+    const lastOp = undoStack[undoStack.length - 1];
     // console.log(lastOp)
-    
+
     // Check if the last operation contains a newline character
-    const containsNewline = lastOp && lastOp.undo.ops && lastOp.undo.ops.some(op => op.insert === '\n');
+    const containsNewline = lastOp && lastOp.undo.ops && lastOp.undo.ops.some((op: any) => op.insert === '\n');
     // console.log(editor.history.redo);
 
-  
+
     // Perform the first undo
     editor.history.undo();
-    
+
     // If the last operation contained a newline, perform an additional undo
     if (containsNewline) {
       editor.history.undo();
     }
-    
+
     const range = editor.getSelection(true);
     handleChangeSelection(range, "user");
   };
-  
+
 
   const handleRedo = () => {
     const editor = editorRefContext?.getEditor();
     const redoStack = editor.history.stack.redo;
     const undoStack = editor.history.stack.undo;
-    const lastOp = redoStack[redoStack.length-1];
-    const containsNewline = lastOp && lastOp.undo.ops && lastOp.undo.ops.some((op:any) => op.insert == '\u200B');
+    const lastOp = redoStack[redoStack.length - 1];
+    const containsNewline = lastOp && lastOp.undo.ops && lastOp.undo.ops.some((op: any) => op.insert == '\u200B');
     editor.history.redo();
 
-    if(containsNewline) {
+    if (containsNewline) {
       editor.history.redo();
     }
     const range = editor.getSelection(true);
     handleChangeSelection(range, "user");
   };
-  
+
 
   const ScrollLeftSvg = () => {
     return (
@@ -3306,17 +3306,17 @@ export default function QuillToolbar(props: any) {
             var textColor = child?.style?.color;
             var fontSize = child?.style?.fontSize;
             const size = Number(fontSize.replace("px", ""));
-      
+
             // Set text color for list marker
             if (textColor) {
               li.style.setProperty("--list-marker-color", textColor);
             } else {
               li.style.setProperty("--list-marker-color", fontColorSvg);
             }
-      
+
             // Calculate and set the list size
             let listSize;
-      
+
             switch (dataList) {
               case "bullet-dot":
                 listSize = size / 2 - 1;
@@ -3332,16 +3332,16 @@ export default function QuillToolbar(props: any) {
               default:
                 listSize = size;
             }
-      
+
             // Check if the calculated listSize is -1 and set to 0 if true
-            listSize = listSize < 0 ? Number(selectedFontSizeValue.replace("px",'')/2) : listSize; // Ensures no negative values
-      
+            listSize = listSize < 0 ? Number(selectedFontSizeValue.replace("px", '') / 2) : listSize; // Ensures no negative values
+
             // Set the calculated size to the CSS variable
             li.style.setProperty("--list-size", listSize + "px");
           });
         });
       });
-      
+
     };
     updateListMarkerColor();
     // Update marker color on text change
