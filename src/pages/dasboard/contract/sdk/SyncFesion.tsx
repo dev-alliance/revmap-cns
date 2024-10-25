@@ -1496,7 +1496,7 @@ function SyncFesion() {
       const containerBottom = containerTop + scrollPageRef.current.clientHeight;
 
       if (cursorPosition.top < containerTop || cursorPosition.bottom > containerBottom - 34) {
-        container.scrollTop = cursorPosition.top + 34 - container.offsetTop;
+        container.scrollTop +=20;
       }
 
       const [line] = currentEditor.getLine(range.index - 1);
@@ -1750,11 +1750,10 @@ function SyncFesion() {
   };
 
   const handleChangeSelection = (range: range, source: string) => {
-    // console.log()
     const editor = editorRefs.current[currentPage].getEditor();
-    if (range && range.length == 0) {
+    if (range ) {
       const [line] = editor.getLine(range.index - 1);
-      console.log(line?.domNode?.innerText == "\u200B");
+      // console.log(line?.domNode?.innerText == "\u200B");
       const format = editor.getFormat(range.index);
       if (format.color) {
         setFontColorSvg(format.color);
@@ -1786,6 +1785,10 @@ function SyncFesion() {
 
       if (format.lineHeight) {
         setSpacing(format.lineHeight);
+      }
+      else {
+       editor.format("lineHeight", "1.5");
+       setSpacing("1.5");
       }
 
       if (format.font) {
@@ -2093,14 +2096,6 @@ function SyncFesion() {
     }
   };
 
-  useEffect(() => {
-    if (!editorRefs) return;
-    if (editorRefs) {
-      const quill = editorRefs?.current[currentPage]?.getEditor();
-      const length = quill?.getLength();
-      quill?.formatText(0, length, "lineHeight", "1.5");
-    }
-  }, []);
 
   useEffect(() => {
     if (editorRefs.current[currentPage]) {

@@ -758,7 +758,10 @@ export default function QuillToolbar(props: any) {
         editor.focus();
 
         if (scrollContainer) {
-          scrollContainer.scrollTop = scrollY;
+          scrollContainer.scrollTo({
+            top: scrollY,
+            behavior: 'smooth' // Makes the scroll smooth
+          });
         }
       }, 0);
     }
@@ -796,9 +799,11 @@ export default function QuillToolbar(props: any) {
       setTimeout(() => {
         editor.focus();
 
-        // Restore the scroll position to prevent the page from jumping
         if (scrollContainer) {
-          scrollContainer.scrollTop = scrollY; // Reset scroll position after focus is applied
+          scrollContainer.scrollTo({
+            top: scrollY,
+            behavior: 'smooth' 
+          }); 
         }
       }, 0);
     }
@@ -882,7 +887,10 @@ export default function QuillToolbar(props: any) {
     }
     setTimeout(() => {
       if (scrollPosition) {
-        scrollContainer.scrollTop = scrollPosition;
+        scrollContainer.scrollTo({
+          top: scrollPosition,
+          behavior: 'smooth' // Makes the scroll smooth
+        });
       }
     }, 0);
     setAnchorElTextColor(null);
@@ -910,7 +918,6 @@ export default function QuillToolbar(props: any) {
   const handleCloseFontColor = () => {
     const editor = editorRefContext.getEditor();
     const scrollContainer = scrollPageRef.current;
-    const scrollY = scrollContainer ? scrollContainer.scrollTop : 0;
 
     if (indexCursor) {
       if (indexCursor.length > 0) {
@@ -922,7 +929,10 @@ export default function QuillToolbar(props: any) {
     }
 
     if (scrollPosition) {
-      scrollContainer.scrollTop = scrollPosition;
+      scrollContainer.scrollTo({
+        top: scrollPosition,
+        behavior: 'smooth' // Makes the scroll smooth
+      });
     }
 
     setAnchorElFontColor(null);
@@ -936,12 +946,16 @@ export default function QuillToolbar(props: any) {
 
     if (range.length === 0) {
       setPrevFontColor(TextColor);
-      setFontColorList(TextColor);
       const [line] = editor.getLine(range.index);
       const text = line?.domNode?.innerText;
+      console.log(text.trim().length);
       if (text == "\u200B") {
         editor.formatText(range.index - 1, 1, { color: TextColor }, "user");
-      } else {
+      }
+      else if(text.trim() == "\u200B" && text.trim().length <=1) {
+        editor.formatText(range.index - 1, 1, { color: TextColor }, "user");
+      }
+      else {
         editor.format("color", TextColor, "user");
       }
     } else {
@@ -960,20 +974,7 @@ export default function QuillToolbar(props: any) {
     editor.focus();
   };
 
-  const handleCancelFontColor = () => {
-    const editor = editorRefContext.getEditor();
-    if (indexCursor) {
-      if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0);
-      } else {
-        editor.setSelection(indexCursor.index, 0);
-      }
-      setTimeout(() => {
-        editor.focus();
-      }, 0);
-    }
-    setAnchorElFontColor(null);
-  };
+ 
 
   const handleOpenBgColor = (event: any) => {
     setAnchorElBgColor(event.currentTarget);
@@ -1028,7 +1029,10 @@ export default function QuillToolbar(props: any) {
       }
       setTimeout(() => {
         if (scrollContainer) {
-          scrollContainer.scrollTop = scrollY;
+          scrollContainer.scrollTo({
+            top: scrollY,
+            behavior: 'smooth' // Makes the scroll smooth
+          });
         }
         editor.focus();
       }, 0);
@@ -1130,7 +1134,10 @@ export default function QuillToolbar(props: any) {
       }
       setTimeout(() => {
         if (scrollContainer) {
-          scrollContainer.scrollTop = scrollY;
+          scrollContainer.scrollTo({
+            top: scrollY,
+            behavior: 'smooth' // Makes the scroll smooth
+          });
         }
         editor.focus();
       }, 0);
@@ -1188,7 +1195,10 @@ export default function QuillToolbar(props: any) {
         editor.focus();
 
         if (scrollContainer) {
-          scrollContainer.scrollTop = scrollY;
+          scrollContainer.scrollTo({
+            top: scrollY,
+            behavior: 'smooth' // Makes the scroll smooth
+          });
         }
       }, 0);
     }
@@ -1207,9 +1217,7 @@ export default function QuillToolbar(props: any) {
     editor.focus();
   };
 
-  const [fontColorList, setFontColorList] = useState("black");
-
-  const handleFontChange = (event: any) => {
+  const handleFontChange = (event: SelectChangeEvent<any>) => {
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -1224,7 +1232,10 @@ export default function QuillToolbar(props: any) {
           { font: event.target.value },
           "user"
         );
-      } else {
+      }
+      else if(text.trim() == "\u200B" && text.trim().length <=1) {
+        editor.formatText(range.index - 1, 1, { font: event.target.value }, "user");
+      }else {
         editor.format("font", event.target.value, "user");
       }
     } else {
@@ -1244,7 +1255,7 @@ export default function QuillToolbar(props: any) {
     }, 0);
   };
 
-  const handleFontSizeChange = (event: any) => {
+  const handleFontSizeChange = (event: SelectChangeEvent<HTMLElement>) => {
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -1259,7 +1270,11 @@ export default function QuillToolbar(props: any) {
           { size: event.target.value },
           "user"
         );
-      } else {
+      } 
+      else if(text.trim() == "\u200B" && text.trim().length <=1) {
+        editor.formatText(range.index - 1, 1, { size: event.target.value }, "user");
+      }
+      else {
         editor.format("size", event.target.value, "user");
       }
     } else {
@@ -1370,7 +1385,7 @@ export default function QuillToolbar(props: any) {
         const quill = editorRefContext.getEditor();
         const undoStack = quill.history.stack.undo;
         const redoStack = quill.history.stack.redo;
-        console.log(redoStack[redoStack.length - 1])
+        // console.log(redoStack[redoStack.length - 1])
         // console.log(undoStack[undoStack.length-1]);
         // console.log(redoStack);
         setCanUndo(undoStack.length > 0);
@@ -1492,7 +1507,11 @@ export default function QuillToolbar(props: any) {
       const text = line?.domNode?.innerText;
       if (text == "\u200B") {
         editor.formatText(range.index - 1, 1, { background: color }, "user");
-      } else {
+      }
+      else if(text.trim() == "\u200B" && text.trim().length <=1) {
+        editor.formatText(range.index - 1, 1, { background: color }, "user");
+      }
+      else {
         editor.format("background", color, "user");
       }
       setPrevBgColor(color);
@@ -1528,6 +1547,11 @@ export default function QuillToolbar(props: any) {
   const [TextColor, setTextColor] = useState("");
 
   const handleFontColorChange = (color: any) => {
+    // const editor = editorRefContext.getEditor();
+    // const range = editor.getSelection(true);
+    // if(range.length > 0) {
+    //   editor.setSelection(range.index,range.length)
+    // }
     setTextColor(color.hex);
     setFontColorSvg(color.hex);
   };
@@ -1730,47 +1754,41 @@ export default function QuillToolbar(props: any) {
   };
 
   useEffect(() => {
+    // console.log("I am called")
     if (!editorRefContext) return;
     const quill = editorRefContext.getEditor();
+    const range = quill.getSelection(true);
     let savedSelection: any = false;
 
+    if (range.length > 0) {
+      savedSelection = true;
+    }
     const restoreSelection = () => {
       if (savedSelection) {
-        quill.setSelection(savedSelection.index, savedSelection.length);
+        quill.setSelection(range.index, range.length);
       }
     };
 
-    const selection = quill.getSelection();
-    if (selection) {
-      selectionRef.current = selection;
-    }
-
-    // Assuming there's a button or a way to detect the menu opening
-    const menuToggle = document.getElementById("menu-toggle-button");
 
     const attachColorListeners = () => {
-      // Ensure that the menu-color element is available
       const menuColor = document.getElementById("menu-color");
+      // console.log(menuColor)
       if (menuColor) {
+        // console.log("I worked")
         menuColor.addEventListener("click", restoreSelection);
-        menuColor.addEventListener("change", restoreSelection); // change event for inputs/select elements
+        menuColor.addEventListener("change", restoreSelection);
       }
     };
 
-    if (menuToggle) {
-      menuToggle.addEventListener("click", () => {
-        setTimeout(() => {
-          attachColorListeners(); // Attach listeners after the menu is likely opened
-        }, 300); // Delay to ensure the menu is rendered
-      });
-    }
+    setTimeout(() => {
+      attachColorListeners();
+    }, 100);
 
-    // Cleanup event listeners when the component unmounts
     return () => {
-      if (menuToggle) {
-        menuToggle.removeEventListener("click", attachColorListeners);
-      }
       const menuColor = document.getElementById("menu-color");
+      if (menuColor) {
+        menuColor.removeEventListener("click", attachColorListeners);
+      }
       if (menuColor) {
         menuColor.removeEventListener("click", restoreSelection);
         menuColor.removeEventListener("change", restoreSelection);
@@ -1780,7 +1798,6 @@ export default function QuillToolbar(props: any) {
 
   const [selectedAlign, setSelectedAlign] = useState("left");
   const handleAlignment = (align: string) => {
-    console.log(align);
     setSelectedAlign(align);
     const quill = editorRefContext.getEditor();
     const range = quill.getSelection();
@@ -2016,17 +2033,11 @@ export default function QuillToolbar(props: any) {
     const undoStack = editor.history.stack.undo;
 
     const lastOp = undoStack[undoStack.length - 1];
-    // console.log(lastOp)
 
-    // Check if the last operation contains a newline character
     const containsNewline = lastOp && lastOp.undo.ops && lastOp.undo.ops.some((op: any) => op.insert === '\n');
-    // console.log(editor.history.redo);
 
-
-    // Perform the first undo
     editor.history.undo();
 
-    // If the last operation contained a newline, perform an additional undo
     if (containsNewline) {
       editor.history.undo();
     }
@@ -2039,7 +2050,6 @@ export default function QuillToolbar(props: any) {
   const handleRedo = () => {
     const editor = editorRefContext?.getEditor();
     const redoStack = editor.history.stack.redo;
-    const undoStack = editor.history.stack.undo;
     const lastOp = redoStack[redoStack.length - 1];
     const containsNewline = lastOp && lastOp.undo.ops && lastOp.undo.ops.some((op: any) => op.insert == '\u200B');
     editor.history.redo();
@@ -3946,7 +3956,7 @@ export default function QuillToolbar(props: any) {
                 <Sketch
                   color={fontColorSvg == "black" ? "#000000" : fontColorSvg}
                   onChange={handleFontColorChange}
-                // id="menu-color"
+                  id="menu-color"
                 />
                 <div className="d-flex justify-content-between pt-2">
                   <button
