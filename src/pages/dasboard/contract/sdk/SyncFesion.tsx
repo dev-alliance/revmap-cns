@@ -1417,15 +1417,17 @@ function SyncFesion() {
       
       const [line] = currentEditor.getLine(range.index);
       const charAtCursor = currentEditor.getText(range.index);
+      console.log(backspaceFormatting)
       const lineText = line ? line?.domNode?.innerText : "";
+      console.log(JSON.stringify(charAtCursor))
+      console.log(JSON.stringify(lineText)) 
       if (
         (charAtCursor == "\n" || charAtCursor.includes("\n")) &&
         range.index !== 0 &&
         lineText.trim().length <= 0
-      ) {
-        // setTimeout(() => {
-          currentEditor.deleteText(range.index -1,1, "user");
         
+      ) {
+          currentEditor.deleteText(range.index -1,1, "user");
       }
 
       if (!format.color) {
@@ -1461,6 +1463,15 @@ function SyncFesion() {
           setTimeout(() => {
             currentEditor.format("background", backspaceFormatting.background);
             setBgColorSvg(backspaceFormatting.background);
+          }, 0);
+        }
+      }
+
+      if(!format.list) {
+        if (backspaceFormatting.list) {
+          setTimeout(() => {
+            currentEditor.format("list", backspaceFormatting.list);
+            setIsListActive(backspaceFormatting.list)
           }, 0);
         }
       }

@@ -1036,7 +1036,7 @@ body {
   color: var(--list-marker-color);
   font-size: var(--list-size);
   position: relative;
-  left: -17px;
+  left: -11px;
 }
 
 /* Lower Alpha List */
@@ -1054,7 +1054,7 @@ body {
   color: var(--list-marker-color);
   font-size: var(--list-size);
   position: relative;
-  left: -17px;
+  left: -11px;
 }
 
 /* Lower Greek List */
@@ -1072,7 +1072,7 @@ body {
   color: var(--list-marker-color);
   font-size: var(--list-size);
   position: relative;
-  left: -17px;
+  left: -11px;
 }
 
 /* Upper Roman List */
@@ -1090,7 +1090,7 @@ body {
   color: var(--list-marker-color);
   font-size: var(--list-size);
   position: relative;
-  left: -17px;
+  left: -11px;
 }
 
 /* Lower Roman List */
@@ -1108,7 +1108,7 @@ body {
   color: var(--list-marker-color);
   font-size: var(--list-size);
   position: relative;
-  left: -17px;
+  left: -11px;
 }
 
 .ql-editor ul[data-list-type="default"] {
@@ -1126,7 +1126,7 @@ body {
   color: var(--list-marker-color);
   font-size: var(--list-size);
   position: relative;
-  left: -17px;
+  left: -11px;
 }
 
 .ql-editor ul[data-list-type="bullet-dot"] {
@@ -2146,6 +2146,6 @@ fill: #7F7F7F;
 /* sy */
 
 .ql-editor li:not(.ql-direction-rtl)::before{
-  margin-left: -0.5em !important;
-  margin-right: 0.3em !important;
+  margin-left: -1.3em !important;
+  margin-right: 1rem !important;
 }

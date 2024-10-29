@@ -1642,43 +1642,22 @@ export default function QuillToolbar(props: any) {
     }
 
     setSelectedColumn(value);
-
-    // Reset grid styles before applying new styles
-    editorContainer.style.display = ""; // Reset display property
-    editorContainer.style.gridTemplateColumns = ""; // Reset grid columns
-    editorContainer.style.gridColumnGap = ""; // Reset column gap
-    editorContainer.style.width = "100%"; // Ensure full width
-    editorContainer.style.gridTemplateAreas = ""; // Reset grid areas
-
+    
     switch (value) {
       case "one":
-        editorContainer.style.display = "block"; // Single column layout, block-level by default
+        editorContainer.style.display = "block";
         break;
       case "two":
-        editorContainer.style.display = "grid";
-        editorContainer.style.gridTemplateColumns = "50% 50%"; // Two equal columns
-        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
+       editorContainer.style.columnCount = 2;
         break;
       case "three":
-        editorContainer.style.display = "grid";
-        editorContainer.style.gridTemplateColumns = "33% 33% 33%"; // Three equal columns
-        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
+        editorContainer.style.columnCount = 3;
         break;
       case "left":
-        editorContainer.style.display = "grid";
-        editorContainer.style.gridTemplateColumns = "25% 75%"; // Left 25% and right 75%
-        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
-        editorContainer.style.gridTemplateAreas = `
-          "left right"
-        `;
+        editorContainer.style.columnCount = 2;
         break;
       case "right":
-        editorContainer.style.display = "grid";
-        editorContainer.style.gridTemplateColumns = "75% 25%"; // Left 75% and right 25%
-        editorContainer.style.gridColumnGap = "20px"; // Gap between columns
-        editorContainer.style.gridTemplateAreas = `
-          "left right"
-        `;
+        editorContainer.style.columnCount = 2;
         break;
       default:
         editorContainer.style.display = "block"; // Default to single column
