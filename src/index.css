@@ -2147,5 +2147,5 @@ fill: #7F7F7F;
 
 .ql-editor li:not(.ql-direction-rtl)::before{
   margin-left: -1.3em !important;
-  margin-right: 1rem !important;
+  margin-right: 0rem !important;
 }

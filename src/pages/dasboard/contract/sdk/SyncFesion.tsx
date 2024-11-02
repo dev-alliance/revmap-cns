@@ -183,6 +183,10 @@ function SyncFesion() {
     setContractNewFont,
     setContractNewFontSize,
     setContractNewFontStyles,
+    selectedFontSizeValue,
+    selectedFontValue,
+    bgColorSvg,
+    fontColorSvg
   } = useContext(ContractContext);
 
   const workerUrl =
@@ -1074,29 +1078,27 @@ function SyncFesion() {
     if (!id && newId === "") {
       setPages([{ content: "" }]);
     }
-    setBgColorSvg("#fefefe");
-    setPrevBgColor("#fefefe");
-    setSelectedFontSize("12px");
-    setSelectedFontSizeValue("12px");
-    setSelectedFontValue("arial");
-    setSelectedFont("arial");
-    setPrevFontColor("black");
+    setTimeout(() => {
+      setBgColorSvg("#fefefe");
+      setPrevBgColor("#fefefe");
+      setSelectedFontSize("12px");
+      setSelectedFontSizeValue("12px");
+      setSelectedFontValue("arial");
+      setSelectedFont("arial");
+      setPrevFontColor("black");
+      setFontColorSvg("black")
+      editor.format("size","12px")
+      editor.format("font","arial")
+      editor.format("color","black")
+      editor.format("background","#fefefe")
+      editor.format("customHeading","paragraph")
+    }, 0);
+
     if (id || newId) {
       setPages(oldPages);
     }
     setEditMode(false);
     setEnabelEditing(true);
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    // documentEditor.focusIn(); // Focusing the editor
-    const buttons = document.querySelectorAll(".e-tbar-btn");
-    const items = document.querySelectorAll(".e-toolbar-item");
-    items.forEach((item) => {
-      item.classList.add("e-overlay");
-    });
-
-    buttons.forEach((button) => {
-      button.setAttribute("aria-disabled", "true");
-    });
   };
 
   useEffect(() => {
@@ -1108,7 +1110,7 @@ function SyncFesion() {
         let totalWidth = 0;
         for (const char of documentName) {
           totalWidth += context.measureText(char).width; // Calculate total width of all characters
-        }
+        }          
         inputRef.current.style.width = `${Math.max(170, totalWidth)}px`; // Set input width
       }
     };
@@ -1412,22 +1414,33 @@ function SyncFesion() {
       const containerTop = container.scrollTop;
 
       if (cursorPosition.top < containerTop) {
-        container.scrollTop = cursorPosition.top - container.offsetTop; 
+        container.scrollTop = cursorPosition.top - container.offsetTop;
       }
-      
+
       const [line] = currentEditor.getLine(range.index);
+      const [lineBefore] = currentEditor.getLine(range.index - 1);
       const charAtCursor = currentEditor.getText(range.index);
-      console.log(backspaceFormatting)
+      const charBeforeCursor = currentEditor.getText(range.index - 1);
+
       const lineText = line ? line?.domNode?.innerText : "";
-      console.log(JSON.stringify(charAtCursor))
-      console.log(JSON.stringify(lineText)) 
+      const lineBeforeText = lineBefore ? lineBefore?.domNode?.innerText : "";
+
+      if (charBeforeCursor == "\n\n" && format.list) {
+        currentEditor.format("list", false, "user");
+        currentEditor.insertText(range.index, "\u200B", {
+          font: selectedFontValue,
+          size: selectedFontSizeValue,
+          customHeading: "paragraph",
+          color: fontColorSvg,
+          background: bgColorSvg
+        })
+      }
       if (
         (charAtCursor == "\n" || charAtCursor.includes("\n")) &&
         range.index !== 0 &&
-        lineText.trim().length <= 0
-        
+        lineText.trim().length <= 0 && !format.list
       ) {
-          currentEditor.deleteText(range.index -1,1, "user");
+        currentEditor.deleteText(range.index - 1, 1, "user");
       }
 
       if (!format.color) {
@@ -1467,7 +1480,8 @@ function SyncFesion() {
         }
       }
 
-      if(!format.list) {
+      console.log(JSON.stringify(lineBeforeText.trim()))
+      if (!format.list && lineBeforeText.trim().length > 1) {
         if (backspaceFormatting.list) {
           setTimeout(() => {
             currentEditor.format("list", backspaceFormatting.list);
@@ -1507,7 +1521,7 @@ function SyncFesion() {
       const containerBottom = containerTop + scrollPageRef.current.clientHeight;
 
       if (cursorPosition.top < containerTop || cursorPosition.bottom > containerBottom - 34) {
-        container.scrollTop +=20;
+        container.scrollTop += 20;
       }
 
       const [line] = currentEditor.getLine(range.index - 1);
@@ -1762,10 +1776,11 @@ function SyncFesion() {
 
   const handleChangeSelection = (range: range, source: string) => {
     const editor = editorRefs.current[currentPage].getEditor();
-    if (range ) {
+    if (range) {
       const [line] = editor.getLine(range.index - 1);
       // console.log(line?.domNode?.innerText == "\u200B");
       const format = editor.getFormat(range.index);
+      console.log(format);
       if (format.color) {
         setFontColorSvg(format.color);
       } else {
@@ -1798,8 +1813,8 @@ function SyncFesion() {
         setSpacing(format.lineHeight);
       }
       else {
-       editor.format("lineHeight", "1.5");
-       setSpacing("1.5");
+        editor.format("lineHeight", "1.5");
+        setSpacing("1.5");
       }
 
       if (format.font) {
