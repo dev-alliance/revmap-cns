@@ -55,7 +55,7 @@ const CreateContract = () => {
     setSelectedFontSize,
     setSelectedFontSizeValue,
     setPrevBgColor,
-    setPrevFontColor
+    setPrevFontColor,
   } = useContext(ContractContext);
 
   // const workerUrl =
@@ -140,17 +140,17 @@ const CreateContract = () => {
   // console.log(selectedTemplate?._id, "selectedTemplate");
 
   const handleCreateDocument = () => {
-    setShowBlock("")
+    setShowBlock("");
     setPages([{ content: "" }]);
     setBgColorSvg("#fefefe");
     setPrevBgColor("#fefefe");
-    setSelectedFontSize("12px")
-    setSelectedFontSizeValue("12px")
-    setSelectedFontValue("arial")
-    setSelectedFont("arial")
-    setPrevFontColor("black")
-    setDucomentName("")
-  }
+    setSelectedFontSize("12px");
+    setSelectedFontSizeValue("12px");
+    setSelectedFontValue("arial");
+    setSelectedFont("arial");
+    setPrevFontColor("black");
+    setDucomentName("");
+  };
 
   return (
     <>
@@ -183,6 +183,7 @@ const CreateContract = () => {
           flexWrap: "wrap",
           alignItems: "center",
           justifyContent: "space-between",
+          background: "#F7F7F7",
         }}
       >
         <div style={{ display: "flex" }}>
@@ -192,16 +193,34 @@ const CreateContract = () => {
               alignItems: "center",
             }}
           >
-            <Typography variant="h5" sx={{ marginBottom: 2 }}>
+            <Typography
+              sx={{
+                color: "#43464C",
+                fontSize: "23px",
+                paddingBottom: "4px",
+                fontWeight: 500,
+              }}
+            >
               New Document
             </Typography>
 
             <Breadcrumbs
               aria-label="breadcrumb"
-              sx={{ mt: -2, mb: 2, fontSize: "14px" }}
+              sx={{
+                mt: -2,
+                mb: 2,
+                fontSize: "13px",
+                color: "#43464C",
+                position: "relative",
+                top: "8px",
+              }}
             >
               <Link
-                style={{ marginRight: "-7px" }}
+                style={{
+                  marginRight: "-7px",
+                  color: "#43464C",
+                  fontSize: "13px",
+                }}
                 to="/dashboard/contract-list"
                 className="link-no-underline"
               >
@@ -209,14 +228,14 @@ const CreateContract = () => {
               </Link>
               {selectDocoment == "" ? (
                 <Typography
-                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  sx={{ fontSize: "13px", ml: "-7px", color: "#43464C" }}
                   color="text.primary"
                 >
                   Select
                 </Typography>
               ) : (
                 <Typography
-                  sx={{ fontSize: "14px", ml: "-7px" }}
+                  sx={{ fontSize: "13px", ml: "-7px", color: "#43464C" }}
                   color="text.primary"
                 >
                   {selectDocoment}
@@ -233,21 +252,32 @@ const CreateContract = () => {
             sx={{
               display: "table",
               width: "100%",
-
+              background: "#FFF",
               pl: "-1rem",
-              borderTop: "0.5px solid #174B8B", // Add a top border
-              borderBottom: "0.5px solid #174B8B",
+              // borderTop: "0.5px solid #174B8B", // Add a top border
+              // borderBottom: "0.5px solid #174B8B",
+
               marginBottom: "1rem",
             }}
           >
-            <Box sx={{ background: "#FFFFFF", p: 2 }}>Select to Start</Box>
+            <Box
+              sx={{
+                background: "#FFFFFF",
+                p: 2,
+                fontSize: "16px",
+                color: "#43464C",
+                height: "50px",
+              }}
+            >
+              Select to Start
+            </Box>
           </Paper>
           <Grid
             container
             spacing={2}
             justifyContent="center"
             alignItems="center"
-            sx={{ background: "#F8FAFD" }}
+            sx={{ background: "#F7F7F7" }}
           >
             <Grid
               item
@@ -260,9 +290,11 @@ const CreateContract = () => {
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
-                sx={{ mt: 12 }}
+                sx={{ marginTop: "84px" }}
               >
                 <Button
+                className="contract-boxes"
+
                   variant="outlined"
                   component={Link}
                   to="/dashboard/editor-dahsbord"
@@ -271,51 +303,53 @@ const CreateContract = () => {
                     display: "table-cell",
                     padding: "15px",
                     pt: 4,
-                    height: "110px",
-
+                    height: "140px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
-                    width: "490px",
+                    width: "600px",
                     borderWidth: 1,
                     borderStyle: "solid",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                    border: "1.5px dashed #174B8B", // Customizing the border to dashed
-                    borderRadius: "16px",
-                    backgroundColor: "#fff", // Sets the background color to white
+                    border: "2px solid #EEE",
+                    borderRadius: "5px",
+                    backgroundColor: "#fff",
                   }}
                 >
                   <div style={{ display: "flex" }}>
-                    <div style={{ marginLeft: "-7px", marginRight: "2rem" }}>
-                      <div style={{ marginTop: "-1rem" }}>
+                    <div style={{ marginLeft: "45px", marginRight: "52px" }}>
+                      <div>
                         <svg
-                          width="82"
-                          height="68"
-                          viewBox="0 0 82 79"
-                          fill="none"
                           xmlns="http://www.w3.org/2000/svg"
+                          width="80"
+                          height="80"
+                          viewBox="0 0 80 80"
+                          fill="none"
                         >
                           <path
-                            d="M47.8327 7.10156H20.4993C18.687 7.10156 16.949 7.78228 15.6675 8.99396C14.386 10.2056 13.666 11.849 13.666 13.5626V65.2511C13.666 66.9647 14.386 68.6081 15.6675 69.8198C16.949 71.0315 18.687 71.7122 20.4993 71.7122H61.4994C63.3117 71.7122 65.0497 71.0315 66.3312 69.8198C67.6127 68.6081 68.3327 66.9647 68.3327 65.2511V26.4848L47.8327 7.10156Z"
-                            stroke="#174B8B"
+                            d="M46.6666 6.66667H19.9999C18.2318 6.66667 16.5361 7.36905 15.2859 8.61929C14.0356 9.86954 13.3333 11.5652 13.3333 13.3333V66.6667C13.3333 68.4348 14.0356 70.1305 15.2859 71.3807C16.5361 72.631 18.2318 73.3333 19.9999 73.3333H59.9999C61.768 73.3333 63.4637 72.631 64.714 71.3807C65.9642 70.1305 66.6666 68.4348 66.6666 66.6667V26.6667L46.6666 6.66667Z"
+                            stroke="#342BDC"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           />
                           <path
-                            d="M47.834 7.10156V26.4848H68.334"
-                            stroke="#174B8B"
+                            d="M46.6667 6.66667V26.6667H66.6667"
+                            stroke="#342BDC"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           />
                           <path
-                            d="M41 58.7904V39.4072"
-                            stroke="#174B8B"
+                            d="M40 60V40"
+                            stroke="#342BDC"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           />
                           <path
-                            d="M30.75 49.0986H51.25"
-                            stroke="#174B8B"
+                            d="M30 50H50"
+                            stroke="#342BDC"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           />
@@ -323,7 +357,13 @@ const CreateContract = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: "table" }}>
+                    <div
+                      style={{
+                        display: "table",
+                        position: "relative",
+                        top: "15px",
+                      }}
+                    >
                       <div style={{ display: "table-row" }}>
                         <div
                           style={{
@@ -335,22 +375,23 @@ const CreateContract = () => {
                             variant="body1"
                             component="span"
                             sx={{
-                              color: "black",
+                              color: "#43464C",
                               fontSize: "18px",
                               marginLeft: "-1.8rem",
                             }}
                           >
-                            New Document
+                            Create new document
                           </Typography>
                           <Typography
                             sx={{
                               fontSize: "13px",
-                              color: "black",
+                              color: "#626469",
                               whiteSpace: "nowrap",
                               marginLeft: "-1.8rem",
                             }}
                           >
-                            Draft, collaborate, negotiate, review and sign
+                            Draft, collaborate, negotiate, review, approve and
+                            sign
                           </Typography>
                         </div>
                       </div>
@@ -367,6 +408,7 @@ const CreateContract = () => {
                 </Button>
               </Box>
             </Grid>
+
             <Grid
               item
               xs={12}
@@ -374,54 +416,65 @@ const CreateContract = () => {
               justifyContent="center"
               alignItems="center"
             >
-              <Box>
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ marginTop: "42px" }}
+              >
                 <Button
+                className="contract-boxes"
+
+                  variant="outlined"
+                  // component={Link}
+                  // to="/dashboard/editor-dahsbord"
                   onClick={() => {
                     setSelectDocoment("Upload Document"), setShowPopup(true);
                   }}
-                  variant="outlined"
                   sx={{
                     display: "table-cell",
                     padding: "15px",
                     pt: 4,
-                    height: "110px",
-                    width: "490px",
+                    height: "140px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
+                    width: "600px",
                     borderWidth: 1,
                     borderStyle: "solid",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                    border: "1.5px dashed #174B8B", // Customizing the border to dashed
-                    borderRadius: "16px",
-                    backgroundColor: "#fff", // Sets the background color to white
+                    border: "2px solid #EEE",
+                    borderRadius: "5px",
+                    backgroundColor: "#fff",
                   }}
                 >
                   <div style={{ display: "flex" }}>
-                    <div style={{ marginLeft: "-7px" }}>
-                      <div style={{ marginTop: "-0.8rem" }}>
+                    <div style={{ marginLeft: "45px", marginRight: "52px" }}>
+                      <div>
                         <svg
-                          width="82"
-                          height="66"
-                          viewBox="0 0 82 78"
-                          fill="none"
                           xmlns="http://www.w3.org/2000/svg"
+                          width="80"
+                          height="80"
+                          viewBox="0 0 80 80"
+                          fill="none"
                         >
                           <path
-                            d="M71.75 48.458V61.3801C71.75 63.0937 71.0301 64.7371 69.7486 65.9488C68.4671 67.1605 66.729 67.8412 64.9167 67.8412H17.0833C15.271 67.8412 13.5329 67.1605 12.2514 65.9488C10.9699 64.7371 10.25 63.0937 10.25 61.3801V48.458"
-                            stroke="#174B8B"
+                            d="M70 50V63.3333C70 65.1014 69.2976 66.7971 68.0474 68.0474C66.7971 69.2976 65.1014 70 63.3333 70H16.6667C14.8986 70 13.2029 69.2976 11.9526 68.0474C10.7024 66.7971 10 65.1014 10 63.3333V50"
+                            stroke="#342BDC"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           />
                           <path
-                            d="M58.0827 25.8441L40.9993 9.69141L23.916 25.8441"
-                            stroke="#174B8B"
+                            d="M56.6666 26.6667L39.9999 10L23.3333 26.6667"
+                            stroke="#342BDC"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           />
                           <path
-                            d="M41 9.69141V48.4578"
-                            stroke="#174B8B"
+                            d="M40 10V50"
+                            stroke="#342BDC"
+                            stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           />
@@ -429,115 +482,13 @@ const CreateContract = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: "table", margin: "0 auto" }}>
-                      <div style={{ display: "table-row" }}>
-                        <div
-                          style={{
-                            display: "table-cell",
-                            textAlign: "start",
-                          }}
-                        >
-                          <Typography
-                            variant="body1"
-                            component="span"
-                            sx={{ color: "black", fontSize: "18px" }}
-                          >
-                            Upload, Store & Track
-                          </Typography>
-                          <Typography sx={{ fontSize: "13px", color: "black" }}>
-                            Manage lifecycle for agreements executed outside
-                            ContractnSign
-                          </Typography>
-                        </div>
-                      </div>
-                      <div style={{ display: "table-row" }}>
-                        <div
-                          style={{
-                            display: "table-cell",
-                            textAlign: "start",
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </Button>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Box>
-                <Button
-                  onClick={() => setSelectDocoment("Use Template")}
-                  variant="outlined"
-                  sx={{
-                    display: "table-cell",
-                    padding: "15px",
-                    pt: 4,
-                    height: "110px",
-                    width: "490px",
-                    color: "gray",
-                    justifyContent: "center",
-                    textTransform: "none",
-
-                    borderWidth: 1,
-                    borderStyle: "solid",
-                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Adds shadow to give depth like a card
-                    border: "1.5px dashed #174B8B", // Customizing the border to dashed
-                    borderRadius: "16px",
-                    backgroundColor: "#fff", // Sets the background color to white
-                  }}
-                >
-                  <div style={{ display: "flex" }}>
-                    <div style={{ marginLeft: "-7px", marginRight: "2rem" }}>
-                      <div style={{ marginTop: "-1rem" }}>
-                        {" "}
-                        <svg
-                          width="82"
-                          height="68"
-                          viewBox="0 0 82 79"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M47.8327 6.9873H20.4993C18.687 6.9873 16.949 7.66802 15.6675 8.87971C14.386 10.0914 13.666 11.7348 13.666 13.4484V65.1369C13.666 66.8505 14.386 68.4939 15.6675 69.7055C16.949 70.9172 18.687 71.5979 20.4993 71.5979H61.4993C63.3117 71.5979 65.0497 70.9172 66.3312 69.7055C67.6127 68.4939 68.3327 66.8505 68.3327 65.1369V26.3705L47.8327 6.9873Z"
-                            stroke="#174B8B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M47.834 6.9873V26.3705H68.334"
-                            stroke="#174B8B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M54.6673 42.5234H27.334"
-                            stroke="#174B8B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M54.6673 55.4453H27.334"
-                            stroke="#174B8B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M34.1673 29.6016H30.7507H27.334"
-                            stroke="#174B8B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div style={{ display: "table" }}>
+                    <div
+                      style={{
+                        display: "table",
+                        position: "relative",
+                        top: "15px",
+                      }}
+                    >
                       <div style={{ display: "table-row" }}>
                         <div
                           style={{
@@ -549,23 +500,167 @@ const CreateContract = () => {
                             variant="body1"
                             component="span"
                             sx={{
-                              color: "black",
+                              color: "#43464C",
                               fontSize: "18px",
                               marginLeft: "-1.8rem",
                             }}
                           >
-                            Use Template
+                            Upload signed document
                           </Typography>
                           <Typography
                             sx={{
                               fontSize: "13px",
-                              color: "black",
+                              color: "#626469",
+                              whiteSpace: "nowrap",
                               marginLeft: "-1.8rem",
                             }}
                           >
-                            Use template to create a document and save time
+                            Set lifecycle to manage existing signed documents
                           </Typography>
                         </div>
+                      </div>
+                      <div style={{ display: "table-row" }}>
+                        <div
+                          style={{
+                            display: "table-cell",
+                            textAlign: "start",
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </Button>
+              </Box>
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ marginTop: "42px" }}
+              >
+                <Button
+                className="contract-boxes"
+                  variant="outlined"
+                  // component={Link}
+                  // to="/dashboard/editor-dahsbord"
+                  onClick={() => setSelectDocoment("Use Template")}
+                  sx={{
+                    display: "table-cell",
+                    padding: "15px",
+                    pt: 4,
+                    height: "140px",
+                    color: "gray",
+                    justifyContent: "center",
+                    textTransform: "none",
+                    width: "600px",
+                    borderWidth: 1,
+                    borderStyle: "solid",
+                    border: "2px solid #EEE",
+                    borderRadius: "5px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <div style={{ display: "flex" }}>
+                    <div style={{ marginLeft: "45px", marginRight: "52px" }}>
+                      <div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="80"
+                          height="80"
+                          viewBox="0 0 80 80"
+                          fill="none"
+                        >
+                          <path
+                            d="M46.6666 6.66666H19.9999C18.2318 6.66666 16.5361 7.36904 15.2859 8.61929C14.0356 9.86953 13.3333 11.5652 13.3333 13.3333V66.6667C13.3333 68.4348 14.0356 70.1305 15.2859 71.3807C16.5361 72.6309 18.2318 73.3333 19.9999 73.3333H59.9999C61.768 73.3333 63.4637 72.6309 64.714 71.3807C65.9642 70.1305 66.6666 68.4348 66.6666 66.6667V26.6667L46.6666 6.66666Z"
+                            stroke="#342BDC"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M46.6667 6.66666V26.6667H66.6668"
+                            stroke="#342BDC"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M53.3334 43.3333H26.6667"
+                            stroke="#342BDC"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M53.3334 56.6667H26.6667"
+                            stroke="#342BDC"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M33.3334 30H30.0001H26.6667"
+                            stroke="#342BDC"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "table",
+                        position: "relative",
+                        top: "15px",
+                      }}
+                    >
+                      <div style={{ display: "table-row" }}>
+                        <div
+                          style={{
+                            display: "table-cell",
+                            textAlign: "start",
+                          }}
+                        >
+                          <Typography
+                            variant="body1"
+                            component="span"
+                            sx={{
+                              color: "#43464C",
+                              fontSize: "18px",
+                              marginLeft: "-1.8rem",
+                            }}
+                          >
+                            Use template{" "}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              color: "#626469",
+                              whiteSpace: "nowrap",
+                              marginLeft: "-1.8rem",
+                            }}
+                          >
+                            Use template to create a document and save time{" "}
+                          </Typography>
+                        </div>
+                      </div>
+                      <div style={{ display: "table-row" }}>
+                        <div
+                          style={{
+                            display: "table-cell",
+                            textAlign: "start",
+                          }}
+                        ></div>
                       </div>
                     </div>
                   </div>

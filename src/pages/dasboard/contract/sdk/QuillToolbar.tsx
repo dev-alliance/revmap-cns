@@ -597,6 +597,7 @@ export default function QuillToolbar(props: any) {
     setIsListActive,
     handleChangeSelection,
     scrollPageRef,
+  
   } = props;
 
   const {
@@ -1304,6 +1305,7 @@ export default function QuillToolbar(props: any) {
       editor.focus();
     }, 0);
   };
+
 
   const handleHeaderChange = (event: SelectChangeEvent<any>) => {
     const editor = editorRefContext?.getEditor();
@@ -3845,6 +3847,7 @@ export default function QuillToolbar(props: any) {
           className="custom-tooltip tooltip-select"
           place="bottom"
         />
+     
         <span className="ql-formats ql-text-highlight">
           <a
             data-tooltip-id="menu-item"
@@ -4102,6 +4105,8 @@ export default function QuillToolbar(props: any) {
             place="bottom"
           />
         )}
+
+        
 
         <span className="ql-formats b-r">
           <a

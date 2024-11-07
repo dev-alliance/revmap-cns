@@ -2,6 +2,10 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+
+html {
+  background-color: rgb(247, 247, 247);
+}
 @font-face {
   font-family: 'Cambria';
   src: url('./assets/fonts/Cambria-Font-For-Windows.ttf') format('truetype');
@@ -2148,4 +2152,9 @@ fill: #7F7F7F;
 .ql-editor li:not(.ql-direction-rtl)::before{
   margin-left: -1.3em !important;
   margin-right: 0rem !important;
+}
+
+.contract-boxes:hover{
+  border: 2px solid #7771e8 !important;
+  background-color: transparent !important;
 }

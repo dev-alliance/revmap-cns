@@ -92,6 +92,8 @@ import DiffMatchPatch, {
 } from "diff-match-patch";
 import { Console } from "console";
 import OptionImage from "../../../../assets/options.png";
+import EditorFooter from "./EditorFooter";
+import { debounce } from "lodash";
 DocumentEditorComponent.Inject(
   Selection,
   Editor,
@@ -1250,6 +1252,8 @@ function SyncFesion() {
     return numericValue * 37.8;
   };
 
+  // cmToPx(documentPageSize.height)
+
   const parentContainerRef = useRef(null); // Ref for the parent container
 
   const isContentEmpty = (htmlContent: string): boolean => {
@@ -1260,145 +1264,66 @@ function SyncFesion() {
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
 
-  const handleChange = (
-    value: any,
-    delta: any,
-    source: any,
-    editor: any,
-    index: number
-  ) => {
-    // if (delta.ops[0].insert === '\n') {
-    //   const range = editor.getSelection();
-    //   const [line] = editor.getLine(range.index);
-    //   const lineText = line.domNode.innerText;
+  const handleOverflow = debounce((index, editor, updatedPages) => {
+    const currentContent = editor.getContents();
+    const editorHeight = editor.root.scrollHeight;
 
-    //   if (lineText.trim() === '') {
-    //     editor.updateContents([
-    //       {
-    //         retain: range.index,
-    //       },
-    //       {
-    //         insert: '\n',
-    //         attributes: { span: {} },
-    //       },
-    //     ]);
-    //   }
-    // }
+    if (editorHeight <= documentHeight) return; // Only handle if overflow occurs
 
-    setPages((prevPages: any[]) => {
-      const updatedPages = [...prevPages];
-      if (index < 0 || index >= updatedPages.length) {
-        console.error("Index out of bounds");
-        return prevPages;
-      }
+    let fitIndex = currentContent.length();
+    let contentToFit = currentContent.slice(0, fitIndex);
 
-      const currentEditor = editorRefs.current[index]?.getEditor();
-      if (currentEditor) {
-        const editorHeight = currentEditor.root.scrollHeight;
-        const documentHeight = cmToPx(documentPageSize.height) - toMinus;
+    // Fit content within current page height
+    while (fitIndex > 0) {
+      editor.setContents(contentToFit, "silent");
 
-        // Check if content fits within the current page
-        if (editorHeight > documentHeight) {
-          // Handle overflow by splitting content
-          const currentContent = currentEditor.getContents();
-          let fitIndex = currentContent.length();
-          let contentToFit = currentContent.slice(0, fitIndex);
+      if (editor.root.scrollHeight <= documentHeight) break;
 
-          // Find the point where content fits within the page size
-          while (fitIndex > 0) {
-            currentEditor.setContents(contentToFit, "silent"); // Use setContents to replace content silently
-
-            if (currentEditor.root.scrollHeight <= documentHeight) {
-              break; // Content fits within the current page size
-            }
-
-            // Adjust content by removing the last part
-            const ops = contentToFit.ops;
-            if (ops.length > 0) {
-              const lastOp = ops[ops.length - 1];
-              if (lastOp.insert && typeof lastOp.insert === "string") {
-                const lastIndex = lastOp.insert.lastIndexOf(" ");
-                if (lastIndex !== -1) {
-                  lastOp.insert = lastOp.insert.substring(0, lastIndex); // Remove last word
-                } else {
-                  ops.pop(); // Remove last op if it's a single word/character
-                }
-              } else {
-                ops.pop(); // Remove non-string ops (e.g., images, formatting)
-              }
-              contentToFit = { ops: ops };
-              fitIndex = contentToFit.ops.reduce(
-                (acc: any, op: any) =>
-                  acc + (typeof op.insert === "string" ? op.insert.length : 0),
-                0
-              );
-            }
-          }
-
-          const fittingContent = currentContent.slice(0, fitIndex);
-          const overflowContent = currentContent.slice(fitIndex);
-
-          // Update current page with fitting content
-          if (
-            JSON.stringify(updatedPages[index].content) !==
-            JSON.stringify(fittingContent)
-          ) {
-            updatedPages[index] = {
-              ...updatedPages[index],
-              content: fittingContent,
-            };
-          }
-
-          // Handle overflow content
-          const handleOverflow = (overflow: any, nextPageIndex: number) => {
-            if (overflow.length() === 0) return;
-
-            if (nextPageIndex >= updatedPages.length) {
-              // Add a new page for overflow content
-              updatedPages.push({ content: overflow });
-              setCurrentPage(updatedPages.length - 1);
-
-              const nextEditor =
-                editorRefs.current[updatedPages.length - 1]?.getEditor();
-              if (nextEditor) {
-                nextEditor.focus();
-                nextEditor.setSelection(nextEditor.getLength() - 1, 0);
-              }
-            } else {
-              // Add to the next page if it already exists
-              const nextEditor = editorRefs.current[nextPageIndex]?.getEditor();
-              if (nextEditor) {
-                const nextPageContent = nextEditor.getContents();
-                const newContent = overflow.concat(nextPageContent);
-                nextEditor.setContents(newContent, "user"); // Use setContents to replace content
-
-                // Check for further overflow
-                if (nextEditor.root.scrollHeight > documentHeight) {
-                  handleOverflow(
-                    nextEditor.getContents().slice(overflow.length()),
-                    nextPageIndex + 1
-                  );
-                }
-              }
-            }
-          };
-
-          handleOverflow(overflowContent, index + 1);
+      const ops = contentToFit.ops;
+      if (ops.length > 0) {
+        const lastOp = ops[ops.length - 1];
+        if (lastOp.insert && typeof lastOp.insert === "string") {
+          const lastIndex = lastOp.insert.lastIndexOf(" ");
+          lastOp.insert = lastIndex !== -1 ? lastOp.insert.slice(0, lastIndex) : "";
         } else {
-          // Update page content if it fits
-          if (
-            JSON.stringify(updatedPages[index].content) !==
-            JSON.stringify(value)
-          ) {
-            updatedPages[index] = { ...updatedPages[index], content: value };
-          }
+          ops.pop();
         }
       }
+      fitIndex = contentToFit.ops.reduce((acc:any, op:any) => acc + (op.insert.length || 0), 0);
+    }
 
-      return updatedPages;
-    });
+    // Assign fitting content to current page
+    updatedPages[index].content = contentToFit;
+    setPages(updatedPages);
+
+    // Move overflow content to the next page
+    const overflowContent = currentContent.slice(fitIndex);
+    moveToNextPage(overflowContent, index + 1, updatedPages);
+  }, 0); // Adjust debounce time
+
+  const moveToNextPage = (overflowContent:any, nextPageIndex:number, updatedPages:any[]) => {
+    if (overflowContent.length() === 0) return;
+
+    if (nextPageIndex >= updatedPages.length) {
+      updatedPages.push({ content: overflowContent });
+    } else {
+      updatedPages[nextPageIndex].content = overflowContent;
+    }
+    setPages([...updatedPages]);
   };
 
+  const handleChange = (value:any, delta:any, source:string, editor:any, index:number) => {
+    const updatedPages = [...pages];
+    const editor_ = editorRefs.current[currentPage].getEditor();
+    if (index >= updatedPages.length) return;
+
+    // Update content only if it changed
+    if (updatedPages[index].content !== value) {
+      updatedPages[index].content = value;
+    }
+
+    handleOverflow(index, editor_, updatedPages); 
+  };
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
@@ -1520,7 +1445,7 @@ function SyncFesion() {
       const containerTop = scrollPageRef.current.scrollTop;
       const containerBottom = containerTop + scrollPageRef.current.clientHeight;
 
-      if (cursorPosition.top < containerTop || cursorPosition.bottom > containerBottom - 34) {
+      if (cursorPosition.top < containerTop || cursorPosition.bottom > containerBottom - 34 ) {
         container.scrollTop += 20;
       }
 
@@ -2261,36 +2186,61 @@ function SyncFesion() {
   const div3Ref = useRef<any>(null);
 
   const [remainingVh, setRemainingVh] = useState(0);
+  const [footerWidth ,setFooterWidth ] = useState(0);
 
+  const [documentHeight,setDocumentHeight] = useState(0)
   useEffect(() => {
-    const calculateRemainingVh = () => {
-      const viewportHeight = window.innerHeight; // Get the total viewport height in pixels
+    const calculateRemainingVh = debounce(() => {
+        const viewportHeight = window.innerHeight;
 
-      // Get the heights of the first three divs in pixels
-      const div1Height = div1Ref.current?.offsetHeight || 0;
-      const div2Height = div2Ref.current?.offsetHeight || 0;
-      const div3Height = div3Ref.current?.offsetHeight || 0;
+        const div1Height = div1Ref.current?.offsetHeight || 0;
+        const div2Height = div2Ref.current?.offsetHeight || 0;
+        const div3Height = div3Ref.current?.offsetHeight || 0;
+        const div3Width = div3Ref.current?.offsetWidth || 0;
 
-      // Calculate total height of the three divs
-      const totalHeight = div1Height + div2Height + div3Height;
+        setFooterWidth(div3Width);
 
-      // Convert total height to vh
-      const totalHeightInVh = (totalHeight / viewportHeight) * 100;
+        const totalHeight = div1Height + div2Height + div3Height + 44;
+        const totalHeightInVh = (totalHeight / viewportHeight) * 100;
+        const remaining = 100 - totalHeightInVh;
 
-      // Calculate the remaining vh
-      const remaining = 100 - totalHeightInVh;
+        setRemainingVh((prev) => (remaining > 0 ? remaining : 0) !== prev ? (remaining > 0 ? remaining : 0) : prev);
+       setDocumentHeight(cmToPx(documentPageSize.height)) 
+    }, 300);
 
-      setRemainingVh(remaining > 0 ? remaining : 0); // If there's no remaining space, set it to 0
-    };
+    calculateRemainingVh(); // Initial calculation on load
 
-    calculateRemainingVh(); // Calculate on initial load
-
-    // Recalculate height when window is resized
     window.addEventListener("resize", calculateRemainingVh);
 
-    // Clean up event listener on component unmount
     return () => window.removeEventListener("resize", calculateRemainingVh);
-  }, [handleClick]);
+}, []);
+
+
+useEffect(() => {
+  const updateFooterWidth = () => {
+    const div3Width = div3Ref.current?.offsetWidth || 0;
+    setFooterWidth(div3Width);
+  };
+
+  // Initial call to set the footer width
+  updateFooterWidth();
+
+  // Set up the MutationObserver
+  const observer = new MutationObserver(updateFooterWidth);
+
+  // Start observing changes in div3Ref
+  if (div3Ref.current) {
+    observer.observe(div3Ref.current, {
+      attributes: true,    // Observe attribute changes
+      childList: true,     // Observe direct children changes
+      attributeFilter: ["style"],
+      subtree: true        // Observe all descendant changes
+    });
+  }
+
+  // Cleanup observer on component unmount
+  return () => observer.disconnect();
+}, []);
 
   const EditIconSvg = () => {
     return (
@@ -2311,6 +2261,7 @@ function SyncFesion() {
 
   const scrollPageRef = useRef<any>(null);
 
+  const [editorZoom,setEditorZoom ] = useState("100%");
   return (
     <>
       {isLoading && (
@@ -3340,6 +3291,8 @@ function SyncFesion() {
             setIsListActive={setIsListActive}
             handleChangeSelection={handleChangeSelection}
             scrollPageRef={scrollPageRef}
+            editorZoom = {editorZoom}
+            setEditorZoom = {setEditorZoom}
           />
         </div>
 
@@ -3354,7 +3307,7 @@ function SyncFesion() {
               style={{
                 overflowX: "auto", // Allows horizontal scrolling if necessary
                 overflowY: "auto", // Allows vertical scrolling if necessary
-                height: `${remainingVh + 1}vh`,
+                height: `${remainingVh +1}vh`,
               }}
               onClick={() => {
                 setAddReply({
@@ -3379,6 +3332,7 @@ function SyncFesion() {
                 style={{
                   height: "100%",
                   overflowY: "auto",
+                  zoom:editorZoom == "100%" ? "75%" : editorZoom == "75%" ? "60%" :editorZoom  
                 }}
                 ref={scrollPageRef}
               >
@@ -4057,6 +4011,9 @@ function SyncFesion() {
                   <TrackChanges rejectChange={rejectChange} />
                 </Grid> */}
               </Grid>
+            </div>
+            <div >
+              <EditorFooter width={footerWidth} editorZoom = {editorZoom} setEditorZoom={setEditorZoom}/>
             </div>
           </div>
         )}
