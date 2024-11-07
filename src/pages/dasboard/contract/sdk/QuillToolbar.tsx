@@ -1751,7 +1751,7 @@ export default function QuillToolbar(props: any) {
     const range = quill.getSelection(true);
     let savedSelection: any = false;
 
-    if (range.length > 0) {
+    if (range&& range.length > 0) {
       savedSelection = true;
     }
     const restoreSelection = () => {

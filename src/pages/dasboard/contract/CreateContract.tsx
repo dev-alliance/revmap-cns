@@ -290,7 +290,7 @@ const CreateContract = () => {
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
-                sx={{ marginTop: "84px" }}
+                sx={{ marginTop: "42px" }}
               >
                 <Button
                 className="contract-boxes"
@@ -303,7 +303,7 @@ const CreateContract = () => {
                     display: "table-cell",
                     padding: "15px",
                     pt: 4,
-                    height: "140px",
+                    maxHeight: "140px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
@@ -420,7 +420,7 @@ const CreateContract = () => {
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
-                sx={{ marginTop: "42px" }}
+                sx={{ marginTop: "22px" }}
               >
                 <Button
                 className="contract-boxes"
@@ -435,7 +435,7 @@ const CreateContract = () => {
                     display: "table-cell",
                     padding: "15px",
                     pt: 4,
-                    height: "140px",
+                    maxHeight: "140px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",
@@ -544,7 +544,7 @@ const CreateContract = () => {
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
-                sx={{ marginTop: "42px" }}
+                sx={{ marginTop: "22px" }}
               >
                 <Button
                 className="contract-boxes"
@@ -556,7 +556,7 @@ const CreateContract = () => {
                     display: "table-cell",
                     padding: "15px",
                     pt: 4,
-                    height: "140px",
+                    maxHeight: "140px",
                     color: "gray",
                     justifyContent: "center",
                     textTransform: "none",

@@ -1267,7 +1267,10 @@ function SyncFesion() {
   const handleOverflow = debounce((index, editor, updatedPages) => {
     const currentContent = editor.getContents();
     const editorHeight = editor.root.scrollHeight;
+    // console.log(editorHeight)
+    // console.log(documentHeight)
 
+    if(editor.root.innerText.trim().length <=0) return ;
     if (editorHeight <= documentHeight) return; // Only handle if overflow occurs
 
     let fitIndex = currentContent.length();
@@ -3332,7 +3335,7 @@ useEffect(() => {
                 style={{
                   height: "100%",
                   overflowY: "auto",
-                  zoom:editorZoom == "100%" ? "75%" : editorZoom == "75%" ? "60%" :editorZoom  
+                  zoom:editorZoom == "100%" ? "75%" : editorZoom == "75%" ? "60%" : editorZoom == "125%" ? "100%" : editorZoom == "150%" ? "125%" : editorZoom == "175%" ? "150%" :editorZoom  
                 }}
                 ref={scrollPageRef}
               >
