@@ -14,14 +14,23 @@ import DropdownBarImage from "../../../../assets/shape.png";
 import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
 Quill.register("modules/resize", ResizeModule);
-function undoChange() {
-  // @ts-ignore
-  this.quill.history.undo();
+
+function undoChange(this: any) {
+  const quill = this.quill;
+  if (quill && quill.history) {
+    quill.history.undo();
+  } else {
+    console.warn("Undo failed: Quill instance or history module not available.");
+  }
 }
 
-function redoChange() {
-  // @ts-ignore
-  this.quill.history.redo();
+function redoChange(this: any) {
+  const quill = this.quill;
+  if (quill && quill.history) {
+    quill.history.redo();
+  } else {
+    console.warn("Redo failed: Quill instance or history module not available.");
+  }
 }
 
 // Custom CheckboxBlot for Quill
