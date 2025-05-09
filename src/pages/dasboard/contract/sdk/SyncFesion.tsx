@@ -780,13 +780,33 @@ function SyncFesion() {
 
   const [isTableSelected, setIsTableSelected] = useState(false);
 
-  const save = () => {
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    const userFileName = prompt("Enter a file name for your docs", "My File");
-    if (userFileName) {
-      documentEditor.save(userFileName, "Docx");
-    }
-  };
+/**
+ * Triggers a save prompt and exports the current document content as a .docx file.
+ * Uses Syncfusion DocumentEditor instance from a ref.
+ */
+const save = () => {
+  // Access the DocumentEditor instance safely
+  const documentEditor = editorContainerRef.current?.documentEditor;
+
+  // Check if the editor is available before proceeding
+  if (!documentEditor) {
+    console.error("DocumentEditor is not available.");
+    alert("Document editor not initialized.");
+    return;
+  }
+
+  // Prompt user for a file name
+  const userFileName = prompt("Enter a file name for your document:", "My File");
+
+  // If user provides a name, proceed to save
+  if (userFileName && userFileName.trim() !== "") {
+    documentEditor.save(userFileName.trim(), "Docx");
+  } else {
+    alert("File name is required to save the document.");
+  }
+};
+
+
   const onClick = () => {
     const container = editorContainerRef.current;
     if (container) {
