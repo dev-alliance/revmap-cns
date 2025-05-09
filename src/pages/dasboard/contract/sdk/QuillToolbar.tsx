@@ -15,6 +15,17 @@ import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
 Quill.register("modules/resize", ResizeModule);
 
+const quill = new Quill('#editor', {
+  modules: {
+    history: {
+      delay: 1000, // Adjust if needed
+      userOnly: true,
+    },
+  },
+  theme: 'snow',
+});
+
+
 function undoChange(this: any) {
   const quill = this.quill;
   if (quill && quill.history) {
@@ -28,6 +39,17 @@ function redoChange(this: any) {
   const quill = this.quill;
   if (quill && quill.history) {
     quill.history.redo();
+    // Wait for redo to complete and clean unwanted newlines
+    setTimeout(() => {
+      const delta = quill.getContents();
+      // Remove unwanted newline characters (if any)
+      if (delta && delta.ops.length > 0) {
+        const lastOp = delta.ops[delta.ops.length - 1];
+        if (lastOp.insert && lastOp.insert === '\n') {
+          quill.deleteText(quill.getLength() - 1, 1); // Delete the last newline character if it's there
+        }
+      }
+    }, 50); // Timeout ensures the redo is completed before cleaning up
   } else {
     console.warn("Redo failed: Quill instance or history module not available.");
   }
