@@ -24,7 +24,7 @@ const quill = new Quill('#editor', {
   },
   theme: 'snow',
 });
-
+(window as any).quill = quill;
 
 function undoChange(this: any) {
   const quill = this.quill;
@@ -55,6 +55,36 @@ function redoChange(this: any) {
   }
 }
 
+window.addEventListener("keydown", function (e: KeyboardEvent) {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+      const quill = new Quill('#editor', { theme: 'snow' });
+     (window as any).quill = quill;
+    const quillEditor = (window as any).quill;
+    const editorElement = document.querySelector(".ql-editor");
+
+    if (!quill || !editorElement) return;
+
+    // Always prevent full-page selection
+    e.preventDefault();
+
+    // Focus editor (helps toolbar behavior)
+    quill.focus();
+
+    // Ensure editor is selectable
+    setTimeout(() => {
+      const length = quill.getLength();
+      quill.setSelection(0, length - 1, "user");
+    }, 0);
+    console.log("Quill instance:", quill);
+console.log("Editor element:", editorElement);
+
+  }
+});
+
+
+
+
+
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
 
@@ -67,6 +97,7 @@ class VideoBlot extends BlockEmbed {
     node.setAttribute("height", "auto"); // Optional: Set default height
     return node;
   }
+
 
   static value(node: any) {
     return node.getAttribute("src"); // Get the video source
