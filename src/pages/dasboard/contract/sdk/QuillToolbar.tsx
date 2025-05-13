@@ -1058,41 +1058,30 @@ const handleAddPage = () => {
     setAnchorElFontColor(null);
   };
 
-  const handleSaveFontColor = () => {
-    const editor = editorRefContext.getEditor();
-    if (!editor) return;
+const handleSaveFontColor = (color: string) => {
+  const editor = editorRefContext.getEditor();
+  if (!editor) return;
 
-    const range = editor.getSelection(true);
+  const range = editor.getSelection(true);
 
-    if (range.length === 0) {
-      setPrevFontColor(TextColor);
-      const [line] = editor.getLine(range.index);
-      const text = line?.domNode?.innerText;
-      console.log(text.trim().length);
-      if (text == "\u200B") {
-        editor.formatText(range.index - 1, 1, { color: TextColor }, "user");
-      }
-      else if (text.trim() == "\u200B" && text.trim().length <= 1) {
-        editor.formatText(range.index - 1, 1, { color: TextColor }, "user");
-      }
-      else {
-        editor.format("color", TextColor, "user");
-      }
+  if (range.length === 0) {
+    setPrevFontColor(color);
+    const [line] = editor.getLine(range.index);
+    const text = line?.domNode?.innerText;
+    if (text === "\u200B" || (text.trim() === "\u200B" && text.trim().length <= 1)) {
+      editor.formatText(range.index - 1, 1, { color }, "user");
     } else {
-      editor.formatText(
-        range.index,
-        range.length,
-        { color: TextColor },
-        "user"
-      );
-      editor.setSelection(range.index + range.length, 0);
+      editor.format("color", color, "user");
     }
+  } else {
+    editor.formatText(range.index, range.length, { color }, "user");
+    editor.setSelection(range.index + range.length, 0);
+  }
 
-    setFontColorSvg(TextColor);
+  setFontColorSvg(color);
+  editor.focus();
+};
 
-    setAnchorElFontColor(null);
-    editor.focus();
-  };
 
 
 
@@ -1677,7 +1666,7 @@ useEffect(() => {
     // if(range.length > 0) {
     //   editor.setSelection(range.index,range.length)
     // }
-    setTextColor(color.hex);
+    handleSaveFontColor(color.hex);
     setFontColorSvg(color.hex);
   };
 
@@ -4119,22 +4108,6 @@ useEffect(() => {
                   onChange={handleFontColorChange}
                   id="menu-color"
                 />
-                <div className="d-flex justify-content-between pt-2">
-                  <button
-                    className="btn btn-sm btn-color-platte btn-outline-primary mx-2"
-                    onClick={() => handleSaveFontColor()}
-                  >
-                    Apply
-                  </button>
-                  <button
-                    className="btn btn-sm btn-color-platte btn-outline-danger mx-2"
-                    onClick={() => {
-                      handleCloseFontColor();
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
               </Menu>
             </span>
           </a>
