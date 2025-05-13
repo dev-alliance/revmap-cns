@@ -254,6 +254,23 @@ useEffect(() => {
       });
     }
 
+    // Only trigger on Ctrl + Shift + x
+    if (e.ctrlKey && e.shiftKey && key === 'x') {
+      e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+      console.log('Ctrl + Shift + x detected: applying underline to all editors');
+
+      editorRefs.current.forEach((ref: any) => {
+        const editor = ref?.getEditor();
+        if (editor) {
+          const length = editor.getLength();
+          const formats = editor.getFormat(0, length);
+          const isStrike = formats.strike === true;
+          editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
+        }
+      });
+    }
+
   };
 
   document.addEventListener('keydown', handleKeyDown);

@@ -3213,13 +3213,25 @@ const handleUnderline = () => {
 };
 
 
-  const handleStrikethrough = () => {
-    const editor = editorRefContext.getEditor();
-    const isStrike = editor.getFormat().strike;
-    setIsStrikeActive(isStrike == undefined ? true : false);
-    editor.format("strike", isStrike == undefined ? true : false, "user");
-    editor.focus();
-  };
+const handleStrikethrough = () => {
+  const editor = editorRefContext.getEditor();
+
+  if (!editor) return; // Safety check in case editor is not initialized
+
+  // Get current format at cursor position
+  const currentFormat = editor.getFormat();
+  const isStrikethrough = currentFormat.strike === true;
+
+  // Update local UI state (e.g., toggle strikethrough button style)
+  setIsStrikeActive(!isStrikethrough);
+
+  // Apply or remove strikethrough formatting
+  editor.format("strike", !isStrikethrough, "user");
+
+  // Bring focus back to the editor
+  editor.focus();
+};
+
 
   const handleSuperscript = () => {
     const editor = editorRefContext.getEditor();
