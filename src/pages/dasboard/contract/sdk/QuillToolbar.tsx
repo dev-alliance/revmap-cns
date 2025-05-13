@@ -3179,13 +3179,22 @@ const handleBold = () => {
 };
 
 
-  const handleItalic = () => {
-    const editor = editorRefContext.getEditor();
-    const isItalic = editor.getFormat().italic;
-    setIsItalicActive(isItalic == undefined ? true : false);
-    editor.format("italic", isItalic == undefined ? true : false, "user");
-    editor.focus();
-  };
+const handleItalic = () => {
+  const editor = editorRefContext.getEditor();
+  if (!editor) return;
+
+  const currentFormat = editor.getFormat();
+  const isItalicActive = !!currentFormat.italic;
+
+  // Toggle italic formatting
+  editor.format("italic", !isItalicActive, "user");
+
+  // Optionally update local UI state (if you're using it)
+  setIsItalicActive(!isItalicActive);
+
+  editor.focus();
+};
+
 
   const handleUnderline = () => {
     const editor = editorRefContext.getEditor();

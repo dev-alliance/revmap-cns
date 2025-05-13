@@ -219,6 +219,23 @@ useEffect(() => {
         }
       });
     }
+
+    if (e.ctrlKey && e.shiftKey && key === 'i') {
+      e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+      console.log('Ctrl + Shift + i detected: applying italic to all editors');
+
+      editorRefs.current.forEach((ref: any) => {
+        const editor = ref?.getEditor();
+        if (editor) {
+          const length = editor.getLength();
+          const formats = editor.getFormat(0, length);
+          const isItalic = formats.italic === true;
+          editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
+        }
+      });
+    }
+
   };
 
   document.addEventListener('keydown', handleKeyDown);
