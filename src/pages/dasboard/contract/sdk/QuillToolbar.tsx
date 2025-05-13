@@ -1675,33 +1675,35 @@ useEffect(() => {
     setBgColorSvg(color.hex);
   };
 
-  const toSentenceCase = (text: any) => {
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-  };
+ const toSentenceCase = (text: string): string => {
+  if (!text) return '';
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+};
 
-  const toLowerCase = (text: any) => {
-    return text.toLowerCase();
-  };
+const toLowerCase = (text: string): string => {
+  return text?.toLowerCase?.() ?? '';
+};
 
-  const toUpperCase = (text: any) => {
-    return text.toUpperCase();
-  };
+const toUpperCase = (text: string): string => {
+  return text?.toUpperCase?.() ?? '';
+};
 
-  const toCapitalizeEachWord = (text: any) => {
-    return text.replace(
-      /\w\S*/g,
-      (word: any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    );
-  };
+const toCapitalizeEachWord = (text: string): string => {
+  if (!text) return '';
+  return text.replace(/\w\S*/g, (word: string) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+};
 
-  const toToggleCase = (text: any) => {
-    return text
-      .split("")
-      .map((char: any) =>
-        char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
-      )
-      .join("");
-  };
+const toToggleCase = (text: string): string => {
+  if (!text) return '';
+  return Array.from(text)
+    .map((char) =>
+      char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
+    )
+    .join('');
+};
+
 
   const handleTextTransformation = (transformationFunction: Function) => {
     const editor = editorRefContext.getEditor();
