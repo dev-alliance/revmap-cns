@@ -282,26 +282,17 @@ useEffect(() => {
         });
       }
 
-      if (data?.comments) {
-        setComments(() => {
-          return data.comments;
-        });
-      }
-      if (data?.newFontSize) {
-        setContractNewFontSize(() => {
-          return data.newFontSize;
-        });
-      }
-      if (data?.newFonts) {
-        setContractNewFont(() => {
-          return data.newFonts;
-        });
-      }
-      if (data?.newFontStyles) {
-        setContractNewFontStyles(() => {
-          return data.newFontStyles;
-        });
-      }
+      const {
+        comments,
+        newFontSize,
+        newFonts,
+        newFontStyles
+      } = data || {};
+
+      if (comments) setComments(comments);
+      if (newFontSize) setContractNewFontSize(newFontSize);
+      if (newFonts) setContractNewFont(newFonts);
+      if (newFontStyles) setContractNewFontStyles(newFontStyles);
       setFormState(data?.overview);
       setDucomentName(data?.overview?.name);
       setLifecycleData(data?.lifecycle);
@@ -1107,6 +1098,8 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
   };
   const handleClickCencel = () => {
     const editor = editorRefs.current[currentPage].getEditor();
+    editor.history.stack.undo = [];
+    editor.history.stack.redo = [];
     if (!id && newId === "") {
       setPages([{ content: "" }]);
     }
@@ -1488,12 +1481,13 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
       const currentLineText = currentLine ? currentLine.domNode.innerText : "";
       var customHeading = format?.customHeading;
       var size = format?.size;
-      if (currentLineText.trim().length < 1) {
-        if (format.customHeading !== "paragraph") {
-          customHeading = "paragraph";
-          size = selectedFontSize;
-          setSelectedHeadersValue(0);
-        }
+      const isEmptyLine = currentLineText.trim().length === 0;
+      const isNotParagraph = format.customHeading !== "paragraph";
+
+      if (isEmptyLine && isNotParagraph) {
+        customHeading = "paragraph";
+        size = selectedFontSize;
+        setSelectedHeadersValue(0);
       }
 
       if (format.color) {
