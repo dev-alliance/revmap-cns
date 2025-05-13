@@ -3162,13 +3162,22 @@ const toToggleCase = (text: string): string => {
     );
   };
 
-  const handleBold = () => {
-    const editor = editorRefContext.getEditor();
-    const isBold = editor.getFormat().bold;
-    setIsBoldActive(isBold == undefined ? true : false);
-    editor.format("bold", isBold == undefined ? true : false, "user");
-    editor.focus();
-  };
+const handleBold = () => {
+  const editor = editorRefContext.getEditor();
+  if (!editor) return;
+
+  const format = editor.getFormat();
+  const isCurrentlyBold = !!format.bold; // Ensures boolean value
+
+  const newBoldState = !isCurrentlyBold;
+
+  // Update state and apply formatting
+  setIsBoldActive(newBoldState);
+  editor.format("bold", newBoldState, "user");
+
+  editor.focus();
+};
+
 
   const handleItalic = () => {
     const editor = editorRefContext.getEditor();

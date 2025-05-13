@@ -200,6 +200,38 @@ function SyncFesion() {
   }, []);
 
 useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    const key = e.key.toLowerCase();
+
+    // Only trigger on Ctrl + Shift + B
+    if (e.ctrlKey && e.shiftKey && key === 'b') {
+      e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+      console.log('Ctrl + Shift + B detected: applying bold to all editors');
+
+      editorRefs.current.forEach((ref: any) => {
+        const editor = ref?.getEditor();
+        if (editor) {
+          const length = editor.getLength();
+          const formats = editor.getFormat(0, length);
+          const isBold = formats.bold === true;
+          editor.formatText(0, length, 'bold', !isBold); // Toggle bold
+        }
+      });
+    }
+  };
+
+  document.addEventListener('keydown', handleKeyDown);
+  return () => {
+    document.removeEventListener('keydown', handleKeyDown);
+  };
+}, []);
+
+
+
+
+
+useEffect(() => {
   // Exit early if editorRefs are not initialized
   if (!editorRefs) return;
 
