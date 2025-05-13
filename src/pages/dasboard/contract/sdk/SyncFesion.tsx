@@ -199,30 +199,43 @@ function SyncFesion() {
     setLeftSidebarExpanded(true);
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
+  // Exit early if editorRefs are not initialized
+  if (!editorRefs) return;
+
+  // Reset document state when no ID is present
+  if (!id && !newId) {
+    setTimeout(() => {
+      // Set default page content and styles
+      setPages([{ content: "" }]);
+      setBgColorSvg("#fefefe");
+      setPrevBgColor("#fefefe");
+      setSelectedFontSize("12px");
+      setSelectedFontSizeValue("12px");
+      setSelectedFontValue("arial");
+      setSelectedFont("arial");
+      setPrevFontColor("black");
+      setDucomentName("");
+      setEditMode(false);
+
+      // Clear undo/redo history for the first page editor only (safe during new doc setup)
+      editorRefs?.current?.forEach((ref:any) => {
+        const editor = ref?.getEditor?.();
+        if (editor) {
+          editor.history.stack.redo = [];
+          editor.history.stack.undo = [];
+        }
+      });
+    }, 0);
+  } else {
+    // If editing an existing document, just reset non-destructive fields
     setTimeout(() => {
       setEditMode(false);
+      setDucomentName("");
     }, 0);
-    setDucomentName("");
-    if (!id && !newId) {
-      setTimeout(() => {
-        setPages([{ content: "" }]);
-        setBgColorSvg("#fefefe");
-        setPrevBgColor("#fefefe");
-        setSelectedFontSize("12px");
-        setSelectedFontSizeValue("12px");
-        setSelectedFontValue("arial");
-        setSelectedFont("arial");
-        setPrevFontColor("black");
-      }, 0);
-    }
-    if (!editorRefs) return;
-    const editor = editorRefs?.current[currentPage]?.getEditor();
-    setTimeout(() => {
-      editor.history.stack.redo = [];
-      editor.history.stack.undo = [];
-    }, 100);
-  }, []);
+  }
+}, []);
+
 
   const [oldPages, setOldPages] = useState([]);
   const listData = async () => {
@@ -1094,8 +1107,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
   };
   const handleClickCencel = () => {
     const editor = editorRefs.current[currentPage].getEditor();
-    editor.history.stack.undo = [];
-    editor.history.stack.redo = [];
     if (!id && newId === "") {
       setPages([{ content: "" }]);
     }
