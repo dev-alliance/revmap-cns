@@ -3196,13 +3196,22 @@ const handleItalic = () => {
 };
 
 
-  const handleUnderline = () => {
-    const editor = editorRefContext.getEditor();
-    const isUnderline = editor.getFormat().underline;
-    setIsUnderlineActive(isUnderline == undefined ? true : false);
-    editor.format("underline", isUnderline == undefined ? true : false, "user");
-    editor.focus();
-  };
+const handleUnderline = () => {
+  const editor = editorRefContext.getEditor();
+  if (!editor) return;
+
+  const currentFormat = editor.getFormat();
+  const isUnderlineActive = !!currentFormat.underline;
+
+  // Toggle underline formatting
+  editor.format("underline", !isUnderlineActive, "user");
+
+  // Optionally update local UI state (e.g., for toolbar button state)
+  setIsUnderlineActive(!isUnderlineActive);
+
+  editor.focus();
+};
+
 
   const handleStrikethrough = () => {
     const editor = editorRefContext.getEditor();

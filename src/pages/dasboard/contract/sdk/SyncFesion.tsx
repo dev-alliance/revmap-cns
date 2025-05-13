@@ -220,6 +220,7 @@ useEffect(() => {
       });
     }
 
+     // Only trigger on Ctrl + Shift + i
     if (e.ctrlKey && e.shiftKey && key === 'i') {
       e.preventDefault(); // Prevent any default behavior like browser shortcuts
 
@@ -232,6 +233,23 @@ useEffect(() => {
           const formats = editor.getFormat(0, length);
           const isItalic = formats.italic === true;
           editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
+        }
+      });
+    }
+
+    // Only trigger on Ctrl + Shift + u
+    if (e.ctrlKey && e.shiftKey && key === 'u') {
+      e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+      console.log('Ctrl + Shift + u detected: applying underline to all editors');
+
+      editorRefs.current.forEach((ref: any) => {
+        const editor = ref?.getEditor();
+        if (editor) {
+          const length = editor.getLength();
+          const formats = editor.getFormat(0, length);
+          const isUnderline = formats.underline === true;
+          editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
         }
       });
     }
