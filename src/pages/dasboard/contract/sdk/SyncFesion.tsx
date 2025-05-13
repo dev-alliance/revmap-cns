@@ -1026,19 +1026,18 @@ const save = () => {
       </div>
     );
   };
+const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use useRef to store container
 
-  let container: DocumentEditorContainerComponent;
   const onCreated = useCallback(() => {
-    // To insert text in cursor position
-    container?.documentEditor?.editor.insertText("Document editor");
-    // Move selection to previous character
-    container?.documentEditor?.selection.moveToPreviousCharacter();
-    // To select the current word in document
-    container?.documentEditor?.selection.selectCurrentWord();
+    if (container.current) {
+      // Now container is safely accessed because we check if it exists
+      container.current.documentEditor?.editor.insertText("Document editor");
+      container.current.documentEditor?.selection.moveToPreviousCharacter();
+      container.current.documentEditor?.selection.selectCurrentWord();
 
-    // documentEditor?.restrictEditing = true;
-    // To get the selected content as text
-    const selectedContent: string = container?.documentEditor?.selection.text;
+      const selectedContent: string = container.current.documentEditor?.selection.text;
+      console.log(selectedContent);
+    }
   }, []);
 
   const [showPopup, setShowPopup] = useState<any>(false);

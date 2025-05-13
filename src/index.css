@@ -1883,6 +1883,8 @@ body {
   color: #7771e8;
 }
 
+
+
 .page-sizing:hover{
   background-color: transparent !important;
   .page-sizing-color {
@@ -2157,4 +2159,15 @@ fill: #7F7F7F;
 .contract-boxes:hover{
   border: 2px solid #7771e8 !important;
   background-color: transparent !important;
+}
+
+.quill-page {
+  width: 21cm;
+  min-height: 29.7cm;
+  margin: 20px auto;
+  padding: 1cm;
+  background: white;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.1);
+  border: 1px solid #ccc;
+  page-break-after: always;
 }
