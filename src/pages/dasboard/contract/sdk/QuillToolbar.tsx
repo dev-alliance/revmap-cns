@@ -15,47 +15,12 @@ import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
 Quill.register("modules/resize", ResizeModule);
 
-const quill = new Quill('#editor', {
-  modules: {
-    history: {
-      delay: 1000, // Adjust if needed
-      userOnly: true,
-    },
-  },
-  theme: 'snow',
-});
-(window as any).quill = quill;
-
-function undoChange(this: any) {
-  const quill = this.quill;
-  if (quill && quill.history) {
-    quill.history.undo();
-  } else {
-    console.warn("Undo failed: Quill instance or history module not available.");
-  }
+interface Page {
+  content: string;
 }
 
-function redoChange(this: any) {
-  const quill = this.quill;
-  if (quill && quill.history) {
-    quill.history.redo();
-    // Wait for redo to complete and clean unwanted newlines
-    setTimeout(() => {
-      const delta = quill.getContents();
-      // Remove unwanted newline characters (if any)
-      if (delta && delta.ops.length > 0) {
-        const lastOp = delta.ops[delta.ops.length - 1];
-        if (lastOp.insert && lastOp.insert === '\n') {
-          quill.deleteText(quill.getLength() - 1, 1); // Delete the last newline character if it's there
-        }
-      }
-    }, 50); // Timeout ensures the redo is completed before cleaning up
-  } else {
-    console.warn("Redo failed: Quill instance or history module not available.");
-  }
-}
 
-window.addEventListener("keydown", function (e: KeyboardEvent) {
+/*window.addEventListener("keydown", function (e: KeyboardEvent) {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
       const quill = new Quill('#editor', { theme: 'snow' });
      (window as any).quill = quill;
@@ -79,7 +44,7 @@ window.addEventListener("keydown", function (e: KeyboardEvent) {
 console.log("Editor element:", editorElement);
 
   }
-});
+});*/
 
 
 
@@ -548,6 +513,24 @@ const listHandler = function (value: any) {
   }
 };
 
+function undoChange(this: any) {
+  const quill = this.quill;
+  if (quill && quill.history) {
+    quill.history.undo();
+  } else {
+    console.warn("Undo failed: Quill instance or history module not available.");
+  }
+}
+
+function redoChange(this: any) {
+  const quill = this.quill;
+  if (quill && quill.history) {
+    quill.history.redo();
+  } else {
+    console.warn("redo failed: Quill instance or history module not available.");
+  }
+}
+
 // Modules object for setting up the Quill editor
 export const modules = {
   toolbar: {
@@ -560,7 +543,7 @@ export const modules = {
   },
   history: {
     delay: 0,
-    maxStack: 5000,
+    maxStack: 100,
     userOnly: true,
   },
   resize: {
@@ -682,8 +665,6 @@ export default function QuillToolbar(props: any) {
     setSelectedFontValue,
     setSelectedFontSizeValue,
     setSelectedHeadersValue,
-    setPages,
-    setCurrentPage,
     spacing,
     setSpacing,
     setBgColorSelection,
@@ -698,6 +679,70 @@ export default function QuillToolbar(props: any) {
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
+
+  const [pages, setPages] = useState<Page[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+
+const handleAddPage = () => {
+    setPages(prevPages => {
+      const updatedPages = [...prevPages, { content: '' }];
+      const newIndex = updatedPages.length - 1;
+      setCurrentPage(newIndex);
+      console.log('📄 New page added at index:', newIndex);
+
+      // Simulate Quill history.record if needed
+      // const quill = editorRefContext?.getEditor();
+      // quill?.history?.record();
+
+      return updatedPages;
+    });
+  };
+
+  // Trigger function (could be called from outside later)
+  const triggerPageBreak = () => {
+    console.log('🧠 Triggering page break...');
+    handleAddPage();
+  };
+
+// const PageBreakComponent = () => {
+//   const [pages, setPages] = useState<Page[]>([]);
+//   const [currentPage, setCurrentPage] = useState(0);
+
+//   // A ref to hold the latest version of the page break function
+//     const pageBreakHandlerRef = useRef<(() => void) | null>(null);
+
+//   // This function adds a new page
+//   const handleAddPage = () => {
+//     setPages((prevPages) => {
+//       const updatedPages = [...prevPages, { content: '' }];
+//       const newIndex = updatedPages.length - 1;
+//       setCurrentPage(newIndex);
+
+//       console.log('📄 Page break added at index:', newIndex);
+
+//       // Simulate Quill history.record if needed
+//       // const quill = yourEditorRef.current;
+//       // if (quill) {
+//       //   quill.history.record();
+//       //   console.log('✍️ Quill history recorded');
+//       // }
+
+//       return updatedPages;
+//     });
+//   }
+
+//   // Store the handler so it can be triggered outside
+//   pageBreakHandlerRef.current = handleAddPage;
+
+//   // External trigger for page break
+//   const triggerPageBreak = () => {
+//     if (pageBreakHandlerRef.current) {
+//       console.log('🧠 Triggering page break...');
+//       pageBreakHandlerRef.current();
+//     }
+//   };
+// };
+
 
   const handleListClick = (value: string) => {
     const editor = editorRefContext.getEditor();
@@ -1455,34 +1500,38 @@ export default function QuillToolbar(props: any) {
 
   const [canRedo, setCanRedo] = useState(false);
 
-  useEffect(() => {
-    const checkHistory = () => {
-      if (editorRefContext) {
-        const quill = editorRefContext.getEditor();
-        const undoStack = quill.history.stack.undo;
-        const redoStack = quill.history.stack.redo;
-        // console.log(redoStack[redoStack.length - 1])
-        // console.log(undoStack[undoStack.length-1]);
-        // console.log(redoStack);
-        setCanUndo(undoStack.length > 0);
-        setCanRedo(redoStack.length > 0);
-      }
-    };
+useEffect(() => {
+  if (!editorRefContext) return;
 
-    if (editorRefContext) {
-      const quill = editorRefContext.getEditor();
+  const quill = editorRefContext.getEditor();
 
-      quill.on("text-change", checkHistory);
-      quill.on("selection-change", checkHistory);
+  // Function to check the undo/redo history
+  const checkHistory = () => {
+    const undoStack = quill.history.stack.undo;
+    const redoStack = quill.history.stack.redo;
 
-      checkHistory(); // Initial check
+        console.log("Undo Stack:", undoStack);
+    console.log("Redo Stack:", redoStack);
 
-      return () => {
-        quill.off("text-change", checkHistory);
-        quill.off("selection-change", checkHistory);
-      };
-    }
-  }, [editorRefContext]);
+    // Set state for undo/redo availability based on the stack lengths
+    setCanUndo(undoStack.length > 0); // If undo stack has entries, enable undo
+    setCanRedo(redoStack.length > 0); // If redo stack has entries, enable redo
+  };
+
+  // Attach event listeners for content changes and selection changes
+  quill.on("text-change", checkHistory);
+  quill.on("selection-change", checkHistory);
+
+  // Initial check when the editor is loaded
+  checkHistory();
+  // Cleanup function to remove event listeners when the component is unmounted
+  return () => {
+    quill.off("text-change", checkHistory);
+    quill.off("selection-change", checkHistory);
+  };
+}, [editorRefContext]); // Dependency array ensures effect runs when editorRefContext is set
+
+
 
   const handleSelectSize = (value: any) => {
     setAnchorElSize(null);
@@ -5378,17 +5427,11 @@ export default function QuillToolbar(props: any) {
             }}
             id="page-break"
           >
-            <span
+      {/* Button or span to trigger the page break */}
+          <span
               className="d-flex justify-content-center align-items-center"
               style={{ width: 34 }}
-              onClick={() => {
-                setPages((prevPages: any) => {
-                  let updatedPages = [...prevPages, { content: "" }];
-                  let newIndex = updatedPages.length - 1;
-                  setCurrentPage(newIndex);
-                  return updatedPages;
-                });
-              }}
+              onClick={triggerPageBreak}
             >
               <PageBreakSvg />
             </span>
