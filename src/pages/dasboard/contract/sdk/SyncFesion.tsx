@@ -201,6 +201,14 @@ function SyncFesion() {
 
   // Create this map outside the event handler (at component/module level)
     const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
+const [formattingVisible, setFormattingVisible] = useState(false);
+const formattingVisibleRef = useRef(formattingVisible);
+
+
+// Keep ref in sync
+useEffect(() => {
+  formattingVisibleRef.current = formattingVisible;
+}, [formattingVisible]);
 
 
   useEffect(() => {
@@ -410,6 +418,79 @@ function SyncFesion() {
             }
           });
         }
+
+if (e.ctrlKey && e.key === '8') {
+  e.preventDefault();
+  editorRefs.current.forEach((ref: any) => {
+    const editor = ref?.getEditor();
+    if (!editor) return;
+
+    const editorContainer = editor.root;
+    const paragraphs = editorContainer.querySelectorAll("p");
+
+    paragraphs.forEach((p: HTMLElement) => {
+      const oldMarks = p.querySelectorAll(".formatting-mark");
+      oldMarks.forEach((mark) => {
+        const parent = mark.parentNode;
+        if (!parent) return;
+
+        const textContent = mark.textContent || "";
+        const restoredText = textContent
+          .replace(/·/g, " ")
+          .replace(/→/g, "\t")
+          .replace(/¶/g, "");
+
+        const textNode = document.createTextNode(restoredText);
+        parent.replaceChild(textNode, mark);
+      });
+
+      // ✅ Use ref to access current visibility
+      if (!formattingVisibleRef.current) {
+        const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+        const textNodes: Text[] = [];
+
+        while (walker.nextNode()) {
+          textNodes.push(walker.currentNode as Text);
+        }
+
+        textNodes.forEach((textNode) => {
+          const originalText = textNode.textContent ?? "";
+          const fragment = document.createDocumentFragment();
+
+          for (let i = 0; i < originalText.length; i++) {
+            const char = originalText[i];
+            const span = document.createElement("span");
+            span.className = "formatting-mark";
+
+            if (char === " " || char === ".") {
+              span.textContent = "·";
+              span.setAttribute("contenteditable", "false");
+            } else if (char === "\t") {
+              span.textContent = "→";
+              span.setAttribute("contenteditable", "false");
+            } else {
+              span.textContent = char;
+            }
+
+            fragment.appendChild(span);
+          }
+
+          textNode.parentNode?.replaceChild(fragment, textNode);
+        });
+
+        const endMark = document.createElement("span");
+        endMark.className = "formatting-mark";
+        endMark.setAttribute("contenteditable", "false");
+        endMark.textContent = "¶";
+        p.appendChild(endMark);
+      }
+    });
+  });
+
+  // ✅ Proper toggle
+  setFormattingVisible(prev => !prev);
+}
+
 
     };
 
