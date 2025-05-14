@@ -1788,39 +1788,79 @@ const toToggleCase = (text: string): string => {
     setShowFormattingMarks(!showFormattingMarks);
   };
 
-  useEffect(() => {
-    if (!editorRefContext) return;
-    const editor = editorRefContext.getEditor();
-    const editorContainer = editor.root;
+useEffect(() => {
+  if (!editorRefContext) return;
 
-    // Get all paragraphs
-    const paragraphs = editorContainer.querySelectorAll("p");
+  const editor = editorRefContext.getEditor();
+  const editorContainer = editor.root;
+  const paragraphs = editorContainer.querySelectorAll("p");
 
-    paragraphs.forEach((p: HTMLElement) => {
-      // Remove text nodes containing '¶'
-      const childNodes = Array.from(p.childNodes);
-      childNodes.forEach((node: Node) => {
-        if (
-          node.textContent?.includes("¶")
-        ) {
-          node.textContent = node.textContent.replace(/¶/g, "");
+  paragraphs.forEach((p: HTMLElement) => {
+    // 🔁 Step 1: Remove old formatting marks (even broken/multi-character ones)
+    const oldMarks = p.querySelectorAll(".formatting-mark");
+    oldMarks.forEach((mark) => {
+      const parent = mark.parentNode;
+      if (!parent) return;
+
+      const textContent = mark.textContent || "";
+
+      // Convert special symbols to original characters
+  const restoredText = textContent
+  .replace(/·/g, " ")
+  .replace(/→/g, "\t")
+  .replace(/¶/g, "");
+
+
+      const textNode = document.createTextNode(restoredText);
+      parent.replaceChild(textNode, mark);
+    });
+
+    // ✅ Step 2: If formatting is enabled, wrap each character
+    if (showFormattingMarks) {
+      const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+      const textNodes: Text[] = [];
+
+      while (walker.nextNode()) {
+        textNodes.push(walker.currentNode as Text);
+      }
+
+      textNodes.forEach((textNode) => {
+        const originalText = textNode.textContent ?? "";
+        const fragment = document.createDocumentFragment();
+
+        for (let i = 0; i < originalText.length; i++) {
+          const char = originalText[i];
+          const span = document.createElement("span");
+          span.className = "formatting-mark";
+
+          if (char === " " || char === ".") {
+            span.textContent = "·";
+            span.setAttribute("contenteditable", "false");
+          } else if (char === "\t") {
+            span.textContent = "→";
+            span.setAttribute("contenteditable", "false");
+          } else {
+            span.textContent = char;
+          }
+
+          fragment.appendChild(span);
         }
+
+        textNode.parentNode?.replaceChild(fragment, textNode);
       });
 
-      // If showFormattingMarks is true, add new formatting mark
-      const lineText = p.innerText.trim();
-      if (lineText === "" || lineText.length < 95) {
-        if (showFormattingMarks) {
-          // Create and append new formatting mark
-          const mark = document.createElement("span");
-          mark.className = "formatting-mark";
-          mark.innerHTML = "¶";
+      // 🧩 Step 3: Add paragraph end mark
+      const endMark = document.createElement("span");
+      endMark.className = "formatting-mark";
+      endMark.setAttribute("contenteditable", "false");
+      endMark.textContent = "¶";
+      p.appendChild(endMark);
+    }
+  });
+}, [showFormattingMarks, editorRefContext]);
 
-          p.appendChild(mark);
-        }
-      }
-    });
-  }, [showFormattingMarks]);
+
+
 
   const handleSelectSpacing = (value: any) => {
     setSpacing(value);
