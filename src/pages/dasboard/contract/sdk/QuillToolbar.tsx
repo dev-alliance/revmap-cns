@@ -2477,23 +2477,33 @@ const toToggleCase = (text: string): string => {
     );
   };
 
-  const SuperScriptSvg = () => {
-    return (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          className="fill-hover"
-          d="M15.5 13C15.5 13.1326 15.4474 13.2598 15.3536 13.3536C15.2598 13.4473 15.1326 13.5 15 13.5H12C11.9072 13.5 11.8162 13.4742 11.7372 13.4253C11.6582 13.3765 11.5944 13.3067 11.5528 13.2236C11.5113 13.1406 11.4937 13.0476 11.5021 12.9551C11.5104 12.8626 11.5443 12.7743 11.6 12.7L14.2982 9.10251C14.3846 8.98738 14.4451 8.85495 14.4756 8.71428C14.5061 8.57361 14.5059 8.42801 14.4749 8.28743C14.444 8.14685 14.3831 8.01461 14.2964 7.89973C14.2096 7.78486 14.0991 7.69007 13.9724 7.62183C13.8456 7.55359 13.7057 7.51352 13.562 7.50435C13.4184 7.49518 13.2744 7.51713 13.14 7.56871C13.0056 7.62028 12.884 7.70025 12.7833 7.80317C12.6827 7.90608 12.6055 8.02951 12.5569 8.16501C12.535 8.22694 12.5011 8.28394 12.4572 8.33277C12.4132 8.3816 12.3601 8.42129 12.3008 8.44958C12.2415 8.47788 12.1772 8.49421 12.1116 8.49767C12.046 8.50112 11.9804 8.49162 11.9185 8.4697C11.8566 8.44779 11.7995 8.41389 11.7507 8.36995C11.7019 8.326 11.6622 8.27287 11.6339 8.21359C11.6056 8.1543 11.5893 8.09002 11.5858 8.02443C11.5824 7.95883 11.5919 7.89319 11.6138 7.83126C11.6824 7.63864 11.78 7.4576 11.9032 7.29439C12.2224 6.87079 12.6969 6.59136 13.2221 6.51758C13.7474 6.44379 14.2805 6.5817 14.7041 6.90095C15.1277 7.22021 15.4071 7.69466 15.4809 8.21994C15.5547 8.74521 15.4168 9.27829 15.0975 9.70189L13 12.5H15C15.1326 12.5 15.2598 12.5527 15.3536 12.6465C15.4474 12.7402 15.5 12.8674 15.5 13ZM9.32754 3.12501C9.2779 3.08198 9.22026 3.04915 9.15792 3.0284C9.09558 3.00765 9.02977 2.99939 8.96424 3.00409C8.8987 3.00879 8.83474 3.02636 8.776 3.0558C8.71727 3.08523 8.66491 3.12596 8.62192 3.17564L5.75004 6.48626L2.87817 3.17376C2.78862 3.08478 2.66873 3.03296 2.54256 3.0287C2.4164 3.02445 2.29329 3.06808 2.19796 3.15083C2.10262 3.23359 2.04212 3.34934 2.0286 3.47485C2.01507 3.60037 2.04953 3.72635 2.12504 3.82751L5.08817 7.25001L2.12504 10.6725C2.03818 10.7728 1.99472 10.9035 2.00421 11.0358C2.01371 11.1681 2.07538 11.2913 2.17567 11.3781C2.27595 11.465 2.40663 11.5085 2.53896 11.499C2.67129 11.4895 2.79443 11.4278 2.88129 11.3275L5.75629 8.01501L8.62817 11.3275C8.67117 11.3772 8.72354 11.4179 8.78228 11.4473C8.84101 11.4767 8.90497 11.4943 8.97049 11.499C9.03602 11.5037 9.10182 11.4954 9.16416 11.4747C9.22649 11.454 9.28413 11.4211 9.33379 11.3781C9.38345 11.3351 9.42415 11.2828 9.45356 11.224C9.48298 11.1653 9.50054 11.1013 9.50524 11.0358C9.50994 10.9703 9.50169 10.9045 9.48096 10.8421C9.46023 10.7798 9.42742 10.7222 9.38442 10.6725L6.41192 7.25001L9.37817 3.82751C9.46411 3.72742 9.50702 3.59742 9.49754 3.46584C9.48805 3.33425 9.42695 3.21175 9.32754 3.12501Z"
-          fill={isScriptActive == "super" ? "#7771E8" : "#7F7F7F"}
-        />
-      </svg>
-    );
-  };
+ const SuperScriptSvg = () => {
+  return (
+    <svg
+       width="18"
+  height="18"
+  viewBox="0 0 16 16"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    className="fill-hover"
+    transform="translate(1, 1)" 
+    d="M9.33 3.13C9.28 3.08 9.22 3.05 9.16 3.03C9.10 3.01 9.03 2.99 8.96 3.00C8.90 3.01 8.83 3.03 8.78 3.06C8.72 3.09 8.66 3.13 8.62 3.18L5.75 6.49L2.88 3.17C2.79 3.08 2.67 3.03 2.54 3.03C2.42 3.02 2.29 3.07 2.20 3.15C2.10 3.23 2.04 3.35 2.03 3.47C2.02 3.60 2.05 3.73 2.13 3.83L5.09 7.25L2.13 10.67C2.04 10.77 2.00 10.90 2.00 11.04C2.01 11.17 2.08 11.29 2.18 11.38C2.28 11.47 2.41 11.51 2.54 11.50C2.67 11.49 2.79 11.43 2.88 11.33L5.76 8.02L8.63 11.33C8.67 11.38 8.72 11.42 8.78 11.45C8.84 11.48 8.90 11.49 8.97 11.50C9.04 11.50 9.10 11.49 9.16 11.47C9.23 11.45 9.28 11.42 9.33 11.38C9.38 11.34 9.42 11.28 9.45 11.22C9.48 11.17 9.50 11.10 9.51 11.04C9.51 10.97 9.50 10.90 9.48 10.84C9.46 10.78 9.43 10.72 9.38 10.67L6.41 7.25L9.38 3.83C9.46 3.73 9.51 3.60 9.50 3.47C9.49 3.33 9.43 3.21 9.33 3.13Z"
+    fill={isScriptActive == "super" ? "#7771E8" : "#7F7F7F"}
+  />
+  <text
+    x="11"
+    y="10"
+    fontSize="14"
+    fill={isScriptActive == "super" ? "#7771E8" : "#7F7F7F"}
+  >
+    ²
+  </text>
+    </svg>
+  );
+};
+
 
   const FormattingSvg = () => {
     return (
@@ -3232,21 +3242,71 @@ const handleStrikethrough = () => {
   editor.focus();
 };
 
+const originalFontSizeMap = new Map<any, string>();
 
-  const handleSuperscript = () => {
-    const editor = editorRefContext.getEditor();
-    const isSuperscript = editor.getFormat().script === "super";
-    setIsScriptActive(isSuperscript ? "" : "super");
-    if (isSuperscript) {
-      editor.format("script", false, "user");
-      editor.format("size", selectedFontSizeValue)
+const handleSuperscript = () => {
+  const editor = editorRefContext.getEditor();
+  const currentFormat = editor.getFormat();
+  const isSuperscript = currentFormat.script === "super";
+
+  // This is the actual selected size before superscript
+  const userSelectedSize = selectedFontSizeValue || "14px";
+
+  const getReducedSize = (size: string): string => {
+    const pxMatch = size.match(/^(\d+)px$/);
+    if (pxMatch) {
+      const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+      return `${reduced}px`;
     }
-    else {
-      editor.format("size", false, "user");
-      editor.format("script", "super", "user")
-    }
-    editor.focus();
+    return size;
   };
+
+  if (isSuperscript) {
+    // Restore the original size from the map
+    const originalSize = originalFontSizeMap.get(editor) || userSelectedSize;
+    editor.format("script", false, "user");
+    editor.format("size", originalSize, "user");
+    setIsScriptActive("");
+    originalFontSizeMap.delete(editor);
+  } else {
+    // Store the original size
+    originalFontSizeMap.set(editor, userSelectedSize);
+
+    // Apply reduced size and superscript
+    const reducedSize = getReducedSize(userSelectedSize);
+    editor.format("script", "super", "user");
+    editor.format("size", reducedSize, "user");
+    setIsScriptActive("super");
+  }
+
+  editor.focus();
+};
+
+
+
+// const handleSuperscript = () => {
+//   const editor = editorRefContext.getEditor();
+
+//   // Check if current selection is already superscript
+//   const isSuperscript = editor.getFormat().script === "super";
+
+//   // Update active script state in your UI
+//   setIsScriptActive(isSuperscript ? "" : "super");
+
+//   if (isSuperscript) {
+//     // If already superscript, remove it and restore font size
+//     editor.format("script", false, "user");
+//     editor.format("size", selectedFontSizeValue); // Restore previously selected font size
+//   } else {
+//     // Remove font size to prevent conflict, then apply superscript
+//     editor.format("size", false, "user");
+//     editor.format("script", "super", "user");
+//   }
+
+//   // Refocus editor after formatting
+//   editor.focus();
+// };
+
 
   const handleSubscript = () => {
     const editor = editorRefContext.getEditor();

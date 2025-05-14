@@ -271,6 +271,78 @@ useEffect(() => {
       });
     }
 
+// Create this map outside the event handler (at component/module level)
+const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
+
+if (e.ctrlKey && e.shiftKey && e.key === '+') {
+  e.preventDefault(); // Prevent default browser behavior
+
+  console.log('Ctrl + Shift + ^ detected: applying superscript to all editors');
+
+  editorRefs.current.forEach((ref: any) => {
+    const editor = ref?.getEditor();
+    if (!editor) return;
+
+    const length = editor.getLength();
+    const formats = editor.getFormat(0, length);
+    const isSuperscript = formats.script === "super";
+
+    const currentFormat = editor.getFormat();
+    const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
+
+    // Helper: reduce size by 4px
+    const getReducedSize = (size: string): string => {
+      const pxMatch = size.match(/^(\d+)px$/);
+      if (pxMatch) {
+        const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+        return `${reduced}px`;
+      }
+      return size;
+    };
+
+    if (isSuperscript) {
+          const getIncreasedSize = (size: string): string => {
+          const pxMatch = size.match(/^(\d+)px$/);
+          if (pxMatch) {
+            const increased = parseInt(pxMatch[1], 10) + 4;
+            return `${increased}px`;
+          }
+          return size;
+        };
+
+      const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
+      console.log("Restoring for editor:", editor);
+      console.log("Original size:", originalSize, "| Current size:", currentSize);
+
+      editor.formatText(0, length, {
+        script: false,
+        size: originalSize,
+      }, 'user');
+
+      originalFontSizeMap.delete(editor);
+      setIsScriptActice("");
+    } else {
+      // Store original size and apply superscript
+      if (!originalFontSizeMap.has(editor)) {
+        originalFontSizeMap.set(editor, currentSize);
+        console.log("Storing original size:", currentSize, "for editor:", editor);
+      }
+
+      const reducedSize = getReducedSize(currentSize);
+      console.log("Applying reduced size:", reducedSize, "to editor:", editor);
+
+      editor.formatText(0, length, {
+        script: 'super',
+        size: reducedSize,
+      }, 'user');
+
+      setIsScriptActice("super");
+    }
+  });
+}
+
+
+
   };
 
   document.addEventListener('keydown', handleKeyDown);
