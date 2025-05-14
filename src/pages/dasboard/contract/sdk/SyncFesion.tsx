@@ -199,157 +199,225 @@ function SyncFesion() {
     setLeftSidebarExpanded(true);
   }, []);
 
-useEffect(() => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    const key = e.key.toLowerCase();
+  // Create this map outside the event handler (at component/module level)
+    const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
 
-    // Only trigger on Ctrl + Shift + B
-    if (e.ctrlKey && e.shiftKey && key === 'b') {
-      e.preventDefault(); // Prevent any default behavior like browser shortcuts
 
-      console.log('Ctrl + Shift + B detected: applying bold to all editors');
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
 
-      editorRefs.current.forEach((ref: any) => {
-        const editor = ref?.getEditor();
-        if (editor) {
-          const length = editor.getLength();
-          const formats = editor.getFormat(0, length);
-          const isBold = formats.bold === true;
-          editor.formatText(0, length, 'bold', !isBold); // Toggle bold
-        }
-      });
-    }
+      // Only trigger on Ctrl + Shift + B
+      if (e.ctrlKey && e.shiftKey && key === 'b') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
 
-     // Only trigger on Ctrl + Shift + i
-    if (e.ctrlKey && e.shiftKey && key === 'i') {
-      e.preventDefault(); // Prevent any default behavior like browser shortcuts
+        console.log('Ctrl + Shift + B detected: applying bold to all editors');
 
-      console.log('Ctrl + Shift + i detected: applying italic to all editors');
-
-      editorRefs.current.forEach((ref: any) => {
-        const editor = ref?.getEditor();
-        if (editor) {
-          const length = editor.getLength();
-          const formats = editor.getFormat(0, length);
-          const isItalic = formats.italic === true;
-          editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
-        }
-      });
-    }
-
-    // Only trigger on Ctrl + Shift + u
-    if (e.ctrlKey && e.shiftKey && key === 'u') {
-      e.preventDefault(); // Prevent any default behavior like browser shortcuts
-
-      console.log('Ctrl + Shift + u detected: applying underline to all editors');
-
-      editorRefs.current.forEach((ref: any) => {
-        const editor = ref?.getEditor();
-        if (editor) {
-          const length = editor.getLength();
-          const formats = editor.getFormat(0, length);
-          const isUnderline = formats.underline === true;
-          editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
-        }
-      });
-    }
-
-    // Only trigger on Ctrl + Shift + x
-    if (e.ctrlKey && e.shiftKey && key === 'x') {
-      e.preventDefault(); // Prevent any default behavior like browser shortcuts
-
-      console.log('Ctrl + Shift + x detected: applying underline to all editors');
-
-      editorRefs.current.forEach((ref: any) => {
-        const editor = ref?.getEditor();
-        if (editor) {
-          const length = editor.getLength();
-          const formats = editor.getFormat(0, length);
-          const isStrike = formats.strike === true;
-          editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
-        }
-      });
-    }
-
-// Create this map outside the event handler (at component/module level)
-const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
-
-if (e.ctrlKey && e.shiftKey && e.key === '+') {
-  e.preventDefault(); // Prevent default browser behavior
-
-  console.log('Ctrl + Shift + ^ detected: applying superscript to all editors');
-
-  editorRefs.current.forEach((ref: any) => {
-    const editor = ref?.getEditor();
-    if (!editor) return;
-
-    const length = editor.getLength();
-    const formats = editor.getFormat(0, length);
-    const isSuperscript = formats.script === "super";
-
-    const currentFormat = editor.getFormat();
-    const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
-
-    // Helper: reduce size by 4px
-    const getReducedSize = (size: string): string => {
-      const pxMatch = size.match(/^(\d+)px$/);
-      if (pxMatch) {
-        const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
-        return `${reduced}px`;
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isBold = formats.bold === true;
+            editor.formatText(0, length, 'bold', !isBold); // Toggle bold
+          }
+        });
       }
-      return size;
+
+      // Only trigger on Ctrl + Shift + i
+      if (e.ctrlKey && e.shiftKey && key === 'i') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + i detected: applying italic to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isItalic = formats.italic === true;
+            editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + u
+      if (e.ctrlKey && e.shiftKey && key === 'u') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + u detected: applying underline to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isUnderline = formats.underline === true;
+            editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + x
+      if (e.ctrlKey && e.shiftKey && key === 'x') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + x detected: applying underline to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isStrike = formats.strike === true;
+            editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + +
+      if (e.ctrlKey && e.shiftKey && e.key === '+') {
+        e.preventDefault(); // Prevent default browser behavior
+
+        console.log('Ctrl + Shift + + detected: applying superscript to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (!editor) return;
+
+          const length = editor.getLength();
+          const formats = editor.getFormat(0, length);
+          const isSuperscript = formats.script === "super";
+
+          const currentFormat = editor.getFormat();
+          const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
+
+          // Helper: reduce size by 4px
+          const getReducedSize = (size: string): string => {
+            const pxMatch = size.match(/^(\d+)px$/);
+            if (pxMatch) {
+              const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+              return `${reduced}px`;
+            }
+            return size;
+          };
+
+          if (isSuperscript) {
+                const getIncreasedSize = (size: string): string => {
+                const pxMatch = size.match(/^(\d+)px$/);
+                if (pxMatch) {
+                  const increased = parseInt(pxMatch[1], 10) + 4;
+                  return `${increased}px`;
+                }
+                return size;
+              };
+
+            const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
+            console.log("Restoring for editor:", editor);
+            console.log("Original size:", originalSize, "| Current size:", currentSize);
+
+            editor.formatText(0, length, {
+              script: false,
+              size: originalSize,
+            }, 'user');
+
+            originalFontSizeMap.delete(editor);
+            setIsScriptActice("");
+          } else {
+            // Store original size and apply superscript
+            if (!originalFontSizeMap.has(editor)) {
+              originalFontSizeMap.set(editor, currentSize);
+              console.log("Storing original size:", currentSize, "for editor:", editor);
+            }
+
+            const reducedSize = getReducedSize(currentSize);
+            console.log("Applying reduced size:", reducedSize, "to editor:", editor);
+
+            editor.formatText(0, length, {
+              script: 'super',
+              size: reducedSize,
+            }, 'user');
+
+            setIsScriptActice("super");
+          }
+        });
+      }
+      // Only trigger on Ctrl + -
+      if (e.ctrlKey && e.key === '-') {
+          e.preventDefault(); // Prevent default browser behavior
+
+          console.log('Ctrl + Shift + - detected: applying subscript to all editors');
+
+          editorRefs.current.forEach((ref: any) => {
+            const editor = ref?.getEditor();
+            if (!editor) return;
+
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isSubscript = formats.script === "sub";
+
+            const currentFormat = editor.getFormat();
+            const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
+
+            // Helper: reduce size by 4px
+            const getReducedSize = (size: string): string => {
+              const pxMatch = size.match(/^(\d+)px$/);
+              if (pxMatch) {
+                const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+                return `${reduced}px`;
+              }
+              return size;
+            };
+
+            if (isSubscript) {
+              // Helper: increase size by 4px
+              const getIncreasedSize = (size: string): string => {
+                const pxMatch = size.match(/^(\d+)px$/);
+                if (pxMatch) {
+                  const increased = parseInt(pxMatch[1], 10) + 4;
+                  return `${increased}px`;
+                }
+                return size;
+              };
+
+              const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
+              console.log("Restoring for editor:", editor);
+              console.log("Original size:", originalSize, "| Current size:", currentSize);
+
+              editor.formatText(0, length, {
+                script: false,
+                size: originalSize,
+              }, 'user');
+
+              originalFontSizeMap.delete(editor);
+              setIsScriptActice("");
+            } else {
+              // Store original size and apply subscript
+              if (!originalFontSizeMap.has(editor)) {
+                originalFontSizeMap.set(editor, currentSize);
+                console.log("Storing original size:", currentSize, "for editor:", editor);
+              }
+
+              const reducedSize = getReducedSize(currentSize);
+              console.log("Applying reduced size:", reducedSize, "to editor:", editor);
+
+              editor.formatText(0, length, {
+                script: 'sub',
+                size: reducedSize,
+              }, 'user');
+
+              setIsScriptActice("sub");
+            }
+          });
+        }
+
     };
 
-    if (isSuperscript) {
-          const getIncreasedSize = (size: string): string => {
-          const pxMatch = size.match(/^(\d+)px$/);
-          if (pxMatch) {
-            const increased = parseInt(pxMatch[1], 10) + 4;
-            return `${increased}px`;
-          }
-          return size;
-        };
-
-      const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
-      console.log("Restoring for editor:", editor);
-      console.log("Original size:", originalSize, "| Current size:", currentSize);
-
-      editor.formatText(0, length, {
-        script: false,
-        size: originalSize,
-      }, 'user');
-
-      originalFontSizeMap.delete(editor);
-      setIsScriptActice("");
-    } else {
-      // Store original size and apply superscript
-      if (!originalFontSizeMap.has(editor)) {
-        originalFontSizeMap.set(editor, currentSize);
-        console.log("Storing original size:", currentSize, "for editor:", editor);
-      }
-
-      const reducedSize = getReducedSize(currentSize);
-      console.log("Applying reduced size:", reducedSize, "to editor:", editor);
-
-      editor.formatText(0, length, {
-        script: 'super',
-        size: reducedSize,
-      }, 'user');
-
-      setIsScriptActice("super");
-    }
-  });
-}
-
-
-
-  };
-
-  document.addEventListener('keydown', handleKeyDown);
-  return () => {
-    document.removeEventListener('keydown', handleKeyDown);
-  };
-}, []);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
 
 

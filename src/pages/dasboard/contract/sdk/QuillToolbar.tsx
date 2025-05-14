@@ -3172,84 +3172,122 @@ const toToggleCase = (text: string): string => {
     );
   };
 
-const handleBold = () => {
+  const handleBold = () => {
+    const editor = editorRefContext.getEditor();
+    if (!editor) return;
+
+    const format = editor.getFormat();
+    const isCurrentlyBold = !!format.bold; // Ensures boolean value
+
+    const newBoldState = !isCurrentlyBold;
+
+    // Update state and apply formatting
+    setIsBoldActive(newBoldState);
+    editor.format("bold", newBoldState, "user");
+
+    editor.focus();
+  };
+
+
+  const handleItalic = () => {
+    const editor = editorRefContext.getEditor();
+    if (!editor) return;
+
+    const currentFormat = editor.getFormat();
+    const isItalicActive = !!currentFormat.italic;
+
+    // Toggle italic formatting
+    editor.format("italic", !isItalicActive, "user");
+
+    // Optionally update local UI state (if you're using it)
+    setIsItalicActive(!isItalicActive);
+
+    editor.focus();
+  };
+
+
+  const handleUnderline = () => {
+    const editor = editorRefContext.getEditor();
+    if (!editor) return;
+
+    const currentFormat = editor.getFormat();
+    const isUnderlineActive = !!currentFormat.underline;
+
+    // Toggle underline formatting
+    editor.format("underline", !isUnderlineActive, "user");
+
+    // Optionally update local UI state (e.g., for toolbar button state)
+    setIsUnderlineActive(!isUnderlineActive);
+
+    editor.focus();
+  };
+
+
+  const handleStrikethrough = () => {
+    const editor = editorRefContext.getEditor();
+
+    if (!editor) return; // Safety check in case editor is not initialized
+
+    // Get current format at cursor position
+    const currentFormat = editor.getFormat();
+    const isStrikethrough = currentFormat.strike === true;
+
+    // Update local UI state (e.g., toggle strikethrough button style)
+    setIsStrikeActive(!isStrikethrough);
+
+    // Apply or remove strikethrough formatting
+    editor.format("strike", !isStrikethrough, "user");
+
+    // Bring focus back to the editor
+    editor.focus();
+  };
+
+  const originalFontSizeMap = new Map<any, string>();
+
+  const handleSuperscript = () => {
+    const editor = editorRefContext.getEditor();
+    const currentFormat = editor.getFormat();
+    const isSuperscript = currentFormat.script === "super";
+
+    // This is the actual selected size before superscript
+    const userSelectedSize = selectedFontSizeValue || "14px";
+
+    const getReducedSize = (size: string): string => {
+      const pxMatch = size.match(/^(\d+)px$/);
+      if (pxMatch) {
+        const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+        return `${reduced}px`;
+      }
+      return size;
+    };
+
+    if (isSuperscript) {
+      // Restore the original size from the map
+      const originalSize = originalFontSizeMap.get(editor) || userSelectedSize;
+      editor.format("script", false, "user");
+      editor.format("size", originalSize, "user");
+      setIsScriptActive("");
+      originalFontSizeMap.delete(editor);
+    } else {
+      // Store the original size
+      originalFontSizeMap.set(editor, userSelectedSize);
+
+      // Apply reduced size and superscript
+      const reducedSize = getReducedSize(userSelectedSize);
+      editor.format("script", "super", "user");
+      editor.format("size", reducedSize, "user");
+      setIsScriptActive("super");
+    }
+
+    editor.focus();
+  };
+
+const handleSubscript = () => {
   const editor = editorRefContext.getEditor();
-  if (!editor) return;
-
-  const format = editor.getFormat();
-  const isCurrentlyBold = !!format.bold; // Ensures boolean value
-
-  const newBoldState = !isCurrentlyBold;
-
-  // Update state and apply formatting
-  setIsBoldActive(newBoldState);
-  editor.format("bold", newBoldState, "user");
-
-  editor.focus();
-};
-
-
-const handleItalic = () => {
-  const editor = editorRefContext.getEditor();
-  if (!editor) return;
-
   const currentFormat = editor.getFormat();
-  const isItalicActive = !!currentFormat.italic;
+  const isSubscript = currentFormat.script === "sub";
 
-  // Toggle italic formatting
-  editor.format("italic", !isItalicActive, "user");
-
-  // Optionally update local UI state (if you're using it)
-  setIsItalicActive(!isItalicActive);
-
-  editor.focus();
-};
-
-
-const handleUnderline = () => {
-  const editor = editorRefContext.getEditor();
-  if (!editor) return;
-
-  const currentFormat = editor.getFormat();
-  const isUnderlineActive = !!currentFormat.underline;
-
-  // Toggle underline formatting
-  editor.format("underline", !isUnderlineActive, "user");
-
-  // Optionally update local UI state (e.g., for toolbar button state)
-  setIsUnderlineActive(!isUnderlineActive);
-
-  editor.focus();
-};
-
-
-const handleStrikethrough = () => {
-  const editor = editorRefContext.getEditor();
-
-  if (!editor) return; // Safety check in case editor is not initialized
-
-  // Get current format at cursor position
-  const currentFormat = editor.getFormat();
-  const isStrikethrough = currentFormat.strike === true;
-
-  // Update local UI state (e.g., toggle strikethrough button style)
-  setIsStrikeActive(!isStrikethrough);
-
-  // Apply or remove strikethrough formatting
-  editor.format("strike", !isStrikethrough, "user");
-
-  // Bring focus back to the editor
-  editor.focus();
-};
-
-const originalFontSizeMap = new Map<any, string>();
-
-const handleSuperscript = () => {
-  const editor = editorRefContext.getEditor();
-  const currentFormat = editor.getFormat();
-  const isSuperscript = currentFormat.script === "super";
-
-  // This is the actual selected size before superscript
+  // This is the actual selected size before subscript
   const userSelectedSize = selectedFontSizeValue || "14px";
 
   const getReducedSize = (size: string): string => {
@@ -3261,7 +3299,7 @@ const handleSuperscript = () => {
     return size;
   };
 
-  if (isSuperscript) {
+  if (isSubscript) {
     // Restore the original size from the map
     const originalSize = originalFontSizeMap.get(editor) || userSelectedSize;
     editor.format("script", false, "user");
@@ -3272,56 +3310,31 @@ const handleSuperscript = () => {
     // Store the original size
     originalFontSizeMap.set(editor, userSelectedSize);
 
-    // Apply reduced size and superscript
+    // Apply reduced size and subscript
     const reducedSize = getReducedSize(userSelectedSize);
-    editor.format("script", "super", "user");
+    editor.format("script", "sub", "user");
     editor.format("size", reducedSize, "user");
-    setIsScriptActive("super");
+    setIsScriptActive("sub");
   }
 
   editor.focus();
 };
 
 
-
-// const handleSuperscript = () => {
-//   const editor = editorRefContext.getEditor();
-
-//   // Check if current selection is already superscript
-//   const isSuperscript = editor.getFormat().script === "super";
-
-//   // Update active script state in your UI
-//   setIsScriptActive(isSuperscript ? "" : "super");
-
-//   if (isSuperscript) {
-//     // If already superscript, remove it and restore font size
-//     editor.format("script", false, "user");
-//     editor.format("size", selectedFontSizeValue); // Restore previously selected font size
-//   } else {
-//     // Remove font size to prevent conflict, then apply superscript
-//     editor.format("size", false, "user");
-//     editor.format("script", "super", "user");
-//   }
-
-//   // Refocus editor after formatting
-//   editor.focus();
-// };
-
-
-  const handleSubscript = () => {
-    const editor = editorRefContext.getEditor();
-    const isSubscript = editor.getFormat().script === "sub";
-    setIsScriptActive(isSubscript ? "" : "sub");
-    if (isSubscript) {
-      editor.format("script", false, "user");
-      editor.format("size", selectedFontSizeValue)
-    }
-    else {
-      editor.format("size", false, "user");
-      editor.format("script", "sub", "user")
-    }
-    editor.focus();
-  };
+  // const handleSubscript = () => {
+  //   const editor = editorRefContext.getEditor();
+  //   const isSubscript = editor.getFormat().script === "sub";
+  //   setIsScriptActive(isSubscript ? "" : "sub");
+  //   if (isSubscript) {
+  //     editor.format("script", false, "user");
+  //     editor.format("size", selectedFontSizeValue)
+  //   }
+  //   else {
+  //     editor.format("size", false, "user");
+  //     editor.format("script", "sub", "user")
+  //   }
+  //   editor.focus();
+  // };
 
   const handleIncreaseIndent = () => {
     if (editorRefContext) {
