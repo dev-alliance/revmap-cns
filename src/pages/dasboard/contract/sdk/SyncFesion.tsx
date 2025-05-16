@@ -206,6 +206,7 @@ function SyncFesion() {
   const [addedString, setAddedString] = useState("");
   const [deletedString, setDeletedString] = useState("");
   const editorRefs: any = useRef<any>([]);
+  const editorRef = useRef<ReactQuill | null>(null);
   const containerRefs: any = useRef([]); // Ref for storing page container divs
   const parentContainerRef = useRef(null); // Ref for the parent container
   const [isTableSelected, setIsTableSelected] = useState(false);
@@ -237,13 +238,11 @@ function SyncFesion() {
   const div2Ref = useRef<any>(null);
   const div3Ref = useRef<any>(null);
   const scrollPageRef = useRef<any>(null);
-
   const [remainingVh, setRemainingVh] = useState(0);
   const [footerWidth ,setFooterWidth ] = useState(0);
-
   const [documentHeight,setDocumentHeight] = useState(0)
-
   const [indexComment, setIndexComment] = useState<number>(0);
+
 
   useEffect(() => {
     setIsLoading(false);
@@ -1397,30 +1396,35 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     }
   }, [editMode]);
 
-  const handleClick = () => {
-    setEditMode(true);
-    setEnabelEditing(false);
-    if (editorRefs) {
-      const editor = editorRefs.current[currentPage].getEditor();
-      handleChangeSelection(editor.getSelection(true), "user");
-      editor.focus();
-    }
-    const documentEditor = editorContainerRef.current?.documentEditor;
-    // documentEditor.focusIn(); // Focusing the editor
-    const buttons = document.querySelectorAll(".e-tbar-btn");
-    const items = document.querySelectorAll(".e-toolbar-item");
-    items.forEach((item) => {
-      item.classList.remove("e-overlay");
+const handleClick = () => {
+  setEditMode(true);
+  setEnabelEditing(false);
 
-      console.log(item, "e-overlay"); // This line is optional, for debugging purposes
-    });
+  const editor = editorRef.current?.getEditor();
+  if (editor) {
+    const range = editor.getSelection(true);
+    handleChangeSelection(range, "user");
+    editor.focus();
+  }
 
-    buttons.forEach((button) => {
-      button.setAttribute("aria-disabled", "false");
+  const documentEditor = editorContainerRef.current?.documentEditor;
+  // documentEditor?.focusIn(); // Uncomment if necessary
 
-      console.log(button.id, "aria-disabled set to false"); // This line is optional, for debugging purposes
-    });
-  };
+  const buttons = document.querySelectorAll(".e-tbar-btn");
+  const items = document.querySelectorAll(".e-toolbar-item");
+
+  items.forEach((item) => {
+    item.classList.remove("e-overlay");
+    console.log(item, "e-overlay removed");
+  });
+
+  buttons.forEach((button) => {
+    button.setAttribute("aria-disabled", "false");
+    console.log(button.id, "aria-disabled set to false");
+  });
+};
+
+
   const handleClickCencel = () => {
     const editor = editorRefs.current[currentPage].getEditor();
     editor.history.stack.undo = [];
@@ -1654,6 +1658,14 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     setPages([...updatedPages]);
   };
 
+  const handleSingleEditorChange = (value: string) => {
+  const updatedPages = value
+    .split('<div class="page-break"></div>')
+    .map(content => ({ content }));
+
+  setPages(updatedPages);
+};
+
   const handleChange = (value:any, delta:any, source:string, editor:any, index:number) => {
     const updatedPages = [...pages];
     const editor_ = editorRefs.current[currentPage].getEditor();
@@ -1666,8 +1678,8 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
 
     handleOverflow(index, editor_, updatedPages); 
   };
-  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
-    const currentEditor = editorRefs?.current[index]?.getEditor();
+const handleKeyDown = (event: React.KeyboardEvent) => {
+    const currentEditor = editorRefs?.current?.getEditor();
 
     const range = currentEditor.getSelection(true);
     if (!range) return;
@@ -1758,27 +1770,27 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
       }
 
       const content = currentEditor.root.innerHTML;
-      if (isContentEmpty(content) && index > 0) {
-        event.preventDefault();
+      // if (isContentEmpty(content) && index > 0) {
+      //   event.preventDefault();
 
-        setPages((prevPages: any) => {
-          const updatedPages = [...prevPages];
-          updatedPages.splice(index, 1);
-          setCurrentPage(Math.max(0, index - 1));
+      //   setPages((prevPages: any) => {
+      //     const updatedPages = [...prevPages];
+      //     updatedPages.splice(index, 1);
+      //     setCurrentPage(Math.max(0, index - 1));
 
-          setTimeout(() => {
-            const editor =
-              editorRefs.current[Math.max(0, index - 1)]?.getEditor();
-            editor.setSelection(editor.getLength() - 1);
-            editor.focus();
-            containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({
-              behavior: "smooth",
-            });
-          }, 100);
+      //     setTimeout(() => {
+      //       const editor =
+      //         editorRefs.current[Math.max(0, index - 1)]?.getEditor();
+      //       editor.setSelection(editor.getLength() - 1);
+      //       editor.focus();
+      //       containerRefs.current[Math.max(0, index - 1)]?.scrollIntoView({
+      //         behavior: "smooth",
+      //       });
+      //     }, 100);
 
-          return updatedPages;
-        });
-      }
+      //     return updatedPages;
+      //   });
+      // }
     }
 
     if (event.key === "Enter") {
@@ -2029,178 +2041,128 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     length: number;
   };
 
-  const handleChangeSelection = (range: range, source: string) => {
-    const editor = editorRefs.current[currentPage].getEditor();
-    if (range) {
-      const [line] = editor.getLine(range.index - 1);
-      // console.log(line?.domNode?.innerText == "\u200B");
-      const format = editor.getFormat(range.index);
-      console.log(format);
-      if (format.color) {
-        setFontColorSvg(format.color);
-      } else {
-        if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
-          if (range.length === 0) {
-            editor.format("color", prevFontColor);
-            setFontColorSvg(prevFontColor);
-          }
-        }
-      }
-      if (format.background) {
-        setBgColorSvg(format.background);
-      } else {
-        if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
-          if (range.length === 0) {
-            editor.format("background", prevBgColor);
-            setBgColorSvg(prevBgColor);
-          }
-        }
-      }
+const handleChangeSelection = (range: range, source: string) => {
+  const editor = editorRef.current?.getEditor();
+  if (!editor || !range) return;
 
-      setIsListActive(format.list || "");
-      setIsScriptActice(format.script || "");
-      setIsBoldActive(format.bold || false);
-      setIsItalicActive(format.italic || false);
-      setIsStrikeActive(format.strike || false);
-      setIsUnderlineActive(format.underline || false);
+  const [line] = editor.getLine(range.index - 1);
+  const format = editor.getFormat(range.index);
 
-      if (format.lineHeight) {
-        setSpacing(format.lineHeight);
-      }
-      else {
-        editor.format("lineHeight", "1.5");
-        setSpacing("1.5");
-      }
+  if (format.color) {
+    setFontColorSvg(format.color);
+  } else if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText !== "\u200B" && range.length === 0) {
+    editor.format("color", prevFontColor);
+    setFontColorSvg(prevFontColor);
+  }
 
-      if (format.font) {
-        setSelectedFontValue(format.font);
-      } else {
-        if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
-          if (range.length === 0) {
-            editor.format("font", selectedFont);
-            setSelectedFontValue(selectedFont);
-          }
-        }
-      }
+  if (format.background) {
+    setBgColorSvg(format.background);
+  } else if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText !== "\u200B" && range.length === 0) {
+    editor.format("background", prevBgColor);
+    setBgColorSvg(prevBgColor);
+  }
 
-      if (format.size) {
-        setSelectedFontSizeValue(format.size);
-      } else {
-        if (range.length > 0) {
-          const format = editor.getFormat(range.index, range.length);
-          if (format.size) {
-            setSelectedFontSizeValue(format.size);
-            if (typeof format.size === "object") {
-              setSelectedFontSizeValue(format.size[0]);
-            }
-          }
-        } else {
-          if (!format.header) {
-            if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText != "\u200B") {
-              editor.format("size", selectedFontSize);
-              setSelectedFontSizeValue(selectedFontSize);
-            }
-          } else {
-            editor.format(
-              "size",
-              format.header == 1
-                ? "24px"
-                : format.header == 2
-                  ? "18px"
-                  : format.header == 3
-                    ? "14px"
-                    : "13px"
-            );
-          }
-        }
-      }
+  setIsListActive(format.list || "");
+  setIsScriptActice(format.script || "");
+  setIsBoldActive(format.bold || false);
+  setIsItalicActive(format.italic || false);
+  setIsStrikeActive(format.strike || false);
+  setIsUnderlineActive(format.underline || false);
 
-      if (format.customHeading) {
-        setSelectedHeadersValue(
-          format.customHeading == "heading-1"
-            ? 1
-            : format.customHeading == "heading-2"
-              ? 2
-              : format.customHeading == "heading-3"
-                ? 3
-                : format.customHeading == "heading-4"
-                  ? 4
-                  : format.customHeading == "paragraph"
-                    ? 0
-                    : 0
-        );
-      } else {
-        editor.format("customHeading", "paragraph");
-        setSelectedHeadersValue(0);
-      }
+  if (format.lineHeight) {
+    setSpacing(format.lineHeight);
+  } else {
+    editor.format("lineHeight", "1.5");
+    setSpacing("1.5");
+  }
+
+  if (format.font) {
+    setSelectedFontValue(format.font);
+  } else if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText !== "\u200B" && range.length === 0) {
+    editor.format("font", selectedFont);
+    setSelectedFontValue(selectedFont);
+  }
+
+  if (format.size) {
+    setSelectedFontSizeValue(typeof format.size === "object" ? format.size[0] : format.size);
+  } else if (range.length > 0) {
+    const format = editor.getFormat(range.index, range.length);
+    if (format.size) {
+      setSelectedFontSizeValue(typeof format.size === "object" ? format.size[0] : format.size);
     }
+  } else if (!format.header) {
+    if (line?.domNode?.innerText?.length <= 1 && line?.domNode?.innerText !== "\u200B") {
+      editor.format("size", selectedFontSize);
+      setSelectedFontSizeValue(selectedFontSize);
+    }
+  } else {
+    editor.format("size",
+      format.header === 1 ? "24px" :
+      format.header === 2 ? "18px" :
+      format.header === 3 ? "14px" : "13px"
+    );
+  }
 
-    if (range && range.length > 0) {
-      const format = editor.getFormat(range);
+  if (format.customHeading) {
+    setSelectedHeadersValue(
+      format.customHeading === "heading-1" ? 1 :
+      format.customHeading === "heading-2" ? 2 :
+      format.customHeading === "heading-3" ? 3 :
+      format.customHeading === "heading-4" ? 4 :
+      0
+    );
+  } else {
+    editor.format("customHeading", "paragraph");
+    setSelectedHeadersValue(0);
+  }
 
-      if (format.font && Array.isArray(format.font)) {
-        setSelectedFontValue("");
-      } else {
-        const content = editor.getContents(range.index, range.length);
-        const extractedFonts: string[] = [];
-        content.ops.forEach((op: any) => {
-          if (
-            op?.attributes?.font &&
-            !extractedFonts.includes(op?.attributes?.font)
-          ) {
-            extractedFonts.push(op.attributes.font);
-          }
-        });
+  if (range.length > 0) {
+    const format = editor.getFormat(range);
+    const content = editor.getContents(range.index, range.length);
+    const extractedFonts: string[] = [];
 
-        if (extractedFonts.length === 1) {
-          setSelectedFontValue(extractedFonts[0]);
-        } else {
-          setSelectedFontValue("");
-        }
-      }
+if (content && Array.isArray(content.ops)) {
+  content.ops.forEach((op: any) => {
+    if (op?.attributes?.font && !extractedFonts.includes(op.attributes.font)) {
+      extractedFonts.push(op.attributes.font);
+    }
+  });
+}
 
-      if (!format.size || format.size.constructor == Array) {
-        setSelectedFontSizeValue("");
-      } else {
-        setSelectedFontSizeValue(format.size);
-      }
+    setSelectedFontValue(extractedFonts.length === 1 ? extractedFonts[0] : "");
 
-      if (!format.customHeading || format.customHeading.constructor == Array) {
-        setSelectedHeadersValue("");
-      } else {
-        setSelectedHeadersValue(
-          format.customHeading == "heading-1"
-            ? 1
-            : format.customHeading == "heading-2"
-              ? 2
-              : format.customHeading == "heading-3"
-                ? 3
-                : format.customHeading == "heading-4"
-                  ? 4
-                  : format.customHeading == "paragraph"
-                    ? 0
-                    : ""
-        );
-      }
-
-      setSelection(range);
-      // selectionRef.current = range;
-      const existingComment = comments?.find(
-        (comment: any) =>
-          comment.range.index === range.index &&
-          comment.range.length === range.length
-      );
-      if (existingComment) {
-        setCurrentComment(existingComment.text);
-      } else {
-        setCurrentComment("");
-      }
+    if (!format.size || Array.isArray(format.size)) {
+      setSelectedFontSizeValue("");
     } else {
-      if (!openComment) {
-        setSelection(null);
-      }
+      setSelectedFontSizeValue(format.size);
     }
-  };
+
+    if (!format.customHeading || Array.isArray(format.customHeading)) {
+      setSelectedHeadersValue("");
+    } else {
+      setSelectedHeadersValue(
+        format.customHeading === "heading-1" ? 1 :
+        format.customHeading === "heading-2" ? 2 :
+        format.customHeading === "heading-3" ? 3 :
+        format.customHeading === "heading-4" ? 4 : 0
+      );
+    }
+
+    setSelection(range);
+    const existingComment = comments?.find(
+      (comment: any) =>
+        comment.range.index === range.index &&
+        comment.range.length === range.length
+    );
+    setCurrentComment(existingComment ? existingComment.text : "");
+
+  } else {
+    if (!openComment) {
+      setSelection(null);
+    }
+  }
+};
+
 
   const [buttonPosition, setButtonPosition] = useState<any>({
     top: 0,
@@ -2387,40 +2349,43 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     }
   }, [selectedHeaders]);
 
-  const handleImageResize = () => {
-    const quill = editorRefs.current[currentPage].getEditor();
-    const editorElement = quill.root;
+const handleImageResize = () => {
+  if (!editorRef.current) return;
 
-    editorElement.addEventListener("mousedown", (event: any) => {
-      if (
-        event.target.tagName === "IMG" &&
-        event.target.classList.contains("resizable")
-      ) {
-        const img = event.target;
-        const startX = event.clientX;
-        const startY = event.clientY;
-        const startWidth = img.clientWidth;
-        const startHeight = img.clientHeight;
+  const quill = editorRef.current.getEditor();
+  const editorElement = quill.root;
 
-        const onMouseMove = (moveEvent: any) => {
-          const width = startWidth + (moveEvent.clientX - startX);
-          const height = startHeight + (moveEvent.clientY - startY);
-          img.style.width = `${width}px`;
-          img.style.height = `${height}px`;
-        };
+  editorElement.addEventListener("mousedown", (event: any) => {
+    if (
+      event.target.tagName === "IMG" &&
+      event.target.classList.contains("resizable")
+    ) {
+      const img = event.target as HTMLImageElement;
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const startWidth = img.clientWidth;
+      const startHeight = img.clientHeight;
 
-        const onMouseUp = () => {
-          document.removeEventListener("mousemove", onMouseMove);
-          document.removeEventListener("mouseup", onMouseUp);
-        };
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        const width = startWidth + (moveEvent.clientX - startX);
+        const height = startHeight + (moveEvent.clientY - startY);
+        img.style.width = `${width}px`;
+        img.style.height = `${height}px`;
+      };
 
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
+      const onMouseUp = () => {
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+      };
 
-        event.preventDefault(); // Prevent text selection while resizing
-      }
-    });
-  };
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+
+      event.preventDefault(); // Prevent text selection while resizing
+    }
+  });
+};
+
 
   useEffect(() => {
     handleImageResize();
@@ -3640,57 +3605,56 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
                     // width: documentPageSize?.title === "Landscape" ? "90%" : "",
                   }}
                 >
-                  {pages.map((page, index) => {
-                    return (
-                      <div
-                        key={index}
-                        ref={(el) => (containerRefs.current[index] = el)} // Ref for the wrapper div
-                        style={{
-                          marginBottom: index > 0 ? "20px" : "0px",
-                          borderRadius: "5px",
-                          width: "100%",
-                          minHeight: `${documentPageSize.height}`,
-                        }}
-                      >
-                        <ReactQuill
-                          ref={(el) => (editorRefs.current[index] = el)}
-                          value={page.content}
-                          onChange={(value, delta, source, editor) =>
-                            handleChange(value, delta, source, editor, index)
-                          }
-                          readOnly={!editMode}
-                          onChangeSelection={handleChangeSelection}
-                          modules={modules}
-                          formats={formats}
-                          onKeyDown={(event) => handleKeyDown(event, index)}
-                          onFocus={() => {
-                            setEditorRefContext(editorRefs.current[index]);
-                            setCurrentPage(index);
-                          }}
-                          theme="snow"
-                          style={{
-                            border: "1px solid #f2f2f2",
-                            borderRadius: "5px",
-                            background: "#fefefe",
-                            width: documentPageSize.width,
-                            height: documentPageSize.height,
-                            margin: "20px 0",
-                          }}
-                        />
-                        <style>
-                          {`
-                            .ql-editor {
-                             min-height: 375px;
-                             padding-top: ${documentPageMargins.top} !important;
-                             padding-bottom: ${documentPageMargins.bottom} !important;
-                             padding-left: ${documentPageMargins.left} !important;
-                             padding-right: ${documentPageMargins.right} !important;                        
-                             } 
-                           `}
-                        </style>
-                      </div>
-                    );
-                  })}
+<div
+  style={{
+    borderRadius: "5px",
+    width: "100%",
+    minHeight: `${documentPageSize.height}`,
+    marginBottom: "20px",
+  }}
+>
+  <ReactQuill
+    ref={editorRef}
+    value={pages.map(p => p.content).join('<div class="page-break"></div>')}
+    onChange={handleSingleEditorChange}
+    readOnly={!editMode}
+    onChangeSelection={handleChangeSelection}
+    modules={modules}
+    formats={formats}
+    onKeyDown={handleKeyDown} // If needed globally
+    onFocus={() => {
+      setEditorRefContext(editorRef.current);
+    }}
+    theme="snow"
+    style={{
+      border: "1px solid #f2f2f2",
+      borderRadius: "5px",
+      background: "#fefefe",
+      width: documentPageSize.width,
+      height: documentPageSize.height,
+      margin: "20px 0",
+    }}
+  />
+  <style>
+    {`
+      .ql-editor {
+        min-height: 375px;
+        padding-top: ${documentPageMargins.top} !important;
+        padding-bottom: ${documentPageMargins.bottom} !important;
+        padding-left: ${documentPageMargins.left} !important;
+        padding-right: ${documentPageMargins.right} !important;
+      }
+
+      .page-break {
+        display: block;
+        height: 40px;
+        margin: 40px 0;
+        border-top: 2px dashed #ccc;
+      }
+    `}
+  </style>
+</div>
+
 
                   {selection && (
                     <Tooltip title="Add Commment">
