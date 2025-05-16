@@ -193,23 +193,67 @@ function SyncFesion() {
 
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
+  
+  // Create this map outside the event handler (at component/module level)
+  const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
+  const [formattingVisible, setFormattingVisible] = useState(false);
+  const formattingVisibleRef = useRef(formattingVisible);
+  const [oldPages, setOldPages] = useState([]);
+  const [showTableTools, setShowTableTools] = useState(false);
+  // State for the cell fill color
+  const [cellFillColor, setCellFillColor] = useState(""); // Default color
+  const [editorHtml, setEditorHtml] = useState<any>([""]);
+  const [addedString, setAddedString] = useState("");
+  const [deletedString, setDeletedString] = useState("");
+  const editorRefs: any = useRef<any>([]);
+  const containerRefs: any = useRef([]); // Ref for storing page container divs
+  const parentContainerRef = useRef(null); // Ref for the parent container
+  const [isTableSelected, setIsTableSelected] = useState(false);
+  const [selection, setSelection] = useState<any>(null);
+  const [comments, setComments] = useState<any>([]);
+  const [openComment, SetOpenComment] = useState<boolean>(false);
+  const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [isInternal, setIsInternal] = useState<boolean>(false);
+  const [currentComment, setCurrentComment] = useState("");
+  const [commentSelection, setCommentSelection] = useState(null);
+  const [commentPrevBg, setCommentPrevBg] = useState("");
+  const commentInputRef: any = useRef(null);
+  const [isBoldActive, setIsBoldActive] = useState(false);
+  const [isItalicActive, setIsItalicActive] = useState(false);
+  const [isStrikeActive, setIsStrikeActive] = useState(false);
+  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
+  const [isScriptActive, setIsScriptActice] = useState("");
+  const [isListActive, setIsListActive] = useState("");
+  const [toMinus, setToMinus] = useState<number>(0);
+  const [commentLeftButton, setCommentLeftButton] = useState("97.8%");
+  const [editComment, setEditComment] = useState<boolean>(false);
+  const [editCommentIndex, setEditCommmentIndex] = useState<any>(null);
+  const [reply, setReply] = useState<any>({});
+  const [addSigns, setAddSigns] = useState<boolean>(true);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const div1Ref = useRef<any>(null);
+  const div2Ref = useRef<any>(null);
+  const div3Ref = useRef<any>(null);
+  const scrollPageRef = useRef<any>(null);
+
+  const [remainingVh, setRemainingVh] = useState(0);
+  const [footerWidth ,setFooterWidth ] = useState(0);
+
+  const [documentHeight,setDocumentHeight] = useState(0)
+
+  const [indexComment, setIndexComment] = useState<number>(0);
 
   useEffect(() => {
     setIsLoading(false);
     setLeftSidebarExpanded(true);
   }, []);
 
-  // Create this map outside the event handler (at component/module level)
-    const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
-const [formattingVisible, setFormattingVisible] = useState(false);
-const formattingVisibleRef = useRef(formattingVisible);
-
-
-// Keep ref in sync
-useEffect(() => {
-  formattingVisibleRef.current = formattingVisible;
-}, [formattingVisible]);
-
+  // Keep ref in sync
+  useEffect(() => {
+    formattingVisibleRef.current = formattingVisible;
+  }, [formattingVisible]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -419,77 +463,78 @@ useEffect(() => {
           });
         }
 
-if (e.ctrlKey && e.key === '8') {
-  e.preventDefault();
-  editorRefs.current.forEach((ref: any) => {
-    const editor = ref?.getEditor();
-    if (!editor) return;
+      // Only trigger on Ctrl + 8
+      if (e.ctrlKey && e.key === '8') {
+        e.preventDefault();
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (!editor) return;
 
-    const editorContainer = editor.root;
-    const paragraphs = editorContainer.querySelectorAll("p");
+          const editorContainer = editor.root;
+          const paragraphs = editorContainer.querySelectorAll("p");
 
-    paragraphs.forEach((p: HTMLElement) => {
-      const oldMarks = p.querySelectorAll(".formatting-mark");
-      oldMarks.forEach((mark) => {
-        const parent = mark.parentNode;
-        if (!parent) return;
+          paragraphs.forEach((p: HTMLElement) => {
+            const oldMarks = p.querySelectorAll(".formatting-mark");
+            oldMarks.forEach((mark) => {
+              const parent = mark.parentNode;
+              if (!parent) return;
 
-        const textContent = mark.textContent || "";
-        const restoredText = textContent
-          .replace(/·/g, " ")
-          .replace(/→/g, "\t")
-          .replace(/¶/g, "");
+              const textContent = mark.textContent || "";
+              const restoredText = textContent
+                .replace(/·/g, " ")
+                .replace(/→/g, "\t")
+                .replace(/¶/g, "");
 
-        const textNode = document.createTextNode(restoredText);
-        parent.replaceChild(textNode, mark);
-      });
+              const textNode = document.createTextNode(restoredText);
+              parent.replaceChild(textNode, mark);
+            });
 
-      // ✅ Use ref to access current visibility
-      if (!formattingVisibleRef.current) {
-        const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
-        const textNodes: Text[] = [];
+            // ✅ Use ref to access current visibility
+            if (!formattingVisibleRef.current) {
+              const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+              const textNodes: Text[] = [];
 
-        while (walker.nextNode()) {
-          textNodes.push(walker.currentNode as Text);
-        }
+              while (walker.nextNode()) {
+                textNodes.push(walker.currentNode as Text);
+              }
 
-        textNodes.forEach((textNode) => {
-          const originalText = textNode.textContent ?? "";
-          const fragment = document.createDocumentFragment();
+              textNodes.forEach((textNode) => {
+                const originalText = textNode.textContent ?? "";
+                const fragment = document.createDocumentFragment();
 
-          for (let i = 0; i < originalText.length; i++) {
-            const char = originalText[i];
-            const span = document.createElement("span");
-            span.className = "formatting-mark";
+                for (let i = 0; i < originalText.length; i++) {
+                  const char = originalText[i];
+                  const span = document.createElement("span");
+                  span.className = "formatting-mark";
 
-            if (char === " " || char === ".") {
-              span.textContent = "·";
-              span.setAttribute("contenteditable", "false");
-            } else if (char === "\t") {
-              span.textContent = "→";
-              span.setAttribute("contenteditable", "false");
-            } else {
-              span.textContent = char;
+                  if (char === " " || char === ".") {
+                    span.textContent = "·";
+                    span.setAttribute("contenteditable", "false");
+                  } else if (char === "\t") {
+                    span.textContent = "→";
+                    span.setAttribute("contenteditable", "false");
+                  } else {
+                    span.textContent = char;
+                  }
+
+                  fragment.appendChild(span);
+                }
+
+                textNode.parentNode?.replaceChild(fragment, textNode);
+              });
+
+              const endMark = document.createElement("span");
+              endMark.className = "formatting-mark";
+              endMark.setAttribute("contenteditable", "false");
+              endMark.textContent = "¶";
+              p.appendChild(endMark);
             }
-
-            fragment.appendChild(span);
-          }
-
-          textNode.parentNode?.replaceChild(fragment, textNode);
+          });
         });
 
-        const endMark = document.createElement("span");
-        endMark.className = "formatting-mark";
-        endMark.setAttribute("contenteditable", "false");
-        endMark.textContent = "¶";
-        p.appendChild(endMark);
+        // ✅ Proper toggle
+        setFormattingVisible(prev => !prev);
       }
-    });
-  });
-
-  // ✅ Proper toggle
-  setFormattingVisible(prev => !prev);
-}
 
 
     };
@@ -500,49 +545,43 @@ if (e.ctrlKey && e.key === '8') {
     };
   }, []);
 
+  useEffect(() => {
+    // Exit early if editorRefs are not initialized
+    if (!editorRefs) return;
 
+    // Reset document state when no ID is present
+    if (!id && !newId) {
+      setTimeout(() => {
+        // Set default page content and styles
+        setPages([{ content: "" }]);
+        setBgColorSvg("#fefefe");
+        setPrevBgColor("#fefefe");
+        setSelectedFontSize("12px");
+        setSelectedFontSizeValue("12px");
+        setSelectedFontValue("arial");
+        setSelectedFont("arial");
+        setPrevFontColor("black");
+        setDucomentName("");
+        setEditMode(false);
 
+        // Clear undo/redo history for the first page editor only (safe during new doc setup)
+        editorRefs?.current?.forEach((ref:any) => {
+          const editor = ref?.getEditor?.();
+          if (editor) {
+            editor.history.stack.redo = [];
+            editor.history.stack.undo = [];
+          }
+        });
+      }, 0);
+    } else {
+      // If editing an existing document, just reset non-destructive fields
+      setTimeout(() => {
+        setEditMode(false);
+        setDucomentName("");
+      }, 0);
+    }
+  }, []);
 
-
-useEffect(() => {
-  // Exit early if editorRefs are not initialized
-  if (!editorRefs) return;
-
-  // Reset document state when no ID is present
-  if (!id && !newId) {
-    setTimeout(() => {
-      // Set default page content and styles
-      setPages([{ content: "" }]);
-      setBgColorSvg("#fefefe");
-      setPrevBgColor("#fefefe");
-      setSelectedFontSize("12px");
-      setSelectedFontSizeValue("12px");
-      setSelectedFontValue("arial");
-      setSelectedFont("arial");
-      setPrevFontColor("black");
-      setDucomentName("");
-      setEditMode(false);
-
-      // Clear undo/redo history for the first page editor only (safe during new doc setup)
-      editorRefs?.current?.forEach((ref:any) => {
-        const editor = ref?.getEditor?.();
-        if (editor) {
-          editor.history.stack.redo = [];
-          editor.history.stack.undo = [];
-        }
-      });
-    }, 0);
-  } else {
-    // If editing an existing document, just reset non-destructive fields
-    setTimeout(() => {
-      setEditMode(false);
-      setDucomentName("");
-    }, 0);
-  }
-}, []);
-
-
-  const [oldPages, setOldPages] = useState([]);
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -785,8 +824,6 @@ useEffect(() => {
     }));
   };
 
-  // To change the font style of selected content
-
   const onToolbarClick = (args: any) => {
     console.log("item clicked : ", args);
 
@@ -928,15 +965,6 @@ useEffect(() => {
       case "Bullets-Square":
         documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
         break;
-      case "Numbering-Arabic":
-        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
-        break;
-      case "Numbering-Roman":
-        documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
-        break;
-      case "Numbering-Alpha":
-        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
-        break;
       // upper lower case
       case "uppercase":
         // Changes the selected text to uppercase
@@ -997,8 +1025,6 @@ useEffect(() => {
     }
   };
 
-  //
-
   const itemsss: ItemModel[] = [
     {
       text: "Single",
@@ -1013,8 +1039,6 @@ useEffect(() => {
       text: "Double",
     },
   ];
-
-  const [showTableTools, setShowTableTools] = useState(false);
 
   // Function to update the table tool visibility based on the editor's selection
   const updateTableToolsVisibility = () => {
@@ -1031,9 +1055,6 @@ useEffect(() => {
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
-
-  // State for the cell fill color
-  const [cellFillColor, setCellFillColor] = useState(""); // Default color
 
   const applyCellFillColor = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1087,33 +1108,31 @@ useEffect(() => {
     }
   };
 
-  const [isTableSelected, setIsTableSelected] = useState(false);
+  /**
+   * Triggers a save prompt and exports the current document content as a .docx file.
+   * Uses Syncfusion DocumentEditor instance from a ref.
+   */
+  const save = () => {
+    // Access the DocumentEditor instance safely
+    const documentEditor = editorContainerRef.current?.documentEditor;
 
-/**
- * Triggers a save prompt and exports the current document content as a .docx file.
- * Uses Syncfusion DocumentEditor instance from a ref.
- */
-const save = () => {
-  // Access the DocumentEditor instance safely
-  const documentEditor = editorContainerRef.current?.documentEditor;
+    // Check if the editor is available before proceeding
+    if (!documentEditor) {
+      console.error("DocumentEditor is not available.");
+      alert("Document editor not initialized.");
+      return;
+    }
 
-  // Check if the editor is available before proceeding
-  if (!documentEditor) {
-    console.error("DocumentEditor is not available.");
-    alert("Document editor not initialized.");
-    return;
-  }
+    // Prompt user for a file name
+    const userFileName = prompt("Enter a file name for your document:", "My File");
 
-  // Prompt user for a file name
-  const userFileName = prompt("Enter a file name for your document:", "My File");
-
-  // If user provides a name, proceed to save
-  if (userFileName && userFileName.trim() !== "") {
-    documentEditor.save(userFileName.trim(), "Docx");
-  } else {
-    alert("File name is required to save the document.");
-  }
-};
+    // If user provides a name, proceed to save
+    if (userFileName && userFileName.trim() !== "") {
+      documentEditor.save(userFileName.trim(), "Docx");
+    } else {
+      alert("File name is required to save the document.");
+    }
+  };
 
 
   const onClick = () => {
@@ -1371,6 +1390,7 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     //   button.setAttribute("aria-disabled", "true");
     // });
   }, [enabelEditing]);
+
   useEffect(() => {
     if (editMode) {
       handleClick();
@@ -1447,10 +1467,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
 
     calculateWidth(); // Call on mount and documentName change
   }, [documentName]);
-
-  const [editorHtml, setEditorHtml] = useState<any>([""]);
-  const [addedString, setAddedString] = useState("");
-  const [deletedString, setDeletedString] = useState("");
 
   const stripHtml = (html: any) => {
     return html.replace(/<\/?[^>]+(>|$)/g, "");
@@ -1572,17 +1588,12 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
   //   setEditorHtml(html);
   // };
 
-  const editorRefs: any = useRef<any>([]);
-  const containerRefs: any = useRef([]); // Ref for storing page container divs
-
   const cmToPx = (cm: any) => {
     const numericValue = parseFloat(cm.replace(/[^0-9.]/g, ""));
     return numericValue * 37.8;
   };
 
   // cmToPx(documentPageSize.height)
-
-  const parentContainerRef = useRef(null); // Ref for the parent container
 
   const isContentEmpty = (htmlContent: string): boolean => {
     const tempDiv = document.createElement("div");
@@ -1860,9 +1871,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     }
   }, [currentPage]);
 
-  const [toMinus, setToMinus] = useState<number>(0);
-  const [commentLeftButton, setCommentLeftButton] = useState("97.8%");
-
   useEffect(() => {
     if (documentPageSize.title === "JIS B6") {
       setCommentLeftButton("96.5%");
@@ -2007,9 +2015,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     }
   };
 
-  const [selection, setSelection] = useState<any>(null);
-  const [comments, setComments] = useState<any>([]);
-
   useEffect(() => {
     if (!editorRefs.current[currentPage]) return;
     const editor = editorRefs.current[currentPage].getEditor();
@@ -2018,13 +2023,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
       setButtonPosition({ top: bounds.bottom + 20 });
     }
   }, [selection]);
-
-  const [isBoldActive, setIsBoldActive] = useState(false);
-  const [isItalicActive, setIsItalicActive] = useState(false);
-  const [isStrikeActive, setIsStrikeActive] = useState(false);
-  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
-  const [isScriptActive, setIsScriptActice] = useState("");
-  const [isListActive, setIsListActive] = useState("");
 
   type range = {
     index: number;
@@ -2209,15 +2207,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     left: 0,
   });
 
-  const [openComment, SetOpenComment] = useState<boolean>(false);
-  const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
-  const [isPublic, setIsPublic] = useState<boolean>(true);
-  const [isInternal, setIsInternal] = useState<boolean>(false);
-  const [currentComment, setCurrentComment] = useState("");
-  const [commentSelection, setCommentSelection] = useState(null);
-  const [commentPrevBg, setCommentPrevBg] = useState("");
-  const commentInputRef: any = useRef(null);
-
   useEffect(() => {
     if (openComment && inputRef.current) {
       commentInputRef.current.focus();
@@ -2321,13 +2310,10 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     setAddReply({ open: false, id: "" });
   };
 
-  const [editComment, setEditComment] = useState<boolean>(false);
-  const [editCommentIndex, setEditCommmentIndex] = useState<any>(null);
   const [addReply, setAddReply] = useState<any>({
     open: false,
     id: "",
   });
-  const [reply, setReply] = useState<any>({});
 
   const handleReplyChange = (indexComment: number, value: string) => {
     setReply((prevReplies: any) => ({
@@ -2335,8 +2321,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
       [indexComment]: value,
     }));
   };
-
-  const [addSigns, setAddSigns] = useState<boolean>(true);
 
   const handleClickSignatures = () => {
     setAddSigns(!addSigns);
@@ -2378,7 +2362,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
       }
     }
   };
-
 
   useEffect(() => {
     if (editorRefs.current[currentPage]) {
@@ -2494,14 +2477,11 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     );
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const [indexComment, setIndexComment] = useState<number>(0);
   const handleOpenOptionsMenu = (event: any, index: number) => {
     setIndexComment(index);
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -2513,14 +2493,6 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     handleClose();
   };
 
-  const div1Ref = useRef<any>(null);
-  const div2Ref = useRef<any>(null);
-  const div3Ref = useRef<any>(null);
-
-  const [remainingVh, setRemainingVh] = useState(0);
-  const [footerWidth ,setFooterWidth ] = useState(0);
-
-  const [documentHeight,setDocumentHeight] = useState(0)
   useEffect(() => {
     const calculateRemainingVh = debounce(() => {
         const viewportHeight = window.innerHeight;
@@ -2548,31 +2520,31 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
 }, []);
 
 
-useEffect(() => {
-  const updateFooterWidth = () => {
-    const div3Width = div3Ref.current?.offsetWidth || 0;
-    setFooterWidth(div3Width);
-  };
+  useEffect(() => {
+    const updateFooterWidth = () => {
+      const div3Width = div3Ref.current?.offsetWidth || 0;
+      setFooterWidth(div3Width);
+    };
 
-  // Initial call to set the footer width
-  updateFooterWidth();
+    // Initial call to set the footer width
+    updateFooterWidth();
 
-  // Set up the MutationObserver
-  const observer = new MutationObserver(updateFooterWidth);
+    // Set up the MutationObserver
+    const observer = new MutationObserver(updateFooterWidth);
 
-  // Start observing changes in div3Ref
-  if (div3Ref.current) {
-    observer.observe(div3Ref.current, {
-      attributes: true,    // Observe attribute changes
-      childList: true,     // Observe direct children changes
-      attributeFilter: ["style"],
-      subtree: true        // Observe all descendant changes
-    });
-  }
+    // Start observing changes in div3Ref
+    if (div3Ref.current) {
+      observer.observe(div3Ref.current, {
+        attributes: true,    // Observe attribute changes
+        childList: true,     // Observe direct children changes
+        attributeFilter: ["style"],
+        subtree: true        // Observe all descendant changes
+      });
+    }
 
-  // Cleanup observer on component unmount
-  return () => observer.disconnect();
-}, []);
+    // Cleanup observer on component unmount
+    return () => observer.disconnect();
+  }, []);
 
   const EditIconSvg = () => {
     return (
@@ -2590,8 +2562,6 @@ useEffect(() => {
       </svg>
     );
   };
-
-  const scrollPageRef = useRef<any>(null);
 
   const [editorZoom,setEditorZoom ] = useState("100%");
   return (
@@ -2653,12 +2623,6 @@ useEffect(() => {
                 outline: "none",
                 width: 168,
               }}
-            // onFocus={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-            // }}
-            // onBlur={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-            // }}
             />
 
             <div

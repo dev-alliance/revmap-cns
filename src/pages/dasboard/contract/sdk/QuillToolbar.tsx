@@ -19,37 +19,6 @@ interface Page {
   content: string;
 }
 
-
-/*window.addEventListener("keydown", function (e: KeyboardEvent) {
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
-      const quill = new Quill('#editor', { theme: 'snow' });
-     (window as any).quill = quill;
-    const quillEditor = (window as any).quill;
-    const editorElement = document.querySelector(".ql-editor");
-
-    if (!quill || !editorElement) return;
-
-    // Always prevent full-page selection
-    e.preventDefault();
-
-    // Focus editor (helps toolbar behavior)
-    quill.focus();
-
-    // Ensure editor is selectable
-    setTimeout(() => {
-      const length = quill.getLength();
-      quill.setSelection(0, length - 1, "user");
-    }, 0);
-    console.log("Quill instance:", quill);
-console.log("Editor element:", editorElement);
-
-  }
-});*/
-
-
-
-
-
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
 
@@ -543,7 +512,7 @@ export const modules = {
   },
   history: {
     delay: 0,
-    maxStack: 100,
+    maxStack: 1000,
     userOnly: true,
   },
   resize: {
@@ -851,6 +820,24 @@ const handleAddPage = () => {
   const [anchorElLinkPicture, setAnchorElLinkPicture] = React.useState(null);
   const openLinkPicture = Boolean(anchorElLinkPicture);
 
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+
+  const [prevSelectionBg, setPrevSelectionBg] = useState<any>(null);
+  const [TextColor, setTextColor] = useState("");
+
+  const [selectedColumn, setSelectedColumn] = useState("one");
+  const [dispalyTextChange, setDisplayTextChange] = useState(false);
+
+  const [showFormattingMarks, setShowFormattingMarks] = useState(false);
+  const [selectedAlign, setSelectedAlign] = useState("left");
+
+  const [linkUrl, setLinkUrl] = useState("");
+  const [displayText, setDisplayText] = useState("");
+
+  const [selection, setSelection] = useState<any>(null);
+  const [cursorIndex, setCursorIndex] = useState<number>(0);
+
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
     const editor = editorRefContext.getEditor();
@@ -862,6 +849,7 @@ const handleAddPage = () => {
       }, 0);
     }
   };
+
   const handleClose2 = () => {
     const editor = editorRefContext.getEditor();
     const scrollContainer = scrollPageRef.current;
@@ -887,6 +875,7 @@ const handleAddPage = () => {
     }
     setAnchorEl2(null);
   };
+
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
     const editor = editorRefContext.getEditor();
@@ -941,6 +930,7 @@ const handleAddPage = () => {
       scrollContainer.scrollTop = scrollPosition;
     }
   };
+
   const handleCloseMargins = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElMargins(null);
@@ -962,6 +952,7 @@ const handleAddPage = () => {
     setIndexCursor(range);
     setAnchorElOrientation(event.currentTarget);
   };
+
   const handleCloseOrientation = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElOrientation(null);
@@ -1058,36 +1049,34 @@ const handleAddPage = () => {
     setAnchorElFontColor(null);
   };
 
-const handleSaveFontColor = (color: string) => {
-  const editor = editorRefContext.getEditor();
-  if (!editor) return;
+  const handleSaveFontColor = (color: string) => {
+    const editor = editorRefContext.getEditor();
+    if (!editor) return;
 
-  const range = editor.getSelection(true);
+    const range = editor.getSelection(true);
 
-  if (range.length === 0) {
-    setPrevFontColor(color);
-    const [line] = editor.getLine(range.index);
-    const text = line?.domNode?.innerText;
-    if (text === "\u200B" || (text.trim() === "\u200B" && text.trim().length <= 1)) {
-      editor.formatText(range.index - 1, 1, { color }, "user");
+    if (range.length === 0) {
+      setPrevFontColor(color);
+      const [line] = editor.getLine(range.index);
+      const text = line?.domNode?.innerText;
+      if (text === "\u200B" || (text.trim() === "\u200B" && text.trim().length <= 1)) {
+        editor.formatText(range.index - 1, 1, { color }, "user");
+      } else {
+        editor.format("color", color, "user");
+      }
     } else {
-      editor.format("color", color, "user");
+      editor.formatText(range.index, range.length, { color }, "user");
+      editor.setSelection(range.index + range.length, 0);
     }
-  } else {
-    editor.formatText(range.index, range.length, { color }, "user");
-    editor.setSelection(range.index + range.length, 0);
-  }
 
-  setFontColorSvg(color);
-  editor.focus();
-};
-
-
-
+    setFontColorSvg(color);
+    editor.focus();
+  };
 
   const handleOpenBgColor = (event: any) => {
     setAnchorElBgColor(event.currentTarget);
   };
+
   const handleCloseBgColor = () => {
     setAnchorElBgColor(null);
   };
@@ -1485,42 +1474,36 @@ const handleSaveFontColor = (color: string) => {
     handleCloseMargins();
   };
 
-  const [canUndo, setCanUndo] = useState(false);
+  useEffect(() => {
+    if (!editorRefContext) return;
 
-  const [canRedo, setCanRedo] = useState(false);
+    const quill = editorRefContext.getEditor();
 
-useEffect(() => {
-  if (!editorRefContext) return;
+    // Function to check the undo/redo history
+    const checkHistory = () => {
+      const undoStack = quill.history.stack.undo;
+      const redoStack = quill.history.stack.redo;
 
-  const quill = editorRefContext.getEditor();
+          console.log("Undo Stack:", undoStack);
+      console.log("Redo Stack:", redoStack);
 
-  // Function to check the undo/redo history
-  const checkHistory = () => {
-    const undoStack = quill.history.stack.undo;
-    const redoStack = quill.history.stack.redo;
+      // Set state for undo/redo availability based on the stack lengths
+      setCanUndo(undoStack.length > 0); // If undo stack has entries, enable undo
+      setCanRedo(redoStack.length > 0); // If redo stack has entries, enable redo
+    };
 
-        console.log("Undo Stack:", undoStack);
-    console.log("Redo Stack:", redoStack);
+    // Attach event listeners for content changes and selection changes
+    quill.on("text-change", checkHistory);
+    quill.on("selection-change", checkHistory);
 
-    // Set state for undo/redo availability based on the stack lengths
-    setCanUndo(undoStack.length > 0); // If undo stack has entries, enable undo
-    setCanRedo(redoStack.length > 0); // If redo stack has entries, enable redo
-  };
-
-  // Attach event listeners for content changes and selection changes
-  quill.on("text-change", checkHistory);
-  quill.on("selection-change", checkHistory);
-
-  // Initial check when the editor is loaded
-  checkHistory();
-  // Cleanup function to remove event listeners when the component is unmounted
-  return () => {
-    quill.off("text-change", checkHistory);
-    quill.off("selection-change", checkHistory);
-  };
-}, [editorRefContext]); // Dependency array ensures effect runs when editorRefContext is set
-
-
+    // Initial check when the editor is loaded
+    checkHistory();
+    // Cleanup function to remove event listeners when the component is unmounted
+    return () => {
+      quill.off("text-change", checkHistory);
+      quill.off("selection-change", checkHistory);
+    };
+  }, [editorRefContext]); // Dependency array ensures effect runs when editorRefContext is set
 
   const handleSelectSize = (value: any) => {
     setAnchorElSize(null);
@@ -1605,8 +1588,6 @@ useEffect(() => {
     },
   ];
 
-  const [prevSelectionBg, setPrevSelectionBg] = useState<any>(null);
-
   const handleTextHighlightColorChange = (color: any) => {
     handletTextHighlightColor(color.hex);
     setBgColorSvg(color.hex);
@@ -1658,8 +1639,6 @@ useEffect(() => {
     }
   };
 
-  const [TextColor, setTextColor] = useState("");
-
   const handleFontColorChange = (color: any) => {
     // const editor = editorRefContext.getEditor();
     // const range = editor.getSelection(true);
@@ -1675,34 +1654,34 @@ useEffect(() => {
     setBgColorSvg(color.hex);
   };
 
- const toSentenceCase = (text: string): string => {
-  if (!text) return '';
-  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-};
+  const toSentenceCase = (text: string): string => {
+    if (!text) return '';
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  };
 
-const toLowerCase = (text: string): string => {
-  return text?.toLowerCase?.() ?? '';
-};
+  const toLowerCase = (text: string): string => {
+    return text?.toLowerCase?.() ?? '';
+  };
 
-const toUpperCase = (text: string): string => {
-  return text?.toUpperCase?.() ?? '';
-};
+  const toUpperCase = (text: string): string => {
+    return text?.toUpperCase?.() ?? '';
+  };
 
-const toCapitalizeEachWord = (text: string): string => {
-  if (!text) return '';
-  return text.replace(/\w\S*/g, (word: string) => {
-    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-  });
-};
+  const toCapitalizeEachWord = (text: string): string => {
+    if (!text) return '';
+    return text.replace(/\w\S*/g, (word: string) => {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+  };
 
-const toToggleCase = (text: string): string => {
-  if (!text) return '';
-  return Array.from(text)
-    .map((char) =>
-      char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
-    )
-    .join('');
-};
+  const toToggleCase = (text: string): string => {
+    if (!text) return '';
+    return Array.from(text)
+      .map((char) =>
+        char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
+      )
+      .join('');
+  };
 
 
   const handleTextTransformation = (transformationFunction: Function) => {
@@ -1747,7 +1726,6 @@ const toToggleCase = (text: string): string => {
 
     handleCloseCase(); // Close any UI elements related to the transformation
   };
-  const [selectedColumn, setSelectedColumn] = useState("one");
 
   const handleClickColumns = (value: string) => {
     const editorContainer = editorRefContext.editor?.root;
@@ -1782,85 +1760,80 @@ const toToggleCase = (text: string): string => {
     handleCloseColumns();
   };
 
-  const [showFormattingMarks, setShowFormattingMarks] = useState(false);
-
   const toggleFormattingMarks = () => {
     setShowFormattingMarks(!showFormattingMarks);
   };
 
-useEffect(() => {
-  if (!editorRefContext) return;
+  useEffect(() => {
+    if (!editorRefContext) return;
 
-  const editor = editorRefContext.getEditor();
-  const editorContainer = editor.root;
-  const paragraphs = editorContainer.querySelectorAll("p");
+    const editor = editorRefContext.getEditor();
+    const editorContainer = editor.root;
+    const paragraphs = editorContainer.querySelectorAll("p");
 
-  paragraphs.forEach((p: HTMLElement) => {
-    // 🔁 Step 1: Remove old formatting marks (even broken/multi-character ones)
-    const oldMarks = p.querySelectorAll(".formatting-mark");
-    oldMarks.forEach((mark) => {
-      const parent = mark.parentNode;
-      if (!parent) return;
+    paragraphs.forEach((p: HTMLElement) => {
+      // 🔁 Step 1: Remove old formatting marks (even broken/multi-character ones)
+      const oldMarks = p.querySelectorAll(".formatting-mark");
+      oldMarks.forEach((mark) => {
+        const parent = mark.parentNode;
+        if (!parent) return;
 
-      const textContent = mark.textContent || "";
+        const textContent = mark.textContent || "";
 
-      // Convert special symbols to original characters
-  const restoredText = textContent
-  .replace(/·/g, " ")
-  .replace(/→/g, "\t")
-  .replace(/¶/g, "");
+        // Convert special symbols to original characters
+    const restoredText = textContent
+    .replace(/·/g, " ")
+    .replace(/→/g, "\t")
+    .replace(/¶/g, "");
 
 
-      const textNode = document.createTextNode(restoredText);
-      parent.replaceChild(textNode, mark);
-    });
-
-    // ✅ Step 2: If formatting is enabled, wrap each character
-    if (showFormattingMarks) {
-      const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
-      const textNodes: Text[] = [];
-
-      while (walker.nextNode()) {
-        textNodes.push(walker.currentNode as Text);
-      }
-
-      textNodes.forEach((textNode) => {
-        const originalText = textNode.textContent ?? "";
-        const fragment = document.createDocumentFragment();
-
-        for (let i = 0; i < originalText.length; i++) {
-          const char = originalText[i];
-          const span = document.createElement("span");
-          span.className = "formatting-mark";
-
-          if (char === " " || char === ".") {
-            span.textContent = "·";
-            span.setAttribute("contenteditable", "false");
-          } else if (char === "\t") {
-            span.textContent = "→";
-            span.setAttribute("contenteditable", "false");
-          } else {
-            span.textContent = char;
-          }
-
-          fragment.appendChild(span);
-        }
-
-        textNode.parentNode?.replaceChild(fragment, textNode);
+        const textNode = document.createTextNode(restoredText);
+        parent.replaceChild(textNode, mark);
       });
 
-      // 🧩 Step 3: Add paragraph end mark
-      const endMark = document.createElement("span");
-      endMark.className = "formatting-mark";
-      endMark.setAttribute("contenteditable", "false");
-      endMark.textContent = "¶";
-      p.appendChild(endMark);
-    }
-  });
-}, [showFormattingMarks, editorRefContext]);
+      // ✅ Step 2: If formatting is enabled, wrap each character
+      if (showFormattingMarks) {
+        const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+        const textNodes: Text[] = [];
 
+        while (walker.nextNode()) {
+          textNodes.push(walker.currentNode as Text);
+        }
 
+        textNodes.forEach((textNode) => {
+          const originalText = textNode.textContent ?? "";
+          const fragment = document.createDocumentFragment();
 
+          for (let i = 0; i < originalText.length; i++) {
+            const char = originalText[i];
+            const span = document.createElement("span");
+            span.className = "formatting-mark";
+
+            if (char === " " || char === ".") {
+              span.textContent = "·";
+              span.setAttribute("contenteditable", "false");
+            } else if (char === "\t") {
+              span.textContent = "→";
+              span.setAttribute("contenteditable", "false");
+            } else {
+              span.textContent = char;
+            }
+
+            fragment.appendChild(span);
+          }
+
+          textNode.parentNode?.replaceChild(fragment, textNode);
+        });
+
+        // 🧩 Step 3: Add paragraph end mark
+        const endMark = document.createElement("span");
+        endMark.className = "formatting-mark";
+        endMark.setAttribute("contenteditable", "false");
+        endMark.textContent = "¶";
+        p.appendChild(endMark);
+      }
+    });
+  }, [showFormattingMarks, editorRefContext]);
 
   const handleSelectSpacing = (value: any) => {
     setSpacing(value);
@@ -1929,7 +1902,6 @@ useEffect(() => {
     };
   }, [openFontColor]);
 
-  const [selectedAlign, setSelectedAlign] = useState("left");
   const handleAlignment = (align: string) => {
     setSelectedAlign(align);
     const quill = editorRefContext.getEditor();
@@ -1944,12 +1916,6 @@ useEffect(() => {
     setAnchorElAlignment(null);
     quill.focus();
   };
-
-  const [linkUrl, setLinkUrl] = useState("");
-  const [displayText, setDisplayText] = useState("");
-
-  const [selection, setSelection] = useState<any>(null);
-  const [cursorIndex, setCursorIndex] = useState<number>(0);
 
   const handleOpenLink = (event: any) => {
     const editor = editorRefContext.getEditor();
@@ -2018,8 +1984,6 @@ useEffect(() => {
     editor.focus();
     setSelection(null);
   };
-
-  const [dispalyTextChange, setDisplayTextChange] = useState(false);
 
   const handleLinkUrlChange = (e: any) => {
     const url = e.target.value;
@@ -2187,7 +2151,6 @@ useEffect(() => {
     handleChangeSelection(range, "user");
   };
 
-
   const handleRedo = () => {
     const editor = editorRefContext?.getEditor();
     const redoStack = editor.history.stack.redo;
@@ -2201,7 +2164,6 @@ useEffect(() => {
     const range = editor.getSelection(true);
     handleChangeSelection(range, "user");
   };
-
 
   const ScrollLeftSvg = () => {
     return (
@@ -3322,44 +3284,43 @@ useEffect(() => {
     editor.focus();
   };
 
-const handleSubscript = () => {
-  const editor = editorRefContext.getEditor();
-  const currentFormat = editor.getFormat();
-  const isSubscript = currentFormat.script === "sub";
+  const handleSubscript = () => {
+    const editor = editorRefContext.getEditor();
+    const currentFormat = editor.getFormat();
+    const isSubscript = currentFormat.script === "sub";
 
-  // This is the actual selected size before subscript
-  const userSelectedSize = selectedFontSizeValue || "14px";
+    // This is the actual selected size before subscript
+    const userSelectedSize = selectedFontSizeValue || "14px";
 
-  const getReducedSize = (size: string): string => {
-    const pxMatch = size.match(/^(\d+)px$/);
-    if (pxMatch) {
-      const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
-      return `${reduced}px`;
+    const getReducedSize = (size: string): string => {
+      const pxMatch = size.match(/^(\d+)px$/);
+      if (pxMatch) {
+        const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+        return `${reduced}px`;
+      }
+      return size;
+    };
+
+    if (isSubscript) {
+      // Restore the original size from the map
+      const originalSize = originalFontSizeMap.get(editor) || userSelectedSize;
+      editor.format("script", false, "user");
+      editor.format("size", originalSize, "user");
+      setIsScriptActive("");
+      originalFontSizeMap.delete(editor);
+    } else {
+      // Store the original size
+      originalFontSizeMap.set(editor, userSelectedSize);
+
+      // Apply reduced size and subscript
+      const reducedSize = getReducedSize(userSelectedSize);
+      editor.format("script", "sub", "user");
+      editor.format("size", reducedSize, "user");
+      setIsScriptActive("sub");
     }
-    return size;
+
+    editor.focus();
   };
-
-  if (isSubscript) {
-    // Restore the original size from the map
-    const originalSize = originalFontSizeMap.get(editor) || userSelectedSize;
-    editor.format("script", false, "user");
-    editor.format("size", originalSize, "user");
-    setIsScriptActive("");
-    originalFontSizeMap.delete(editor);
-  } else {
-    // Store the original size
-    originalFontSizeMap.set(editor, userSelectedSize);
-
-    // Apply reduced size and subscript
-    const reducedSize = getReducedSize(userSelectedSize);
-    editor.format("script", "sub", "user");
-    editor.format("size", reducedSize, "user");
-    setIsScriptActive("sub");
-  }
-
-  editor.focus();
-};
-
 
   // const handleSubscript = () => {
   //   const editor = editorRefContext.getEditor();
@@ -3375,7 +3336,7 @@ const handleSubscript = () => {
   //   }
   //   editor.focus();
   // };
-
+  
   const handleIncreaseIndent = () => {
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
