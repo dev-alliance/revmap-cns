@@ -16,6 +16,8 @@ import React, {
 
 // import
 
+import Delta from 'quill-delta';
+
 import {
   DocumentEditorContainerComponent,
   Toolbar,
@@ -103,6 +105,23 @@ DocumentEditorComponent.Inject(
 );
 
 DocumentEditorContainerComponent.Inject(Toolbar);
+
+const BlockEmbed = Quill.import("blots/block/embed");
+
+class PageBreakBlot extends BlockEmbed {
+  static blotName = "divider";
+  static tagName = "div";
+  static className = "page-break";
+
+  static create(value: any) {
+    const node = super.create();
+    node.setAttribute("contenteditable", "false");
+    return node;
+  }
+}
+
+Quill.register(PageBreakBlot);
+
 
 function SyncFesion() {
   const location = useLocation();
@@ -205,8 +224,7 @@ function SyncFesion() {
   const [editorHtml, setEditorHtml] = useState<any>([""]);
   const [addedString, setAddedString] = useState("");
   const [deletedString, setDeletedString] = useState("");
-  const editorRefs: any = useRef<any>([]);
-  const editorRef = useRef<ReactQuill | null>(null);
+  const editorRefs = useRef<ReactQuill | null>(null);
   const containerRefs: any = useRef([]); // Ref for storing page container divs
   const parentContainerRef = useRef(null); // Ref for the parent container
   const [isTableSelected, setIsTableSelected] = useState(false);
@@ -242,7 +260,7 @@ function SyncFesion() {
   const [footerWidth ,setFooterWidth ] = useState(0);
   const [documentHeight,setDocumentHeight] = useState(0)
   const [indexComment, setIndexComment] = useState<number>(0);
-
+  const [content, setContent] = useState('');
 
   useEffect(() => {
     setIsLoading(false);
@@ -264,15 +282,15 @@ function SyncFesion() {
 
         console.log('Ctrl + Shift + B detected: applying bold to all editors');
 
-        editorRefs.current.forEach((ref: any) => {
-          const editor = ref?.getEditor();
+        if(editorRefs.current) {
+          const editor = editorRefs.current.getEditor();
           if (editor) {
             const length = editor.getLength();
             const formats = editor.getFormat(0, length);
             const isBold = formats.bold === true;
             editor.formatText(0, length, 'bold', !isBold); // Toggle bold
           }
-        });
+        }
       }
 
       // Only trigger on Ctrl + Shift + i
@@ -281,15 +299,15 @@ function SyncFesion() {
 
         console.log('Ctrl + Shift + i detected: applying italic to all editors');
 
-        editorRefs.current.forEach((ref: any) => {
-          const editor = ref?.getEditor();
+        if(editorRefs.current) {
+          const editor = editorRefs.current.getEditor();
           if (editor) {
             const length = editor.getLength();
             const formats = editor.getFormat(0, length);
             const isItalic = formats.italic === true;
             editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
           }
-        });
+        }
       }
 
       // Only trigger on Ctrl + Shift + u
@@ -298,15 +316,15 @@ function SyncFesion() {
 
         console.log('Ctrl + Shift + u detected: applying underline to all editors');
 
-        editorRefs.current.forEach((ref: any) => {
-          const editor = ref?.getEditor();
+        if(editorRefs.current) {
+          const editor = editorRefs.current.getEditor();
           if (editor) {
             const length = editor.getLength();
             const formats = editor.getFormat(0, length);
             const isUnderline = formats.underline === true;
             editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
           }
-        });
+        }
       }
 
       // Only trigger on Ctrl + Shift + x
@@ -315,15 +333,15 @@ function SyncFesion() {
 
         console.log('Ctrl + Shift + x detected: applying underline to all editors');
 
-        editorRefs.current.forEach((ref: any) => {
-          const editor = ref?.getEditor();
+        if(editorRefs.current) {
+          const editor = editorRefs.current.getEditor();
           if (editor) {
             const length = editor.getLength();
             const formats = editor.getFormat(0, length);
             const isStrike = formats.strike === true;
             editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
           }
-        });
+        }
       }
 
       // Only trigger on Ctrl + Shift + +
@@ -332,8 +350,8 @@ function SyncFesion() {
 
         console.log('Ctrl + Shift + + detected: applying superscript to all editors');
 
-        editorRefs.current.forEach((ref: any) => {
-          const editor = ref?.getEditor();
+        if(editorRefs.current) {
+          const editor = editorRefs.current.getEditor();
           if (!editor) return;
 
           const length = editor.getLength();
@@ -391,7 +409,7 @@ function SyncFesion() {
 
             setIsScriptActice("super");
           }
-        });
+        }
       }
       // Only trigger on Ctrl + -
       if (e.ctrlKey && e.key === '-') {
@@ -399,8 +417,8 @@ function SyncFesion() {
 
           console.log('Ctrl + Shift + - detected: applying subscript to all editors');
 
-          editorRefs.current.forEach((ref: any) => {
-            const editor = ref?.getEditor();
+          if(editorRefs.current) {
+            const editor = editorRefs.current.getEditor();
             if (!editor) return;
 
             const length = editor.getLength();
@@ -459,14 +477,14 @@ function SyncFesion() {
 
               setIsScriptActice("sub");
             }
-          });
+          }
         }
 
       // Only trigger on Ctrl + 8
       if (e.ctrlKey && e.key === '8') {
         e.preventDefault();
-        editorRefs.current.forEach((ref: any) => {
-          const editor = ref?.getEditor();
+        if(editorRefs.current) {
+          const editor = editorRefs.current.getEditor();
           if (!editor) return;
 
           const editorContainer = editor.root;
@@ -529,7 +547,7 @@ function SyncFesion() {
               p.appendChild(endMark);
             }
           });
-        });
+        }
 
         // ✅ Proper toggle
         setFormattingVisible(prev => !prev);
@@ -562,15 +580,6 @@ function SyncFesion() {
         setPrevFontColor("black");
         setDucomentName("");
         setEditMode(false);
-
-        // Clear undo/redo history for the first page editor only (safe during new doc setup)
-        editorRefs?.current?.forEach((ref:any) => {
-          const editor = ref?.getEditor?.();
-          if (editor) {
-            editor.history.stack.redo = [];
-            editor.history.stack.undo = [];
-          }
-        });
       }, 0);
     } else {
       // If editing an existing document, just reset non-destructive fields
@@ -1400,11 +1409,13 @@ const handleClick = () => {
   setEditMode(true);
   setEnabelEditing(false);
 
-  const editor = editorRef.current?.getEditor();
+  if(editorRefs.current) {
+    const editor = editorRefs.current.getEditor();
   if (editor) {
     const range = editor.getSelection(true);
     handleChangeSelection(range, "user");
     editor.focus();
+  }
   }
 
   const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1426,9 +1437,8 @@ const handleClick = () => {
 
 
   const handleClickCencel = () => {
-    const editor = editorRefs.current[currentPage].getEditor();
-    editor.history.stack.undo = [];
-    editor.history.stack.redo = [];
+    if(editorRefs.current) {
+      const editor = editorRefs.current.getEditor();
     if (!id && newId === "") {
       setPages([{ content: "" }]);
     }
@@ -1453,6 +1463,7 @@ const handleClick = () => {
     }
     setEditMode(false);
     setEnabelEditing(true);
+    }
   };
 
   useEffect(() => {
@@ -1607,45 +1618,156 @@ const handleClick = () => {
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
 
-  const handleOverflow = debounce((index, editor, updatedPages) => {
-    const currentContent = editor.getContents();
+let isHandlingOverflow = false;
+
+const handleOverflow = debounce((editor: any) => {
+  if (isHandlingOverflow) return;
+  if (!editor || !editor.root || documentHeight <= 0) {
+    console.warn("❌ Invalid editor or documentHeight. Skipping overflow handling.");
+    return;
+  }
+
+  isHandlingOverflow = true;
+
+  try {
     const editorHeight = editor.root.scrollHeight;
-    // console.log(editorHeight)
-    // console.log(documentHeight)
+    console.log("📏 Current height:", editorHeight, "| Allowed:", documentHeight);
 
-    if(editor.root.innerText.trim().length <=0) return ;
-    if (editorHeight <= documentHeight) return; // Only handle if overflow occurs
+    const contents = editor.getContents();
+    const hasPageBreak = contents.ops?.some((op: any) => op.insert && op.insert.divider);
 
-    let fitIndex = currentContent.length();
-    let contentToFit = currentContent.slice(0, fitIndex);
-
-    // Fit content within current page height
-    while (fitIndex > 0) {
-      editor.setContents(contentToFit, "silent");
-
-      if (editor.root.scrollHeight <= documentHeight) break;
-
-      const ops = contentToFit.ops;
-      if (ops.length > 0) {
-        const lastOp = ops[ops.length - 1];
-        if (lastOp.insert && typeof lastOp.insert === "string") {
-          const lastIndex = lastOp.insert.lastIndexOf(" ");
-          lastOp.insert = lastIndex !== -1 ? lastOp.insert.slice(0, lastIndex) : "";
-        } else {
-          ops.pop();
-        }
+    if (editorHeight <= documentHeight) {
+      if (hasPageBreak) {
+        // Remove all divider blots
+        const ops = contents.ops || [];
+        const cleanedOps = ops.filter((op: any) => !(op.insert && op.insert.divider));
+        editor.setContents(new Delta(cleanedOps), "user");
+        console.log("🧹 Removed page break due to reduced height.");
+      } else {
+        console.log("✅ No overflow and no page break. Skipping.");
       }
-      fitIndex = contentToFit.ops.reduce((acc:any, op:any) => acc + (op.insert.length || 0), 0);
+      return;
     }
 
-    // Assign fitting content to current page
-    updatedPages[index].content = contentToFit;
-    setPages(updatedPages);
+    // If already has a page break and still overflows, skip re-splitting
+    if (hasPageBreak) {
+      console.log("✅ Page break already present. Skipping.");
+      return;
+    }
 
-    // Move overflow content to the next page
-    const overflowContent = currentContent.slice(fitIndex);
-    moveToNextPage(overflowContent, index + 1, updatedPages);
-  }, 0); // Adjust debounce time
+    const ops = contents.ops || [];
+
+    const tempEditor = document.createElement("div");
+    tempEditor.classList.add("ql-editor");
+    tempEditor.style.position = "absolute";
+    tempEditor.style.visibility = "hidden";
+    tempEditor.style.height = "auto";
+    tempEditor.style.width = editor.root.clientWidth + "px";
+    document.body.appendChild(tempEditor);
+
+    let accumulatedHeight = 0;
+    let splitIndex = 0;
+    let splitOffset = 0;
+    let foundSplit = false;
+
+    // Find where to split the content
+    outer: for (let i = 0; i < ops.length; i++) {
+      const op = ops[i];
+      if (typeof op.insert === "string") {
+        const text = op.insert;
+        for (let j = 1; j <= text.length; j++) {
+          tempEditor.innerText = "";
+
+          for (let k = 0; k < i; k++) {
+            if (typeof ops[k].insert === "string") {
+              tempEditor.innerText += ops[k].insert;
+            } else {
+              tempEditor.innerText += "[embed]";
+            }
+          }
+
+          tempEditor.innerText += text.slice(0, j);
+          accumulatedHeight = tempEditor.scrollHeight;
+
+          if (accumulatedHeight > documentHeight) {
+            splitIndex = i;
+            splitOffset = j - 1;
+            foundSplit = true;
+            break outer;
+          }
+        }
+      } else {
+        tempEditor.innerText += "[embed]";
+        accumulatedHeight = tempEditor.scrollHeight;
+        if (accumulatedHeight > documentHeight) {
+          splitIndex = i;
+          splitOffset = 0;
+          foundSplit = true;
+          break;
+        }
+      }
+    }
+
+    document.body.removeChild(tempEditor);
+
+    if (!foundSplit) {
+      console.log("⚠️ Could not find split point.");
+      return;
+    }
+
+    const firstOps = [];
+    for (let i = 0; i < splitIndex; i++) {
+      firstOps.push(ops[i]);
+    }
+
+    if (typeof ops[splitIndex].insert === "string" && splitOffset > 0) {
+      firstOps.push({
+        insert: ops[splitIndex].insert.slice(0, splitOffset),
+        attributes: ops[splitIndex].attributes,
+      });
+    }
+
+    const secondOps = [];
+    if (typeof ops[splitIndex].insert === "string") {
+      secondOps.push({
+        insert: ops[splitIndex].insert.slice(splitOffset),
+        attributes: ops[splitIndex].attributes,
+      });
+    } else if (splitOffset === 0) {
+      secondOps.push(ops[splitIndex]);
+    }
+
+    for (let i = splitIndex + 1; i < ops.length; i++) {
+      secondOps.push(ops[i]);
+    }
+
+    // 1. Set first part of the content
+    editor.setContents(new Delta(firstOps), "silent");
+
+    // 2. Insert page break embed
+    const insertAt = editor.getLength();
+    editor.insertEmbed(insertAt, "divider", true, "user");
+
+    // 3. Add invisible space so cursor can be placed reliably
+    editor.insertText(insertAt + 1, "\u200B", "user");
+
+    // 4. Move cursor right after the zero-width space
+    editor.setSelection(insertAt + 2, 0, "user");
+
+    // 5. Append second part after the page break
+    editor.updateContents(new Delta(secondOps), "silent");
+
+    console.log("✅ Content split and page break inserted.");
+  } catch (e) {
+    console.error("⚠️ Overflow handler error:", e);
+  } finally {
+    isHandlingOverflow = false;
+  }
+}, 500);
+
+
+
+
 
   const moveToNextPage = (overflowContent:any, nextPageIndex:number, updatedPages:any[]) => {
     if (overflowContent.length() === 0) return;
@@ -1663,23 +1785,70 @@ const handleClick = () => {
     .split('<div class="page-break"></div>')
     .map(content => ({ content }));
 
+    console.log("heelo");
+
   setPages(updatedPages);
 };
 
-  const handleChange = (value:any, delta:any, source:string, editor:any, index:number) => {
-    const updatedPages = [...pages];
-    const editor_ = editorRefs.current[currentPage].getEditor();
-    if (index >= updatedPages.length) return;
+const [numPages, setNumPages] = useState(1); // default: 1 page
 
-    // Update content only if it changed
-    if (updatedPages[index].content !== value) {
-      updatedPages[index].content = value;
+const handleEditorHeightCheck = () => {
+  const editorNode = editorRefs.current?.getEditor().root;
+  if (!editorNode) return;
+
+  const currentHeight = editorNode.scrollHeight;
+  const singlePageHeight = documentPageSize.height;
+
+  const pages = Math.ceil(currentHeight / singlePageHeight);
+  setNumPages(pages);
+};
+
+const [hasPageBreak, setHasPageBreak] = useState(false);
+
+const baseHeightCm = parseFloat(documentPageSize.height); // e.g. "17cm" => 17
+const editorHeight = hasPageBreak ? `${baseHeightCm * 2}cm` : documentPageSize.height;
+
+
+const handleChange = (
+  value: any,
+  delta: any,
+  source: string,
+  editor: any
+) => {
+  // ✅ Update page[0].content while preserving the full pages structure
+  setPages((prevPages:any) => {
+    const updatedPages = [...prevPages];
+    if (updatedPages.length === 0) {
+      updatedPages.push({ content: value });
+    } else {
+      updatedPages[0] = { ...updatedPages[0], content: value };
     }
+    return updatedPages;
+  });
 
-    handleOverflow(index, editor_, updatedPages); 
-  };
+  handleEditorHeightCheck(); // recalculate page count
+
+  const contents = editor.getContents();
+  const pageBreakPresent = contents.ops.some(
+    (op: any) => op.insert && op.insert.divider
+  );
+
+  if (pageBreakPresent && !hasPageBreak) {
+    setHasPageBreak(true);
+  } else if (!pageBreakPresent && hasPageBreak) {
+    setHasPageBreak(false);
+  }
+
+  // ✅ Call overflow detection if needed
+  const quill = editorRefs.current?.getEditor?.();
+  if (quill) {
+    handleOverflow(quill);
+  }
+};
+
 const handleKeyDown = (event: React.KeyboardEvent) => {
     const currentEditor = editorRefs?.current?.getEditor();
+      if (!currentEditor) return;  // <-- Added guard
 
     const range = currentEditor.getSelection(true);
     if (!range) return;
@@ -1875,8 +2044,8 @@ const handleKeyDown = (event: React.KeyboardEvent) => {
   };
 
   useEffect(() => {
-    setEditorRefContext(editorRefs.current[currentPage]);
-    const editor = editorRefs?.current[currentPage]?.getEditor();
+    setEditorRefContext(editorRefs.current);
+    const editor = editorRefs?.current?.getEditor();
     if (editor) {
       editor.setSelection(editor.getLength() - 1, 0);
       editor.focus();
@@ -1914,11 +2083,13 @@ const handleKeyDown = (event: React.KeyboardEvent) => {
     if (documentPageSize.title === "US Letter") {
       setCommentLeftButton("97.6%");
     }
-    const editor = editorRefs.current[currentPage]?.getEditor();
+   if(editorRefs.current) {
+      const editor = editorRefs.current.getEditor();
     if (editor) {
       const editorHeight = editor.root.scrollHeight;
       const documentHeightPx = cmToPx(documentPageSize.height);
       setToMinus(documentHeightPx - editorHeight);
+    }
     }
   }, [editorRefs, currentPage, documentPageSize]);
 
@@ -2028,8 +2199,8 @@ const handleKeyDown = (event: React.KeyboardEvent) => {
   };
 
   useEffect(() => {
-    if (!editorRefs.current[currentPage]) return;
-    const editor = editorRefs.current[currentPage].getEditor();
+    if (!editorRefs.current) return;
+    const editor = editorRefs.current.getEditor();
     if (editor && selection) {
       const bounds = editor?.getBounds(selection.index);
       setButtonPosition({ top: bounds.bottom + 20 });
@@ -2042,7 +2213,8 @@ const handleKeyDown = (event: React.KeyboardEvent) => {
   };
 
 const handleChangeSelection = (range: range, source: string) => {
-  const editor = editorRef.current?.getEditor();
+  if(editorRefs.current) {
+      const editor = editorRefs.current.getEditor();
   if (!editor || !range) return;
 
   const [line] = editor.getLine(range.index - 1);
@@ -2160,6 +2332,7 @@ if (content && Array.isArray(content.ops)) {
     if (!openComment) {
       setSelection(null);
     }
+  }
   }
 };
 
@@ -2326,7 +2499,7 @@ if (content && Array.isArray(content.ops)) {
   };
 
   useEffect(() => {
-    if (editorRefs.current[currentPage]) {
+    if (editorRefs.current) {
       const fontChange = () => {
         if (selectedHeaders === 1) {
           setSelectedFontSizeValue("24px");
@@ -2350,9 +2523,9 @@ if (content && Array.isArray(content.ops)) {
   }, [selectedHeaders]);
 
 const handleImageResize = () => {
-  if (!editorRef.current) return;
+  if (!editorRefs.current) return;
 
-  const quill = editorRef.current.getEditor();
+  const quill = editorRefs.current.getEditor();
   const editorElement = quill.root;
 
   editorElement.addEventListener("mousedown", (event: any) => {
@@ -3576,13 +3749,15 @@ const handleImageResize = () => {
                   id: "",
                 });
                 SetOpenComment(false);
-                if (editorRefs && commentSelection) {
-                  const editor = editorRefs.current[currentPage].getEditor();
+                if (commentSelection) {
+                      if(editorRefs.current) {
+                        const editor = editorRefs.current.getEditor();
                   const { index, length } = commentSelection;
                   editor.formatText(index, length, {
                     background: commentPrevBg,
                   });
                 }
+              }
               }}
             >
               <Grid
@@ -3605,76 +3780,91 @@ const handleImageResize = () => {
                     // width: documentPageSize?.title === "Landscape" ? "90%" : "",
                   }}
                 >
-<div
-  style={{
-    borderRadius: "5px",
-    width: "100%",
-    minHeight: `${documentPageSize.height}`,
-    marginBottom: "20px",
-  }}
->
-  <ReactQuill
-    ref={editorRef}
-    value={pages.map(p => p.content).join('<div class="page-break"></div>')}
-    onChange={handleSingleEditorChange}
-    readOnly={!editMode}
-    onChangeSelection={handleChangeSelection}
-    modules={modules}
-    formats={formats}
-    onKeyDown={handleKeyDown} // If needed globally
-    onFocus={() => {
-      setEditorRefContext(editorRef.current);
-    }}
-    theme="snow"
-    style={{
-      border: "1px solid #f2f2f2",
-      borderRadius: "5px",
-      background: "#fefefe",
-      width: documentPageSize.width,
-      height: documentPageSize.height,
-      margin: "20px 0",
-    }}
-  />
-  <style>
-    {`
-      .ql-editor {
-        min-height: 375px;
-        padding-top: ${documentPageMargins.top} !important;
-        padding-bottom: ${documentPageMargins.bottom} !important;
-        padding-left: ${documentPageMargins.left} !important;
-        padding-right: ${documentPageMargins.right} !important;
-      }
+                  <div
+                    style={{
+                      borderRadius: "5px",
+                      width: "100%",
+                      height: `calc(${documentPageSize.height}px * ${numPages})`,
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <ReactQuill
+                      ref={editorRefs}
+                      value={pages[0]?.content || ""}
+                        onChange={(value:any, delta:any, source:any, editor:any) =>
+                          handleChange(value, delta, source, editor)
+                        }
+                      readOnly={!editMode}
+                      onChangeSelection={handleChangeSelection}
+                      modules={modules}
+                      formats={formats}
+                      onKeyDown={handleKeyDown} // If needed globally
+                      onFocus={() => {
+                        setEditorRefContext(editorRefs.current);
+                      }}
+                      theme="snow"
+                      style={{
+                        border: "1px solid #f2f2f2",
+                        borderRadius: "5px",
+                        background: "#fefefe",
+                        width: documentPageSize.width,
+                        height: editorHeight,
+                        margin: "20px 0",
+                      }}
+                    />
+                    {(() => {
+  console.log("Debug info:", editorHeight);
+  return null; // Render nothing
+})()}
+                    <style>
+                      {`
+                      :root {
+                        --page-height: ${documentPageSize.height}px;
+                      }
+                        .ql-editor {
+                          min-height: 375px;
+                          padding-top: ${documentPageMargins.top} !important;
+                          padding-bottom: ${documentPageMargins.bottom} !important;
+                          padding-left: ${documentPageMargins.left} !important;
+                          padding-right: ${documentPageMargins.right} !important;
+                        }
+.page-break {
+  display: block;
+  height: 40px;
+  background: #f7f7f7;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  margin-left: -${documentPageMargins.left}px;
+  margin-right: -${documentPageMargins.right}px;
+  width: calc(100% + ${documentPageMargins.left + documentPageMargins.right}px);
+  box-sizing: content-box;
+  pointer-events: none;
+  user-select: none;
+}
 
-      .page-break {
-        display: block;
-        height: 40px;
-        margin: 40px 0;
-        border-top: 2px dashed #ccc;
-      }
-    `}
-  </style>
-</div>
 
 
+                      `}
+                    </style>
+                  </div>
                   {selection && (
                     <Tooltip title="Add Commment">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (editorRefs) {
-                            const editor =
-                              editorRefs.current[currentPage].getEditor();
-                            const range = editor.getSelection();
-                            const format = editor.getFormat(
-                              range.index,
-                              range.length
-                            );
-                            setCommentPrevBg(format.background);
-                            setCommentSelection(range);
-                            editor.formatText(range.index, range.length, {
-                              background: "#e1ecff",
-                            });
-                          }
+                          //    if(editorRefs.current) {
+                          //       const editor = editorRefs.current.getEditor();
+                          //   const range = editor.getSelection();
+                          //   const format = editor.getFormat(
+                          //     range.index,
+                          //     range.length
+                          //   );
+                          //   setCommentPrevBg(format.background);
+                          //   setCommentSelection(range);
+                          //   editor.formatText(range.index, range.length, {
+                          //     background: "#e1ecff",
+                          //   });
+                          // }
                           SetOpenComment(true);
                         }}
                         style={{

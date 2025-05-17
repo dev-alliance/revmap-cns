@@ -52,6 +52,7 @@
     "mui-one-time-password-input": "^2.0.1",
     "pdfjs-dist": "^2.16.105",
     "postcss-import": "^15.1.0",
+    "quill-delta": "^5.1.0",
     "quill-resize-module": "^1.2.4",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
@@ -69,7 +70,7 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-comments": "^40.2.0",
+    "@ckeditor/ckeditor5-comments": "^45.1.0",
     "@types/jquery": "^3.5.29",
     "@types/node": "^20.8.9",
     "@types/pdfjs-dist": "^2.10.378",

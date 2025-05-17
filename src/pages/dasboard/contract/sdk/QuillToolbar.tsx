@@ -551,6 +551,7 @@ export const formats = [
   "video",
   "audio",
   "customHeading",
+  "divider"
 ];
 
 const List = Quill.import("formats/list");
@@ -648,6 +649,17 @@ export default function QuillToolbar(props: any) {
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
+
+const BlockEmbed = Quill.import("blots/block/embed");
+
+class PageBreakBlot extends BlockEmbed {
+  static blotName = "divider";
+  static tagName = "div";
+  static className = "page-break";
+}
+
+Quill.register(PageBreakBlot);
+
 
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
