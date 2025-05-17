@@ -65,7 +65,7 @@ import { ItemModel } from "@syncfusion/ej2-react-splitbuttons";
 import { ContractContext } from "@/context/ContractContext";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
-
+const Delta = Quill.import("delta");
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
 import {
@@ -1603,69 +1603,138 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
 
-  const handleOverflow = debounce((index, editor, updatedPages) => {
-    const currentContent = editor.getContents();
-    const editorHeight = editor.root.scrollHeight;
-    // console.log(editorHeight)
-    // console.log(documentHeight)
+const handleOverflow = debounce((index, editor, updatedPages) => {
+  const currentContent = editor.getContents();
+  const editorHeight = editor.root.scrollHeight;
 
-    if(editor.root.innerText.trim().length <=0) return ;
-    if (editorHeight <= documentHeight) return; // Only handle if overflow occurs
+  console.log(`Editor ${index} Height:`, editorHeight);
+  console.log(`Document Page Height:`, documentHeight);
 
-    let fitIndex = currentContent.length();
-    let contentToFit = currentContent.slice(0, fitIndex);
+  if (editor.root.innerText.trim().length <= 0) return;
+  if (editorHeight <= documentHeight) return;
 
-    // Fit content within current page height
-    while (fitIndex > 0) {
-      editor.setContents(contentToFit, "silent");
+  let fitIndex = currentContent.length();
+  let contentToFit = currentContent.slice(0, fitIndex);
 
-      if (editor.root.scrollHeight <= documentHeight) break;
+  while (fitIndex > 0) {
+    editor.setContents(contentToFit, "silent");
+    const testHeight = editor.root.scrollHeight;
+    console.log(`Trying fitIndex ${fitIndex} → height: ${testHeight}`);
 
-      const ops = contentToFit.ops;
-      if (ops.length > 0) {
-        const lastOp = ops[ops.length - 1];
-        if (lastOp.insert && typeof lastOp.insert === "string") {
-          const lastIndex = lastOp.insert.lastIndexOf(" ");
-          lastOp.insert = lastIndex !== -1 ? lastOp.insert.slice(0, lastIndex) : "";
+    if (testHeight <= documentHeight) break;
+
+    const ops = contentToFit.ops;
+    if (ops.length > 0) {
+      const lastOp = ops[ops.length - 1];
+      if (lastOp.insert && typeof lastOp.insert === "string") {
+        const lastIndex = lastOp.insert.lastIndexOf(" ");
+        if (lastIndex !== -1) {
+          lastOp.insert = lastOp.insert.slice(0, lastIndex);
         } else {
-          ops.pop();
+          ops.pop(); // Remove the entire op if no space
         }
+      } else {
+        ops.pop(); // For embeds
       }
-      fitIndex = contentToFit.ops.reduce((acc:any, op:any) => acc + (op.insert.length || 0), 0);
     }
 
-    // Assign fitting content to current page
-    updatedPages[index].content = contentToFit;
-    setPages(updatedPages);
+    fitIndex = contentToFit.ops.reduce((acc:any, op:any) => {
+      return acc + (typeof op.insert === "string" ? op.insert.length : 1);
+    }, 0);
+  }
 
-    // Move overflow content to the next page
+  console.log(`Final fitIndex: ${fitIndex}`);
+  console.log("Fit Content:", contentToFit);
+setPages([...updatedPages]);
+
+setTimeout(() => {
+  requestAnimationFrame(() => {
     const overflowContent = currentContent.slice(fitIndex);
-    moveToNextPage(overflowContent, index + 1, updatedPages);
-  }, 0); // Adjust debounce time
+    moveToNextPage(
+      overflowContent,
+      index + 1,
+      updatedPages,
+      setPages,
+      editorRefs // make sure this is the same ref you're using elsewhere
+    );
+  });
+}, 0);
+}, 100); // Slight debounce to batch rapid calls
 
-  const moveToNextPage = (overflowContent:any, nextPageIndex:number, updatedPages:any[]) => {
-    if (overflowContent.length() === 0) return;
-
-    if (nextPageIndex >= updatedPages.length) {
-      updatedPages.push({ content: overflowContent });
-    } else {
-      updatedPages[nextPageIndex].content = overflowContent;
-    }
-    setPages([...updatedPages]);
+function mergeContent(existingContent:any, overflowContent:any) {
+  if (!existingContent || !existingContent.ops) {
+    return overflowContent;
+  }
+  if (!overflowContent || !overflowContent.ops) {
+    return existingContent;
+  }
+  // Prepend overflowContent to existingContent for correct order
+  return {
+    ops: [...overflowContent.ops, ...existingContent.ops],
   };
+}
 
-  const handleChange = (value:any, delta:any, source:string, editor:any, index:number) => {
-    const updatedPages = [...pages];
-    const editor_ = editorRefs.current[currentPage].getEditor();
-    if (index >= updatedPages.length) return;
 
-    // Update content only if it changed
-    if (updatedPages[index].content !== value) {
-      updatedPages[index].content = value;
-    }
+function moveToNextPage(overflowContent:any, nextPageIndex:any, pages:any, setPages:any, editorRefs:any) {
+  console.log('mergeContent called');
+  const existingNextContent = pages[nextPageIndex]?.content;
 
-    handleOverflow(index, editor_, updatedPages); 
-  };
+  console.log('Existing content ops:', existingNextContent?.ops);
+  console.log('Overflow content ops:', overflowContent.ops);
+
+  // Merge overflowContent with existing next page content
+  const mergedContent = mergeContent(existingNextContent, overflowContent);
+
+  // Create new pages array with merged content on next page
+  const newPages = pages.map((page:any, idx:any) =>
+    idx === nextPageIndex
+      ? { ...page, content: mergedContent }
+      : page
+  );
+
+  // If nextPageIndex is beyond current pages length, add new page
+  if (nextPageIndex >= pages.length) {
+    newPages.push({ content: overflowContent });
+  }
+
+  console.log('Updated next page content after merge:', mergedContent);
+  setPages(newPages);
+
+  // Optionally, update editor content for next page here too,
+  // after state update
+  const nextEditorRef = editorRefs.current[nextPageIndex];
+  if (nextEditorRef) {
+    const quill = nextEditorRef.getEditor();
+    quill.setContents(mergedContent);
+
+
+  }
+}
+
+
+const handleChange = (value: any, delta: any, source: string, editor: any, index: number) => {
+  const updatedPages = [...pages];
+
+  // 🛡️ Safely get editor
+  const editorRef = editorRefs.current[index];
+  if (!editorRef) {
+    console.warn(`Editor ref not found at index ${index}`);
+    return;
+  }
+
+  const quillEditor = editorRef.getEditor();
+  if (index >= updatedPages.length) return;
+
+  // Update content only if it changed
+  if (updatedPages[index].content !== value) {
+    updatedPages[index].content = value;
+  }
+
+  handleOverflow(index, quillEditor, updatedPages);
+};
+
+
+
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
@@ -3640,11 +3709,11 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
                     // width: documentPageSize?.title === "Landscape" ? "90%" : "",
                   }}
                 >
-                  {pages.map((page, index) => {
-                    return (
-                      <div
-                        key={index}
-                        ref={(el) => (containerRefs.current[index] = el)} // Ref for the wrapper div
+                  {pages.map((page, index) => (
+                        page && (
+                          <div
+                            key={index}
+                            ref={(el) => (containerRefs.current[index] = el)}
                         style={{
                           marginBottom: index > 0 ? "20px" : "0px",
                           borderRadius: "5px",
@@ -3653,11 +3722,9 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
                         }}
                       >
                         <ReactQuill
-                          ref={(el) => (editorRefs.current[index] = el)}
-                          value={page.content}
-                          onChange={(value, delta, source, editor) =>
-                            handleChange(value, delta, source, editor, index)
-                          }
+  value={pages[index]?.content}
+  onChange={(value, delta, source, editor) => handleChange(value, delta, source, editor, index)}
+  ref={(ref) => (editorRefs.current[index] = ref)}
                           readOnly={!editMode}
                           onChangeSelection={handleChangeSelection}
                           modules={modules}
@@ -3689,8 +3756,8 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
                            `}
                         </style>
                       </div>
-                    );
-                  })}
+                    )
+                  ))}
 
                   {selection && (
                     <Tooltip title="Add Commment">
