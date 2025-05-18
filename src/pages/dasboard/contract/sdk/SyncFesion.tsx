@@ -536,6 +536,85 @@ function SyncFesion() {
         setFormattingVisible(prev => !prev);
       }
 
+      
+      if (e.key === ' ') {
+        console.log("triggerd");
+      const focusedEditorIndex = currentPage;
+      console.log("focusedEditorIndex", focusedEditorIndex)
+      const editor = editorRefs.current[currentPage].getEditor();
+
+      const range = editor.getSelection(true);
+      if (!range) return;
+
+      // Get the current line/blot before cursor
+      const [block, offset] = editor.scroll.descendant(
+        Quill.import('blots/block'),
+        range.index - 1
+      );
+      if (!block) return;
+      
+      const text = block.domNode.textContent || '';
+      if (/^\d+\.$/.test(text.trim())) {
+            // text is something like "1." or "23."
+            const cleanedText = text.replace(/\s+/g, '').replace(/\u200B/g, ''); // remove all whitespace and zero-width spaces
+            console.log('Cleaned:', JSON.stringify(cleanedText)); // to verify
+            // Match something like "2."
+            const match = cleanedText.match(/^(\d+)\.$/);
+
+            console.log("match: ", match);
+        if (match) {
+          const startNumber = parseInt(match[1], 10);
+          console.log("start: ", startNumber);
+
+          e.preventDefault();
+
+          editor.deleteText(range.index - text.length, text.length);
+
+          // ✅ Only use string here, not an object!
+          editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+
+          editor.insertText(range.index - text.length, ' ');
+          
+          editor.setSelection(range.index - text.length + 1, 0);
+
+          // ✅ Patch <ol> start attribute manually
+            setTimeout(() => {
+              const [leaf] = editor.getLeaf(range.index - text.length);
+              if (!leaf) return;
+
+              let parent = leaf.parent;
+              while (parent && parent.domNode?.tagName !== 'OL') {
+                parent = parent.parent;
+              }
+
+              if (parent && parent.domNode?.tagName === 'OL') {
+                parent.domNode.setAttribute('start', String(startNumber));
+                parent.domNode.style.setProperty('--custom-start', startNumber - 1); // ✅ sets CSS variable
+                //parent.domNode.style.setProperty('counter-reset', `list-item ${startNumber - 1}`); // fallback
+              }
+            }, 0);
+        }
+        else {
+          console.log("No match for pattern like '1.'");
+        }
+      } else {
+        console.log("Not a numbered list item", /^\d+\.$/.test(text.trim()));
+        console.log("Not a numbered list item", text);
+      }
+    }
+
+   if (e.key === 'Enter' || e.key === 'Backspace') {
+  setTimeout(() => {
+    const editor = editorRefs.current[currentPage].getEditor();
+    const range = editor.getSelection(true);
+    if (!range) return;
+
+    // example after adding or updating new page content
+    const newEditor = editorRefs.current[currentPage].getEditor();
+    //patchListStartOnEditor(newEditor);
+  }, 0);
+}
+
 
     };
 

@@ -712,60 +712,174 @@ const handleAddPage = () => {
 //   };
 // };
 
+function removeListFromEmptyLines(editor:any) {
+  const delta = editor.getContents();
+  let index = 0;
 
-  const handleListClick = (value: string) => {
-    const editor = editorRefContext.getEditor();
-    if (!editor) return;
+  console.log("🔍 Running removeListFromEmptyLines");
+  console.log("Delta ops:", delta.ops);
 
-    const range = editor.getSelection(true);
-    if (!range) return;
+  delta.ops?.forEach((op:any, i:any) => {
+    const insert = op.insert;
+     const currentListType = op.attributes.list; // ✅ Fix here
 
-    let [block] = editor.scroll.descendant(
-      Quill.import("blots/block"),
-      range.index
-    );
+    if (typeof insert === 'string' && insert === '\n') {
+      const attributes = op.attributes;
+      console.log(`Line break at index ${index} with attributes:`, attributes);
 
-    if (block && block.domNode.tagName === "LI") {
-      const list = block.parent;
-      const listType = block.parent?.domNode?.attributes[0]?.nodeValue;
+      if (attributes && attributes.list) {
+        const prevOp = delta.ops[i - 1];
+        const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
 
-      if (list && list.domNode.tagName !== value.toUpperCase()) {
+        console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
+        console.log(`→ Previous text: "${prevText}"`);
 
-        if (listType === value) {
-          editor.format("list", false, "user");
-          setIsListActive("");
+        if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
+          console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list.`);
+          editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
         }
-        else {
-          editor.format("list", false, "user");
-          setIsListActive(value);
-          editor.format("list", value, "user");
-        }
-      } else {
-        list.children.forEach((listItem: any) => {
-          const itemIndex = editor.getIndex(listItem);
-
-          if (value === "none") {
-            setIsListActive("none");
-            editor.formatLine(itemIndex, 1, { list: false }, "user");
-          } else {
-            setIsListActive(value);
-            editor.formatLine(itemIndex, 1, { list: value }, "user");
-          }
-        });
-      }
-    } else {
-      if (value === "none") {
-        setIsListActive("none");
-        editor.format("list", false, "user");
-      } else {
-        setIsListActive(value);
-        editor.format("list", value, "user");
       }
     }
 
-    setAnchorEl2(null);
-    setAnchorEl(null);
-  };
+    // Advance index
+    if (typeof insert === 'string') {
+      index += insert.length;
+    } else {
+      index += 1;
+    }
+  });
+
+  console.log("✅ Finished checking for empty list lines");
+}
+
+function removeListFromEmptyLinesalpha(editor: any) {
+  const delta = editor.getContents();
+  let index = 0;
+
+  console.log("🔍 Running removeListFromEmptyLines");
+  console.log("Delta ops:", delta.ops);
+
+  const listTypesToCheck = ['lower-alpha', 'upper-alpha'];
+
+  delta.ops?.forEach((op: any, i: number) => {
+    const insert = op.insert;
+    const listType = op.attributes?.list;
+
+    if (typeof insert === 'string' && insert === '\n') {
+      console.log(`↪️ Line break at index ${index} with attributes:`, op.attributes);
+
+      if (listTypesToCheck.includes(listType)) {
+        const prevOp = delta.ops[i - 1];
+        const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
+
+        console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
+        console.log(`→ Previous text: "${prevText}"`);
+
+        if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
+          console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list formatting.`);
+          editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
+        }
+      }
+    }
+
+    // Advance index
+    if (typeof insert === 'string') {
+      index += insert.length;
+    } else {
+      index += 1;
+    }
+  });
+
+  console.log("✅ Finished checking for empty list lines");
+}
+
+function removeListFromEmptyLinesroman(editor: any) {
+  const delta = editor.getContents();
+  let index = 0;
+
+  console.log("🔍 Running removeListFromEmptyLines");
+  console.log("Delta ops:", delta.ops);
+
+  const listTypesToCheck = ['lower-roman', 'upper-roman'];
+
+  delta.ops?.forEach((op: any, i: number) => {
+    const insert = op.insert;
+    const listType = op.attributes?.list;
+
+    if (typeof insert === 'string' && insert === '\n') {
+      console.log(`↪️ Line break at index ${index} with attributes:`, op.attributes);
+
+      if (listTypesToCheck.includes(listType)) {
+        const prevOp = delta.ops[i - 1];
+        const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
+
+        console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
+        console.log(`→ Previous text: "${prevText}"`);
+
+        if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
+          console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list formatting.`);
+          editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
+        }
+      }
+    }
+
+    // Advance index
+    if (typeof insert === 'string') {
+      index += insert.length;
+    } else {
+      index += 1;
+    }
+  });
+
+  console.log("✅ Finished checking for empty list lines");
+}
+
+
+
+
+const handleListClick = (value: string) => {
+  const editor = editorRefContext.getEditor();
+  if (!editor) return;
+
+  const range = editor.getSelection(true);
+  if (!range) return;
+
+  const [block, offset] = editor.scroll.descendant(
+    Quill.import('blots/block'),
+    range.index
+  );
+  
+
+  if (block && block.domNode.tagName === 'LI') {
+    // Get the current list type from the blot's attributes (safer)
+    const formats = editor.getFormat(range);
+    const currentList = formats.list || null;
+
+    if (currentList === value) {
+      // Remove list formatting if clicking the same list type
+      editor.format('list', false, 'user');
+      setIsListActive('');
+    } else {
+      // Apply new list type
+      editor.format('list', value, 'user');
+      setIsListActive(value);
+    }
+  } else {
+    // If not inside a list item, just toggle formatting for current line(s)
+    if (value === 'none') {
+      editor.format('list', false, 'user');
+      setIsListActive('');
+    } else {
+      editor.format('list', value, 'user');
+      setIsListActive(value);
+    }
+  }
+
+  // Close menus
+  setAnchorEl2(null);
+  setAnchorEl(null);
+};
+
 
   const [indexCursor, setIndexCursor] = useState<any>(null);
 
@@ -4518,6 +4632,7 @@ const handleAddPage = () => {
                 style={{ width: 30 }}
                 onMouseDown={(e) => {
                   handleListClick("default");
+                  removeListFromEmptyLines(editorRefContext.getEditor());
                 }}
               >
                 <NumberingSvg />
@@ -4574,6 +4689,7 @@ const handleAddPage = () => {
                     }}
                     onClick={() => {
                       handleListClick("none");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
                     }}
                   >
                     <div
@@ -4608,6 +4724,7 @@ const handleAddPage = () => {
                     }}
                     onClick={() => {
                       handleListClick("default");
+                      removeListFromEmptyLines(editorRefContext.getEditor());
                     }}
                   >
                     <div
@@ -4668,7 +4785,10 @@ const handleAddPage = () => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("lower-alpha")}
+                    onClick={() => {
+  handleListClick("lower-alpha");
+  removeListFromEmptyLinesalpha(editorRefContext.getEditor());
+}}
                   >
                     <div
                       className={
@@ -4730,7 +4850,10 @@ const handleAddPage = () => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("upper-alpha")}
+                    onClick={() => {
+                      handleListClick("upper-alpha");
+                      removeListFromEmptyLinesalpha(editorRefContext.getEditor());
+                    }}
                   >
                     <div
                       className={
@@ -4790,7 +4913,9 @@ const handleAddPage = () => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("lower-roman")}
+                    onClick={() => { handleListClick("lower-roman");
+                      removeListFromEmptyLinesroman(editorRefContext.getEditor());
+                    }}
                   >
                     <div
                       className={
@@ -4851,7 +4976,9 @@ const handleAddPage = () => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("upper-roman")}
+                    onClick={() => { handleListClick("upper-roman");
+                      removeListFromEmptyLinesroman(editorRefContext.getEditor());
+                    }}
                   >
                     <div
                       className={
@@ -4924,7 +5051,9 @@ const handleAddPage = () => {
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 30, cursor: "pointer" }}
-                onMouseDown={() => handleListClick("bullet-dot")}
+                onMouseDown={() => { handleListClick("bullet-dot");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
               >
                 <BulletSvg />
               </span>
@@ -4978,7 +5107,9 @@ const handleAddPage = () => {
                         border: "1px solid #7771E8 !important",
                       },
                     }}
-                    onClick={() => handleListClick("none")}
+                    onClick={() => { handleListClick("none");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div
                       className="e-de-list-header-presetmenu"
@@ -5014,7 +5145,9 @@ const handleAddPage = () => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-dot-large")}
+                    onClick={() => { handleListClick("bullet-dot-large");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className={"e-de-bullet-list-header-presetmenu"}>
                       <div>
@@ -5044,7 +5177,9 @@ const handleAddPage = () => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-circle")}
+                    onClick={() => { handleListClick("bullet-circle");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5074,7 +5209,9 @@ const handleAddPage = () => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-square")}
+                    onClick={() => { handleListClick("bullet-square");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5106,7 +5243,9 @@ const handleAddPage = () => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-flower")}
+                    onClick={() => { handleListClick("bullet-flower");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5137,7 +5276,9 @@ const handleAddPage = () => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-arrow")}
+                    onClick={() => { handleListClick("bullet-arrow");
+                     // removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5167,7 +5308,9 @@ const handleAddPage = () => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-tick")}
+                    onClick={() => {  handleListClick("bullet-tick");
+                     // removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
