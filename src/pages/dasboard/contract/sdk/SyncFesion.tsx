@@ -104,6 +104,10 @@ DocumentEditorComponent.Inject(
 
 DocumentEditorContainerComponent.Inject(Toolbar);
 
+import CustomOrderedList from './customOrderedList'; // path to your blot
+
+
+
 function SyncFesion() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -254,6 +258,25 @@ function SyncFesion() {
   useEffect(() => {
     formattingVisibleRef.current = formattingVisible;
   }, [formattingVisible]);
+
+function patchListStartOnEditor(editor: any) {
+  const ols = editor.root.querySelectorAll('ol');
+  ols.forEach((ol: any) => {
+    const startAttr = ol.getAttribute('start');
+    const start = startAttr ? parseInt(startAttr, 10) : 1;
+    if (!isNaN(start)) {
+      ol.style.setProperty('--custom-start', start - 1);
+      ol.style.setProperty('counter-reset', `list-item ${start - 1}`);
+    }
+  });
+}
+
+function updateListStylesForAllPages() {
+  editorRefs.current.forEach((editorRefs:any) => {
+    const editor = editorRefs.getEditor();
+    patchListStartOnEditor(editor);
+  });
+}
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -537,81 +560,75 @@ function SyncFesion() {
       }
 
       
-      if (e.key === ' ') {
-        console.log("triggerd");
-      const focusedEditorIndex = currentPage;
-      console.log("focusedEditorIndex", focusedEditorIndex)
-      const editor = editorRefs.current[currentPage].getEditor();
+if (e.key === ' ') {
+  console.log("triggered");
+  const focusedEditorIndex = currentPage;
+  console.log("focusedEditorIndex", focusedEditorIndex);
+  const editor = editorRefs.current[currentPage].getEditor();
 
-      const range = editor.getSelection(true);
-      if (!range) return;
+  const range = editor.getSelection(true);
+  if (!range) return;
 
-      // Get the current line/blot before cursor
-      const [block, offset] = editor.scroll.descendant(
-        Quill.import('blots/block'),
-        range.index - 1
-      );
-      if (!block) return;
-      
-      const text = block.domNode.textContent || '';
-      if (/^\d+\.$/.test(text.trim())) {
-            // text is something like "1." or "23."
-            const cleanedText = text.replace(/\s+/g, '').replace(/\u200B/g, ''); // remove all whitespace and zero-width spaces
-            console.log('Cleaned:', JSON.stringify(cleanedText)); // to verify
-            // Match something like "2."
-            const match = cleanedText.match(/^(\d+)\.$/);
+  // Get the current line/blot before cursor
+  const [block, offset] = editor.scroll.descendant(
+    Quill.import('blots/block'),
+    range.index - 1
+  );
+  if (!block) return;
 
-            console.log("match: ", match);
-        if (match) {
-          const startNumber = parseInt(match[1], 10);
-          console.log("start: ", startNumber);
+  const text = block.domNode.textContent || '';
+  // Remove all whitespace and zero-width spaces to normalize input
+  const cleanedText = text.replace(/\s+/g, '').replace(/\u200B/g, '');
+  console.log('Cleaned:', JSON.stringify(cleanedText)); 
 
-          e.preventDefault();
+  if (/^\d+\.$/.test(cleanedText)) {
+    const match = cleanedText.match(/^(\d+)\.$/);
+    if (match) {
+      const startNumber = parseInt(match[1], 10);
+      console.log("start: ", startNumber);
+      Quill.register(CustomOrderedList, true);
 
-          editor.deleteText(range.index - text.length, text.length);
+      e.preventDefault();
 
-          // ✅ Only use string here, not an object!
-          editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+      // Remove the original typed text (e.g., "1.")
+      editor.deleteText(range.index - text.length, text.length);
 
-          editor.insertText(range.index - text.length, ' ');
-          
-          editor.setSelection(range.index - text.length + 1, 0);
+      // Apply list formatting with the correct start number
+      editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
 
-          // ✅ Patch <ol> start attribute manually
-            setTimeout(() => {
-              const [leaf] = editor.getLeaf(range.index - text.length);
-              if (!leaf) return;
 
-              let parent = leaf.parent;
-              while (parent && parent.domNode?.tagName !== 'OL') {
-                parent = parent.parent;
-              }
+      // Insert a space to allow typing after list bullet
+      editor.insertText(range.index - text.length, ' ');
 
-              if (parent && parent.domNode?.tagName === 'OL') {
-                parent.domNode.setAttribute('start', String(startNumber));
-                parent.domNode.style.setProperty('--custom-start', startNumber - 1); // ✅ sets CSS variable
-                //parent.domNode.style.setProperty('counter-reset', `list-item ${startNumber - 1}`); // fallback
-              }
-            }, 0);
+      // Set cursor right after the inserted space
+      editor.setSelection(range.index - text.length + 1, 0);
+
+      // Patch OL element manually to fix start attribute and CSS variable
+      setTimeout(() => {
+        const [leaf] = editor.getLeaf(range.index - text.length);
+        if (!leaf) return;
+
+        let parent = leaf.parent;
+        while (parent && parent.domNode?.tagName !== 'OL') {
+          parent = parent.parent;
         }
-        else {
-          console.log("No match for pattern like '1.'");
+
+        if (parent && parent.domNode?.tagName === 'OL') {
+          parent.domNode.setAttribute('start', String(startNumber));
+          parent.domNode.style.setProperty('--custom-start', startNumber - 1);
         }
-      } else {
-        console.log("Not a numbered list item", /^\d+\.$/.test(text.trim()));
-        console.log("Not a numbered list item", text);
-      }
+      }, 0);
     }
+  } else {
+    console.log("Not a numbered list item", cleanedText);
+  }
+}
 
-   if (e.key === 'Enter' || e.key === 'Backspace') {
+
+if (e.key === 'Enter' || e.key === 'Backspace') {
   setTimeout(() => {
     const editor = editorRefs.current[currentPage].getEditor();
-    const range = editor.getSelection(true);
-    if (!range) return;
-
-    // example after adding or updating new page content
-    const newEditor = editorRefs.current[currentPage].getEditor();
-    //patchListStartOnEditor(newEditor);
+    patchListStartOnEditor(editor);
   }, 0);
 }
 
@@ -690,6 +707,8 @@ function SyncFesion() {
         setCurrentPage(data?.pages.length - 1);
         setOldPages(data?.pages);
       }
+
+      updateListStylesForAllPages();
 
       if (data?.pageSize) {
         setDocumentPageSize(() => {
@@ -1525,6 +1544,7 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
 
     if (id || newId) {
       setPages(oldPages);
+      updateListStylesForAllPages();
     }
     setEditMode(false);
     setEnabelEditing(true);
@@ -1725,6 +1745,7 @@ const handleOverflow = debounce((index, editor, updatedPages) => {
   console.log(`Final fitIndex: ${fitIndex}`);
   console.log("Fit Content:", contentToFit);
 setPages([...updatedPages]);
+updateListStylesForAllPages();
 
 setTimeout(() => {
   requestAnimationFrame(() => {
@@ -1778,6 +1799,7 @@ function moveToNextPage(overflowContent:any, nextPageIndex:any, pages:any, setPa
 
   console.log('Updated next page content after merge:', mergedContent);
   setPages(newPages);
+  updateListStylesForAllPages();
 
   // Optionally, update editor content for next page here too,
   // after state update
@@ -1808,6 +1830,8 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
   if (updatedPages[index].content !== value) {
     updatedPages[index].content = value;
   }
+
+  updateListStylesForAllPages();
 
   handleOverflow(index, quillEditor, updatedPages);
 };
@@ -1926,6 +1950,8 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
 
           return updatedPages;
         });
+
+        updateListStylesForAllPages();
       }
     }
 
@@ -2007,6 +2033,16 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
           currentEditor.format("list", false)
         }
       }
+        setTimeout(() => {
+        const editor = editorRefs.current[currentPage].getEditor();
+        const range = editor.getSelection(true);
+        if (!range) return;
+
+          // example after adding or updating new page content
+          const newEditor = editorRefs.current[currentPage].getEditor();
+          patchListStartOnEditor(newEditor);
+        }, 0); // Delay to let Quill insert the new line first
+
     }
   };
 

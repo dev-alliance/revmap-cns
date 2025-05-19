@@ -15,6 +15,8 @@ import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
 Quill.register("modules/resize", ResizeModule);
 
+import CustomOrderedList from './customOrderedList'; // path to your blot
+
 interface Page {
   content: string;
 }
@@ -838,6 +840,8 @@ function removeListFromEmptyLinesroman(editor: any) {
 
 
 const handleListClick = (value: string) => {
+  console.log('[📋 handleListClick] List format value:', value);
+
   const editor = editorRefContext.getEditor();
   if (!editor) return;
 
@@ -4913,9 +4917,10 @@ const handleListClick = (value: string) => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => { handleListClick("lower-roman");
-                      removeListFromEmptyLinesroman(editorRefContext.getEditor());
-                    }}
+                  onClick={() => { 
+                    handleListClick("lower-roman");
+                    removeListFromEmptyLinesroman(editorRefContext.getEditor());
+                  }}
                   >
                     <div
                       className={
