@@ -144,7 +144,6 @@ html {
   font-size: var(--list-size, 1em);
 }
 
-
 /* -------- Upper-alpha list -------- */
 .ql-editor ol[data-alpha="upper"],
 .ql-editor ul[data-list-type="upper-alpha"] {
@@ -168,7 +167,6 @@ html {
   font-size: var(--list-size, 1em);
 }
 
-
 /* -------- Lower-alpha list -------- */
 .ql-editor ol[data-alpha="lower"],
 .ql-editor ul[data-list-type="lower-alpha"] {
@@ -191,6 +189,137 @@ html {
   color: var(--list-marker-color, #000);
   font-size: var(--list-size, 1em);
 }
+
+/* Lower Greek List */
+.ql-editor ul[data-list-type="lower-greek"] {
+  list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-greek"] > li {
+  counter-increment: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-greek"] > li:before {
+  content: counter(list-item, lower-greek) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+/* Upper Roman List */
+.ql-editor ul[data-list-type="upper-roman"] {
+  list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="upper-roman"] > li {
+  counter-increment: list-item;
+}
+
+.ql-editor ul[data-list-type="upper-roman"] > li:before {
+  content: counter(list-item, upper-roman) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+/* Lower Roman List */
+.ql-editor ul[data-list-type="lower-roman"] {
+  list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-roman"] > li {
+  counter-increment: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-roman"] > li:before {
+  content: counter(list-item, lower-roman) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+/* Default numbered list for ul */
+.ql-editor ul[data-list-type="default"] {
+  list-style-type: none;
+  counter-reset: list-counter;
+}
+
+.ql-editor ul[data-list-type="default"] > li {
+  counter-increment: list-counter;
+}
+
+.ql-editor ul[data-list-type="default"] > li:before {
+  content: counter(list-counter) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+
+/* -------- Custom bullet icon lists only -------- */
+.ql-editor ul[data-list-type^="bullet-"] {
+  list-style: none !important;
+  padding-left: 1.5em;
+  counter-reset: none !important;
+}
+
+.ql-editor ul[data-list-type^="bullet-"] > li {
+  counter-increment: none !important;
+  position: relative;
+}
+
+.ql-editor ul[data-list-type^="bullet-"] > li::before {
+  position: relative;
+  left: -15px;
+  bottom: 1px;
+  display: inline-block;
+  font-family: 'e-icons';
+  font-size: var(--list-size);
+  color: var(--list-marker-color);
+}
+
+/* bullet-dot */
+.ql-editor ul[data-list-type="bullet-dot"] > li:before {
+  content: "\e747";
+}
+
+/* bullet-dot-large */
+.ql-editor ul[data-list-type="bullet-dot-large"] > li:before {
+  content: "\e747";
+}
+
+/* bullet-circle */
+.ql-editor ul[data-list-type="bullet-circle"] > li:before {
+  content: "\e7d0";
+}
+
+/* bullet-square */
+.ql-editor ul[data-list-type="bullet-square"] > li:before {
+  content: "\e7be";
+}
+
+/* bullet-flower */
+.ql-editor ul[data-list-type="bullet-flower"] > li:before {
+  content: "\e79b";
+}
+
+/* bullet-arrow */
+.ql-editor ul[data-list-type="bullet-arrow"] > li:before {
+  content: "\e763";
+}
+
+/* bullet-tick */
+.ql-editor ul[data-list-type="bullet-tick"] > li:before {
+  content: "\e7fc";
+}
+
 
 
 /* for now  */
@@ -1093,194 +1222,6 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2;
-}
-
-/* Lower Greek List */
-.ql-editor ul[data-list-type="lower-greek"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-greek"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-greek"] > li:before {
-  content: counter(list-item, lower-greek) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-/* Upper Roman List */
-.ql-editor ul[data-list-type="upper-roman"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-roman"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-roman"] > li:before {
-  content: counter(list-item, upper-roman) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-/* Lower Roman List */
-.ql-editor ul[data-list-type="lower-roman"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-roman"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-roman"] > li:before {
-  content: counter(list-item, lower-roman) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-.ql-editor ul[data-list-type="default"] {
-  list-style-type: none;
-  counter-reset: list-counter; /* Reset the list counter */
-
-}
-
-.ql-editor ul[data-list-type="default"] > li {
-  counter-increment: list-counter; /* Increment the counter for each list item */
-}
-
-.ql-editor ul[data-list-type="default"] > li:before {
-  content: counter(list-counter) ". "; /* Display the counter */
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-.ql-editor ul[data-list-type="bullet-dot"] {
-  list-style-type: none;
-
-}
-
-.ql-editor ul[data-list-type="bullet-dot"]>li:before {
-  content: "\e747"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -16px;
-  bottom: 1px;
-}
-
-.ql-editor ul[data-list-type="bullet-dot-large"] {
-  list-style-type: none;
-}
-
-.ql-editor ul[data-list-type="bullet-dot-large"]>li:before {
-  content: "\e747";
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-circle"] {
-  list-style-type: none;
-}
-
-.ql-editor ul[data-list-type="bullet-circle"]>li:before {
-  content: "\e7d0"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-square"] {
-  list-style-type: none;
-  position: relative;
-}
-
-.ql-editor ul[data-list-type="bullet-square"]>li:before {
-  content: "\e7be"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-flower"] {
-  list-style-type: none;
-  /* margin-left: 0.2rem; */
-}
-
-.ql-editor ul[data-list-type="bullet-flower"]>li:before {
-  content: "\e79b"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-
-.ql-editor ul[data-list-type="bullet-arrow"] {
-  list-style-type: none;
-  /* margin-left: 0.2rem; */
-}
-
-.ql-editor ul[data-list-type="bullet-arrow"]>li:before {
-  content: "\e763"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-tick"] {
-  list-style-type: none;
-  /* margin-left: 0.2rem; */
-}
-
-.ql-editor ul[data-list-type="bullet-tick"]>li:before {
-  content: "\e7fc"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
 }
 
 .css-6hp17o-MuiList-root-MuiMenu-list {
