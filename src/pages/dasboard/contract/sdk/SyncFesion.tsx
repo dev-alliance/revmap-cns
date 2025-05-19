@@ -104,7 +104,9 @@ DocumentEditorComponent.Inject(
 
 DocumentEditorContainerComponent.Inject(Toolbar);
 
-import CustomOrderedList from './customOrderedList'; // path to your blot
+import CustomOrderedList from './customOrderedList'; // path to your blot;
+import CustomAlphaList from './customAlphaBlot';
+
 
 
 
@@ -259,24 +261,24 @@ function SyncFesion() {
     formattingVisibleRef.current = formattingVisible;
   }, [formattingVisible]);
 
-function patchListStartOnEditor(editor: any) {
-  const ols = editor.root.querySelectorAll('ol');
-  ols.forEach((ol: any) => {
-    const startAttr = ol.getAttribute('start');
-    const start = startAttr ? parseInt(startAttr, 10) : 1;
-    if (!isNaN(start)) {
-      ol.style.setProperty('--custom-start', start - 1);
-      ol.style.setProperty('counter-reset', `list-item ${start - 1}`);
-    }
-  });
-}
+// function patchListStartOnEditor(editor: any) {
+//   const ols = editor.root.querySelectorAll('ol');
+//   ols.forEach((ol: any) => {
+//     const startAttr = ol.getAttribute('start');
+//     const start = startAttr ? parseInt(startAttr, 10) : 1;
+//     if (!isNaN(start)) {
+//       ol.style.setProperty('--custom-start', start - 1);
+//       ol.style.setProperty('counter-reset', `list-item ${start - 1}`);
+//     }
+//   });
+// }
 
-function updateListStylesForAllPages() {
-  editorRefs.current.forEach((editorRefs:any) => {
-    const editor = editorRefs.getEditor();
-    patchListStartOnEditor(editor);
-  });
-}
+// function updateListStylesForAllPages() {
+//   editorRefs.current.forEach((editorRefs:any) => {
+//     const editor = editorRefs.getEditor();
+//     patchListStartOnEditor(editor);
+//   });
+// }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -560,77 +562,123 @@ function updateListStylesForAllPages() {
       }
 
       
-if (e.key === ' ') {
-  console.log("triggered");
-  const focusedEditorIndex = currentPage;
-  console.log("focusedEditorIndex", focusedEditorIndex);
-  const editor = editorRefs.current[currentPage].getEditor();
+      if (e.key === ' ') {
+        console.log("triggered");
+        const focusedEditorIndex = currentPage;
+        console.log("focusedEditorIndex", focusedEditorIndex);
+        const editor = editorRefs.current[currentPage].getEditor();
 
-  const range = editor.getSelection(true);
-  if (!range) return;
+        const range = editor.getSelection(true);
+        if (!range) return;
 
-  // Get the current line/blot before cursor
-  const [block, offset] = editor.scroll.descendant(
-    Quill.import('blots/block'),
-    range.index - 1
-  );
-  if (!block) return;
+        // Get the current line/blot before cursor
+        const [block, offset] = editor.scroll.descendant(
+          Quill.import('blots/block'),
+          range.index - 1
+        );
+        if (!block) return;
 
-  const text = block.domNode.textContent || '';
-  // Remove all whitespace and zero-width spaces to normalize input
-  const cleanedText = text.replace(/\s+/g, '').replace(/\u200B/g, '');
-  console.log('Cleaned:', JSON.stringify(cleanedText)); 
+        const text = block.domNode.textContent || '';
+        // Remove all whitespace and zero-width spaces to normalize input
+        const cleanedText = text.replace(/\s+/g, '').replace(/\u200B/g, '');
+        console.log('Cleaned:', JSON.stringify(cleanedText)); 
 
-  if (/^\d+\.$/.test(cleanedText)) {
-    const match = cleanedText.match(/^(\d+)\.$/);
-    if (match) {
-      const startNumber = parseInt(match[1], 10);
-      console.log("start: ", startNumber);
-      Quill.register(CustomOrderedList, true);
+        if (/^\d+\.$/.test(cleanedText)) {
+          const match = cleanedText.match(/^(\d+)\.$/);
+          if (match) {
+            const startNumber = parseInt(match[1], 10);
+            console.log("start: ", startNumber);
+            Quill.register(CustomOrderedList, true);
 
-      e.preventDefault();
+            e.preventDefault();
 
-      // Remove the original typed text (e.g., "1.")
-      editor.deleteText(range.index - text.length, text.length);
+            // Remove the original typed text (e.g., "1.")
+            editor.deleteText(range.index - text.length, text.length);
 
-      // Apply list formatting with the correct start number
-      editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+            // Apply list formatting with the correct start number
+            editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
 
 
-      // Insert a space to allow typing after list bullet
-      editor.insertText(range.index - text.length, ' ');
+            // Insert a space to allow typing after list bullet
+            editor.insertText(range.index - text.length, ' ');
 
-      // Set cursor right after the inserted space
-      editor.setSelection(range.index - text.length + 1, 0);
+            // Set cursor right after the inserted space
+            editor.setSelection(range.index - text.length + 1, 0);
 
-      // Patch OL element manually to fix start attribute and CSS variable
-      setTimeout(() => {
-        const [leaf] = editor.getLeaf(range.index - text.length);
-        if (!leaf) return;
+            // Patch OL element manually to fix start attribute and CSS variable
+            setTimeout(() => {
+              const [leaf] = editor.getLeaf(range.index - text.length);
+              if (!leaf) return;
 
-        let parent = leaf.parent;
-        while (parent && parent.domNode?.tagName !== 'OL') {
-          parent = parent.parent;
+              let parent = leaf.parent;
+              while (parent && parent.domNode?.tagName !== 'OL') {
+                parent = parent.parent;
+              }
+
+              if (parent && parent.domNode?.tagName === 'OL') {
+                parent.domNode.setAttribute('start', String(startNumber));
+                parent.domNode.style.setProperty('--custom-start', startNumber - 1);
+              }
+            }, 0);
+          }
+        }  else if (/^[a-zA-Z]\.$/.test(cleanedText)) {
+          console.log("yes this calllllllllllllllllllllllllllllllllllllll")
+          const match = cleanedText.match(/^([a-zA-Z])\.$/);
+          if (match) {
+            Quill.register(CustomAlphaList, true);
+            const letter = match[1];
+            const isUpper = letter === letter.toUpperCase();
+            const startNumber = letter.toLowerCase().charCodeAt(0) - 96; // 'a' = 1
+            const listStyle = isUpper ? 'upper-alpha' : 'lower-alpha';
+
+            console.log(`Alphabet list: ${letter}, start=${startNumber}, style=${listStyle}`);
+
+            e.preventDefault();
+
+            // Remove the typed "a." or "A."
+            editor.deleteText(range.index - text.length, text.length);
+            console.log("startnumber: ", startNumber, "  liststyletype: ", listStyle);
+            // Format the line as ordered list
+            editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+
+
+            // Insert a space after formatting
+            editor.insertText(range.index - text.length, ' ');
+            editor.setSelection(range.index - text.length + 1, 0);
+
+            // Delay DOM patching to next tick
+              setTimeout(() => {
+                const [leaf] = editor.getLeaf(range.index - text.length);
+                if (!leaf) return;
+
+                let parent = leaf.parent;
+                while (parent && parent.domNode?.tagName !== 'OL') {
+                  parent = parent.parent;
+                }
+                if (parent && parent.domNode?.tagName === 'OL') {
+                  parent.domNode.setAttribute('start', String(startNumber));
+                  parent.domNode.setAttribute('data-alpha', isUpper ? 'upper' : 'lower');
+                  parent.domNode.setAttribute('data-alpha', isUpper ? 'upper' : 'lower');
+                  console.log('data-alpha set:', parent.domNode.getAttribute('data-alpha'));
+
+                  // parent.domNode.setAttribute('start', String(startNumber));
+                  // parent.domNode.style.listStyleType = listStyle; // 'upper-alpha' or 'lower-alpha'
+                }
+              }, 0);
+
+          }
+        } else {
+          console.log("Not a numbered list item", cleanedText);
         }
-
-        if (parent && parent.domNode?.tagName === 'OL') {
-          parent.domNode.setAttribute('start', String(startNumber));
-          parent.domNode.style.setProperty('--custom-start', startNumber - 1);
-        }
-      }, 0);
-    }
-  } else {
-    console.log("Not a numbered list item", cleanedText);
-  }
-}
+      }
 
 
-if (e.key === 'Enter' || e.key === 'Backspace') {
-  setTimeout(() => {
-    const editor = editorRefs.current[currentPage].getEditor();
-    patchListStartOnEditor(editor);
-  }, 0);
-}
+      // if (e.key === 'Enter' || e.key === 'Backspace') {
+      //   setTimeout(() => {
+      //     const editor = editorRefs.current[currentPage].getEditor();
+      //     patchListStartOnEditor(editor);
+      //   }, 0);
+      // }
 
 
     };
@@ -708,7 +756,7 @@ if (e.key === 'Enter' || e.key === 'Backspace') {
         setOldPages(data?.pages);
       }
 
-      updateListStylesForAllPages();
+      //updateListStylesForAllPages();
 
       if (data?.pageSize) {
         setDocumentPageSize(() => {
@@ -1544,7 +1592,7 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
 
     if (id || newId) {
       setPages(oldPages);
-      updateListStylesForAllPages();
+      //updateListStylesForAllPages();
     }
     setEditMode(false);
     setEnabelEditing(true);
@@ -1745,7 +1793,7 @@ const handleOverflow = debounce((index, editor, updatedPages) => {
   console.log(`Final fitIndex: ${fitIndex}`);
   console.log("Fit Content:", contentToFit);
 setPages([...updatedPages]);
-updateListStylesForAllPages();
+//updateListStylesForAllPages();
 
 setTimeout(() => {
   requestAnimationFrame(() => {
@@ -1799,7 +1847,7 @@ function moveToNextPage(overflowContent:any, nextPageIndex:any, pages:any, setPa
 
   console.log('Updated next page content after merge:', mergedContent);
   setPages(newPages);
-  updateListStylesForAllPages();
+  //updateListStylesForAllPages();
 
   // Optionally, update editor content for next page here too,
   // after state update
@@ -1831,7 +1879,7 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
     updatedPages[index].content = value;
   }
 
-  updateListStylesForAllPages();
+  //updateListStylesForAllPages();
 
   handleOverflow(index, quillEditor, updatedPages);
 };
@@ -1951,7 +1999,7 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
           return updatedPages;
         });
 
-        updateListStylesForAllPages();
+        //updateListStylesForAllPages();
       }
     }
 
@@ -2040,7 +2088,7 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
 
           // example after adding or updating new page content
           const newEditor = editorRefs.current[currentPage].getEditor();
-          patchListStartOnEditor(newEditor);
+          //patchListStartOnEditor(newEditor);
         }, 0); // Delay to let Quill insert the new line first
 
     }

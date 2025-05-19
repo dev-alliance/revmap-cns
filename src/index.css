@@ -122,23 +122,75 @@ html {
   font-display: swap;
 
 }
+
+/* -------- Base OL reset -------- */
 .ql-editor ol {
   list-style: none !important;
+  padding-left: 1.5em;
   counter-reset: list-item var(--custom-start, 0) !important;
-  padding-left: 1.5em !important;
 }
 
-.ql-editor ol li {
-  counter-increment: list-item !important;
-  position: relative !important;
+/* -------- Decimal list -------- */
+.ql-editor ol:not([data-alpha]) > li {
+  counter-increment: list-item;
+  position: relative;
 }
 
-.ql-editor ol li::before {
-  content: counter(list-item) ". " !important;
-  position: absolute !important;
-  left: 0 !important;
+.ql-editor ol:not([data-alpha]) > li::before {
+  content: counter(list-item, decimal) ". ";
+  position: absolute;
+  left: 0;
+  color: var(--list-marker-color, #000);
+  font-size: var(--list-size, 1em);
 }
 
+
+/* -------- Upper-alpha list -------- */
+.ql-editor ol[data-alpha="upper"],
+.ql-editor ul[data-list-type="upper-alpha"] {
+  list-style: none;
+  counter-reset: list-item var(--custom-start, 0);
+  padding-left: 1.5em;
+}
+
+.ql-editor ol[data-alpha="upper"] > li,
+.ql-editor ul[data-list-type="upper-alpha"] > li {
+  counter-increment: list-item;
+  position: relative;
+}
+
+.ql-editor ol[data-alpha="upper"] > li::before,
+.ql-editor ul[data-list-type="upper-alpha"] > li::before {
+  content: counter(list-item, upper-alpha) ". ";
+  position: absolute;
+  left: 0;
+  color: var(--list-marker-color, #000);
+  font-size: var(--list-size, 1em);
+}
+
+
+/* -------- Lower-alpha list -------- */
+.ql-editor ol[data-alpha="lower"],
+.ql-editor ul[data-list-type="lower-alpha"] {
+  list-style: none;
+  counter-reset: list-item var(--custom-start, 0);
+  padding-left: 1.5em;
+}
+
+.ql-editor ol[data-alpha="lower"] > li,
+.ql-editor ul[data-list-type="lower-alpha"] > li {
+  counter-increment: list-item;
+  position: relative;
+}
+
+.ql-editor ol[data-alpha="lower"] > li::before,
+.ql-editor ul[data-list-type="lower-alpha"] > li::before {
+  content: counter(list-item, lower-alpha) ". ";
+  position: absolute;
+  left: 0;
+  color: var(--list-marker-color, #000);
+  font-size: var(--list-size, 1em);
+}
 
 
 /* for now  */
@@ -1041,40 +1093,6 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2;
-}
-.ql-editor ul[data-list-type="upper-alpha"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-alpha"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-alpha"] > li:before {
-  content: counter(list-item, upper-alpha) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-/* Lower Alpha List */
-.ql-editor ul[data-list-type="lower-alpha"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-alpha"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-alpha"] > li:before {
-  content: counter(list-item, lower-alpha) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
 }
 
 /* Lower Greek List */
