@@ -1882,6 +1882,36 @@ const handleListClick = (value: string) => {
     setShowFormattingMarks(!showFormattingMarks);
   };
 
+  const handleSelectSpacing = (value: any) => {
+  // Update the spacing state to the selected value
+  setSpacing(value);
+
+  // Close the spacing dropdown/menu by clearing its anchor element
+  setAnchorElSpacing(null);
+
+  // Get the Quill editor instance from the context/ref
+  const quillEditor = editorRefContext.getEditor();
+
+  if (quillEditor) {
+    // Get the current selection range in the editor (true means get the current cursor position or selection)
+    const savedRange = quillEditor.getSelection(true);
+
+    if (savedRange) {
+      // If there is an active selection (even length 0 means just cursor), format the lines within the selection
+      quillEditor.formatLine(
+        savedRange.index, // Start index of selection
+        savedRange.length, // Length of selection
+        { lineHeight: value }, // Apply the lineHeight formatting with the selected value
+        "user" // Source of the change (user-triggered)
+      );
+    } else {
+      // If there is no selection (cursor not focused), just apply lineHeight format to the current cursor position
+      quillEditor.format("lineHeight", value, "user");
+    }
+  }
+};
+
+
   useEffect(() => {
     if (!editorRefContext) return;
 
@@ -1952,30 +1982,6 @@ const handleListClick = (value: string) => {
       }
     });
   }, [showFormattingMarks, editorRefContext]);
-
-  const handleSelectSpacing = (value: any) => {
-    setSpacing(value);
-    setAnchorElSpacing(null);
-
-    const quillEditor = editorRefContext.getEditor();
-
-    if (quillEditor) {
-      const savedRange = quillEditor.getSelection(true);
-
-      if (savedRange && savedRange.length > 0) {
-        quillEditor.formatLine(
-          savedRange.index,
-          savedRange.length,
-          {
-            lineHeight: value,
-          },
-          "user"
-        );
-      } else {
-        quillEditor.format("lineHeight", value, "user");
-      }
-    }
-  };
 
   useEffect(() => {
     // console.log("I am called")
