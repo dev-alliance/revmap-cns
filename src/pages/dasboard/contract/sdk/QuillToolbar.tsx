@@ -1223,36 +1223,53 @@ const handleListClick = (value: string) => {
 
   const handleOpenAlignment = (event: any) => {
     const editor = editorRefContext.getEditor();
+
+    if (!editor) return;
+
+    // Get the current selection (cursor or text range)
     const range = editor.getSelection(true);
+
+    // Save the selection for later restoration
     setIndexCursor(range);
-    if (range.length > 0) {
+
+    // Ensure selection remains intact after menu opens
+    if (range && range.length > 0) {
       setTimeout(() => {
         editor.setSelection(range.index, range.length);
       }, 0);
     }
+
+    // Open the alignment menu anchored to the clicked element
     setAnchorElAlignment(event.currentTarget);
   };
 
+
   const handleCloseAlignment = (event: any) => {
     const editor = editorRefContext.getEditor();
+    if (!editor) return;
+
     const scrollContainer = scrollPageRef.current;
     const scrollY = scrollContainer ? scrollContainer.scrollTop : 0;
+
     if (indexCursor) {
-      if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0);
-      } else {
-        editor.setSelection(indexCursor.index, 0);
-      }
+      // Restore the cursor to the end of the previous selection
+      const { index, length } = indexCursor;
+      const restoreIndex = length > 0 ? index + length : index;
+      editor.setSelection(restoreIndex, 0);
+
+      // Restore scroll and focus after setting the selection
       setTimeout(() => {
         if (scrollContainer) {
           scrollContainer.scrollTo({
             top: scrollY,
-            behavior: 'smooth' // Makes the scroll smooth
+            behavior: 'smooth', // Smooth scrolling back to previous position
           });
         }
         editor.focus();
       }, 0);
     }
+
+    // Close the alignment dropdown
     setAnchorElAlignment(null);
   };
 
@@ -2027,17 +2044,29 @@ const handleListClick = (value: string) => {
   }, [openFontColor]);
 
   const handleAlignment = (align: string) => {
+    // Update local state to reflect selected alignment (used for UI highlighting or state)
     setSelectedAlign(align);
+
+    // Get the Quill editor instance from context
     const quill = editorRefContext.getEditor();
+
+    // Get the current selection range in the editor
     const range = quill.getSelection();
 
+    if (!range) return; // If no selection, exit early to avoid errors
+
+    // If 'left' is selected, remove the alignment formatting (Quill treats default as 'left')
     if (align === "left") {
       quill.format("align", false, "user");
     } else {
+      // Otherwise, apply the selected alignment
       quill.format("align", align, "user");
     }
 
+    // Close the alignment dropdown/menu
     setAnchorElAlignment(null);
+
+    // Ensure the editor remains focused after applying formatting
     quill.focus();
   };
 
