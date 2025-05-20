@@ -106,7 +106,7 @@ DocumentEditorContainerComponent.Inject(Toolbar);
 
 import CustomOrderedList from './customOrderedList'; // path to your blot;
 import CustomAlphaList from './customAlphaBlot';
-
+import { constrainedMemory } from "process";
 
 
 
@@ -255,6 +255,8 @@ function SyncFesion() {
     setIsLoading(false);
     setLeftSidebarExpanded(true);
   }, []);
+
+
 
   // Keep ref in sync
   useEffect(() => {
@@ -689,6 +691,35 @@ function SyncFesion() {
     };
   }, []);
 
+useEffect(() => {
+  pages.forEach((page, i) => {
+    if (page.type === "pageBreak") {
+      const editor = editorRefs.current[currentPage]?.getEditor();
+      if (!editor) return; // editor not ready
+
+      // Get cursor position
+      
+      const selection = editor.getSelection(true);
+      const insertIndex = selection ? selection.index : editor.getLength();
+      console.log("selection: ", selection.index);
+      console.log("insertIndex: ", insertIndex);
+
+      // Insert text at cursor position
+      const pageBreakText = "\n----- PAGE BREAK -----\n";
+      editor.insertText(insertIndex, pageBreakText, { color: 'white' });
+
+
+      // Set cursor right after the inserted text
+      editor.setSelection(insertIndex + pageBreakText.length);
+
+      console.log("Page break inserted at position:", insertIndex);
+    }
+  });
+}, [pages]);
+
+
+
+
   useEffect(() => {
     // Exit early if editorRefs are not initialized
     if (!editorRefs) return;
@@ -697,7 +728,7 @@ function SyncFesion() {
     if (!id && !newId) {
       setTimeout(() => {
         // Set default page content and styles
-        setPages([{ content: "" }]);
+        setPages([{ type: "content", content: "" }]);
         setBgColorSvg("#fefefe");
         setPrevBgColor("#fefefe");
         setSelectedFontSize("12px");
@@ -749,8 +780,16 @@ function SyncFesion() {
 
       if (data?.pages) {
         setPages(() => {
-          let pages = data?.pages;
-          return pages;
+          // Defensive: if data.pages is undefined, fallback to empty array
+          let rawPages = data?.pages ?? [];
+
+          // Map pages and add type 'content' (assuming all are content pages)
+          let normalizedPages = rawPages.map((page:any) => ({
+            type: "content",        // add type here
+            content: page.content || ""  // safely fallback to empty string if needed
+          }));
+
+          return normalizedPages;
         });
         setCurrentPage(data?.pages.length - 1);
         setOldPages(data?.pages);
@@ -1572,7 +1611,7 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     editor.history.stack.undo = [];
     editor.history.stack.redo = [];
     if (!id && newId === "") {
-      setPages([{ content: "" }]);
+      setPages([{ type: "content", content: "" }]);
     }
     setTimeout(() => {
       setBgColorSvg("#fefefe");
@@ -1750,64 +1789,116 @@ const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
 
+  function findDeltaIndexAtCharIndex(delta:any, charIndex:any) {
+  let deltaIndex = 0;
+  let runningCharCount = 0;
+
+  for (const op of delta.ops) {
+    const insert = op.insert;
+    const len = typeof insert === 'string' ? insert.length : 1;
+
+    if (runningCharCount + len > charIndex) {
+      deltaIndex += charIndex - runningCharCount;
+      break;
+    } else {
+      runningCharCount += len;
+      deltaIndex += len;
+    }
+  }
+
+  return deltaIndex;
+}
+
+const PAGE_BREAK_STRING = "----- PAGE BREAK -----";
+
 const handleOverflow = debounce((index, editor, updatedPages) => {
   const currentContent = editor.getContents();
+  const plainText = editor.getText();
   const editorHeight = editor.root.scrollHeight;
 
-  console.log(`Editor ${index} Height:`, editorHeight);
-  console.log(`Document Page Height:`, documentHeight);
+  // Get current cursor position before any changes
+  const selection = editor.getSelection();
+  const previousCursorPosition = selection ? selection.index : null;
+  console.log("Previous cursor position:", previousCursorPosition);
 
-  if (editor.root.innerText.trim().length <= 0) return;
-  if (editorHeight <= documentHeight) return;
+  // 1. Exit if empty
+  if (plainText.trim().length === 0) return;
 
-  let fitIndex = currentContent.length();
+  // 2. Check for manual page break position
+  const breakPosition = plainText.indexOf(PAGE_BREAK_STRING);
+
+  // 3. If manual page break found, split at that position
+  if (breakPosition !== -1) {
+    // Avoid re-handling same break — check if next page already has content
+    if (updatedPages[index + 1]?.content?.ops?.length > 0) return;
+
+    const breakLength = PAGE_BREAK_STRING.length; // include newlines
+    const before = currentContent.slice(0, breakPosition);
+    const after = currentContent.slice(breakPosition + breakLength);
+
+    editor.setContents(before, "silent");
+
+    moveToNextPage(after, index + 1, updatedPages, setPages, editorRefs);
+
+    return;
+  }
+
+
+  // 4. If no manual break, check for overflow by height
+  if (editorHeight <= documentHeight) {
+    // Content fits, no need to split
+    return;
+  }
+
+  // 5. Automatic overflow split:
+  // Find largest content slice that fits in the page height
+  let fitIndex = currentContent.length(); // start from full length
   let contentToFit = currentContent.slice(0, fitIndex);
 
   while (fitIndex > 0) {
     editor.setContents(contentToFit, "silent");
     const testHeight = editor.root.scrollHeight;
-    console.log(`Trying fitIndex ${fitIndex} → height: ${testHeight}`);
 
     if (testHeight <= documentHeight) break;
 
+    // Reduce content size by trimming last operation or characters
     const ops = contentToFit.ops;
     if (ops.length > 0) {
       const lastOp = ops[ops.length - 1];
       if (lastOp.insert && typeof lastOp.insert === "string") {
-        const lastIndex = lastOp.insert.lastIndexOf(" ");
-        if (lastIndex !== -1) {
-          lastOp.insert = lastOp.insert.slice(0, lastIndex);
+        const lastSpaceIndex = lastOp.insert.lastIndexOf(" ");
+        if (lastSpaceIndex !== -1) {
+          lastOp.insert = lastOp.insert.slice(0, lastSpaceIndex);
         } else {
-          ops.pop(); // Remove the entire op if no space
+          ops.pop();
         }
       } else {
-        ops.pop(); // For embeds
+        ops.pop();
       }
     }
 
+    // Recalculate fitIndex
     fitIndex = contentToFit.ops.reduce((acc:any, op:any) => {
       return acc + (typeof op.insert === "string" ? op.insert.length : 1);
     }, 0);
   }
+  console.log("")
 
-  console.log(`Final fitIndex: ${fitIndex}`);
-  console.log("Fit Content:", contentToFit);
-setPages([...updatedPages]);
-//updateListStylesForAllPages();
+  // 6. After fitting content found, split content
+  const overflowContent = currentContent.slice(fitIndex);
 
-setTimeout(() => {
-  requestAnimationFrame(() => {
-    const overflowContent = currentContent.slice(fitIndex);
-    moveToNextPage(
-      overflowContent,
-      index + 1,
-      updatedPages,
-      setPages,
-      editorRefs // make sure this is the same ref you're using elsewhere
-    );
-  });
-}, 0);
-}, 100); // Slight debounce to batch rapid calls
+  // Get current cursor position before any changes
+  console.log("new cursor position:", fitIndex);
+  
+  editor.setContents(contentToFit, "silent");
+  editor.setSelection(previousCursorPosition, 0, 'silent');
+
+
+  moveToNextPage(overflowContent, index + 1, updatedPages, setPages, editorRefs);
+
+}, 100);
+
+
 
 function mergeContent(existingContent:any, overflowContent:any) {
   if (!existingContent || !existingContent.ops) {
@@ -1855,8 +1946,6 @@ function moveToNextPage(overflowContent:any, nextPageIndex:any, pages:any, setPa
   if (nextEditorRef) {
     const quill = nextEditorRef.getEditor();
     quill.setContents(mergedContent);
-
-
   }
 }
 
@@ -3804,24 +3893,27 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
             // position:"relative"
           }}
         >
-          <QuillToolbar
-            isBoldActive={isBoldActive}
-            setIsBoldActive={setIsBoldActive}
-            isItalicActive={isItalicActive}
-            setIsItalicActive={setIsItalicActive}
-            isUnderlineActive={isUnderlineActive}
-            setIsUnderlineActive={setIsUnderlineActive}
-            isStrikeActive={isStrikeActive}
-            setIsStrikeActive={setIsStrikeActive}
-            isScriptActive={isScriptActive}
-            setIsScriptActive={setIsScriptActice}
-            isListActive={isListActive}
-            setIsListActive={setIsListActive}
-            handleChangeSelection={handleChangeSelection}
-            scrollPageRef={scrollPageRef}
-            editorZoom = {editorZoom}
-            setEditorZoom = {setEditorZoom}
-          />
+        <QuillToolbar
+          pages={pages}
+          setPages={setPages}
+          isBoldActive={isBoldActive}
+          setIsBoldActive={setIsBoldActive}
+          isItalicActive={isItalicActive}
+          setIsItalicActive={setIsItalicActive}
+          isUnderlineActive={isUnderlineActive}
+          setIsUnderlineActive={setIsUnderlineActive}
+          isStrikeActive={isStrikeActive}
+          setIsStrikeActive={setIsStrikeActive}
+          isScriptActive={isScriptActive}
+          setIsScriptActive={setIsScriptActice}
+          isListActive={isListActive}
+          setIsListActive={setIsListActive}
+          handleChangeSelection={handleChangeSelection}
+          scrollPageRef={scrollPageRef}
+          editorZoom={editorZoom}
+          setEditorZoom={setEditorZoom}
+        />
+
         </div>
 
         {(showBlock === "" || documentContent == "word") && (
@@ -3872,6 +3964,7 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
                     // width: documentPageSize?.title === "Landscape" ? "90%" : "",
                   }}
                 >
+                  {console.log("Rendering pages:", pages)}
                   {pages.map((page, index) => (
                         page && (
                           <div
@@ -3885,9 +3978,9 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
                         }}
                       >
                         <ReactQuill
-  value={pages[index]?.content}
-  onChange={(value, delta, source, editor) => handleChange(value, delta, source, editor, index)}
-  ref={(ref) => (editorRefs.current[index] = ref)}
+                          value={pages[index]?.content}
+                          onChange={(value, delta, source, editor) => handleChange(value, delta, source, editor, index)}
+                          ref={(ref) => (editorRefs.current[index] = ref)}
                           readOnly={!editMode}
                           onChangeSelection={handleChangeSelection}
                           modules={modules}

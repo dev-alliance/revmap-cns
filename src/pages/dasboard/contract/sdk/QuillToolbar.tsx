@@ -17,9 +17,16 @@ Quill.register("modules/resize", ResizeModule);
 
 import CustomOrderedList from './customOrderedList'; // path to your blot
 
-interface Page {
-  content: string;
-}
+type Page = 
+  | { type: 'pageBreak' }
+  | { type: 'content'; content: string };
+
+
+type QuillToolbarProps = {
+  pages: Page[];
+  setPages: React.Dispatch<React.SetStateAction<Page[]>>;
+};
+
 
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -598,6 +605,8 @@ Quill.register(CustomHeadingAttribute, true);
 Quill.register(LineHeightStyle, true);
 
 export default function QuillToolbar(props: any) {
+  const { pages, setPages } = props as QuillToolbarProps;
+  
   const {
     isBoldActive,
     setIsBoldActive,
@@ -650,69 +659,70 @@ export default function QuillToolbar(props: any) {
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
+  
+  
+  const [currentPage, setCurrentPage] = useState(0);
 
+// const handleAddPage = () => {
+//     setPages(prevPages => {
+//       const updatedPages = [...prevPages, { content: '' }];
+//       const newIndex = updatedPages.length - 1;
+//       setCurrentPage(newIndex);
+//       console.log('📄 New page added at index:', newIndex);
+
+//       // Simulate Quill history.record if needed
+//       // const quill = editorRefContext?.getEditor();
+//       // quill?.history?.record();
+
+//       return updatedPages;
+//     });
+//   };
+
+const PageBreakComponent = () => {
   const [pages, setPages] = useState<Page[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
 
-const handleAddPage = () => {
-    setPages(prevPages => {
-      const updatedPages = [...prevPages, { content: '' }];
-      const newIndex = updatedPages.length - 1;
-      setCurrentPage(newIndex);
-      console.log('📄 New page added at index:', newIndex);
+  // A ref to hold the latest version of the page break function
+    const pageBreakHandlerRef = useRef<(() => void) | null>(null);
 
-      // Simulate Quill history.record if needed
-      // const quill = editorRefContext?.getEditor();
-      // quill?.history?.record();
+  // This function adds a new page
+  // const handleAddPage = () => {
+  //   setPages((prevPages) => {
+  //     const updatedPages = [...prevPages, { content: '' }];
+  //     const newIndex = updatedPages.length - 1;
+  //     setCurrentPage(newIndex);
 
-      return updatedPages;
-    });
+  //     console.log('📄 Page break added at index:', newIndex);
+
+  //     // Simulate Quill history.record if needed
+  //     // const quill = yourEditorRef.current;
+  //     // if (quill) {
+  //     //   quill.history.record();
+  //     //   console.log('✍️ Quill history recorded');
+  //     // }
+
+  //     return updatedPages;
+  //   });
+  // }
+
+  // Store the handler so it can be triggered outside
+  // pageBreakHandlerRef.current = handleAddPage;
+
+  // External trigger for page break
+  const triggerPageBreak = () => {
+    if (pageBreakHandlerRef.current) {
+      console.log('🧠 Triggering page break...');
+      pageBreakHandlerRef.current();
+    }
   };
+};
+
 
   // Trigger function (could be called from outside later)
   const triggerPageBreak = () => {
     console.log('🧠 Triggering page break...');
-    handleAddPage();
+    PageBreakComponent();
   };
-
-// const PageBreakComponent = () => {
-//   const [pages, setPages] = useState<Page[]>([]);
-//   const [currentPage, setCurrentPage] = useState(0);
-
-//   // A ref to hold the latest version of the page break function
-//     const pageBreakHandlerRef = useRef<(() => void) | null>(null);
-
-//   // This function adds a new page
-//   const handleAddPage = () => {
-//     setPages((prevPages) => {
-//       const updatedPages = [...prevPages, { content: '' }];
-//       const newIndex = updatedPages.length - 1;
-//       setCurrentPage(newIndex);
-
-//       console.log('📄 Page break added at index:', newIndex);
-
-//       // Simulate Quill history.record if needed
-//       // const quill = yourEditorRef.current;
-//       // if (quill) {
-//       //   quill.history.record();
-//       //   console.log('✍️ Quill history recorded');
-//       // }
-
-//       return updatedPages;
-//     });
-//   }
-
-//   // Store the handler so it can be triggered outside
-//   pageBreakHandlerRef.current = handleAddPage;
-
-//   // External trigger for page break
-//   const triggerPageBreak = () => {
-//     if (pageBreakHandlerRef.current) {
-//       console.log('🧠 Triggering page break...');
-//       pageBreakHandlerRef.current();
-//     }
-//   };
-// };
 
 function removeListFromEmptyLines(editor:any) {
   const delta = editor.getContents();
@@ -5699,13 +5709,21 @@ const handleListClick = (value: string) => {
             id="page-break"
           >
       {/* Button or span to trigger the page break */}
-          <span
-              className="d-flex justify-content-center align-items-center"
-              style={{ width: 34 }}
-              onClick={triggerPageBreak}
-            >
-              <PageBreakSvg />
-            </span>
+        <span
+          className="d-flex justify-content-center align-items-center"
+          style={{ width: 34 }}
+          onClick={() => {
+            setPages((prevPages: any) => {
+              const updatedPages = [...prevPages, { type: "pageBreak" }];
+              console.log("New page type:", updatedPages[updatedPages.length - 1].type);
+              console.log("After adding page break:", updatedPages);
+              return updatedPages;
+            });
+          }}
+
+        >
+          <PageBreakSvg />
+        </span>
           </span>
         </span>
         <ReactTooltip
