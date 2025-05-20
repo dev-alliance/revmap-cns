@@ -2140,34 +2140,38 @@ const handleClickColumns = (value: string) => {
     setAnchorElFormula(event.currentTarget);
   };
 
-  const handleAddLink = () => {
-    const editor = editorRefContext.getEditor();
+const [isSaving, setIsSaving] = useState(false);
 
-    if (selection) {
-      const { index, length } = selection;
+const handleAddLink = () => {
+  if (isSaving) return; // Prevent double clicks
+  setIsSaving(true);
 
-      // Create a Delta for deleting the selected text and inserting the link
-      let delta = new editor.constructor.imports.delta();
+  const editor = editorRefContext.getEditor();
 
-      // Delete the selected text and insert the link
-      delta = delta
-        .retain(index) // Retain the text before the selection
-        .delete(length) // Delete the selected text
-        .insert(displayText, { link: linkUrl }); // Insert the display text with link formatting
+  if (selection) {
+    const { index, length } = selection;
 
-      // Apply the delta with 'user' action to track undo/redo
-      editor.updateContents(delta, "user");
-    } else {
-      // If no selection, insert the link at the cursor position
-      editor.insertText(cursorIndex, displayText, { link: linkUrl }, "user");
-    }
+    let delta = new editor.constructor.imports.delta();
 
-    // Clear inputs and close the link dialog
-    setDisplayText("");
-    setLinkUrl("");
-    handleCloseLink();
-    setSelection(null);
-  };
+    delta = delta
+      .retain(index)
+      .delete(length)
+      .insert(displayText, { link: linkUrl });
+
+    editor.updateContents(delta, "user");
+  } else {
+    editor.insertText(cursorIndex, displayText, { link: linkUrl }, "user");
+  }
+
+  setDisplayText("");
+  setLinkUrl("");
+  handleCloseLink();
+  setSelection(null);
+
+  // Allow another click after a short delay or after async logic
+  setTimeout(() => setIsSaving(false), 300);
+};
+
 
   const handleCloseLink = () => {
     setDisplayTextChange(false);
@@ -6827,6 +6831,7 @@ const handleClickColumns = (value: string) => {
                           fontWeight: 400,
                         }}
                         onClick={handleAddLink}
+                        disabled={isSaving}
                       >
                         Save
                       </button>
