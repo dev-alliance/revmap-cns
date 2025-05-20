@@ -1843,6 +1843,7 @@ const handleOverflow = debounce((index, editor, updatedPages) => {
     return;
   }
 
+  const documentHeight = cmToPx(documentPageSize.height);
 
   // 4. If no manual break, check for overflow by height
   if (editorHeight <= documentHeight) {
