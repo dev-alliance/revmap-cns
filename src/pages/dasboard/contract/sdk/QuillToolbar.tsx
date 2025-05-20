@@ -31,6 +31,31 @@ type QuillToolbarProps = {
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
 
+class ResizableImage extends BlockEmbed {
+  static blotName = "resizableImage";
+  static tagName = "img";
+
+  static create(value: { src: string; width?: string; height?: string }) {
+    const node = super.create() as HTMLImageElement;
+    node.setAttribute("src", value.src);
+    if (value.width) node.style.width = value.width;
+    if (value.height) node.style.height = value.height;
+    node.classList.add("resizable");
+    return node;
+  }
+
+  static value(node: HTMLImageElement) {
+    return {
+      src: node.getAttribute("src") || "",
+      width: node.style.width || undefined,
+      height: node.style.height || undefined,
+    };
+  }
+}
+
+Quill.register({ "formats/resizableImage": ResizableImage });
+
+
 class VideoBlot extends BlockEmbed {
   static create(value: any) {
     const node = super.create();
@@ -2201,41 +2226,50 @@ const handleAddLink = () => {
     // setDisplayTextChange(true);
   };
 
-  const handlePictureFromFile = () => {
-    // Open a file input dialog
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
+const handlePictureFromFile = () => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
 
-    fileInput.onchange = async (e: any) => {
-      const file = e.target.files[0];
-      if (file) {
-        // Create a URL for the selected image
-        const reader = new FileReader();
+  fileInput.onchange = async (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
 
-        reader.onload = (event: any) => {
-          const imageUrl = event.target.result;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageUrl = event.target?.result as string;
 
-          const quill = editorRefContext.getEditor();
-          quill.insertEmbed(cursorIndex, "image", imageUrl, "user");
+      const quill = editorRefContext.getEditor();
+      const cursorIndex = quill.getSelection()?.index ?? quill.getLength();
 
-          const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
-          if (img) {
-            img.classList.add("resizable");
-          }
+      quill.insertEmbed(cursorIndex, "image", imageUrl, "user");
+      quill.setSelection(cursorIndex + 1);
+      quill.focus();
 
-          // quill.setSelection(cursorIndex + 1);
-          quill.focus();
-        };
-
-        reader.readAsDataURL(file);
+      const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
+      if (img) {
+        console.log("Before adding class - image size:", img.naturalWidth, "x", img.naturalHeight);
+        
+        img.classList.add("resizable");
+        
+const rect = img.getBoundingClientRect();
+      console.log(
+        "After adding class - image size:",
+        Math.round(rect.width),
+        "x",
+        Math.round(rect.height)
+      );
       }
     };
 
-    // Trigger the file input dialog
-    fileInput.click();
-    setAnchorElPicture(null);
+    reader.readAsDataURL(file);
   };
+
+  fileInput.click();
+  setAnchorElPicture(null);
+};
+
 
   const handleVideoFromFile = () => {
     const fileInput = document.createElement("input");
