@@ -1883,38 +1883,56 @@ const handleCloseMargins = () => {
     handleCloseCase(); // Close any UI elements related to the transformation
   };
 
-  const handleClickColumns = (value: string) => {
-    const editorContainer = editorRefContext.editor?.root;
+const handleClickColumns = (value: string) => {
+  const editorContainer = editorRefContext.editor?.root;
 
-    if (!editorContainer) {
-      console.error("Editor container not found");
-      return;
-    }
+  if (!editorContainer) {
+    console.error("Editor container not found");
+    return;
+  }
 
-    setSelectedColumn(value);
+  setSelectedColumn(value);
 
-    switch (value) {
-      case "one":
-        editorContainer.style.columnCount = 1;
-        break;
-      case "two":
-        editorContainer.style.columnCount = 2;
-        break;
-      case "three":
-        editorContainer.style.columnCount = 3;
-        break;
-      case "left":
-        editorContainer.style.columnCount = 2;
-        break;
-      case "right":
-        editorContainer.style.columnCount = 2;
-        break;
-      default:
-        editorContainer.style.display = "block"; // Default to single column
-    }
+  // Clear previous column-related styles
+  editorContainer.style.columnCount = "";
+  editorContainer.style.columnGap = "";
+  editorContainer.style.columnRule = "";
+  editorContainer.style.marginLeft = "";
+  editorContainer.style.transform = "";
 
-    handleCloseColumns();
-  };
+  // Force reflow
+  void editorContainer.offsetHeight;
+
+  switch (value) {
+    case "one":
+      editorContainer.style.columnCount = "1";
+      editorContainer.style.width = "100%"; // Ensure full width
+      break;
+    case "two":
+      editorContainer.style.columnCount = "2";
+      editorContainer.style.columnGap = "30px";
+      editorContainer.style.columnRule = "1px solid #ccc";
+      break;
+    case "three":
+      editorContainer.style.columnCount = "3";
+      editorContainer.style.columnGap = "30px";
+      editorContainer.style.columnRule = "1px solid #ccc";
+      break;
+    case "left":
+    case "right":
+      editorContainer.style.columnCount = "2";
+      editorContainer.style.columnGap = "30px";
+      editorContainer.style.columnRule = "1px solid #ccc";
+      // Additional positioning if needed for left/right layout
+      break;
+    default:
+      editorContainer.style.columnCount = "1";
+      break;
+  }
+
+  handleCloseColumns();
+};
+
 
   const toggleFormattingMarks = () => {
     setShowFormattingMarks(!showFormattingMarks);
