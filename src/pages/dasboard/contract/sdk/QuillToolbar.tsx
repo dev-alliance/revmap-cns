@@ -1047,32 +1047,43 @@ const handleListClick = (value: string) => {
     setAnchorEl(null);
   };
 
-  const handleOpenMargins = (event: any) => {
-    if (openMargins) return;
-    const editor = editorRefContext.getEditor();
-    const range = editor.getSelection(true);
-    setIndexCursor(range);
-    const scrollContainer = scrollPageRef.current;
-    setAnchorElMargins(event.currentTarget);
-    if (scrollPosition) {
-      scrollContainer.scrollTop = scrollPosition;
-    }
-  };
+// Opens the margin popover and stores the cursor position
+const handleOpenMargins = (event: any) => {
+  if (openMargins) return; // Prevent re-opening if already open
 
-  const handleCloseMargins = () => {
-    const editor = editorRefContext.getEditor();
-    setAnchorElMargins(null);
-    if (indexCursor) {
-      if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0);
-      } else {
-        editor.setSelection(indexCursor.index, 0);
-      }
-      setTimeout(() => {
-        editor.focus();
-      }, 0);
+  const editor = editorRefContext.getEditor(); // Get Quill editor instance
+  const range = editor.getSelection(true); // Get current selection (with fallback to cursor position)
+
+  setIndexCursor(range); // Save the current cursor position to restore later
+  setAnchorElMargins(event.currentTarget); // Set anchor element for the margin popover
+
+  // Restore scroll position if previously saved
+  const scrollContainer = scrollPageRef.current;
+  if (scrollPosition) {
+    scrollContainer.scrollTop = scrollPosition;
+  }
+};
+
+// Closes the margin popover and restores cursor focus and position
+const handleCloseMargins = () => {
+  const editor = editorRefContext.getEditor(); // Get Quill editor instance
+  setAnchorElMargins(null); // Close the margin popover
+
+  // Restore the saved cursor position
+  if (indexCursor) {
+    if (indexCursor.length > 0) {
+      editor.setSelection(indexCursor.index + indexCursor.length, 0);
+    } else {
+      editor.setSelection(indexCursor.index, 0);
     }
-  };
+
+    // Delay focus to ensure selection is applied correctly
+    setTimeout(() => {
+      editor.focus();
+    }, 0);
+  }
+};
+
 
   const handleOpenOrientation = (event: any) => {
     const editor = editorRefContext.getEditor();
