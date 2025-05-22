@@ -2154,6 +2154,7 @@ const handleClickColumns = (value: string) => {
   };
 
   const handleOpenFormula = (event: any) => {
+    console.log("cicked dnjcjd bcj")
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
     setCursorIndex(range.index);
@@ -2162,6 +2163,7 @@ const handleClickColumns = (value: string) => {
       setSelection(range);
       editor.setSelection(range.index, range.length);
     }
+    console.log("formula : ", event.current);
     setAnchorElFormula(event.currentTarget);
   };
 
@@ -2223,7 +2225,7 @@ const handleAddLink = () => {
   const [displayFormula, setDisplayFormula] = useState("");
   const handleFormulaChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDisplayFormula(e.target.value);
-    // setDisplayTextChange(true);
+    //setDisplayTextChange(true);
   };
 
 const handlePictureFromFile = () => {
@@ -3585,15 +3587,32 @@ const rect = img.getBoundingClientRect();
     }
   };
 
-  const handleInsertFormula = () => {
-    if (editorRefContext) {
-      const editor = editorRefContext.getEditor();
-      const range = editor.getSelection(true);
-      if (range) {
-        editor.format("formula", true, "user");
-      }
+const handleCloseformula = () => {
+    setDisplayFormula("");
+    const editor = editorRefContext.getEditor();
+    setAnchorElFormula(null)
+    editor.focus();
+    setSelection(null);
+};
+
+const handleInsertFormula = () => {
+  if (editorRefContext) {
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+      console.log("clicked : ", editor);
+    if (range) {
+      // Insert or replace formula at cursor with the current input value
+      editor.insertText(range.index, displayFormula, {
+        bold: true,
+        italic: true
+      }, "user");
+
+      // Move cursor after the formula
+      editor.setSelection(range.index + 1, 0, "user");
     }
-  };
+    handleCloseformula();
+  }
+};
 
   const handleInsertCodeBlock = () => {
     if (editorRefContext) {
@@ -7207,7 +7226,7 @@ const rect = img.getBoundingClientRect();
             anchorEl={anchorElFormula}
             open={openFormula}
             closeAfterTransition
-            onClose={() => setAnchorElFormula(null)}
+            onClose={handleCloseformula}
             MenuListProps={{
               "aria-labelledby": "openFormula-button",
             }}
@@ -7276,7 +7295,7 @@ const rect = img.getBoundingClientRect();
                       color: "black",
                       fontWeight: 400,
                     }}
-                    onClick={() => setAnchorElFormula(null)}
+                    onClick={handleInsertFormula}
                   >
                     Save
                   </button>
