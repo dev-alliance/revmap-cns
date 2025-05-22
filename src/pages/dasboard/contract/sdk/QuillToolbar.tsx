@@ -15,6 +15,7 @@ import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
 //import { setWaitingForBold } from './sharedflag';
 import { getCtrlShiftAPressed, setCtrlShiftAPressed, getEditorInstances } from './sharedflag';
+import TableGridPicker from './TableGridPicker'; // make sure path is correct
 Quill.register("modules/resize", ResizeModule);
 
 import CustomOrderedList from './customOrderedList'; // path to your blot
@@ -3577,40 +3578,45 @@ const rect = img.getBoundingClientRect();
     );
   };
 
-  
+  const [showGrid, setShowGrid] = useState(false);
 
+  const insertTable = (rows: number, cols: number) => {
+    const quill = editorRefContext.getEditor?.();
+    if (!quill) return;
 
-const insertCustomTable = () => {
-  console.log("clicked");
-  const quill = editorRefContext.getEditor?.();
-  if (!quill) {
-    console.warn('Quill instance not found');
-    return;
-  }
+    const range = quill.getSelection(true);
+    if (!range) return;
 
-  const tableHTML = `
-    <table border="1" style="border-collapse: collapse; width: 100%;">
-      <thead>
-        <tr>
-          <th style="padding: 8px;">Heading 1</th>
-          <th style="padding: 8px;">Heading 2</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="padding: 8px;">column 1</td>
-          <td style="padding: 8px;">column 2</td>
-        </tr>
-      </tbody>
-    </table>
-  `;
+    let tableHTML = `<table border="1" style="border-collapse: collapse; width: 100%;">`;
 
-  const range = quill.getSelection(true);
-  if (range) {
+    // Header
+    tableHTML += '<thead><tr>';
+    for (let c = 0; c < cols; c++) {
+      tableHTML += `<th style="padding: 8px;"></th>`;
+    }
+    tableHTML += '</tr></thead>';
+
+    // Body
+    tableHTML += '<tbody>';
+    for (let r = 0; r < rows - 1; r++) {
+      tableHTML += '<tr>';
+      for (let c = 0; c < cols; c++) {
+        tableHTML += `<td style="padding: 8px;"></td>`;
+      }
+      tableHTML += '</tr>';
+    }
+    tableHTML += '</tbody></table>';
+
     quill.insertEmbed(range.index, 'htmlTable', tableHTML, 'user');
+    const deltaAfterInsert = quill.getContents();
+    console.log("Delta after insert:", JSON.stringify(deltaAfterInsert, null, 2));
     quill.setSelection(range.index + 1);
-  }
-};
+  };
+
+  const handleTableSizeSelect = (rows: number, cols: number) => {
+    insertTable(rows, cols);
+    setShowGrid(false);
+  };
 
   const handleBold = () => {
     if (getCtrlShiftAPressed()) {
@@ -7024,38 +7030,28 @@ const handleInsertFormula = () => {
           place="bottom"
         />
 
-        <span className="ql-formats">
+        <span className="ql-formats" style={{ position: 'relative' }}>
           <a
-            data-tooltip-id="menu-item-13"
-            data-tooltip-content="Table"
-            data-tooltip-place="bottom"
-            onClick={insertCustomTable}
+            onClick={() => setShowGrid((prev) => !prev)}
+            style={{ cursor: 'pointer' }}
           >
-            <span
-              className="d-flex ql-color fonts"
-              style={{
-                height: 30,
-                border: "1px solid #D9D9D9",
-                borderRadius: 5,
-              }}
-            >
-              <span
-                className="d-flex justify-content-center align-items-center"
-                style={{ width: 30 }}
-              >
+            <span className="d-flex ql-color fonts" style={{ height: 30, border: "1px solid #D9D9D9", borderRadius: 5 }}>
+              <span className="d-flex justify-content-center align-items-center" style={{ width: 30 }}>
                 <TableSvg />
               </span>
-              <span
-                className="d-flex justify-content-center align-items-center"
-                style={{
-                  width: 20,
-                }}
-              >
+              <span className="d-flex justify-content-center align-items-center" style={{ width: 20 }}>
                 <DropdownImage />
               </span>
             </span>
           </a>
+
+          {showGrid && (
+            <div style={{ position: 'absolute', top: 35, zIndex: 9999 }}>
+              <TableGridPicker onSelect={handleTableSizeSelect} />
+            </div>
+          )}
         </span>
+
         <ReactTooltip
           className="custom-tooltip"
           id="menu-item-13"

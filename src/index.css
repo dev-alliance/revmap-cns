@@ -2153,18 +2153,72 @@ fill: #7F7F7F;
   margin: 1em 0 !important;
 }
 
-
 .ql-editor .custom-html-table {
-  margin: 1em 0;
+  margin: 1.5em 0;
+  overflow-x: auto;
 }
 
 .ql-editor .custom-html-table table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: auto;
+  border: 1px solid #d1d1d1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+
+.ql-editor .custom-html-table thead {
+  background-color: #f2f2f2;
 }
 
 .ql-editor .custom-html-table th,
 .ql-editor .custom-html-table td {
   border: 1px solid #ccc;
-  padding: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: middle;
+  min-width: 80px;
+  height: 38px;
+  background-color: #fff;
+}
+
+.ql-editor .custom-html-table th {
+  font-weight: 600;
+}
+
+.ql-editor .custom-html-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.ql-editor .custom-html-table tr:hover {
+  background-color: #e6f7ff;
+}
+
+
+.parent-of-toolbar {
+  overflow: visible;
+  z-index: 1000;
+  position: relative;
+}
+
+.ql-toolbar {
+  overflow: visible;
+  position: relative;
+  z-index: 1000;
+}
+
+.ql-formats {
+  overflow: visible;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Optional: Drop-down hover effect for buttons */
+.ql-formats > * {
+  transition: all 0.2s ease;
+}
+
+.ql-formats > *:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
 }

@@ -257,6 +257,21 @@ function SyncFesion() {
     setLeftSidebarExpanded(true);
   }, []);
 
+//   useEffect(() => {
+//   if (!editorRefs) return;
+
+//   const savedDelta = editorRefs.getContent();
+//   console.log("saveddelta", savedDelta);
+
+//   if (savedDelta) {
+//     const savedDeltaParsed = JSON.parse(savedDelta);
+//     const quill = editorRefContext.getEditor?.();
+//     if (quill) {
+//       quill.setContents(savedDeltaParsed);
+//     }
+//   }
+// }, []);
+
 
 
   // Keep ref in sync
@@ -852,45 +867,72 @@ useEffect(() => {
 
   const editorContainerRef: any = useRef(null);
 
-  const handleSubmit = async () => {
-    console.log("handle submit");
-    try {
-      if (!documentName) {
-        toast.error("Please enter the name of the document");
-        return;
-      }
-      setAuditTrails([
+const handleSubmit = async () => {
+  try {
+      if (!editorRefs) return;
+  const editorRef = editorRefs.current[0];
+  const quillEditor = editorRef.getEditor();
+    const quillEditor1 = editorRefs.current[currentPage].getEditor();
+  const savedDelta =  quillEditor.getContents();
+  console.log("saveddelta", savedDelta);
+    if (!documentName) {
+      toast.error("Please enter the name of the document");
+      return;
+    }
+
+    // 1. Get Quill content as Delta
+    const quill = editorRefs.current[currentPage].getEditor();
+    if (!quill) {
+      toast.error("Editor instance not found.");
+      return;
+    }
+
+    const contentDelta = quill.getContents(); // This includes your custom embeds like tables
+    const contentJSON = JSON.stringify(contentDelta);
+
+    // 2. Prepare your payload including the content
+    const payload = {
+      documentName,
+      content: contentJSON,
+      auditTrails: [
         ...(auditTrails || []),
         {
           user: user?.firstName,
           date: new Date(),
           message: "has added the new version",
         },
-      ]);
+      ],
+      // ... any other data you want to send
+    };
 
-      await createPayload();
-      setBgColorSvg("#fefefe");
-      setPrevBgColor("#fefefe");
-      setSelectedFontSize("12px");
-      setSelectedFontSizeValue("12px");
-      setSelectedFontValue("arial");
-      setSelectedFont("arial");
-      setPrevFontColor("black");
-    } catch (error: any) {
-      console.log(error);
+    // 3. Save it via your API or local storage
+          await createPayload();
 
-      let errorMessage = "Failed to create .";
-      if (error.response && error.response.data) {
-        errorMessage =
-          error.response.data.message ||
-          error.response.data ||
-          "An error occurred";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      toast.error(errorMessage);
+    // 4. Reset UI states as you are already doing
+    setBgColorSvg("#fefefe");
+    setPrevBgColor("#fefefe");
+    setSelectedFontSize("12px");
+    setSelectedFontSizeValue("12px");
+    setSelectedFontValue("arial");
+    setSelectedFont("arial");
+    setPrevFontColor("black");
+
+    toast.success("Document saved successfully!");
+  } catch (error: any) {
+    console.log(error);
+    let errorMessage = "Failed to save document.";
+    if (error.response && error.response.data) {
+      errorMessage =
+        error.response.data.message ||
+        error.response.data ||
+        "An error occurred";
+    } else if (error.message) {
+      errorMessage = error.message;
     }
-  };
+    toast.error(errorMessage);
+  }
+};
+
 
   const createPayload = async () => {
     try {
