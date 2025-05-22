@@ -107,7 +107,8 @@ DocumentEditorContainerComponent.Inject(Toolbar);
 import CustomOrderedList from './customOrderedList'; // path to your blot;
 import CustomAlphaList from './customAlphaBlot';
 import { constrainedMemory } from "process";
-
+import { setCtrlShiftAPressed } from './sharedflag';
+import { setEditorInstances } from "./sharedflag";
 
 
 function SyncFesion() {
@@ -285,6 +286,24 @@ function SyncFesion() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
+
+      // Only trigger on Ctrl + Shift + a
+      if (e.ctrlKey && e.shiftKey && key === 'a') {
+        e.preventDefault();
+        console.log("clicked ctrl + shift + a");
+        setCtrlShiftAPressed(true);
+        
+        const instances: any[] = [];
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            instances.push(editor);
+          }
+        });
+
+        setEditorInstances(instances); // ✅ pass array
+      }
 
       // Only trigger on Ctrl + Shift + B
       if (e.ctrlKey && e.shiftKey && key === 'b') {
@@ -673,15 +692,6 @@ function SyncFesion() {
           console.log("Not a numbered list item", cleanedText);
         }
       }
-
-
-      // if (e.key === 'Enter' || e.key === 'Backspace') {
-      //   setTimeout(() => {
-      //     const editor = editorRefs.current[currentPage].getEditor();
-      //     patchListStartOnEditor(editor);
-      //   }, 0);
-      // }
-
 
     };
 

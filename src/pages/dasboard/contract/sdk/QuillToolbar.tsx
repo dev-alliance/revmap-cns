@@ -13,6 +13,8 @@ import { Quill } from "react-quill";
 import DropdownBarImage from "../../../../assets/shape.png";
 import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
+//import { setWaitingForBold } from './sharedflag';
+import { getCtrlShiftAPressed, setCtrlShiftAPressed, getEditorInstances } from './sharedflag';
 Quill.register("modules/resize", ResizeModule);
 
 import CustomOrderedList from './customOrderedList'; // path to your blot
@@ -1214,6 +1216,32 @@ const handleCloseMargins = () => {
   };
 
   const handleSaveFontColor = (color: string) => {
+    if (getCtrlShiftAPressed()) {
+  console.log("Apply font color after Ctrl+Shift+Z");
+  setCtrlShiftAPressed(false);
+
+  const editors = getEditorInstances();
+  console.log("editors:", editors);
+
+  editors.forEach((editor, i) => {
+    if (!editor) return;
+
+    console.log(`Editor [${i}] processing...`);
+
+    const length = editor.getLength();
+    if (length <= 1) return;
+
+    // Apply font color from start to end (excluding trailing newline)
+    editor.formatText(0, length - 1, { color }, "user");
+
+    console.log(`Editor [${i}] colored from 0 to ${length - 1} with color: ${color}`);
+  });
+
+  // Optional: set color UI/icon state
+  setFontColorSvg(color);
+  handleCloseCase();
+    }
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
 
@@ -1497,6 +1525,30 @@ const handleCloseMargins = () => {
   };
 
   const handleFontChange = (event: SelectChangeEvent<any>) => {
+    if (getCtrlShiftAPressed()) {
+      console.log("Apply font family after Ctrl+Shift+Z");
+      setCtrlShiftAPressed(false);
+
+      const editors = getEditorInstances();
+      console.log("editors:", editors);
+
+      editors.forEach((editor, i) => {
+        if (!editor) return;
+
+        const length = editor.getLength();
+        if (length <= 1) return;
+
+        editor.formatText(0, length - 1, { font: event.target.value }, "user");
+        console.log(`Editor [${i}] font family set from 0 to ${length - 1} with font: ${event.target.value}`);
+      });
+
+      setSelectedFont(event.target.value);
+      setSelectedFontValue(event.target.value);
+      handleCloseCase(); // if needed
+      return;
+    }
+
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -1535,6 +1587,29 @@ const handleCloseMargins = () => {
   };
 
   const handleFontSizeChange = (event: SelectChangeEvent<HTMLElement>) => {
+    if (getCtrlShiftAPressed()) {
+      console.log("Apply font size after Ctrl+Shift+Z");
+      setCtrlShiftAPressed(false);
+
+      const editors = getEditorInstances();
+      console.log("editors:", editors);
+
+      editors.forEach((editor, i) => {
+        if (!editor) return;
+
+        const length = editor.getLength();
+        if (length <= 1) return;
+
+        editor.formatText(0, length - 1, { size: event.target.value }, "user");
+        console.log(`Editor [${i}] font size set from 0 to ${length - 1} with size: ${event.target.value}`);
+      });
+
+      setSelectedFontSize(event.target.value);
+      setSelectedFontSizeValue(event.target.value);
+      handleCloseCase(); // if needed
+      return;
+    }
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -1571,7 +1646,6 @@ const handleCloseMargins = () => {
       editor.focus();
     }, 0);
   };
-
 
   const handleHeaderChange = (event: SelectChangeEvent<any>) => {
     const editor = editorRefContext?.getEditor();
@@ -1775,6 +1849,29 @@ const handleCloseMargins = () => {
   };
 
   const handletTextHighlightColor = (color: string) => {
+    if (getCtrlShiftAPressed()) {
+  console.log("Apply background color after Ctrl+Shift+Z");
+  setCtrlShiftAPressed(false);
+
+  const editors = getEditorInstances();
+  console.log("editors:", editors);
+
+  editors.forEach((editor, i) => {
+    if (!editor) return;
+
+    const length = editor.getLength();
+    if (length <= 1) return;
+
+    editor.formatText(0, length - 1, { background: color }, "user");
+
+    console.log(`Editor [${i}] background colored from 0 to ${length - 1} with color: ${color}`);
+  });
+
+  setPrevBgColor(color);
+  setFontColorSvg(color); // optional: update UI state if needed
+  handleCloseCase();
+  return; // Stop further processing since we've already applied to all editors
+    }
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -1866,6 +1963,59 @@ const handleCloseMargins = () => {
 
 
   const handleTextTransformation = (transformationFunction: Function) => {
+    if (getCtrlShiftAPressed()) {
+      console.log("Text transformation after Ctrl+Shift+Z");
+      setCtrlShiftAPressed(false);
+
+      const editors = getEditorInstances();
+      console.log("editors:", editors);
+
+      editors.forEach((editor, i) => {
+        console.log(`Editor [${i}] processing...`);
+
+        let selection = editor.getSelection();
+        console.log(`Editor [${i}] original selection:`, selection);
+
+        // If no selection, apply to full content
+        const index = 0;
+        const length = editor.getLength(); // includes the trailing newline
+
+        console.log(`Editor [${i}] applying transformation from index ${index} to length ${length}`);
+
+        const contents = editor.getContents(index, length);
+        console.log(`Editor [${i}] contents:`, contents);
+
+        const Delta = (editor.constructor as any).imports.delta;
+        let delta = new Delta();
+
+        const transformedOps = contents.ops.map((op: any, opIndex: number) => {
+          if (op.insert && typeof op.insert === "string") {
+            const transformedSegment = transformationFunction(op.insert);
+            console.log(`Editor [${i}] op[${opIndex}]:`, op.insert, "->", transformedSegment);
+            return {
+              insert: transformedSegment,
+              attributes: op.attributes || {},
+            };
+          } else {
+            console.log(`Editor [${i}] op[${opIndex}] is non-string or embed:`, op);
+            return op;
+          }
+        });
+
+        delta.retain(index);
+        delta.delete(length);
+
+        transformedOps.forEach((op: any) => {
+          delta = delta.insert(op.insert, op.attributes);
+        });
+
+        console.log(`Editor [${i}] delta to apply:`, delta);
+        editor.updateContents(delta, "user");
+      });
+
+      handleCloseCase();
+    }
+
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection();
 
@@ -3407,6 +3557,22 @@ const rect = img.getBoundingClientRect();
   };
 
   const handleBold = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("Bold after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+                const length = editor.getLength();
+                const formats = editor.getFormat(0, length);
+                const isBold = formats.bold === true;
+                editor.formatText(0, length, 'bold', !isBold); // Toggle bold
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
 
@@ -3424,6 +3590,22 @@ const rect = img.getBoundingClientRect();
 
 
   const handleItalic = () => {
+      if (getCtrlShiftAPressed()) {
+        console.log("italic after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isItalic = formats.italic === true;
+            editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
 
@@ -3441,6 +3623,22 @@ const rect = img.getBoundingClientRect();
 
 
   const handleUnderline = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("underline after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isUnderline = formats.underline === true;
+            editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
 
@@ -3458,6 +3656,22 @@ const rect = img.getBoundingClientRect();
 
 
   const handleStrikethrough = () => {
+      if (getCtrlShiftAPressed()) {
+        console.log("strikethrough after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isStrike = formats.strike === true;
+            editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
 
     if (!editor) return; // Safety check in case editor is not initialized
@@ -3553,23 +3767,34 @@ const rect = img.getBoundingClientRect();
 
     editor.focus();
   };
-
-  // const handleSubscript = () => {
-  //   const editor = editorRefContext.getEditor();
-  //   const isSubscript = editor.getFormat().script === "sub";
-  //   setIsScriptActive(isSubscript ? "" : "sub");
-  //   if (isSubscript) {
-  //     editor.format("script", false, "user");
-  //     editor.format("size", selectedFontSizeValue)
-  //   }
-  //   else {
-  //     editor.format("size", false, "user");
-  //     editor.format("script", "sub", "user")
-  //   }
-  //   editor.focus();
-  // };
   
   const handleIncreaseIndent = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("increaseindent after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+          if (editor) {
+              const length = editor.getLength();
+              let index = 0;
+
+              while (index < length) {
+                  const [line, offset] = editor.getLine(index);
+                  if (line) {
+                      const formats = editor.getFormat(index, 1); // Get formats for the line
+                      const currentIndent = formats.indent || 0;
+                      editor.formatLine(index, 1, 'indent', currentIndent + 1);
+                      index += line.length(); // Move to the start of the next line
+                  } else {
+                      break;
+                  }
+              }
+          }
+        });
+    }
+
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
       const currentIndent = editor.getFormat().indent || 0;
@@ -3578,6 +3803,32 @@ const rect = img.getBoundingClientRect();
   };
 
   const handleDecreaseIndent = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("decreaseindent after Ctrl+Shift+Z");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors);
+        editors.forEach(editor => {
+            if (editor) {
+                const length = editor.getLength();
+                let index = 0;
+
+                while (index < length) {
+                    const [line, offset] = editor.getLine(index);
+                    if (line) {
+                        const formats = editor.getFormat(index, 1);
+                        const currentIndent = formats.indent || 0;
+                        const newIndent = Math.max(0, currentIndent - 1); // prevent negative indent
+                        editor.formatLine(index, 1, 'indent', newIndent);
+                        index += line.length();
+                    } else {
+                        break;
+                    }
+                }
+            }
+        });
+    }
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
       const currentIndent = editor.getFormat().indent || 0;
