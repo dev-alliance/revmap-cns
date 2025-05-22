@@ -29,6 +29,26 @@ type QuillToolbarProps = {
   setPages: React.Dispatch<React.SetStateAction<Page[]>>;
 };
 
+const BlockEmbed1 = Quill.import('blots/block/embed');
+
+class TableBlot extends BlockEmbed1 {
+  static blotName = 'htmlTable';
+  static tagName = 'div';
+  static className = 'custom-html-table';
+
+  static create(value: string) {
+    const node = super.create() as HTMLElement;
+    node.innerHTML = value;
+    return node;
+  }
+
+  static value(node: HTMLElement) {
+    return node.innerHTML;
+  }
+}
+
+Quill.register(TableBlot);
+
 
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -587,6 +607,7 @@ export const formats = [
   "video",
   "audio",
   "customHeading",
+  'htmlTable',
 ];
 
 const List = Quill.import("formats/list");
@@ -1988,7 +2009,7 @@ const handleCloseMargins = () => {
         const Delta = (editor.constructor as any).imports.delta;
         let delta = new Delta();
 
-        const transformedOps = contents.ops.map((op: any, opIndex: number) => {
+        const transformedOps = contents?.ops?.map((op: any, opIndex: number) => {
           if (op.insert && typeof op.insert === "string") {
             const transformedSegment = transformationFunction(op.insert);
             console.log(`Editor [${i}] op[${opIndex}]:`, op.insert, "->", transformedSegment);
@@ -2005,7 +2026,7 @@ const handleCloseMargins = () => {
         delta.retain(index);
         delta.delete(length);
 
-        transformedOps.forEach((op: any) => {
+        transformedOps?.forEach((op: any) => {
           delta = delta.insert(op.insert, op.attributes);
         });
 
@@ -3555,6 +3576,41 @@ const rect = img.getBoundingClientRect();
       </svg>
     );
   };
+
+  
+
+
+const insertCustomTable = () => {
+  console.log("clicked");
+  const quill = editorRefContext.getEditor?.();
+  if (!quill) {
+    console.warn('Quill instance not found');
+    return;
+  }
+
+  const tableHTML = `
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr>
+          <th style="padding: 8px;">Heading 1</th>
+          <th style="padding: 8px;">Heading 2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding: 8px;">column 1</td>
+          <td style="padding: 8px;">column 2</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  const range = quill.getSelection(true);
+  if (range) {
+    quill.insertEmbed(range.index, 'htmlTable', tableHTML, 'user');
+    quill.setSelection(range.index + 1);
+  }
+};
 
   const handleBold = () => {
     if (getCtrlShiftAPressed()) {
@@ -6973,6 +7029,7 @@ const handleInsertFormula = () => {
             data-tooltip-id="menu-item-13"
             data-tooltip-content="Table"
             data-tooltip-place="bottom"
+            onClick={insertCustomTable}
           >
             <span
               className="d-flex ql-color fonts"

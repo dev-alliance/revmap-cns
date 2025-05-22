@@ -2152,3 +2152,19 @@ fill: #7F7F7F;
   padding: 10px !important;
   margin: 1em 0 !important;
 }
+
+
+.ql-editor .custom-html-table {
+  margin: 1em 0;
+}
+
+.ql-editor .custom-html-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ql-editor .custom-html-table th,
+.ql-editor .custom-html-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
