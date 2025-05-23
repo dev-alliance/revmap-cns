@@ -2937,7 +2937,7 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
     );
   };
 
-  const [editorZoom,setEditorZoom ] = useState("100%");
+  const [editorZoom,setEditorZoom ] = useState("150%");
   return (
     <>
       {isLoading && (

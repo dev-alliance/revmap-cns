@@ -1396,6 +1396,53 @@ body {
   }
 }
 
+.btn-undo.active {
+  border: 1px solid #7771e8 !important;
+  background-color: #f0f0ff; /* Optional: light background */
+}
+
+.btn-undo.active .stroke-hover {
+  stroke: #7771e8;
+}
+.btn-undo.active .fill-hover {
+  fill: #7771e8;
+}
+.btn-undo.active .history-svg {
+  fill: #7771e8;
+}
+
+.btn-undo.super {
+  border: 1px solid #7771e8 !important;
+  background-color: #f0f0ff; /* Optional: light background */
+}
+
+.btn-undo.super .stroke-hover {
+  stroke: #7771e8;
+}
+.btn-undo.super .fill-hover {
+  fill: #7771e8;
+}
+.btn-undo.super .history-svg {
+  fill: #7771e8;
+}
+
+.btn-undo.sub {
+  border: 1px solid #7771e8 !important;
+  background-color: #f0f0ff; /* Optional: light background */
+}
+
+.btn-undo.sub .stroke-hover {
+  stroke: #7771e8;
+}
+.btn-undo.sub .fill-hover {
+  fill: #7771e8;
+}
+.btn-undo.sub .history-svg {
+  fill: #7771e8;
+}
+
+
+
 .fonts:hover {
   border: 1px solid #7771e8 !important;
   /* color: #7771e8 !important; */
@@ -2202,23 +2249,23 @@ fill: #7F7F7F;
 }
 
 .ql-toolbar {
-  overflow: visible;
-  position: relative;
-  z-index: 1000;
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 1000 !important;
 }
 
 .ql-formats {
-  overflow: visible;
-  position: relative;
-  z-index: 1000;
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 1000 !important;
 }
 
 /* Optional: Drop-down hover effect for buttons */
 .ql-formats > * {
-  transition: all 0.2s ease;
+  transition: all 0.2s ease !important;
 }
 
 .ql-formats > *:hover {
-  background-color: #f0f0f0;
-  border-radius: 4px;
+  background-color: #f0f0f0 !important;
+  border-radius: 4px !important;
 }
