@@ -107,7 +107,7 @@ DocumentEditorContainerComponent.Inject(Toolbar);
 import CustomOrderedList from './customOrderedList'; // path to your blot;
 import CustomAlphaList from './customAlphaBlot';
 import { constrainedMemory } from "process";
-import { setCtrlShiftAPressed } from './sharedflag';
+import { setCtrlShiftAPressed, setupGlobalHighlightClearListener } from './sharedflag';
 import { setEditorInstances } from "./sharedflag";
 
 
@@ -305,21 +305,24 @@ function SyncFesion() {
       // Only trigger on Ctrl + Shift + a
       if (e.ctrlKey && e.shiftKey && key === 'a') {
         e.preventDefault();
-        console.log("clicked ctrl + shift + a");
         setCtrlShiftAPressed(true);
-        
+
         const instances: any[] = [];
+        const highlightColor = '#B4D5FF';
 
         editorRefs.current.forEach((ref: any) => {
           const editor = ref?.getEditor();
           if (editor) {
             instances.push(editor);
+            const length = editor.getLength();
+            editor.formatText(0, length - 1, { background: highlightColor }, "user");
           }
         });
 
-        setEditorInstances(instances); // ✅ pass array
+        setEditorInstances(instances);
+        setupGlobalHighlightClearListener(); // 🧠 Set once for all
       }
-
+      
       // Only trigger on Ctrl + Shift + B
       if (e.ctrlKey && e.shiftKey && key === 'b') {
         e.preventDefault(); // Prevent any default behavior like browser shortcuts

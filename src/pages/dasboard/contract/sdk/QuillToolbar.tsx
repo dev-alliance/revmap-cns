@@ -14,7 +14,7 @@ import DropdownBarImage from "../../../../assets/shape.png";
 import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
 //import { setWaitingForBold } from './sharedflag';
-import { getCtrlShiftAPressed, setCtrlShiftAPressed, getEditorInstances } from './sharedflag';
+import { getCtrlShiftAPressed, setCtrlShiftAPressed, getEditorInstances,   clearHighlight } from './sharedflag';
 import TableGridPicker from './TableGridPicker'; // make sure path is correct
 Quill.register("modules/resize", ResizeModule);
 
@@ -1406,11 +1406,12 @@ const handleCloseMargins = () => {
   const editors = getEditorInstances();
   console.log("editors:", editors);
 
+
   editors.forEach((editor, i) => {
     if (!editor) return;
 
     console.log(`Editor [${i}] processing...`);
-
+    clearHighlight(editor);
     const length = editor.getLength();
     if (length <= 1) return;
 
@@ -1718,6 +1719,7 @@ const handleCloseMargins = () => {
       editors.forEach((editor, i) => {
         if (!editor) return;
 
+        clearHighlight(editor);
         const length = editor.getLength();
         if (length <= 1) return;
 
@@ -1780,6 +1782,7 @@ const handleCloseMargins = () => {
       editors.forEach((editor, i) => {
         if (!editor) return;
 
+        clearHighlight(editor);
         const length = editor.getLength();
         if (length <= 1) return;
 
@@ -2042,6 +2045,7 @@ const handleCloseMargins = () => {
   editors.forEach((editor, i) => {
     if (!editor) return;
 
+    clearHighlight(editor);
     const length = editor.getLength();
     if (length <= 1) return;
 
@@ -2156,6 +2160,7 @@ const handleCloseMargins = () => {
       editors.forEach((editor, i) => {
         console.log(`Editor [${i}] processing...`);
 
+        clearHighlight(editor);
         let selection = editor.getSelection();
         console.log(`Editor [${i}] original selection:`, selection);
 
@@ -3783,11 +3788,11 @@ const rect = img.getBoundingClientRect();
     if (getCtrlShiftAPressed()) {
         console.log("Bold after Ctrl+Shift+A");
         setCtrlShiftAPressed(false);
-
-        const editors = getEditorInstances();
+        const editors = getEditorInstances()
         console.log("editor: ", editors)
         editors.forEach(editor => {
         if (editor) {
+                clearHighlight(editor);
                 const length = editor.getLength();
                 const formats = editor.getFormat(0, length);
                 const isBold = formats.bold === true;
@@ -3821,6 +3826,7 @@ const rect = img.getBoundingClientRect();
         console.log("editor: ", editors)
         editors.forEach(editor => {
         if (editor) {
+            clearHighlight(editor);
             const length = editor.getLength();
             const formats = editor.getFormat(0, length);
             const isItalic = formats.italic === true;
@@ -3854,6 +3860,7 @@ const rect = img.getBoundingClientRect();
         console.log("editor: ", editors)
         editors.forEach(editor => {
         if (editor) {
+            clearHighlight(editor);
             const length = editor.getLength();
             const formats = editor.getFormat(0, length);
             const isUnderline = formats.underline === true;
@@ -3887,6 +3894,7 @@ const rect = img.getBoundingClientRect();
         console.log("editor: ", editors)
         editors.forEach(editor => {
         if (editor) {
+            clearHighlight(editor);
             const length = editor.getLength();
             const formats = editor.getFormat(0, length);
             const isStrike = formats.strike === true;
@@ -4000,6 +4008,7 @@ const rect = img.getBoundingClientRect();
         console.log("editor: ", editors)
         editors.forEach(editor => {
           if (editor) {
+              clearHighlight(editor);
               const length = editor.getLength();
               let index = 0;
 
@@ -4034,6 +4043,7 @@ const rect = img.getBoundingClientRect();
         console.log("editor: ", editors);
         editors.forEach(editor => {
             if (editor) {
+                clearHighlight(editor);
                 const length = editor.getLength();
                 let index = 0;
 
