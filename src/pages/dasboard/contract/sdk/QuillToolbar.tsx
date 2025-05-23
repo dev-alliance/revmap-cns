@@ -30,6 +30,7 @@ type QuillToolbarProps = {
   setPages: React.Dispatch<React.SetStateAction<Page[]>>;
 };
 
+
 const BlockEmbed1 = Quill.import('blots/block/embed');
 
 class TableBlot extends BlockEmbed1 {
@@ -40,15 +41,175 @@ class TableBlot extends BlockEmbed1 {
   static create(value: string) {
     const node = super.create() as HTMLElement;
     node.innerHTML = value;
+
+    // Enable contentEditable for all cells
+    TableBlot.makeCellsEditable(node);
+
+    // Bind cell click events to dynamically add row/column
+    TableBlot.addInteractionListeners(node);
+
     return node;
   }
 
   static value(node: HTMLElement) {
     return node.innerHTML;
   }
+
+  static makeCellsEditable(node: HTMLElement) {
+    const cells = node.querySelectorAll('td, th');
+    cells.forEach((cell) => {
+      (cell as HTMLElement).contentEditable = 'true';
+      (cell as HTMLElement).style.padding = '8px';
+    });
+  }
+
+static showActionMenu(cell: HTMLTableCellElement, table: HTMLTableElement, node: HTMLElement) {
+  const existingMenu = document.getElementById('table-action-menu');
+  if (existingMenu) existingMenu.remove();
+
+  const menu = document.createElement('div');
+  menu.id = 'table-action-menu';
+  menu.style.position = 'absolute';
+  menu.style.background = '#fff';
+  menu.style.border = '1px solid #ccc';
+  menu.style.padding = '6px';
+  menu.style.boxShadow = '0px 2px 8px rgba(0,0,0,0.15)';
+  menu.style.zIndex = '9999';
+
+  const createMenuItem = (label: string, onClick: (e: MouseEvent) => void) => {
+    const btn = document.createElement('div');
+    btn.textContent = label;
+    btn.style.cursor = 'pointer';
+    btn.style.padding = '4px';
+    btn.onclick = onClick;
+    return btn;
+  };
+
+  const rowIndex = cell.parentElement ? Array.from((cell.parentElement.parentElement as HTMLTableElement).rows).indexOf(cell.parentElement as HTMLTableRowElement) : -1;
+
+  const colIndex = Array.from(cell.parentElement!.children).indexOf(cell);
+
+  menu.appendChild(createMenuItem('+ Add Row', (e) => {
+    e.stopPropagation();
+    TableBlot.insertRow(table);
+    node.innerHTML = table.outerHTML;
+    TableBlot.makeCellsEditable(node);
+    TableBlot.addInteractionListeners(node);
+    menu.remove();
+  }));
+
+  menu.appendChild(createMenuItem('+ Add Column', (e) => {
+    e.stopPropagation();
+    TableBlot.insertColumn(table);
+    node.innerHTML = table.outerHTML;
+    TableBlot.makeCellsEditable(node);
+    TableBlot.addInteractionListeners(node);
+    menu.remove();
+  }));
+
+  if (table.rows.length > 1) {
+    menu.appendChild(createMenuItem('🗑 Delete Row', (e) => {
+      e.stopPropagation();
+      TableBlot.deleteRow(table, rowIndex);
+      node.innerHTML = table.outerHTML;
+      TableBlot.makeCellsEditable(node);
+      TableBlot.addInteractionListeners(node);
+      menu.remove();
+    }));
+  }
+
+  if (table.rows[0].cells.length > 1) {
+    menu.appendChild(createMenuItem('🗑 Delete Column', (e) => {
+      e.stopPropagation();
+      TableBlot.deleteColumn(table, colIndex);
+      node.innerHTML = table.outerHTML;
+      TableBlot.makeCellsEditable(node);
+      TableBlot.addInteractionListeners(node);
+      menu.remove();
+    }));
+  }
+
+  document.body.appendChild(menu);
+
+  const rect = cell.getBoundingClientRect();
+  menu.style.top = `${rect.bottom + window.scrollY}px`;
+  menu.style.left = `${rect.left + window.scrollX}px`;
+
+  document.addEventListener('click', () => {
+    menu.remove();
+  }, { once: true });
 }
 
+
+  static addInteractionListeners(node: HTMLElement) {
+  const table = node.querySelector('table');
+  if (!table) return;
+
+  const lastRow = table.rows[table.rows.length - 1];
+  const lastColIndex = lastRow ? lastRow.cells.length - 1 : -1;
+
+  // Prevent duplicate listeners
+  const allCells = table.querySelectorAll('td, th');
+  allCells.forEach((cell) => {
+    const clone = cell.cloneNode(true);
+    cell.parentNode?.replaceChild(clone, cell);
+  });
+
+  Array.from(table.rows).forEach((row, rowIndex) => {
+    Array.from(row.cells).forEach((cell, colIndex) => {
+      cell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isLastRow = rowIndex === table.rows.length - 1;
+        const isLastCol = colIndex === lastColIndex;
+
+        if (isLastRow || isLastCol) {
+          TableBlot.showActionMenu(cell as HTMLTableCellElement, table, node);
+        }
+      });
+    });
+  });
+}
+
+
+  static insertRow(table: HTMLTableElement) {
+    const row = table.insertRow();
+    const colCount = table.rows[0]?.cells.length || 1;
+    for (let i = 0; i < colCount; i++) {
+      const cell = row.insertCell();
+      cell.contentEditable = 'true';
+      cell.style.padding = '8px';
+    }
+  }
+
+  static insertColumn(table: HTMLTableElement) {
+    Array.from(table.rows).forEach((row) => {
+      const cell = row.insertCell();
+      cell.contentEditable = 'true';
+      cell.style.padding = '8px';
+    });
+  }
+
+  static deleteRow(table: HTMLTableElement, rowIndex: number) {
+    if (table.rows.length > 1 && rowIndex >= 0) {
+      table.deleteRow(rowIndex);
+    }
+  }
+
+  static deleteColumn(table: HTMLTableElement, colIndex: number) {
+    if (table.rows[0].cells.length > 1 && colIndex >= 0) {
+      Array.from(table.rows).forEach((row) => {
+        if (row.cells[colIndex]) {
+          row.deleteCell(colIndex);
+        }
+      });
+    }
+  }
+
+}
+
+// Register blot
 Quill.register(TableBlot);
+
 
 
 // Custom CheckboxBlot for Quill
@@ -4977,21 +5138,29 @@ const handleInsertFormula = () => {
           />
         )}
         <span className="ql-formats b-r">
-          <button className="btn-undo" id="bold" onClick={handleBold}>
+          <button
+            className={`btn-undo ${isBoldActive ? 'active' : ''}`}
+            id="bold"
+            onClick={handleBold}
+          >
             <BoldSvg />
           </button>
-          <button className="btn-undo ml-2 " id="italic" onClick={handleItalic}>
+          <button
+            className={`btn-undo ml-2 ${isItalicActive ? 'active' : ''}`}
+            id="italic"
+            onClick={handleItalic}
+          >
             <ItalicSvg />
           </button>
           <button
-            className="btn-undo mx-2 "
+            className={`btn-undo mx-2 ${isUnderlineActive ? 'active' : ''}`}
             id="underline"
             onClick={handleUnderline}
           >
             <UnderlineSvg />
           </button>
           <button
-            className="btn-undo"
+            className={`btn-undo ${isStrikeActive ? 'active' : ''}`}
             id="strike"
             onClick={handleStrikethrough}
           >
@@ -5024,17 +5193,20 @@ const handleInsertFormula = () => {
         />
         <span className="ql-formats b-r">
           <button
-            className="btn-undo"
+            className={`btn-undo ${isScriptActive ? 'super' : ''}`}
             id="superscript"
             onClick={handleSuperscript}
           >
             <SuperScriptSvg />
           </button>
-          <button className="btn-undo mx-2" id="subscript" onClick={handleSubscript}>
+          <button 
+            className={`btn-undo mx-2 ${isScriptActive ? 'sub' : ''}`} 
+            id="subscript" 
+            onClick={handleSubscript}>
             <SubScriptSvg />
           </button>
           <button
-            className="btn-undo"
+            className={`btn-undo ${showFormattingMarks ? 'super' : ''}`}
             id="formatting-marks"
             onClick={toggleFormattingMarks}
           >
