@@ -2275,18 +2275,15 @@ const handleClickColumns = (value: string) => {
     case "two":
       editorContainer.style.columnCount = "2";
       editorContainer.style.columnGap = "30px";
-      editorContainer.style.columnRule = "1px solid #ccc";
       break;
     case "three":
       editorContainer.style.columnCount = "3";
       editorContainer.style.columnGap = "30px";
-      editorContainer.style.columnRule = "1px solid #ccc";
       break;
     case "left":
     case "right":
       editorContainer.style.columnCount = "2";
       editorContainer.style.columnGap = "30px";
-      editorContainer.style.columnRule = "1px solid #ccc";
       // Additional positioning if needed for left/right layout
       break;
     default:

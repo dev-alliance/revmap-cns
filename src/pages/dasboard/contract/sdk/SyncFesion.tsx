@@ -671,7 +671,14 @@ useEffect(() => {
             editor.deleteText(range.index - text.length, text.length);
 
             // Apply list formatting with the correct start number
+            const currentFormats = editor.getFormat(range.index);
+
             editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+
+            // Reapply font-size
+            if (currentFormats['font-size']) {
+              editor.formatText(range.index - text.length, 1, 'font-size', currentFormats['font-size']);
+            }
 
 
             // Insert a space to allow typing after list bullet
@@ -754,6 +761,8 @@ useEffect(() => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+
 
 useEffect(() => {
   pages.forEach((page, i) => {
