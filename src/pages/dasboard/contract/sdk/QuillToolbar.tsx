@@ -9,6 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import ReactDOM from 'react-dom';
 import { Quill } from "react-quill";
 import DropdownBarImage from "../../../../assets/shape.png";
 import { Sketch } from "@uiw/react-color";
@@ -737,7 +738,7 @@ export const modules = {
     modules: ['Resize', 'DisplaySize', 'Toolbar']
   },
   clipboard: {
-    // mathc
+     matchVisual: false
   }
 };
 
@@ -7226,12 +7227,24 @@ const handleInsertFormula = () => {
               </span>
             </span>
           </a>
-
-          {showGrid && (
-            <div style={{ position: 'absolute', top: 35, zIndex: 9999 }}>
-              <TableGridPicker onSelect={handleTableSizeSelect} />
-            </div>
-          )}
+    {showGrid &&
+      ReactDOM.createPortal(
+        <div
+          style={{
+            marginTop: 200,
+            marginLeft: -380,
+            padding: 5,
+            background: '#fff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            borderRadius: 4,
+            width: 'fit-content',
+            zIndex: 1000,
+          }}
+        >
+          <TableGridPicker onSelect={handleTableSizeSelect} />
+        </div>,
+        document.getElementById('grid-picker-container')!
+      )}
         </span>
 
         <ReactTooltip
@@ -7823,6 +7836,8 @@ const handleInsertFormula = () => {
       <button onClick={scrollRight} className="scroll-left justify-flex-end">
         <ScrollRightSvg />
       </button>
+      <div id="grid-picker-container"></div>
+
     </div>
   );
 }

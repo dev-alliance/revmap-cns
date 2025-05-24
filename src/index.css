@@ -470,9 +470,9 @@ html {
   /* Smooth transition for opacity change */
 }
 
-.no-scrollbar {
+/* .no-scrollbar {
   overflow: hidden !important;
-}
+} */
 
 .condition-item:hover .remove-btn {
   opacity: 1;
@@ -2248,10 +2248,12 @@ fill: #7F7F7F;
   position: relative;
 }
 
+/* Your toolbar keeps overflow visible */
 .ql-toolbar {
-  overflow: visible !important;
+  overflow-y: visible !important;
   position: relative !important;
   z-index: 1000 !important;
+  display: inline-block; /* shrinkwrap toolbar buttons */
 }
 
 .ql-formats {
