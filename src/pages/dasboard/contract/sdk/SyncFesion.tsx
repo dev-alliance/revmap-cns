@@ -2940,7 +2940,7 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
     );
   };
 
-  const [editorZoom,setEditorZoom ] = useState("150%");
+  const [editorZoom,setEditorZoom ] = useState("100%");
   return (
     <>
       {isLoading && (
@@ -4008,7 +4008,7 @@ const handleChange = (value: any, delta: any, source: string, editor: any, index
                 style={{
                   height: "100%",
                   overflowY: "auto",
-                  zoom:editorZoom == "100%" ? "75%" : editorZoom == "75%" ? "60%" : editorZoom == "125%" ? "100%" : editorZoom == "150%" ? "125%" : editorZoom == "175%" ? "150%" :editorZoom  
+                  zoom:editorZoom == "100%" ? "100%" : editorZoom == "75%" ? "75%" : editorZoom == "125%" ? "125%" : editorZoom == "150%" ? "150%" : editorZoom == "175%" ? "175%" :editorZoom  
                 }}
                 ref={scrollPageRef}
               >
