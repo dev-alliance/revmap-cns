@@ -600,27 +600,24 @@ Quill.register(SignatureBlot);
 // Add sizes to whitelist and register them
 const SizeStyle = Quill.import("attributors/style/size");
 SizeStyle.whitelist = [
-  "8px",
-  "10px",
-  "12px",
-  "13px",
-  "14px",
-  "16px",
-  "18px",
-  "20px",
-  "24px",
-  "26px",
-  "28px",
-  "32px",
-  "36px",
-  "40px",
-  "44px",
-  "48px",
-  "54px",
-  "60px",
-  "72px",
+  "11px",   // ≈ 7pt
+  "12px",   // ≈ 8pt
+  "13px",   // ≈ 9pt
+  "15px",   // ≈ 10pt
+  "16px", // ≈ 11pt
+  "16.5px", // ≈ 12pt
+  "18.5px", // ≈ 14pt
+  "20px", // ≈ 16pt
+  "24.8px", // ≈ 18pt
+  "32px", // ≈ 24pt
+  "40px", // ≈ 30pt
+  "48px", // ≈ 36pt
+  "67.5px", // ≈ 48pt
+  "74px", // ≈ 60pt
+  "87px", // ≈ 72pt
 ];
 Quill.register(SizeStyle, true);
+
 
 // Add fonts to whitelist and register them
 const Font = Quill.import("formats/font");
@@ -794,7 +791,7 @@ const Parchment = Quill.import("parchment");
 
 const lineHeightConfig = {
   scope: Parchment.Scope.BLOCK,
-  whitelist: ["1.5", "1.7", "2", "2.5", "3", "3.5"],
+  whitelist: ["1", "1.15", "1.5", "2", "2.5", "3"],
 };
 
 const LineHeightStyle = new Parchment.Attributor.Style(
@@ -1842,11 +1839,11 @@ const handleCloseMargins = () => {
     const range = editor.getSelection();
 
     const headerSizes: Record<string, string> = {
-      1: "24px",
-      2: "18px",
-      3: "14px",
-      4: "13px",
-      default: "12px",
+      1: "24.8px",
+      2: "20px",
+      3: "18.5px",
+      4: "16.5px",
+      default: "16px",
     };
 
     const getClass: Record<string, string> = {
@@ -1891,6 +1888,24 @@ const handleCloseMargins = () => {
       editor.focus();
     }, 0);
   };
+
+const customLabels = {
+  "11px": "7",
+  "12px": "8",
+  "13px": "9",
+  "15px": "10",
+  "16px": "11",
+  "16.5px": "12",
+  "18.5px": "14",
+  "20px": "16",
+  "24.8px": "18",
+  "32px": "24",
+  "40px": "30",
+  "48px": "36",
+  "67.5px": "48",
+  "74px": "60",
+  "87px": "72",
+};
 
   const handleSelectOrientation = (value: any) => {
     if (value === "landscape") {
@@ -2011,10 +2026,13 @@ const handleCloseMargins = () => {
 
   const lineSpacing = [
     {
-      value: "1.5",
+      value: "1",
     },
     {
-      value: "1.7",
+      value: "1.15",
+    },
+    {
+      value: "1.5",
     },
     {
       value: "2",
@@ -2024,9 +2042,6 @@ const handleCloseMargins = () => {
     },
     {
       value: "3",
-    },
-    {
-      value: "3.5",
     },
   ];
 
@@ -2680,7 +2695,7 @@ const rect = img.getBoundingClientRect();
       {
         color: "black",
         background: "#fefefe",
-        lineHeight: "1.5",
+        lineHeight: "1",
         font: "arial",
         size: "13px",
         header: false,
@@ -2696,7 +2711,7 @@ const rect = img.getBoundingClientRect();
     setPrevBgColor("#fefefe");
     setPrevFontColor("black");
     setSelectedFont("arial");
-    setSelectedFontSize("13px");
+    setSelectedFontSize("17.5px");
     setSelectedHeaders(0);
   };
 
@@ -4174,18 +4189,18 @@ const handleInsertFormula = () => {
         }
 
         if (fontSize && !oldSize.includes(fontSize)) {
-          if (fontSize.includes("pt")) {
-            const fs = fontSize.replace("pt", "");
-            const pt = Math.floor(Number(fs) * 1.333);
-            fontSize = `${pt}px`;
-          }
+          // if (fontSize.includes("pt")) {
+          //   const fs = fontSize.replace("pt", "");
+          //   const pt = Math.floor(Number(fs) * 1.333);
+          //   fontSize = `${pt}px`;
+          // }
 
           if (!SizeStyle.whitelist.includes(fontSize)) {
             SizeStyle.whitelist.push(fontSize);
             setContractNewFontSize((prevValues: string[]) => {
               if (!prevValues.includes(fontSize)) {
                 return [...prevValues, fontSize];
-              } else return [prevValues];
+              } else return [...prevValues, fontSize];
             });
           }
         }
@@ -4227,7 +4242,7 @@ const handleInsertFormula = () => {
               op.attributes.background = "#fefefe";
             }
             if(!op.attributes.lineHeight) {
-              op.attributes.lineHeight = 1.5;
+              op.attributes.lineHeight = 1;
             }
             if (node.tagName === "DIV") {
               console.log("ss")
@@ -4261,7 +4276,7 @@ const handleInsertFormula = () => {
                       insert:child.innerText,
                       attributes:{
                         ...op.attributes,
-                        lineHeight:1.5,
+                        lineHeight:1,
                         size:op?.attributes?.size || "12px"
                       },
                     
@@ -4611,7 +4626,8 @@ const handleInsertFormula = () => {
                       left: "-0.2rem",
                     }}
                   >
-                    {selectedFontSizeValue.replace("px", "")}
+                  {customLabels[selectedFontSizeValue as keyof typeof customLabels] ??
+                     selectedFontSizeValue.replace("px", "")}
                   </div>
                 )}
               >
@@ -4631,7 +4647,9 @@ const handleInsertFormula = () => {
                       key={size}
                       value={size}
                     >
-                      {size.replace("px", "")}
+                      {customLabels[size as keyof typeof customLabels] 
+  ? customLabels[size as keyof typeof customLabels] 
+  : size.replace("", "")}
                     </MenuItem>
                   ))}
               </Select>
@@ -6030,17 +6048,17 @@ const handleInsertFormula = () => {
                             // color:"#7F7F7F"
                           }}
                         >
-                          {size.value == "1.5"
+                          {size.value == "1"
                             ? "1"
-                            : size.value == "1.7"
+                            : size.value == "1.15"
                               ? "1.15"
-                              : size.value == "2"
+                              : size.value == "1.5"
                                 ? "1.5"
-                                : size.value == "2.5"
+                                : size.value == "2"
                                   ? "2"
-                                  : size.value == "3"
+                                  : size.value == "2.5"
                                     ? "2.5"
-                                    : size.value == "3.5"
+                                    : size.value == "3"
                                       ? "3"
                                       : ""}
                         </div>

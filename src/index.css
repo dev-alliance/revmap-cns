@@ -1509,7 +1509,7 @@ body {
 
 .e-de-list-header-presetmenu {
   cursor: pointer !important;
-  font-size: 11px;
+  font-size: 16px;
   line-height: 14px;
   overflow: hidden;
   text-align: left;
@@ -1529,7 +1529,7 @@ body {
   background-color: transparent !important;
   .e-de-list-header-presetmenu {
     cursor: pointer !important;
-    font-size: 11px;
+    font-size: 16px;
     line-height: 14px;
     overflow: hidden;
     text-align: left;
@@ -1548,7 +1548,7 @@ body {
 
 .e-de-list-header-presetmenu-selected{
   cursor: pointer !important;
-  font-size: 11px;
+  font-size: 16px;
   line-height: 14px;
   overflow: hidden;
   text-align: left;
