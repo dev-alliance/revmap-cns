@@ -667,17 +667,17 @@ function SyncFesion() {
 
             e.preventDefault();
 
+            // Step 1: Get the formats at the first character of the text being deleted
+const currentFormats = editor.getFormat(range.index - text.length, 1);
             // Remove the original typed text (e.g., "1.")
             editor.deleteText(range.index - text.length, text.length);
 
-            // Apply list formatting with the correct start number
-            const currentFormats = editor.getFormat(range.index);
-
             editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
 
+            console.log("currentFormats", currentFormats['size']);
             // Reapply font-size
-            if (currentFormats['font-size']) {
-              editor.formatText(range.index - text.length, 1, 'font-size', currentFormats['font-size']);
+            if (currentFormats['size']) {
+              editor.formatText(range.index - text.length, 1, 'size', currentFormats['size']);
             }
 
 
@@ -700,6 +700,7 @@ function SyncFesion() {
               if (parent && parent.domNode?.tagName === 'OL') {
                 parent.domNode.setAttribute('start', String(startNumber));
                 parent.domNode.style.setProperty('--custom-start', startNumber - 1);
+                 parent.domNode.style.fontSize = currentFormats['size']; // <-- Try thi
               }
             }, 0);
           }
