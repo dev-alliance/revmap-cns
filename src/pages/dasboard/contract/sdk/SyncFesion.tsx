@@ -257,38 +257,38 @@ function SyncFesion() {
     setLeftSidebarExpanded(true);
   }, []);
 
-// useEffect(() => {
-//   const quill = editorRefs.current[currentPage]?.getEditor();
-//   if (!quill) return;
+useEffect(() => {
+  const quill = editorRefs.current[currentPage]?.getEditor();
+  if (!quill) return;
 
-//   const editorElement = quill.root;
+  const editorElement = quill.root;
 
-//   const handlePaste = (e:any) => {
-//     e.preventDefault();
+  const handlePaste = (e:any) => {
+    e.preventDefault();
 
-//     const text = e.clipboardData.getData('text/plain');
+    const text = e.clipboardData.getData('text/plain');
 
-//     // Wait until Quill updates the selection after paste
-//     setTimeout(() => {
-//       const selection = quill.getSelection();
+    // Wait until Quill updates the selection after paste
+    setTimeout(() => {
+      const selection = quill.getSelection();
 
-//       const insertAt = selection?.index ?? quill.getLength(); // fallback to end
-//       quill.insertText(insertAt, text, {
-//         font: 'arial',
-//         size: '13px',
-//         color: '#000000'
-//       });
+      const insertAt = selection?.index ?? quill.getLength(); // fallback to end
+      quill.insertText(insertAt, text, {
+        font: 'arial',
+        size: '13px',
+        color: '#000000'
+      });
 
-//       // Move cursor to end of pasted content
-//       quill.setSelection(insertAt + text.length, 0);
-//     }, 0);
-//   };
+      // Move cursor to end of pasted content
+      quill.setSelection(insertAt + text.length, 0);
+    }, 0);
+  };
 
-//   editorElement.addEventListener('paste', handlePaste);
-//   return () => {
-//     editorElement.removeEventListener('paste', handlePaste);
-//   };
-// }, [currentPage]);
+  editorElement.addEventListener('paste', handlePaste);
+  return () => {
+    editorElement.removeEventListener('paste', handlePaste);
+  };
+}, [currentPage]);
 
 
 

@@ -600,21 +600,18 @@ Quill.register(SignatureBlot);
 // Add sizes to whitelist and register them
 const SizeStyle = Quill.import("attributors/style/size");
 SizeStyle.whitelist = [
-  "11px",   // ≈ 7pt
-  "12px",   // ≈ 8pt
-  "13px",   // ≈ 9pt
-  "15px",   // ≈ 10pt
-  "16px", // ≈ 11pt
-  "16.5px", // ≈ 12pt
-  "18.5px", // ≈ 14pt
-  "20px", // ≈ 16pt
-  "24.8px", // ≈ 18pt
-  "32px", // ≈ 24pt
-  "40px", // ≈ 30pt
-  "48px", // ≈ 36pt
-  "67.5px", // ≈ 48pt
-  "74px", // ≈ 60pt
-  "87px", // ≈ 72pt
+  "11.55px",   // ≈ 7pt
+  "13.2px",   // ≈ 8pt
+  "14.85px",   // ≈ 9pt
+  "16.5px",   // ≈ 10pt
+  "18.15px", // ≈ 11pt
+  "19.8px", // ≈ 12pt
+  "23.1px", // ≈ 14pt
+  "29.7px", // ≈ 18pt
+  "39.6px", // ≈ 24pt
+  "59.4px", // ≈ 36pt
+  "79.2px", // ≈ 48pt
+  "118.8px", // ≈ 72pt
 ];
 Quill.register(SizeStyle, true);
 
@@ -1890,21 +1887,18 @@ const handleCloseMargins = () => {
   };
 
 const customLabels = {
-  "11px": "7",
-  "12px": "8",
-  "13px": "9",
-  "15px": "10",
-  "16px": "11",
-  "16.5px": "12",
-  "18.5px": "14",
-  "20px": "16",
-  "24.8px": "18",
-  "32px": "24",
-  "40px": "30",
-  "48px": "36",
-  "67.5px": "48",
-  "74px": "60",
-  "87px": "72",
+  "11.55px": "7",
+  "13.2px": "8",
+  "14.85px": "9",
+  "16.5px": "10",
+  "18.15px": "11",
+  "19.8px": "12",
+  "23.1px": "14",
+  "29.7px": "18",
+  "39.6px": "24",
+  "59.4px": "36",
+  "79.2px": "48",
+  "118.8px": "72",
 };
 
   const handleSelectOrientation = (value: any) => {
