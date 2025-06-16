@@ -123,6 +123,203 @@ html {
 
 }
 
+/* -------- Base OL reset -------- */
+.ql-editor ol {
+  list-style: none !important;
+  padding-left: 1.5em;
+  counter-reset: list-item var(--custom-start, 0) !important;
+}
+
+/* -------- Decimal list -------- */
+.ql-editor ol:not([data-alpha]) > li {
+  counter-increment: list-item;
+  position: relative;
+}
+
+.ql-editor ol:not([data-alpha]) > li::before {
+  content: counter(list-item, decimal) ". ";
+  position: absolute;
+  left: 0;
+  color: var(--list-marker-color, #000);
+  font-size: var(--list-size, 1em);
+}
+
+/* -------- Upper-alpha list -------- */
+.ql-editor ol[data-alpha="upper"],
+.ql-editor ul[data-list-type="upper-alpha"] {
+  list-style: none;
+  counter-reset: list-item var(--custom-start, 0);
+  padding-left: 1.5em;
+}
+
+.ql-editor ol[data-alpha="upper"] > li,
+.ql-editor ul[data-list-type="upper-alpha"] > li {
+  counter-increment: list-item;
+  position: relative;
+}
+
+.ql-editor ol[data-alpha="upper"] > li::before,
+.ql-editor ul[data-list-type="upper-alpha"] > li::before {
+  content: counter(list-item, upper-alpha) ". ";
+  position: absolute;
+  left: 0;
+  color: var(--list-marker-color, #000);
+  font-size: var(--list-size, 1em);
+}
+
+/* -------- Lower-alpha list -------- */
+.ql-editor ol[data-alpha="lower"],
+.ql-editor ul[data-list-type="lower-alpha"] {
+  list-style: none;
+  counter-reset: list-item var(--custom-start, 0);
+  padding-left: 1.5em;
+}
+
+.ql-editor ol[data-alpha="lower"] > li,
+.ql-editor ul[data-list-type="lower-alpha"] > li {
+  counter-increment: list-item;
+  position: relative;
+}
+
+.ql-editor ol[data-alpha="lower"] > li::before,
+.ql-editor ul[data-list-type="lower-alpha"] > li::before {
+  content: counter(list-item, lower-alpha) ". ";
+  position: absolute;
+  left: 0;
+  color: var(--list-marker-color, #000);
+  font-size: var(--list-size, 1em);
+}
+
+/* Lower Greek List */
+.ql-editor ul[data-list-type="lower-greek"] {
+  list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-greek"] > li {
+  counter-increment: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-greek"] > li:before {
+  content: counter(list-item, lower-greek) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+/* Upper Roman List */
+.ql-editor ul[data-list-type="upper-roman"] {
+  list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="upper-roman"] > li {
+  counter-increment: list-item;
+}
+
+.ql-editor ul[data-list-type="upper-roman"] > li:before {
+  content: counter(list-item, upper-roman) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+/* Lower Roman List */
+.ql-editor ul[data-list-type="lower-roman"] {
+  list-style-type: none;
+  counter-reset: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-roman"] > li {
+  counter-increment: list-item;
+}
+
+.ql-editor ul[data-list-type="lower-roman"] > li:before {
+  content: counter(list-item, lower-roman) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+/* Default numbered list for ul */
+.ql-editor ul[data-list-type="default"] {
+  list-style-type: none;
+  counter-reset: list-counter;
+}
+
+.ql-editor ul[data-list-type="default"] > li {
+  counter-increment: list-counter;
+}
+
+.ql-editor ul[data-list-type="default"] > li:before {
+  content: counter(list-counter) ". ";
+  color: var(--list-marker-color);
+  font-size: var(--list-size);
+  position: relative;
+  left: -11px;
+}
+
+
+/* -------- Custom bullet icon lists only -------- */
+.ql-editor ul[data-list-type^="bullet-"] {
+  list-style: none !important;
+  padding-left: 1.5em;
+  counter-reset: none !important;
+}
+
+.ql-editor ul[data-list-type^="bullet-"] > li {
+  counter-increment: none !important;
+  position: relative;
+}
+
+.ql-editor ul[data-list-type^="bullet-"] > li::before {
+  position: relative;
+  left: -15px;
+  bottom: 1px;
+  display: inline-block;
+  font-family: 'e-icons';
+  font-size: var(--list-size);
+  color: var(--list-marker-color);
+}
+
+/* bullet-dot */
+.ql-editor ul[data-list-type="bullet-dot"] > li:before {
+  content: "\e747";
+}
+
+/* bullet-dot-large */
+.ql-editor ul[data-list-type="bullet-dot-large"] > li:before {
+  content: "\e747";
+}
+
+/* bullet-circle */
+.ql-editor ul[data-list-type="bullet-circle"] > li:before {
+  content: "\e7d0";
+}
+
+/* bullet-square */
+.ql-editor ul[data-list-type="bullet-square"] > li:before {
+  content: "\e7be";
+}
+
+/* bullet-flower */
+.ql-editor ul[data-list-type="bullet-flower"] > li:before {
+  content: "\e79b";
+}
+
+/* bullet-arrow */
+.ql-editor ul[data-list-type="bullet-arrow"] > li:before {
+  content: "\e763";
+}
+
+/* bullet-tick */
+.ql-editor ul[data-list-type="bullet-tick"] > li:before {
+  content: "\e7fc";
+}
+
 
 
 /* for now  */
@@ -273,9 +470,9 @@ html {
   /* Smooth transition for opacity change */
 }
 
-.no-scrollbar {
+/* .no-scrollbar {
   overflow: hidden !important;
-}
+} */
 
 .condition-item:hover .remove-btn {
   opacity: 1;
@@ -1026,228 +1223,6 @@ body {
   stroke-linejoin: round;
   stroke-width: 2;
 }
-.ql-editor ul[data-list-type="upper-alpha"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-alpha"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-alpha"] > li:before {
-  content: counter(list-item, upper-alpha) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-/* Lower Alpha List */
-.ql-editor ul[data-list-type="lower-alpha"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-alpha"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-alpha"] > li:before {
-  content: counter(list-item, lower-alpha) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-/* Lower Greek List */
-.ql-editor ul[data-list-type="lower-greek"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-greek"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-greek"] > li:before {
-  content: counter(list-item, lower-greek) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-/* Upper Roman List */
-.ql-editor ul[data-list-type="upper-roman"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-roman"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="upper-roman"] > li:before {
-  content: counter(list-item, upper-roman) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-/* Lower Roman List */
-.ql-editor ul[data-list-type="lower-roman"] {
-  list-style-type: none;
-  counter-reset: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-roman"] > li {
-  counter-increment: list-item;
-}
-
-.ql-editor ul[data-list-type="lower-roman"] > li:before {
-  content: counter(list-item, lower-roman) ". ";
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-.ql-editor ul[data-list-type="default"] {
-  list-style-type: none;
-  counter-reset: list-counter; /* Reset the list counter */
-
-}
-
-.ql-editor ul[data-list-type="default"] > li {
-  counter-increment: list-counter; /* Increment the counter for each list item */
-}
-
-.ql-editor ul[data-list-type="default"] > li:before {
-  content: counter(list-counter) ". "; /* Display the counter */
-  color: var(--list-marker-color);
-  font-size: var(--list-size);
-  position: relative;
-  left: -11px;
-}
-
-.ql-editor ul[data-list-type="bullet-dot"] {
-  list-style-type: none;
-
-}
-
-.ql-editor ul[data-list-type="bullet-dot"]>li:before {
-  content: "\e747"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -16px;
-  bottom: 1px;
-}
-
-.ql-editor ul[data-list-type="bullet-dot-large"] {
-  list-style-type: none;
-}
-
-.ql-editor ul[data-list-type="bullet-dot-large"]>li:before {
-  content: "\e747";
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-circle"] {
-  list-style-type: none;
-}
-
-.ql-editor ul[data-list-type="bullet-circle"]>li:before {
-  content: "\e7d0"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-square"] {
-  list-style-type: none;
-  position: relative;
-}
-
-.ql-editor ul[data-list-type="bullet-square"]>li:before {
-  content: "\e7be"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-flower"] {
-  list-style-type: none;
-  /* margin-left: 0.2rem; */
-}
-
-.ql-editor ul[data-list-type="bullet-flower"]>li:before {
-  content: "\e79b"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-
-.ql-editor ul[data-list-type="bullet-arrow"] {
-  list-style-type: none;
-  /* margin-left: 0.2rem; */
-}
-
-.ql-editor ul[data-list-type="bullet-arrow"]>li:before {
-  content: "\e763"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
-
-
-.ql-editor ul[data-list-type="bullet-tick"] {
-  list-style-type: none;
-  /* margin-left: 0.2rem; */
-}
-
-.ql-editor ul[data-list-type="bullet-tick"]>li:before {
-  content: "\e7fc"; /* Correct escaping */
-  display: inline-block;
-  font-family: 'e-icons';
-  font-size: var(--list-size);
-  color: var(--list-marker-color);
-  position: relative;
-  left: -15px;
-  bottom: 1px;
-}
 
 .css-6hp17o-MuiList-root-MuiMenu-list {
   display: flex;
@@ -1421,6 +1396,53 @@ body {
   }
 }
 
+.btn-undo.active {
+  border: 1px solid #7771e8 !important;
+  background-color: #f0f0ff; /* Optional: light background */
+}
+
+.btn-undo.active .stroke-hover {
+  stroke: #7771e8;
+}
+.btn-undo.active .fill-hover {
+  fill: #7771e8;
+}
+.btn-undo.active .history-svg {
+  fill: #7771e8;
+}
+
+.btn-undo.super {
+  border: 1px solid #7771e8 !important;
+  background-color: #f0f0ff; /* Optional: light background */
+}
+
+.btn-undo.super .stroke-hover {
+  stroke: #7771e8;
+}
+.btn-undo.super .fill-hover {
+  fill: #7771e8;
+}
+.btn-undo.super .history-svg {
+  fill: #7771e8;
+}
+
+.btn-undo.sub {
+  border: 1px solid #7771e8 !important;
+  background-color: #f0f0ff; /* Optional: light background */
+}
+
+.btn-undo.sub .stroke-hover {
+  stroke: #7771e8;
+}
+.btn-undo.sub .fill-hover {
+  fill: #7771e8;
+}
+.btn-undo.sub .history-svg {
+  fill: #7771e8;
+}
+
+
+
 .fonts:hover {
   border: 1px solid #7771e8 !important;
   /* color: #7771e8 !important; */
@@ -1487,7 +1509,7 @@ body {
 
 .e-de-list-header-presetmenu {
   cursor: pointer !important;
-  font-size: 11px;
+  font-size: 16px;
   line-height: 14px;
   overflow: hidden;
   text-align: left;
@@ -1507,7 +1529,7 @@ body {
   background-color: transparent !important;
   .e-de-list-header-presetmenu {
     cursor: pointer !important;
-    font-size: 11px;
+    font-size: 16px;
     line-height: 14px;
     overflow: hidden;
     text-align: left;
@@ -1526,7 +1548,7 @@ body {
 
 .e-de-list-header-presetmenu-selected{
   cursor: pointer !important;
-  font-size: 11px;
+  font-size: 16px;
   line-height: 14px;
   overflow: hidden;
   text-align: left;
@@ -1734,7 +1756,7 @@ body {
 }
 
 .ql-editor {
-  font-size: 12px !important;
+  font-size: 12px;
 }
 
 .replies {
@@ -1882,6 +1904,8 @@ body {
 .page-sizing-color-selected {
   color: #7771e8;
 }
+
+
 
 .page-sizing:hover{
   background-color: transparent !important;
@@ -2157,4 +2181,93 @@ fill: #7F7F7F;
 .contract-boxes:hover{
   border: 2px solid #7771e8 !important;
   background-color: transparent !important;
+}
+
+.quill-page {
+  width: 21cm;
+  min-height: 29.7cm;
+  margin: 20px auto;
+  padding: 1cm;
+  background: white;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.1);
+  border: 1px solid #ccc;
+  page-break-after: always;
+}
+
+.columns-block {
+  background: #f7f7f7 !important;
+  padding: 10px !important;
+  margin: 1em 0 !important;
+}
+
+.ql-editor .custom-html-table {
+  margin: 1.5em 0;
+  overflow-x: auto;
+}
+
+.ql-editor .custom-html-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  border: 1px solid #d1d1d1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+
+.ql-editor .custom-html-table thead {
+  background-color: #f2f2f2;
+}
+
+.ql-editor .custom-html-table th,
+.ql-editor .custom-html-table td {
+  border: 1px solid #ccc;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: middle;
+  min-width: 80px;
+  height: 38px;
+  background-color: #fff;
+}
+
+.ql-editor .custom-html-table th {
+  font-weight: 600;
+}
+
+.ql-editor .custom-html-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.ql-editor .custom-html-table tr:hover {
+  background-color: #e6f7ff;
+}
+
+
+.parent-of-toolbar {
+  overflow: visible;
+  z-index: 1000;
+  position: relative;
+}
+
+/* Your toolbar keeps overflow visible */
+.ql-toolbar {
+  overflow-y: visible !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  display: inline-block; /* shrinkwrap toolbar buttons */
+}
+
+.ql-formats {
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Optional: Drop-down hover effect for buttons */
+.ql-formats > * {
+  transition: all 0.2s ease !important;
+}
+
+.ql-formats > *:hover {
+  background-color: #f0f0f0 !important;
+  border-radius: 4px !important;
 }

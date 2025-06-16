@@ -65,7 +65,7 @@ import { ItemModel } from "@syncfusion/ej2-react-splitbuttons";
 import { ContractContext } from "@/context/ContractContext";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
-
+const Delta = Quill.import("delta");
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
 import {
@@ -103,6 +103,13 @@ DocumentEditorComponent.Inject(
 );
 
 DocumentEditorContainerComponent.Inject(Toolbar);
+
+import CustomOrderedList from './customOrderedList'; // path to your blot;
+import CustomAlphaList from './customAlphaBlot';
+import { constrainedMemory } from "process";
+import { setCtrlShiftAPressed, setupGlobalHighlightClearListener } from './sharedflag';
+import { setEditorInstances } from "./sharedflag";
+
 
 function SyncFesion() {
   const location = useLocation();
@@ -193,20 +200,609 @@ function SyncFesion() {
 
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
+  
+  // Create this map outside the event handler (at component/module level)
+  const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
+  const [formattingVisible, setFormattingVisible] = useState(false);
+  const formattingVisibleRef = useRef(formattingVisible);
+  const [oldPages, setOldPages] = useState([]);
+  const [showTableTools, setShowTableTools] = useState(false);
+  // State for the cell fill color
+  const [cellFillColor, setCellFillColor] = useState(""); // Default color
+  const [editorHtml, setEditorHtml] = useState<any>([""]);
+  const [addedString, setAddedString] = useState("");
+  const [deletedString, setDeletedString] = useState("");
+  const editorRefs: any = useRef<any>([]);
+  const containerRefs: any = useRef([]); // Ref for storing page container divs
+  const parentContainerRef = useRef(null); // Ref for the parent container
+  const [isTableSelected, setIsTableSelected] = useState(false);
+  const [selection, setSelection] = useState<any>(null);
+  const [comments, setComments] = useState<any>([]);
+  const [openComment, SetOpenComment] = useState<boolean>(false);
+  const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [isInternal, setIsInternal] = useState<boolean>(false);
+  const [currentComment, setCurrentComment] = useState("");
+  const [commentSelection, setCommentSelection] = useState(null);
+  const [commentPrevBg, setCommentPrevBg] = useState("");
+  const commentInputRef: any = useRef(null);
+  const [isBoldActive, setIsBoldActive] = useState(false);
+  const [isItalicActive, setIsItalicActive] = useState(false);
+  const [isStrikeActive, setIsStrikeActive] = useState(false);
+  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
+  const [isScriptActive, setIsScriptActice] = useState("");
+  const [isListActive, setIsListActive] = useState("");
+  const [toMinus, setToMinus] = useState<number>(0);
+  const [commentLeftButton, setCommentLeftButton] = useState("97.8%");
+  const [editComment, setEditComment] = useState<boolean>(false);
+  const [editCommentIndex, setEditCommmentIndex] = useState<any>(null);
+  const [reply, setReply] = useState<any>({});
+  const [addSigns, setAddSigns] = useState<boolean>(true);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const div1Ref = useRef<any>(null);
+  const div2Ref = useRef<any>(null);
+  const div3Ref = useRef<any>(null);
+  const scrollPageRef = useRef<any>(null);
+
+  const [remainingVh, setRemainingVh] = useState(0);
+  const [footerWidth ,setFooterWidth ] = useState(0);
+
+  const [documentHeight,setDocumentHeight] = useState(0)
+
+  const [indexComment, setIndexComment] = useState<number>(0);
 
   useEffect(() => {
     setIsLoading(false);
     setLeftSidebarExpanded(true);
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
+  const quill = editorRefs.current[currentPage]?.getEditor();
+  if (!quill) return;
+
+  const editorElement = quill.root;
+
+  const handlePaste = (e:any) => {
+    e.preventDefault();
+
+    const text = e.clipboardData.getData('text/plain');
+
+    // Wait until Quill updates the selection after paste
     setTimeout(() => {
-      setEditMode(false);
+      const selection = quill.getSelection();
+
+      const insertAt = selection?.index ?? quill.getLength(); // fallback to end
+      quill.insertText(insertAt, text, {
+        font: 'arial',
+        size: '13px',
+        color: '#000000'
+      });
+
+      // Move cursor to end of pasted content
+      quill.setSelection(insertAt + text.length, 0);
     }, 0);
-    setDucomentName("");
+  };
+
+  editorElement.addEventListener('paste', handlePaste);
+  return () => {
+    editorElement.removeEventListener('paste', handlePaste);
+  };
+}, [currentPage]);
+
+
+
+
+//   useEffect(() => {
+//   if (!editorRefs) return;
+
+//   const savedDelta = editorRefs.getContent();
+//   console.log("saveddelta", savedDelta);
+
+//   if (savedDelta) {
+//     const savedDeltaParsed = JSON.parse(savedDelta);
+//     const quill = editorRefContext.getEditor?.();
+//     if (quill) {
+//       quill.setContents(savedDeltaParsed);
+//     }
+//   }
+// }, []);
+
+
+
+  // Keep ref in sync
+  useEffect(() => {
+    formattingVisibleRef.current = formattingVisible;
+  }, [formattingVisible]);
+
+// function patchListStartOnEditor(editor: any) {
+//   const ols = editor.root.querySelectorAll('ol');
+//   ols.forEach((ol: any) => {
+//     const startAttr = ol.getAttribute('start');
+//     const start = startAttr ? parseInt(startAttr, 10) : 1;
+//     if (!isNaN(start)) {
+//       ol.style.setProperty('--custom-start', start - 1);
+//       ol.style.setProperty('counter-reset', `list-item ${start - 1}`);
+//     }
+//   });
+// }
+
+// function updateListStylesForAllPages() {
+//   editorRefs.current.forEach((editorRefs:any) => {
+//     const editor = editorRefs.getEditor();
+//     patchListStartOnEditor(editor);
+//   });
+// }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+
+      // Only trigger on Ctrl + Shift + a
+      if (e.ctrlKey && e.shiftKey && key === 'a') {
+        e.preventDefault();
+        setCtrlShiftAPressed(true);
+
+        const instances: any[] = [];
+        const highlightColor = '#B4D5FF';
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            instances.push(editor);
+            const length = editor.getLength();
+            editor.formatText(0, length - 1, { background: highlightColor }, "user");
+          }
+        });
+
+        setEditorInstances(instances);
+        setupGlobalHighlightClearListener(); // 🧠 Set once for all
+      }
+      
+      // Only trigger on Ctrl + Shift + B
+      if (e.ctrlKey && e.shiftKey && key === 'b') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + B detected: applying bold to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isBold = formats.bold === true;
+            editor.formatText(0, length, 'bold', !isBold); // Toggle bold
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + i
+      if (e.ctrlKey && e.shiftKey && key === 'i') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + i detected: applying italic to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isItalic = formats.italic === true;
+            editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + u
+      if (e.ctrlKey && e.shiftKey && key === 'u') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + u detected: applying underline to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isUnderline = formats.underline === true;
+            editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + x
+      if (e.ctrlKey && e.shiftKey && key === 'x') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + x detected: applying underline to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isStrike = formats.strike === true;
+            editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + +
+      if (e.ctrlKey && e.shiftKey && e.key === '+') {
+        e.preventDefault(); // Prevent default browser behavior
+
+        console.log('Ctrl + Shift + + detected: applying superscript to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (!editor) return;
+
+          const length = editor.getLength();
+          const formats = editor.getFormat(0, length);
+          const isSuperscript = formats.script === "super";
+
+          const currentFormat = editor.getFormat();
+          const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
+
+          // Helper: reduce size by 4px
+          const getReducedSize = (size: string): string => {
+            const pxMatch = size.match(/^(\d+)px$/);
+            if (pxMatch) {
+              const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+              return `${reduced}px`;
+            }
+            return size;
+          };
+
+          if (isSuperscript) {
+                const getIncreasedSize = (size: string): string => {
+                const pxMatch = size.match(/^(\d+)px$/);
+                if (pxMatch) {
+                  const increased = parseInt(pxMatch[1], 10) + 4;
+                  return `${increased}px`;
+                }
+                return size;
+              };
+
+            const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
+            console.log("Restoring for editor:", editor);
+            console.log("Original size:", originalSize, "| Current size:", currentSize);
+
+            editor.formatText(0, length, {
+              script: false,
+              size: originalSize,
+            }, 'user');
+
+            originalFontSizeMap.delete(editor);
+            setIsScriptActice("");
+          } else {
+            // Store original size and apply superscript
+            if (!originalFontSizeMap.has(editor)) {
+              originalFontSizeMap.set(editor, currentSize);
+              console.log("Storing original size:", currentSize, "for editor:", editor);
+            }
+
+            const reducedSize = getReducedSize(currentSize);
+            console.log("Applying reduced size:", reducedSize, "to editor:", editor);
+
+            editor.formatText(0, length, {
+              script: 'super',
+              size: reducedSize,
+            }, 'user');
+
+            setIsScriptActice("super");
+          }
+        });
+      }
+      // Only trigger on Ctrl + -
+      if (e.ctrlKey && e.key === '-') {
+          e.preventDefault(); // Prevent default browser behavior
+
+          console.log('Ctrl + Shift + - detected: applying subscript to all editors');
+
+          editorRefs.current.forEach((ref: any) => {
+            const editor = ref?.getEditor();
+            if (!editor) return;
+
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isSubscript = formats.script === "sub";
+
+            const currentFormat = editor.getFormat();
+            const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
+
+            // Helper: reduce size by 4px
+            const getReducedSize = (size: string): string => {
+              const pxMatch = size.match(/^(\d+)px$/);
+              if (pxMatch) {
+                const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+                return `${reduced}px`;
+              }
+              return size;
+            };
+
+            if (isSubscript) {
+              // Helper: increase size by 4px
+              const getIncreasedSize = (size: string): string => {
+                const pxMatch = size.match(/^(\d+)px$/);
+                if (pxMatch) {
+                  const increased = parseInt(pxMatch[1], 10) + 4;
+                  return `${increased}px`;
+                }
+                return size;
+              };
+
+              const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
+              console.log("Restoring for editor:", editor);
+              console.log("Original size:", originalSize, "| Current size:", currentSize);
+
+              editor.formatText(0, length, {
+                script: false,
+                size: originalSize,
+              }, 'user');
+
+              originalFontSizeMap.delete(editor);
+              setIsScriptActice("");
+            } else {
+              // Store original size and apply subscript
+              if (!originalFontSizeMap.has(editor)) {
+                originalFontSizeMap.set(editor, currentSize);
+                console.log("Storing original size:", currentSize, "for editor:", editor);
+              }
+
+              const reducedSize = getReducedSize(currentSize);
+              console.log("Applying reduced size:", reducedSize, "to editor:", editor);
+
+              editor.formatText(0, length, {
+                script: 'sub',
+                size: reducedSize,
+              }, 'user');
+
+              setIsScriptActice("sub");
+            }
+          });
+        }
+
+      // Only trigger on Ctrl + 8
+      if (e.ctrlKey && e.key === '8') {
+        e.preventDefault();
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (!editor) return;
+
+          const editorContainer = editor.root;
+          const paragraphs = editorContainer.querySelectorAll("p");
+
+          paragraphs.forEach((p: HTMLElement) => {
+            const oldMarks = p.querySelectorAll(".formatting-mark");
+            oldMarks.forEach((mark) => {
+              const parent = mark.parentNode;
+              if (!parent) return;
+
+              const textContent = mark.textContent || "";
+              const restoredText = textContent
+                .replace(/·/g, " ")
+                .replace(/→/g, "\t")
+                .replace(/¶/g, "");
+
+              const textNode = document.createTextNode(restoredText);
+              parent.replaceChild(textNode, mark);
+            });
+
+            // ✅ Use ref to access current visibility
+            if (!formattingVisibleRef.current) {
+              const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+              const textNodes: Text[] = [];
+
+              while (walker.nextNode()) {
+                textNodes.push(walker.currentNode as Text);
+              }
+
+              textNodes.forEach((textNode) => {
+                const originalText = textNode.textContent ?? "";
+                const fragment = document.createDocumentFragment();
+
+                for (let i = 0; i < originalText.length; i++) {
+                  const char = originalText[i];
+                  const span = document.createElement("span");
+                  span.className = "formatting-mark";
+
+                  if (char === " " || char === ".") {
+                    span.textContent = "·";
+                    span.setAttribute("contenteditable", "false");
+                  } else if (char === "\t") {
+                    span.textContent = "→";
+                    span.setAttribute("contenteditable", "false");
+                  } else {
+                    span.textContent = char;
+                  }
+
+                  fragment.appendChild(span);
+                }
+
+                textNode.parentNode?.replaceChild(fragment, textNode);
+              });
+
+              const endMark = document.createElement("span");
+              endMark.className = "formatting-mark";
+              endMark.setAttribute("contenteditable", "false");
+              endMark.textContent = "¶";
+              p.appendChild(endMark);
+            }
+          });
+        });
+
+        // ✅ Proper toggle
+        setFormattingVisible(prev => !prev);
+      }
+
+      
+      if (e.key === ' ') {
+        console.log("triggered");
+        const focusedEditorIndex = currentPage;
+        console.log("focusedEditorIndex", focusedEditorIndex);
+        const editor = editorRefs.current[currentPage].getEditor();
+
+        const range = editor.getSelection(true);
+        if (!range) return;
+
+        // Get the current line/blot before cursor
+        const [block, offset] = editor.scroll.descendant(
+          Quill.import('blots/block'),
+          range.index - 1
+        );
+        if (!block) return;
+
+        const text = block.domNode.textContent || '';
+        // Remove all whitespace and zero-width spaces to normalize input
+        const cleanedText = text.replace(/\s+/g, '').replace(/\u200B/g, '');
+        console.log('Cleaned:', JSON.stringify(cleanedText)); 
+
+        if (/^\d+\.$/.test(cleanedText)) {
+          const match = cleanedText.match(/^(\d+)\.$/);
+          if (match) {
+            const startNumber = parseInt(match[1], 10);
+            console.log("start: ", startNumber);
+            Quill.register(CustomOrderedList, true);
+
+            e.preventDefault();
+
+            // Step 1: Get the formats at the first character of the text being deleted
+const currentFormats = editor.getFormat(range.index - text.length, 1);
+            // Remove the original typed text (e.g., "1.")
+            editor.deleteText(range.index - text.length, text.length);
+
+            editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+
+            console.log("currentFormats", currentFormats['size']);
+            // Reapply font-size
+            if (currentFormats['size']) {
+              editor.formatText(range.index - text.length, 1, 'size', currentFormats['size']);
+            }
+
+
+            // Insert a space to allow typing after list bullet
+            editor.insertText(range.index - text.length, ' ');
+
+            // Set cursor right after the inserted space
+            editor.setSelection(range.index - text.length + 1, 0);
+
+            // Patch OL element manually to fix start attribute and CSS variable
+            setTimeout(() => {
+              const [leaf] = editor.getLeaf(range.index - text.length);
+              if (!leaf) return;
+
+              let parent = leaf.parent;
+              while (parent && parent.domNode?.tagName !== 'OL') {
+                parent = parent.parent;
+              }
+
+              if (parent && parent.domNode?.tagName === 'OL') {
+                parent.domNode.setAttribute('start', String(startNumber));
+                parent.domNode.style.setProperty('--custom-start', startNumber - 1);
+                 parent.domNode.style.fontSize = currentFormats['size']; // <-- Try thi
+              }
+            }, 0);
+          }
+        }  else if (/^[a-zA-Z]\.$/.test(cleanedText)) {
+          console.log("yes this calllllllllllllllllllllllllllllllllllllll")
+          const match = cleanedText.match(/^([a-zA-Z])\.$/);
+          if (match) {
+            Quill.register(CustomAlphaList, true);
+            const letter = match[1];
+            const isUpper = letter === letter.toUpperCase();
+            const startNumber = letter.toLowerCase().charCodeAt(0) - 96; // 'a' = 1
+            const listStyle = isUpper ? 'upper-alpha' : 'lower-alpha';
+
+            console.log(`Alphabet list: ${letter}, start=${startNumber}, style=${listStyle}`);
+
+            e.preventDefault();
+
+            // Remove the typed "a." or "A."
+            editor.deleteText(range.index - text.length, text.length);
+            console.log("startnumber: ", startNumber, "  liststyletype: ", listStyle);
+            // Format the line as ordered list
+            editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+
+
+            // Insert a space after formatting
+            editor.insertText(range.index - text.length, ' ');
+            editor.setSelection(range.index - text.length + 1, 0);
+
+            // Delay DOM patching to next tick
+              setTimeout(() => {
+                const [leaf] = editor.getLeaf(range.index - text.length);
+                if (!leaf) return;
+
+                let parent = leaf.parent;
+                while (parent && parent.domNode?.tagName !== 'OL') {
+                  parent = parent.parent;
+                }
+                if (parent && parent.domNode?.tagName === 'OL') {
+                  parent.domNode.setAttribute('start', String(startNumber));
+                  parent.domNode.setAttribute('data-alpha', isUpper ? 'upper' : 'lower');
+                  parent.domNode.setAttribute('data-alpha', isUpper ? 'upper' : 'lower');
+                  console.log('data-alpha set:', parent.domNode.getAttribute('data-alpha'));
+
+                  // parent.domNode.setAttribute('start', String(startNumber));
+                  // parent.domNode.style.listStyleType = listStyle; // 'upper-alpha' or 'lower-alpha'
+                }
+              }, 0);
+
+          }
+        } else {
+          console.log("Not a numbered list item", cleanedText);
+        }
+      }
+
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+
+
+useEffect(() => {
+  pages.forEach((page, i) => {
+    if (page.type === "pageBreak") {
+      const editor = editorRefs.current[currentPage]?.getEditor();
+      if (!editor) return; // editor not ready
+
+      // Get cursor position
+      
+      const selection = editor.getSelection(true);
+      const insertIndex = selection ? selection.index : editor.getLength();
+      console.log("selection: ", selection.index);
+      console.log("insertIndex: ", insertIndex);
+
+      // Insert text at cursor position
+      const pageBreakText = "\n----- PAGE BREAK -----\n";
+      editor.insertText(insertIndex, pageBreakText, { color: 'white' });
+
+
+      // Set cursor right after the inserted text
+      editor.setSelection(insertIndex + pageBreakText.length);
+
+      console.log("Page break inserted at position:", insertIndex);
+    }
+  });
+}, [pages]);
+
+
+
+
+  useEffect(() => {
+    // Exit early if editorRefs are not initialized
+    if (!editorRefs) return;
+
+    // Reset document state when no ID is present
     if (!id && !newId) {
       setTimeout(() => {
-        setPages([{ content: "" }]);
+        // Set default page content and styles
+        setPages([{ type: "content", content: "" }]);
         setBgColorSvg("#fefefe");
         setPrevBgColor("#fefefe");
         setSelectedFontSize("12px");
@@ -214,17 +810,27 @@ function SyncFesion() {
         setSelectedFontValue("arial");
         setSelectedFont("arial");
         setPrevFontColor("black");
+        setDucomentName("");
+        setEditMode(false);
+
+        // Clear undo/redo history for the first page editor only (safe during new doc setup)
+        editorRefs?.current?.forEach((ref:any) => {
+          const editor = ref?.getEditor?.();
+          if (editor) {
+            editor.history.stack.redo = [];
+            editor.history.stack.undo = [];
+          }
+        });
+      }, 0);
+    } else {
+      // If editing an existing document, just reset non-destructive fields
+      setTimeout(() => {
+        setEditMode(false);
+        setDucomentName("");
       }, 0);
     }
-    if (!editorRefs) return;
-    const editor = editorRefs?.current[currentPage]?.getEditor();
-    setTimeout(() => {
-      editor.history.stack.redo = [];
-      editor.history.stack.undo = [];
-    }, 100);
   }, []);
 
-  const [oldPages, setOldPages] = useState([]);
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -248,12 +854,22 @@ function SyncFesion() {
 
       if (data?.pages) {
         setPages(() => {
-          let pages = data?.pages;
-          return pages;
+          // Defensive: if data.pages is undefined, fallback to empty array
+          let rawPages = data?.pages ?? [];
+
+          // Map pages and add type 'content' (assuming all are content pages)
+          let normalizedPages = rawPages.map((page:any) => ({
+            type: "content",        // add type here
+            content: page.content || ""  // safely fallback to empty string if needed
+          }));
+
+          return normalizedPages;
         });
         setCurrentPage(data?.pages.length - 1);
         setOldPages(data?.pages);
       }
+
+      //updateListStylesForAllPages();
 
       if (data?.pageSize) {
         setDocumentPageSize(() => {
@@ -269,26 +885,17 @@ function SyncFesion() {
         });
       }
 
-      if (data?.comments) {
-        setComments(() => {
-          return data.comments;
-        });
-      }
-      if (data?.newFontSize) {
-        setContractNewFontSize(() => {
-          return data.newFontSize;
-        });
-      }
-      if (data?.newFonts) {
-        setContractNewFont(() => {
-          return data.newFonts;
-        });
-      }
-      if (data?.newFontStyles) {
-        setContractNewFontStyles(() => {
-          return data.newFontStyles;
-        });
-      }
+      const {
+        comments,
+        newFontSize,
+        newFonts,
+        newFontStyles
+      } = data || {};
+
+      if (comments) setComments(comments);
+      if (newFontSize) setContractNewFontSize(newFontSize);
+      if (newFonts) setContractNewFont(newFonts);
+      if (newFontStyles) setContractNewFontStyles(newFontStyles);
       setFormState(data?.overview);
       setDucomentName(data?.overview?.name);
       setLifecycleData(data?.lifecycle);
@@ -309,45 +916,72 @@ function SyncFesion() {
 
   const editorContainerRef: any = useRef(null);
 
-  const handleSubmit = async () => {
-    console.log("handle submit");
-    try {
-      if (!documentName) {
-        toast.error("Please enter the name of the document");
-        return;
-      }
-      setAuditTrails([
+const handleSubmit = async () => {
+  try {
+      if (!editorRefs) return;
+  const editorRef = editorRefs.current[0];
+  const quillEditor = editorRef.getEditor();
+    const quillEditor1 = editorRefs.current[currentPage].getEditor();
+  const savedDelta =  quillEditor.getContents();
+  console.log("saveddelta", savedDelta);
+    if (!documentName) {
+      toast.error("Please enter the name of the document");
+      return;
+    }
+
+    // 1. Get Quill content as Delta
+    const quill = editorRefs.current[currentPage].getEditor();
+    if (!quill) {
+      toast.error("Editor instance not found.");
+      return;
+    }
+
+    const contentDelta = quill.getContents(); // This includes your custom embeds like tables
+    const contentJSON = JSON.stringify(contentDelta);
+
+    // 2. Prepare your payload including the content
+    const payload = {
+      documentName,
+      content: contentJSON,
+      auditTrails: [
         ...(auditTrails || []),
         {
           user: user?.firstName,
           date: new Date(),
           message: "has added the new version",
         },
-      ]);
+      ],
+      // ... any other data you want to send
+    };
 
-      await createPayload();
-      setBgColorSvg("#fefefe");
-      setPrevBgColor("#fefefe");
-      setSelectedFontSize("12px");
-      setSelectedFontSizeValue("12px");
-      setSelectedFontValue("arial");
-      setSelectedFont("arial");
-      setPrevFontColor("black");
-    } catch (error: any) {
-      console.log(error);
+    // 3. Save it via your API or local storage
+          await createPayload();
 
-      let errorMessage = "Failed to create .";
-      if (error.response && error.response.data) {
-        errorMessage =
-          error.response.data.message ||
-          error.response.data ||
-          "An error occurred";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      toast.error(errorMessage);
+    // 4. Reset UI states as you are already doing
+    setBgColorSvg("#fefefe");
+    setPrevBgColor("#fefefe");
+    setSelectedFontSize("12px");
+    setSelectedFontSizeValue("12px");
+    setSelectedFontValue("arial");
+    setSelectedFont("arial");
+    setPrevFontColor("black");
+
+    toast.success("Document saved successfully!");
+  } catch (error: any) {
+    console.log(error);
+    let errorMessage = "Failed to save document.";
+    if (error.response && error.response.data) {
+      errorMessage =
+        error.response.data.message ||
+        error.response.data ||
+        "An error occurred";
+    } else if (error.message) {
+      errorMessage = error.message;
     }
-  };
+    toast.error(errorMessage);
+  }
+};
+
 
   const createPayload = async () => {
     try {
@@ -475,8 +1109,6 @@ function SyncFesion() {
       [dropdown]: !prevState[dropdown],
     }));
   };
-
-  // To change the font style of selected content
 
   const onToolbarClick = (args: any) => {
     console.log("item clicked : ", args);
@@ -619,15 +1251,6 @@ function SyncFesion() {
       case "Bullets-Square":
         documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
         break;
-      case "Numbering-Arabic":
-        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
-        break;
-      case "Numbering-Roman":
-        documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
-        break;
-      case "Numbering-Alpha":
-        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
-        break;
       // upper lower case
       case "uppercase":
         // Changes the selected text to uppercase
@@ -688,8 +1311,6 @@ function SyncFesion() {
     }
   };
 
-  //
-
   const itemsss: ItemModel[] = [
     {
       text: "Single",
@@ -704,8 +1325,6 @@ function SyncFesion() {
       text: "Double",
     },
   ];
-
-  const [showTableTools, setShowTableTools] = useState(false);
 
   // Function to update the table tool visibility based on the editor's selection
   const updateTableToolsVisibility = () => {
@@ -722,9 +1341,6 @@ function SyncFesion() {
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
-
-  // State for the cell fill color
-  const [cellFillColor, setCellFillColor] = useState(""); // Default color
 
   const applyCellFillColor = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -778,15 +1394,33 @@ function SyncFesion() {
     }
   };
 
-  const [isTableSelected, setIsTableSelected] = useState(false);
-
+  /**
+   * Triggers a save prompt and exports the current document content as a .docx file.
+   * Uses Syncfusion DocumentEditor instance from a ref.
+   */
   const save = () => {
+    // Access the DocumentEditor instance safely
     const documentEditor = editorContainerRef.current?.documentEditor;
-    const userFileName = prompt("Enter a file name for your docs", "My File");
-    if (userFileName) {
-      documentEditor.save(userFileName, "Docx");
+
+    // Check if the editor is available before proceeding
+    if (!documentEditor) {
+      console.error("DocumentEditor is not available.");
+      alert("Document editor not initialized.");
+      return;
+    }
+
+    // Prompt user for a file name
+    const userFileName = prompt("Enter a file name for your document:", "My File");
+
+    // If user provides a name, proceed to save
+    if (userFileName && userFileName.trim() !== "") {
+      documentEditor.save(userFileName.trim(), "Docx");
+    } else {
+      alert("File name is required to save the document.");
     }
   };
+
+
   const onClick = () => {
     const container = editorContainerRef.current;
     if (container) {
@@ -1006,19 +1640,18 @@ function SyncFesion() {
       </div>
     );
   };
+const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use useRef to store container
 
-  let container: DocumentEditorContainerComponent;
   const onCreated = useCallback(() => {
-    // To insert text in cursor position
-    container?.documentEditor?.editor.insertText("Document editor");
-    // Move selection to previous character
-    container?.documentEditor?.selection.moveToPreviousCharacter();
-    // To select the current word in document
-    container?.documentEditor?.selection.selectCurrentWord();
+    if (container.current) {
+      // Now container is safely accessed because we check if it exists
+      container.current.documentEditor?.editor.insertText("Document editor");
+      container.current.documentEditor?.selection.moveToPreviousCharacter();
+      container.current.documentEditor?.selection.selectCurrentWord();
 
-    // documentEditor?.restrictEditing = true;
-    // To get the selected content as text
-    const selectedContent: string = container?.documentEditor?.selection.text;
+      const selectedContent: string = container.current.documentEditor?.selection.text;
+      console.log(selectedContent);
+    }
   }, []);
 
   const [showPopup, setShowPopup] = useState<any>(false);
@@ -1043,6 +1676,7 @@ function SyncFesion() {
     //   button.setAttribute("aria-disabled", "true");
     // });
   }, [enabelEditing]);
+
   useEffect(() => {
     if (editMode) {
       handleClick();
@@ -1078,7 +1712,7 @@ function SyncFesion() {
     editor.history.stack.undo = [];
     editor.history.stack.redo = [];
     if (!id && newId === "") {
-      setPages([{ content: "" }]);
+      setPages([{ type: "content", content: "" }]);
     }
     setTimeout(() => {
       setBgColorSvg("#fefefe");
@@ -1098,6 +1732,7 @@ function SyncFesion() {
 
     if (id || newId) {
       setPages(oldPages);
+      //updateListStylesForAllPages();
     }
     setEditMode(false);
     setEnabelEditing(true);
@@ -1119,10 +1754,6 @@ function SyncFesion() {
 
     calculateWidth(); // Call on mount and documentName change
   }, [documentName]);
-
-  const [editorHtml, setEditorHtml] = useState<any>([""]);
-  const [addedString, setAddedString] = useState("");
-  const [deletedString, setDeletedString] = useState("");
 
   const stripHtml = (html: any) => {
     return html.replace(/<\/?[^>]+(>|$)/g, "");
@@ -1244,17 +1875,12 @@ function SyncFesion() {
   //   setEditorHtml(html);
   // };
 
-  const editorRefs: any = useRef<any>([]);
-  const containerRefs: any = useRef([]); // Ref for storing page container divs
-
   const cmToPx = (cm: any) => {
     const numericValue = parseFloat(cm.replace(/[^0-9.]/g, ""));
     return numericValue * 37.8;
   };
 
   // cmToPx(documentPageSize.height)
-
-  const parentContainerRef = useRef(null); // Ref for the parent container
 
   const isContentEmpty = (htmlContent: string): boolean => {
     const tempDiv = document.createElement("div");
@@ -1264,69 +1890,193 @@ function SyncFesion() {
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
 
-  const handleOverflow = debounce((index, editor, updatedPages) => {
-    const currentContent = editor.getContents();
-    const editorHeight = editor.root.scrollHeight;
-    // console.log(editorHeight)
-    // console.log(documentHeight)
+  function findDeltaIndexAtCharIndex(delta:any, charIndex:any) {
+  let deltaIndex = 0;
+  let runningCharCount = 0;
 
-    if(editor.root.innerText.trim().length <=0) return ;
-    if (editorHeight <= documentHeight) return; // Only handle if overflow occurs
+  for (const op of delta.ops) {
+    const insert = op.insert;
+    const len = typeof insert === 'string' ? insert.length : 1;
 
-    let fitIndex = currentContent.length();
-    let contentToFit = currentContent.slice(0, fitIndex);
+    if (runningCharCount + len > charIndex) {
+      deltaIndex += charIndex - runningCharCount;
+      break;
+    } else {
+      runningCharCount += len;
+      deltaIndex += len;
+    }
+  }
 
-    // Fit content within current page height
-    while (fitIndex > 0) {
-      editor.setContents(contentToFit, "silent");
+  return deltaIndex;
+}
 
-      if (editor.root.scrollHeight <= documentHeight) break;
+const PAGE_BREAK_STRING = "----- PAGE BREAK -----";
 
-      const ops = contentToFit.ops;
-      if (ops.length > 0) {
-        const lastOp = ops[ops.length - 1];
-        if (lastOp.insert && typeof lastOp.insert === "string") {
-          const lastIndex = lastOp.insert.lastIndexOf(" ");
-          lastOp.insert = lastIndex !== -1 ? lastOp.insert.slice(0, lastIndex) : "";
+const handleOverflow = debounce((index, editor, updatedPages) => {
+  const currentContent = editor.getContents();
+  const plainText = editor.getText();
+  const editorHeight = editor.root.scrollHeight;
+
+  // Get current cursor position before any changes
+  const selection = editor.getSelection();
+  const previousCursorPosition = selection ? selection.index : null;
+  console.log("Previous cursor position:", previousCursorPosition);
+
+  // 1. Exit if empty
+  if (plainText.trim().length === 0) return;
+
+  // 2. Check for manual page break position
+  const breakPosition = plainText.indexOf(PAGE_BREAK_STRING);
+
+  // 3. If manual page break found, split at that position
+  if (breakPosition !== -1) {
+    // Avoid re-handling same break — check if next page already has content
+    if (updatedPages[index + 1]?.content?.ops?.length > 0) return;
+
+    const breakLength = PAGE_BREAK_STRING.length; // include newlines
+    const before = currentContent.slice(0, breakPosition);
+    const after = currentContent.slice(breakPosition + breakLength);
+
+    editor.setContents(before, "silent");
+
+    moveToNextPage(after, index + 1, updatedPages, setPages, editorRefs);
+
+    return;
+  }
+
+  const documentHeight = cmToPx(documentPageSize.height);
+
+  // 4. If no manual break, check for overflow by height
+  if (editorHeight <= documentHeight) {
+    // Content fits, no need to split
+    return;
+  }
+
+  // 5. Automatic overflow split:
+  // Find largest content slice that fits in the page height
+  let fitIndex = currentContent.length(); // start from full length
+  let contentToFit = currentContent.slice(0, fitIndex);
+
+  while (fitIndex > 0) {
+    editor.setContents(contentToFit, "silent");
+    const testHeight = editor.root.scrollHeight;
+
+    if (testHeight <= documentHeight) break;
+
+    // Reduce content size by trimming last operation or characters
+    const ops = contentToFit.ops;
+    if (ops.length > 0) {
+      const lastOp = ops[ops.length - 1];
+      if (lastOp.insert && typeof lastOp.insert === "string") {
+        const lastSpaceIndex = lastOp.insert.lastIndexOf(" ");
+        if (lastSpaceIndex !== -1) {
+          lastOp.insert = lastOp.insert.slice(0, lastSpaceIndex);
         } else {
           ops.pop();
         }
+      } else {
+        ops.pop();
       }
-      fitIndex = contentToFit.ops.reduce((acc:any, op:any) => acc + (op.insert.length || 0), 0);
     }
 
-    // Assign fitting content to current page
-    updatedPages[index].content = contentToFit;
-    setPages(updatedPages);
+    // Recalculate fitIndex
+    fitIndex = contentToFit.ops.reduce((acc:any, op:any) => {
+      return acc + (typeof op.insert === "string" ? op.insert.length : 1);
+    }, 0);
+  }
+  console.log("")
 
-    // Move overflow content to the next page
-    const overflowContent = currentContent.slice(fitIndex);
-    moveToNextPage(overflowContent, index + 1, updatedPages);
-  }, 0); // Adjust debounce time
+  // 6. After fitting content found, split content
+  const overflowContent = currentContent.slice(fitIndex);
 
-  const moveToNextPage = (overflowContent:any, nextPageIndex:number, updatedPages:any[]) => {
-    if (overflowContent.length() === 0) return;
+  // Get current cursor position before any changes
+  console.log("new cursor position:", fitIndex);
+  
+  editor.setContents(contentToFit, "silent");
+  editor.setSelection(previousCursorPosition, 0, 'silent');
 
-    if (nextPageIndex >= updatedPages.length) {
-      updatedPages.push({ content: overflowContent });
-    } else {
-      updatedPages[nextPageIndex].content = overflowContent;
-    }
-    setPages([...updatedPages]);
+
+  moveToNextPage(overflowContent, index + 1, updatedPages, setPages, editorRefs);
+
+}, 100);
+
+
+
+function mergeContent(existingContent:any, overflowContent:any) {
+  if (!existingContent || !existingContent.ops) {
+    return overflowContent;
+  }
+  if (!overflowContent || !overflowContent.ops) {
+    return existingContent;
+  }
+  // Prepend overflowContent to existingContent for correct order
+  return {
+    ops: [...overflowContent.ops, ...existingContent.ops],
   };
+}
 
-  const handleChange = (value:any, delta:any, source:string, editor:any, index:number) => {
-    const updatedPages = [...pages];
-    const editor_ = editorRefs.current[currentPage].getEditor();
-    if (index >= updatedPages.length) return;
 
-    // Update content only if it changed
-    if (updatedPages[index].content !== value) {
-      updatedPages[index].content = value;
-    }
+function moveToNextPage(overflowContent:any, nextPageIndex:any, pages:any, setPages:any, editorRefs:any) {
+  console.log('mergeContent called');
+  const existingNextContent = pages[nextPageIndex]?.content;
 
-    handleOverflow(index, editor_, updatedPages); 
-  };
+  console.log('Existing content ops:', existingNextContent?.ops);
+  console.log('Overflow content ops:', overflowContent.ops);
+
+  // Merge overflowContent with existing next page content
+  const mergedContent = mergeContent(existingNextContent, overflowContent);
+
+  // Create new pages array with merged content on next page
+  const newPages = pages.map((page:any, idx:any) =>
+    idx === nextPageIndex
+      ? { ...page, content: mergedContent }
+      : page
+  );
+
+  // If nextPageIndex is beyond current pages length, add new page
+  if (nextPageIndex >= pages.length) {
+    newPages.push({ content: overflowContent });
+  }
+
+  console.log('Updated next page content after merge:', mergedContent);
+  setPages(newPages);
+  //updateListStylesForAllPages();
+
+  // Optionally, update editor content for next page here too,
+  // after state update
+  const nextEditorRef = editorRefs.current[nextPageIndex];
+  if (nextEditorRef) {
+    const quill = nextEditorRef.getEditor();
+    quill.setContents(mergedContent);
+  }
+}
+
+
+const handleChange = (value: any, delta: any, source: string, editor: any, index: number) => {
+  const updatedPages = [...pages];
+
+  // 🛡️ Safely get editor
+  const editorRef = editorRefs.current[index];
+  if (!editorRef) {
+    console.warn(`Editor ref not found at index ${index}`);
+    return;
+  }
+
+  const quillEditor = editorRef.getEditor();
+  if (index >= updatedPages.length) return;
+
+  // Update content only if it changed
+  if (updatedPages[index].content !== value) {
+    updatedPages[index].content = value;
+  }
+
+  //updateListStylesForAllPages();
+
+  handleOverflow(index, quillEditor, updatedPages);
+};
+
+
+
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
@@ -1439,6 +2189,8 @@ function SyncFesion() {
 
           return updatedPages;
         });
+
+        //updateListStylesForAllPages();
       }
     }
 
@@ -1458,12 +2210,13 @@ function SyncFesion() {
       const currentLineText = currentLine ? currentLine.domNode.innerText : "";
       var customHeading = format?.customHeading;
       var size = format?.size;
-      if (currentLineText.trim().length < 1) {
-        if (format.customHeading !== "paragraph") {
-          customHeading = "paragraph";
-          size = selectedFontSize;
-          setSelectedHeadersValue(0);
-        }
+      const isEmptyLine = currentLineText.trim().length === 0;
+      const isNotParagraph = format.customHeading !== "paragraph";
+
+      if (isEmptyLine && isNotParagraph) {
+        customHeading = "paragraph";
+        size = selectedFontSize;
+        setSelectedHeadersValue(0);
       }
 
       if (format.color) {
@@ -1519,6 +2272,16 @@ function SyncFesion() {
           currentEditor.format("list", false)
         }
       }
+        setTimeout(() => {
+        const editor = editorRefs.current[currentPage].getEditor();
+        const range = editor.getSelection(true);
+        if (!range) return;
+
+          // example after adding or updating new page content
+          const newEditor = editorRefs.current[currentPage].getEditor();
+          //patchListStartOnEditor(newEditor);
+        }, 0); // Delay to let Quill insert the new line first
+
     }
   };
 
@@ -1530,9 +2293,6 @@ function SyncFesion() {
       editor.focus();
     }
   }, [currentPage]);
-
-  const [toMinus, setToMinus] = useState<number>(0);
-  const [commentLeftButton, setCommentLeftButton] = useState("97.8%");
 
   useEffect(() => {
     if (documentPageSize.title === "JIS B6") {
@@ -1678,9 +2438,6 @@ function SyncFesion() {
     }
   };
 
-  const [selection, setSelection] = useState<any>(null);
-  const [comments, setComments] = useState<any>([]);
-
   useEffect(() => {
     if (!editorRefs.current[currentPage]) return;
     const editor = editorRefs.current[currentPage].getEditor();
@@ -1689,13 +2446,6 @@ function SyncFesion() {
       setButtonPosition({ top: bounds.bottom + 20 });
     }
   }, [selection]);
-
-  const [isBoldActive, setIsBoldActive] = useState(false);
-  const [isItalicActive, setIsItalicActive] = useState(false);
-  const [isStrikeActive, setIsStrikeActive] = useState(false);
-  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
-  const [isScriptActive, setIsScriptActice] = useState("");
-  const [isListActive, setIsListActive] = useState("");
 
   type range = {
     index: number;
@@ -1880,15 +2630,6 @@ function SyncFesion() {
     left: 0,
   });
 
-  const [openComment, SetOpenComment] = useState<boolean>(false);
-  const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
-  const [isPublic, setIsPublic] = useState<boolean>(true);
-  const [isInternal, setIsInternal] = useState<boolean>(false);
-  const [currentComment, setCurrentComment] = useState("");
-  const [commentSelection, setCommentSelection] = useState(null);
-  const [commentPrevBg, setCommentPrevBg] = useState("");
-  const commentInputRef: any = useRef(null);
-
   useEffect(() => {
     if (openComment && inputRef.current) {
       commentInputRef.current.focus();
@@ -1992,13 +2733,10 @@ function SyncFesion() {
     setAddReply({ open: false, id: "" });
   };
 
-  const [editComment, setEditComment] = useState<boolean>(false);
-  const [editCommentIndex, setEditCommmentIndex] = useState<any>(null);
   const [addReply, setAddReply] = useState<any>({
     open: false,
     id: "",
   });
-  const [reply, setReply] = useState<any>({});
 
   const handleReplyChange = (indexComment: number, value: string) => {
     setReply((prevReplies: any) => ({
@@ -2006,8 +2744,6 @@ function SyncFesion() {
       [indexComment]: value,
     }));
   };
-
-  const [addSigns, setAddSigns] = useState<boolean>(true);
 
   const handleClickSignatures = () => {
     setAddSigns(!addSigns);
@@ -2049,7 +2785,6 @@ function SyncFesion() {
       }
     }
   };
-
 
   useEffect(() => {
     if (editorRefs.current[currentPage]) {
@@ -2165,14 +2900,11 @@ function SyncFesion() {
     );
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const [indexComment, setIndexComment] = useState<number>(0);
   const handleOpenOptionsMenu = (event: any, index: number) => {
     setIndexComment(index);
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -2184,14 +2916,6 @@ function SyncFesion() {
     handleClose();
   };
 
-  const div1Ref = useRef<any>(null);
-  const div2Ref = useRef<any>(null);
-  const div3Ref = useRef<any>(null);
-
-  const [remainingVh, setRemainingVh] = useState(0);
-  const [footerWidth ,setFooterWidth ] = useState(0);
-
-  const [documentHeight,setDocumentHeight] = useState(0)
   useEffect(() => {
     const calculateRemainingVh = debounce(() => {
         const viewportHeight = window.innerHeight;
@@ -2219,31 +2943,31 @@ function SyncFesion() {
 }, []);
 
 
-useEffect(() => {
-  const updateFooterWidth = () => {
-    const div3Width = div3Ref.current?.offsetWidth || 0;
-    setFooterWidth(div3Width);
-  };
+  useEffect(() => {
+    const updateFooterWidth = () => {
+      const div3Width = div3Ref.current?.offsetWidth || 0;
+      setFooterWidth(div3Width);
+    };
 
-  // Initial call to set the footer width
-  updateFooterWidth();
+    // Initial call to set the footer width
+    updateFooterWidth();
 
-  // Set up the MutationObserver
-  const observer = new MutationObserver(updateFooterWidth);
+    // Set up the MutationObserver
+    const observer = new MutationObserver(updateFooterWidth);
 
-  // Start observing changes in div3Ref
-  if (div3Ref.current) {
-    observer.observe(div3Ref.current, {
-      attributes: true,    // Observe attribute changes
-      childList: true,     // Observe direct children changes
-      attributeFilter: ["style"],
-      subtree: true        // Observe all descendant changes
-    });
-  }
+    // Start observing changes in div3Ref
+    if (div3Ref.current) {
+      observer.observe(div3Ref.current, {
+        attributes: true,    // Observe attribute changes
+        childList: true,     // Observe direct children changes
+        attributeFilter: ["style"],
+        subtree: true        // Observe all descendant changes
+      });
+    }
 
-  // Cleanup observer on component unmount
-  return () => observer.disconnect();
-}, []);
+    // Cleanup observer on component unmount
+    return () => observer.disconnect();
+  }, []);
 
   const EditIconSvg = () => {
     return (
@@ -2262,9 +2986,7 @@ useEffect(() => {
     );
   };
 
-  const scrollPageRef = useRef<any>(null);
-
-  const [editorZoom,setEditorZoom ] = useState("100%");
+  const [editorZoom,setEditorZoom ] = useState("50%");
   return (
     <>
       {isLoading && (
@@ -2324,12 +3046,6 @@ useEffect(() => {
                 outline: "none",
                 width: 168,
               }}
-            // onFocus={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-            // }}
-            // onBlur={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-            // }}
             />
 
             <div
@@ -3279,24 +3995,27 @@ useEffect(() => {
             // position:"relative"
           }}
         >
-          <QuillToolbar
-            isBoldActive={isBoldActive}
-            setIsBoldActive={setIsBoldActive}
-            isItalicActive={isItalicActive}
-            setIsItalicActive={setIsItalicActive}
-            isUnderlineActive={isUnderlineActive}
-            setIsUnderlineActive={setIsUnderlineActive}
-            isStrikeActive={isStrikeActive}
-            setIsStrikeActive={setIsStrikeActive}
-            isScriptActive={isScriptActive}
-            setIsScriptActive={setIsScriptActice}
-            isListActive={isListActive}
-            setIsListActive={setIsListActive}
-            handleChangeSelection={handleChangeSelection}
-            scrollPageRef={scrollPageRef}
-            editorZoom = {editorZoom}
-            setEditorZoom = {setEditorZoom}
-          />
+        <QuillToolbar
+          pages={pages}
+          setPages={setPages}
+          isBoldActive={isBoldActive}
+          setIsBoldActive={setIsBoldActive}
+          isItalicActive={isItalicActive}
+          setIsItalicActive={setIsItalicActive}
+          isUnderlineActive={isUnderlineActive}
+          setIsUnderlineActive={setIsUnderlineActive}
+          isStrikeActive={isStrikeActive}
+          setIsStrikeActive={setIsStrikeActive}
+          isScriptActive={isScriptActive}
+          setIsScriptActive={setIsScriptActice}
+          isListActive={isListActive}
+          setIsListActive={setIsListActive}
+          handleChangeSelection={handleChangeSelection}
+          scrollPageRef={scrollPageRef}
+          editorZoom={editorZoom}
+          setEditorZoom={setEditorZoom}
+        />
+
         </div>
 
         {(showBlock === "" || documentContent == "word") && (
@@ -3335,7 +4054,7 @@ useEffect(() => {
                 style={{
                   height: "100%",
                   overflowY: "auto",
-                  zoom:editorZoom == "100%" ? "75%" : editorZoom == "75%" ? "60%" : editorZoom == "125%" ? "100%" : editorZoom == "150%" ? "125%" : editorZoom == "175%" ? "150%" :editorZoom  
+                  zoom:editorZoom == "100%" ? "100%" : editorZoom == "75%" ? "75%" : editorZoom == "125%" ? "125%" : editorZoom == "150%" ? "150%" : editorZoom == "175%" ? "175%" :editorZoom  
                 }}
                 ref={scrollPageRef}
               >
@@ -3347,11 +4066,12 @@ useEffect(() => {
                     // width: documentPageSize?.title === "Landscape" ? "90%" : "",
                   }}
                 >
-                  {pages.map((page, index) => {
-                    return (
-                      <div
-                        key={index}
-                        ref={(el) => (containerRefs.current[index] = el)} // Ref for the wrapper div
+                  {console.log("Rendering pages:", pages)}
+                  {pages.map((page, index) => (
+                        page && (
+                          <div
+                            key={index}
+                            ref={(el) => (containerRefs.current[index] = el)}
                         style={{
                           marginBottom: index > 0 ? "20px" : "0px",
                           borderRadius: "5px",
@@ -3360,11 +4080,9 @@ useEffect(() => {
                         }}
                       >
                         <ReactQuill
-                          ref={(el) => (editorRefs.current[index] = el)}
-                          value={page.content}
-                          onChange={(value, delta, source, editor) =>
-                            handleChange(value, delta, source, editor, index)
-                          }
+                          value={pages[index]?.content}
+                          onChange={(value, delta, source, editor) => handleChange(value, delta, source, editor, index)}
+                          ref={(ref) => (editorRefs.current[index] = ref)}
                           readOnly={!editMode}
                           onChangeSelection={handleChangeSelection}
                           modules={modules}
@@ -3396,8 +4114,8 @@ useEffect(() => {
                            `}
                         </style>
                       </div>
-                    );
-                  })}
+                    )
+                  ))}
 
                   {selection && (
                     <Tooltip title="Add Commment">
