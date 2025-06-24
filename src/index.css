@@ -1759,6 +1759,12 @@ body {
   font-size: 12px;
 }
 
+.ql-editor {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important
+}
+
+
 .replies {
   background-color: #eef3fa;
   border-top: 1px solid #00000080;
