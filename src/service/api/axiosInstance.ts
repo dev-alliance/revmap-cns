@@ -4,7 +4,7 @@ import axios from "axios";
 //   baseURL: "http://localhost:1337",
 
 const baseURL = axios.create({
-  baseURL: "http://api.contractnsign.com",
+  baseURL: "https://contract-sign-server.vercel.app/",
   // baseURL: "http://localhost:1337",
 
 });

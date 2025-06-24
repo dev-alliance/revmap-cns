@@ -65,7 +65,7 @@ import { ItemModel } from "@syncfusion/ej2-react-splitbuttons";
 import { ContractContext } from "@/context/ContractContext";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
-
+const Delta = Quill.import("delta");
 import PDFUploaderViewer from "@/pages/dasboard/contract/PDFUploaderViewer";
 import SyncFesionFileDilog from "@/pages/dasboard/contract/sdk/SyncFesionFileDilog";
 import {
@@ -103,6 +103,13 @@ DocumentEditorComponent.Inject(
 );
 
 DocumentEditorContainerComponent.Inject(Toolbar);
+
+import CustomOrderedList from './customOrderedList'; // path to your blot;
+import CustomAlphaList from './customAlphaBlot';
+import { constrainedMemory } from "process";
+import { setCtrlShiftAPressed, setupGlobalHighlightClearListener } from './sharedflag';
+import { setEditorInstances } from "./sharedflag";
+
 
 function SyncFesion() {
   const location = useLocation();
@@ -193,19 +200,88 @@ function SyncFesion() {
 
   const workerUrl =
     "https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js";
+  
+  // Create this map outside the event handler (at component/module level)
+  const originalFontSizeMap = new Map<any, string>(); // Key: editor instance, Value: original size
+  const [formattingVisible, setFormattingVisible] = useState(false);
+  const formattingVisibleRef = useRef(formattingVisible);
+  const [oldPages, setOldPages] = useState([]);
+  const [showTableTools, setShowTableTools] = useState(false);
+  // State for the cell fill color
+  const [cellFillColor, setCellFillColor] = useState(""); // Default color
+  const [editorHtml, setEditorHtml] = useState<any>([""]);
+  const [addedString, setAddedString] = useState("");
+  const [deletedString, setDeletedString] = useState("");
+  const editorRefs: any = useRef<any>([]);
+  const containerRefs: any = useRef([]); // Ref for storing page container divs
+  const parentContainerRef = useRef(null); // Ref for the parent container
+  const [isTableSelected, setIsTableSelected] = useState(false);
+  const [selection, setSelection] = useState<any>(null);
+  const [comments, setComments] = useState<any>([]);
+  const [openComment, SetOpenComment] = useState<boolean>(false);
+  const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [isInternal, setIsInternal] = useState<boolean>(false);
+  const [currentComment, setCurrentComment] = useState("");
+  const [commentSelection, setCommentSelection] = useState(null);
+  const [commentPrevBg, setCommentPrevBg] = useState("");
+  const commentInputRef: any = useRef(null);
+  const [isBoldActive, setIsBoldActive] = useState(false);
+  const [isItalicActive, setIsItalicActive] = useState(false);
+  const [isStrikeActive, setIsStrikeActive] = useState(false);
+  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
+  const [isScriptActive, setIsScriptActice] = useState("");
+  const [isListActive, setIsListActive] = useState("");
+  const [toMinus, setToMinus] = useState<number>(0);
+  const [commentLeftButton, setCommentLeftButton] = useState("97.8%");
+  const [editComment, setEditComment] = useState<boolean>(false);
+  const [editCommentIndex, setEditCommmentIndex] = useState<any>(null);
+  const [reply, setReply] = useState<any>({});
+  const [addSigns, setAddSigns] = useState<boolean>(true);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const div1Ref = useRef<any>(null);
+  const div2Ref = useRef<any>(null);
+  const div3Ref = useRef<any>(null);
+  const scrollPageRef = useRef<any>(null);
+
+  const [remainingVh, setRemainingVh] = useState(0);
+  const [footerWidth ,setFooterWidth ] = useState(0);
+
+  const [documentHeight,setDocumentHeight] = useState(0)
+
+  const [indexComment, setIndexComment] = useState<number>(0);
 
   useEffect(() => {
     setIsLoading(false);
     setLeftSidebarExpanded(true);
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
+  const quill = editorRefs.current[currentPage]?.getEditor();
+  if (!quill) return;
+
+  const editorElement = quill.root;
+
+  const handlePaste = (e:any) => {
+    e.preventDefault();
+
+    const text = e.clipboardData.getData('text/plain');
+
+    // Wait until Quill updates the selection after paste
     setTimeout(() => {
-      setEditMode(false);
+      const selection = quill.getSelection();
+
+      const insertAt = selection?.index ?? quill.getLength(); // fallback to end
+      quill.insertText(insertAt, text, {
+        font: 'arial',
+        size: '13px',
+        color: '#000000'
+      });
+
+      // Move cursor to end of pasted content
+      quill.setSelection(insertAt + text.length, 0);
     }, 0);
-<<<<<<< Updated upstream
-    setDucomentName("");
-=======
   };
 
   editorElement.addEventListener('paste', handlePaste);
@@ -213,6 +289,9 @@ function SyncFesion() {
     editorElement.removeEventListener('paste', handlePaste);
   };
 }, [currentPage]);
+
+
+
 
 //   useEffect(() => {
 //   if (!editorRefs) return;
@@ -232,7 +311,6 @@ function SyncFesion() {
 
 
   // Keep ref in sync
- 
   useEffect(() => {
     formattingVisibleRef.current = formattingVisible;
   }, [formattingVisible]);
@@ -685,41 +763,46 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     };
   }, []);
 
-  useEffect(() => {
-    pages.forEach((page, i) => {
-      if (page.type === "pageBreak") {
-        const editor = editorRefs.current[currentPage]?.getEditor();
-        if (!editor) return; // editor not ready
-
-        // Get cursor position
-        
-        const selection = editor.getSelection(true);
-        const insertIndex = selection ? selection.index : editor.getLength();
-        console.log("selection: ", selection.index);
-        console.log("insertIndex: ", insertIndex);
-
-        // Insert text at cursor position
-        const pageBreakText = "\n----- PAGE BREAK -----\n";
-        editor.insertText(insertIndex, pageBreakText, { color: 'white' });
 
 
-        // Set cursor right after the inserted text
-        editor.setSelection(insertIndex + pageBreakText.length);
+useEffect(() => {
+  pages.forEach((page, i) => {
+    if (page.type === "pageBreak") {
+      const editor = editorRefs.current[currentPage]?.getEditor();
+      if (!editor) return; // editor not ready
 
-        console.log("Page break inserted at position:", insertIndex);
-      }
-    });
-  }, [pages]);
+      // Get cursor position
+      
+      const selection = editor.getSelection(true);
+      const insertIndex = selection ? selection.index : editor.getLength();
+      console.log("selection: ", selection.index);
+      console.log("insertIndex: ", insertIndex);
+
+      // Insert text at cursor position
+      const pageBreakText = "\n----- PAGE BREAK -----\n";
+      editor.insertText(insertIndex, pageBreakText, { color: 'white' });
+
+
+      // Set cursor right after the inserted text
+      editor.setSelection(insertIndex + pageBreakText.length);
+
+      console.log("Page break inserted at position:", insertIndex);
+    }
+  });
+}, [pages]);
+
+
+
 
   useEffect(() => {
     // Exit early if editorRefs are not initialized
     if (!editorRefs) return;
 
     // Reset document state when no ID is present
->>>>>>> Stashed changes
     if (!id && !newId) {
       setTimeout(() => {
-        setPages([{ content: "" }]);
+        // Set default page content and styles
+        setPages([{ type: "content", content: "" }]);
         setBgColorSvg("#fefefe");
         setPrevBgColor("#fefefe");
         setSelectedFontSize("12px");
@@ -727,17 +810,27 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
         setSelectedFontValue("arial");
         setSelectedFont("arial");
         setPrevFontColor("black");
+        setDucomentName("");
+        setEditMode(false);
+
+        // Clear undo/redo history for the first page editor only (safe during new doc setup)
+        editorRefs?.current?.forEach((ref:any) => {
+          const editor = ref?.getEditor?.();
+          if (editor) {
+            editor.history.stack.redo = [];
+            editor.history.stack.undo = [];
+          }
+        });
+      }, 0);
+    } else {
+      // If editing an existing document, just reset non-destructive fields
+      setTimeout(() => {
+        setEditMode(false);
+        setDucomentName("");
       }, 0);
     }
-    if (!editorRefs) return;
-    const editor = editorRefs?.current[currentPage]?.getEditor();
-    setTimeout(() => {
-      editor.history.stack.redo = [];
-      editor.history.stack.undo = [];
-    }, 100);
   }, []);
 
-  const [oldPages, setOldPages] = useState([]);
   const listData = async () => {
     try {
       setIsLoading(true);
@@ -761,12 +854,22 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
 
       if (data?.pages) {
         setPages(() => {
-          let pages = data?.pages;
-          return pages;
+          // Defensive: if data.pages is undefined, fallback to empty array
+          let rawPages = data?.pages ?? [];
+
+          // Map pages and add type 'content' (assuming all are content pages)
+          let normalizedPages = rawPages.map((page:any) => ({
+            type: "content",        // add type here
+            content: page.content || ""  // safely fallback to empty string if needed
+          }));
+
+          return normalizedPages;
         });
         setCurrentPage(data?.pages.length - 1);
         setOldPages(data?.pages);
       }
+
+      //updateListStylesForAllPages();
 
       if (data?.pageSize) {
         setDocumentPageSize(() => {
@@ -782,26 +885,17 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
         });
       }
 
-      if (data?.comments) {
-        setComments(() => {
-          return data.comments;
-        });
-      }
-      if (data?.newFontSize) {
-        setContractNewFontSize(() => {
-          return data.newFontSize;
-        });
-      }
-      if (data?.newFonts) {
-        setContractNewFont(() => {
-          return data.newFonts;
-        });
-      }
-      if (data?.newFontStyles) {
-        setContractNewFontStyles(() => {
-          return data.newFontStyles;
-        });
-      }
+      const {
+        comments,
+        newFontSize,
+        newFonts,
+        newFontStyles
+      } = data || {};
+
+      if (comments) setComments(comments);
+      if (newFontSize) setContractNewFontSize(newFontSize);
+      if (newFonts) setContractNewFont(newFonts);
+      if (newFontStyles) setContractNewFontStyles(newFontStyles);
       setFormState(data?.overview);
       setDucomentName(data?.overview?.name);
       setLifecycleData(data?.lifecycle);
@@ -822,96 +916,72 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
 
   const editorContainerRef: any = useRef(null);
 
-  const handleSubmit = async () => {
-<<<<<<< Updated upstream
-    console.log("handle submit");
-    try {
-=======
-    try {
-        if (!editorRefs) return;
-    const editorRef = editorRefs.current[0];
-    const quillEditor = editorRef.getEditor();
-      const quillEditor1 = editorRefs.current[currentPage].getEditor();
-    const savedDelta =  quillEditor.getContents();
-    console.log("saveddelta", savedDelta);
->>>>>>> Stashed changes
-      if (!documentName) {
-        toast.error("Please enter the name of the document");
-        return;
-      }
-<<<<<<< Updated upstream
-      setAuditTrails([
+const handleSubmit = async () => {
+  try {
+      if (!editorRefs) return;
+  const editorRef = editorRefs.current[0];
+  const quillEditor = editorRef.getEditor();
+    const quillEditor1 = editorRefs.current[currentPage].getEditor();
+  const savedDelta =  quillEditor.getContents();
+  console.log("saveddelta", savedDelta);
+    if (!documentName) {
+      toast.error("Please enter the name of the document");
+      return;
+    }
+
+    // 1. Get Quill content as Delta
+    const quill = editorRefs.current[currentPage].getEditor();
+    if (!quill) {
+      toast.error("Editor instance not found.");
+      return;
+    }
+
+    const contentDelta = quill.getContents(); // This includes your custom embeds like tables
+    const contentJSON = JSON.stringify(contentDelta);
+
+    // 2. Prepare your payload including the content
+    const payload = {
+      documentName,
+      content: contentJSON,
+      auditTrails: [
         ...(auditTrails || []),
         {
           user: user?.firstName,
           date: new Date(),
           message: "has added the new version",
         },
-      ]);
+      ],
+      // ... any other data you want to send
+    };
 
-      await createPayload();
-=======
+    // 3. Save it via your API or local storage
+          await createPayload();
 
-      // 1. Get Quill content as Delta
-      const quill = editorRefs.current[currentPage].getEditor();
-      if (!quill) {
-        toast.error("Editor instance not found.");
-        return;
-      }
+    // 4. Reset UI states as you are already doing
+    setBgColorSvg("#fefefe");
+    setPrevBgColor("#fefefe");
+    setSelectedFontSize("12px");
+    setSelectedFontSizeValue("12px");
+    setSelectedFontValue("arial");
+    setSelectedFont("arial");
+    setPrevFontColor("black");
 
-      const contentDelta = quill.getContents(); // This includes your custom embeds like tables
-      const contentJSON = JSON.stringify(contentDelta);
-
-      // 2. Prepare your payload including the content
-      const payload = {
-        documentName,
-        content: contentJSON,
-        auditTrails: [
-          ...(auditTrails || []),
-          {
-            user: user?.firstName,
-            date: new Date(),
-            message: "has added the new version",
-          },
-        ],
-        // ... any other data you want to send
-      };
-
-      // 3. Save it via your API or local storage
-            await createPayload();
-
-      // 4. Reset UI states as you are already doing
->>>>>>> Stashed changes
-      setBgColorSvg("#fefefe");
-      setPrevBgColor("#fefefe");
-      setSelectedFontSize("12px");
-      setSelectedFontSizeValue("12px");
-      setSelectedFontValue("arial");
-      setSelectedFont("arial");
-      setPrevFontColor("black");
-<<<<<<< Updated upstream
-    } catch (error: any) {
-      console.log(error);
-
-      let errorMessage = "Failed to create .";
-=======
-
-      toast.success("Document saved successfully!");
-    } catch (error: any) {
-      console.log(error);
-      let errorMessage = "Failed to save document.";
->>>>>>> Stashed changes
-      if (error.response && error.response.data) {
-        errorMessage =
-          error.response.data.message ||
-          error.response.data ||
-          "An error occurred";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      toast.error(errorMessage);
+    toast.success("Document saved successfully!");
+  } catch (error: any) {
+    console.log(error);
+    let errorMessage = "Failed to save document.";
+    if (error.response && error.response.data) {
+      errorMessage =
+        error.response.data.message ||
+        error.response.data ||
+        "An error occurred";
+    } else if (error.message) {
+      errorMessage = error.message;
     }
-  };
+    toast.error(errorMessage);
+  }
+};
+
 
   const createPayload = async () => {
     try {
@@ -1039,8 +1109,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       [dropdown]: !prevState[dropdown],
     }));
   };
-
-  // To change the font style of selected content
 
   const onToolbarClick = (args: any) => {
     console.log("item clicked : ", args);
@@ -1183,15 +1251,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       case "Bullets-Square":
         documentEditor.editor.applyBullet("\uf0a7", "Wingdings"); // Square bullet
         break;
-      case "Numbering-Arabic":
-        documentEditor.editor.applyNumbering("%1.", "Arabic"); // Arabic numbering
-        break;
-      case "Numbering-Roman":
-        documentEditor.editor.applyNumbering("%1.", "Roman"); // Uppercase Roman numbering
-        break;
-      case "Numbering-Alpha":
-        documentEditor.editor.applyNumbering("%1.", "UpperLetter"); // Uppercase Alphabet numbering
-        break;
       // upper lower case
       case "uppercase":
         // Changes the selected text to uppercase
@@ -1252,8 +1311,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     }
   };
 
-  //
-
   const itemsss: ItemModel[] = [
     {
       text: "Single",
@@ -1268,8 +1325,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       text: "Double",
     },
   ];
-
-  const [showTableTools, setShowTableTools] = useState(false);
 
   // Function to update the table tool visibility based on the editor's selection
   const updateTableToolsVisibility = () => {
@@ -1286,9 +1341,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
-
-  // State for the cell fill color
-  const [cellFillColor, setCellFillColor] = useState(""); // Default color
 
   const applyCellFillColor = () => {
     const documentEditor = editorContainerRef.current?.documentEditor;
@@ -1342,15 +1394,33 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     }
   };
 
-  const [isTableSelected, setIsTableSelected] = useState(false);
-
+  /**
+   * Triggers a save prompt and exports the current document content as a .docx file.
+   * Uses Syncfusion DocumentEditor instance from a ref.
+   */
   const save = () => {
+    // Access the DocumentEditor instance safely
     const documentEditor = editorContainerRef.current?.documentEditor;
-    const userFileName = prompt("Enter a file name for your docs", "My File");
-    if (userFileName) {
-      documentEditor.save(userFileName, "Docx");
+
+    // Check if the editor is available before proceeding
+    if (!documentEditor) {
+      console.error("DocumentEditor is not available.");
+      alert("Document editor not initialized.");
+      return;
+    }
+
+    // Prompt user for a file name
+    const userFileName = prompt("Enter a file name for your document:", "My File");
+
+    // If user provides a name, proceed to save
+    if (userFileName && userFileName.trim() !== "") {
+      documentEditor.save(userFileName.trim(), "Docx");
+    } else {
+      alert("File name is required to save the document.");
     }
   };
+
+
   const onClick = () => {
     const container = editorContainerRef.current;
     if (container) {
@@ -1570,23 +1640,18 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       </div>
     );
   };
-<<<<<<< Updated upstream
-=======
-  const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use useRef to store container
->>>>>>> Stashed changes
+const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use useRef to store container
 
-  let container: DocumentEditorContainerComponent;
   const onCreated = useCallback(() => {
-    // To insert text in cursor position
-    container?.documentEditor?.editor.insertText("Document editor");
-    // Move selection to previous character
-    container?.documentEditor?.selection.moveToPreviousCharacter();
-    // To select the current word in document
-    container?.documentEditor?.selection.selectCurrentWord();
+    if (container.current) {
+      // Now container is safely accessed because we check if it exists
+      container.current.documentEditor?.editor.insertText("Document editor");
+      container.current.documentEditor?.selection.moveToPreviousCharacter();
+      container.current.documentEditor?.selection.selectCurrentWord();
 
-    // documentEditor?.restrictEditing = true;
-    // To get the selected content as text
-    const selectedContent: string = container?.documentEditor?.selection.text;
+      const selectedContent: string = container.current.documentEditor?.selection.text;
+      console.log(selectedContent);
+    }
   }, []);
 
   const [showPopup, setShowPopup] = useState<any>(false);
@@ -1611,6 +1676,7 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     //   button.setAttribute("aria-disabled", "true");
     // });
   }, [enabelEditing]);
+
   useEffect(() => {
     if (editMode) {
       handleClick();
@@ -1646,7 +1712,7 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     editor.history.stack.undo = [];
     editor.history.stack.redo = [];
     if (!id && newId === "") {
-      setPages([{ content: "" }]);
+      setPages([{ type: "content", content: "" }]);
     }
     setTimeout(() => {
       setBgColorSvg("#fefefe");
@@ -1666,6 +1732,7 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
 
     if (id || newId) {
       setPages(oldPages);
+      //updateListStylesForAllPages();
     }
     setEditMode(false);
     setEnabelEditing(true);
@@ -1687,10 +1754,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
 
     calculateWidth(); // Call on mount and documentName change
   }, [documentName]);
-
-  const [editorHtml, setEditorHtml] = useState<any>([""]);
-  const [addedString, setAddedString] = useState("");
-  const [deletedString, setDeletedString] = useState("");
 
   const stripHtml = (html: any) => {
     return html.replace(/<\/?[^>]+(>|$)/g, "");
@@ -1812,17 +1875,12 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
   //   setEditorHtml(html);
   // };
 
-  const editorRefs: any = useRef<any>([]);
-  const containerRefs: any = useRef([]); // Ref for storing page container divs
-
   const cmToPx = (cm: any) => {
     const numericValue = parseFloat(cm.replace(/[^0-9.]/g, ""));
     return numericValue * 37.8;
   };
 
   // cmToPx(documentPageSize.height)
-
-  const parentContainerRef = useRef(null); // Ref for the parent container
 
   const isContentEmpty = (htmlContent: string): boolean => {
     const tempDiv = document.createElement("div");
@@ -1832,72 +1890,193 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     return !tempDiv.textContent || !tempDiv.textContent.trim();
   };
 
-  const handleOverflow = debounce((index, editor, updatedPages) => {
-    const currentContent = editor.getContents();
-    const editorHeight = editor.root.scrollHeight;
-    // console.log(editorHeight)
-    // console.log(documentHeight)
+  function findDeltaIndexAtCharIndex(delta:any, charIndex:any) {
+  let deltaIndex = 0;
+  let runningCharCount = 0;
 
-    if(editor.root.innerText.trim().length <=0) return ;
-    if (editorHeight <= documentHeight) return; // Only handle if overflow occurs
+  for (const op of delta.ops) {
+    const insert = op.insert;
+    const len = typeof insert === 'string' ? insert.length : 1;
 
-    let fitIndex = currentContent.length();
-    let contentToFit = currentContent.slice(0, fitIndex);
+    if (runningCharCount + len > charIndex) {
+      deltaIndex += charIndex - runningCharCount;
+      break;
+    } else {
+      runningCharCount += len;
+      deltaIndex += len;
+    }
+  }
 
-    // Fit content within current page height
-    while (fitIndex > 0) {
-      editor.setContents(contentToFit, "silent");
+  return deltaIndex;
+}
 
-      if (editor.root.scrollHeight <= documentHeight) break;
+const PAGE_BREAK_STRING = "----- PAGE BREAK -----";
 
-      const ops = contentToFit.ops;
-      if (ops.length > 0) {
-        const lastOp = ops[ops.length - 1];
-        if (lastOp.insert && typeof lastOp.insert === "string") {
-          const lastIndex = lastOp.insert.lastIndexOf(" ");
-          lastOp.insert = lastIndex !== -1 ? lastOp.insert.slice(0, lastIndex) : "";
+const handleOverflow = debounce((index, editor, updatedPages) => {
+  const currentContent = editor.getContents();
+  const plainText = editor.getText();
+  const editorHeight = editor.root.scrollHeight;
+
+  // Get current cursor position before any changes
+  const selection = editor.getSelection();
+  const previousCursorPosition = selection ? selection.index : null;
+  console.log("Previous cursor position:", previousCursorPosition);
+
+  // 1. Exit if empty
+  if (plainText.trim().length === 0) return;
+
+  // 2. Check for manual page break position
+  const breakPosition = plainText.indexOf(PAGE_BREAK_STRING);
+
+  // 3. If manual page break found, split at that position
+  if (breakPosition !== -1) {
+    // Avoid re-handling same break — check if next page already has content
+    if (updatedPages[index + 1]?.content?.ops?.length > 0) return;
+
+    const breakLength = PAGE_BREAK_STRING.length; // include newlines
+    const before = currentContent.slice(0, breakPosition);
+    const after = currentContent.slice(breakPosition + breakLength);
+
+    editor.setContents(before, "silent");
+
+    moveToNextPage(after, index + 1, updatedPages, setPages, editorRefs);
+
+    return;
+  }
+
+  const documentHeight = cmToPx(documentPageSize.height);
+
+  // 4. If no manual break, check for overflow by height
+  if (editorHeight <= documentHeight) {
+    // Content fits, no need to split
+    return;
+  }
+
+  // 5. Automatic overflow split:
+  // Find largest content slice that fits in the page height
+  let fitIndex = currentContent.length(); // start from full length
+  let contentToFit = currentContent.slice(0, fitIndex);
+
+  while (fitIndex > 0) {
+    editor.setContents(contentToFit, "silent");
+    const testHeight = editor.root.scrollHeight;
+
+    if (testHeight <= documentHeight) break;
+
+    // Reduce content size by trimming last operation or characters
+    const ops = contentToFit.ops;
+    if (ops.length > 0) {
+      const lastOp = ops[ops.length - 1];
+      if (lastOp.insert && typeof lastOp.insert === "string") {
+        const lastSpaceIndex = lastOp.insert.lastIndexOf(" ");
+        if (lastSpaceIndex !== -1) {
+          lastOp.insert = lastOp.insert.slice(0, lastSpaceIndex);
         } else {
           ops.pop();
         }
+      } else {
+        ops.pop();
       }
-      fitIndex = contentToFit.ops.reduce((acc:any, op:any) => acc + (op.insert.length || 0), 0);
     }
 
-    // Assign fitting content to current page
-    updatedPages[index].content = contentToFit;
-    setPages(updatedPages);
+    // Recalculate fitIndex
+    fitIndex = contentToFit.ops.reduce((acc:any, op:any) => {
+      return acc + (typeof op.insert === "string" ? op.insert.length : 1);
+    }, 0);
+  }
+  console.log("")
 
-    // Move overflow content to the next page
-    const overflowContent = currentContent.slice(fitIndex);
-    moveToNextPage(overflowContent, index + 1, updatedPages);
-  }, 0); // Adjust debounce time
+  // 6. After fitting content found, split content
+  const overflowContent = currentContent.slice(fitIndex);
 
-  const moveToNextPage = (overflowContent:any, nextPageIndex:number, updatedPages:any[]) => {
-    if (overflowContent.length() === 0) return;
+  // Get current cursor position before any changes
+  console.log("new cursor position:", fitIndex);
+  
+  editor.setContents(contentToFit, "silent");
+  editor.setSelection(previousCursorPosition, 0, 'silent');
 
-    if (nextPageIndex >= updatedPages.length) {
-      updatedPages.push({ content: overflowContent });
-    } else {
-      updatedPages[nextPageIndex].content = overflowContent;
-    }
-    setPages([...updatedPages]);
+
+  moveToNextPage(overflowContent, index + 1, updatedPages, setPages, editorRefs);
+
+}, 100);
+
+
+
+function mergeContent(existingContent:any, overflowContent:any) {
+  if (!existingContent || !existingContent.ops) {
+    return overflowContent;
+  }
+  if (!overflowContent || !overflowContent.ops) {
+    return existingContent;
+  }
+  // Prepend overflowContent to existingContent for correct order
+  return {
+    ops: [...overflowContent.ops, ...existingContent.ops],
   };
+}
 
-<<<<<<< Updated upstream
-  const handleChange = (value:any, delta:any, source:string, editor:any, index:number) => {
-    const updatedPages = [...pages];
-    const editor_ = editorRefs.current[currentPage].getEditor();
-    if (index >= updatedPages.length) return;
 
-    // Update content only if it changed
-    if (updatedPages[index].content !== value) {
-      updatedPages[index].content = value;
-    }
+function moveToNextPage(overflowContent:any, nextPageIndex:any, pages:any, setPages:any, editorRefs:any) {
+  console.log('mergeContent called');
+  const existingNextContent = pages[nextPageIndex]?.content;
 
-    handleOverflow(index, editor_, updatedPages); 
-  };
-=======
->>>>>>> Stashed changes
+  console.log('Existing content ops:', existingNextContent?.ops);
+  console.log('Overflow content ops:', overflowContent.ops);
+
+  // Merge overflowContent with existing next page content
+  const mergedContent = mergeContent(existingNextContent, overflowContent);
+
+  // Create new pages array with merged content on next page
+  const newPages = pages.map((page:any, idx:any) =>
+    idx === nextPageIndex
+      ? { ...page, content: mergedContent }
+      : page
+  );
+
+  // If nextPageIndex is beyond current pages length, add new page
+  if (nextPageIndex >= pages.length) {
+    newPages.push({ content: overflowContent });
+  }
+
+  console.log('Updated next page content after merge:', mergedContent);
+  setPages(newPages);
+  //updateListStylesForAllPages();
+
+  // Optionally, update editor content for next page here too,
+  // after state update
+  const nextEditorRef = editorRefs.current[nextPageIndex];
+  if (nextEditorRef) {
+    const quill = nextEditorRef.getEditor();
+    quill.setContents(mergedContent);
+  }
+}
+
+
+const handleChange = (value: any, delta: any, source: string, editor: any, index: number) => {
+  const updatedPages = [...pages];
+
+  // 🛡️ Safely get editor
+  const editorRef = editorRefs.current[index];
+  if (!editorRef) {
+    console.warn(`Editor ref not found at index ${index}`);
+    return;
+  }
+
+  const quillEditor = editorRef.getEditor();
+  if (index >= updatedPages.length) return;
+
+  // Update content only if it changed
+  if (updatedPages[index].content !== value) {
+    updatedPages[index].content = value;
+  }
+
+  //updateListStylesForAllPages();
+
+  handleOverflow(index, quillEditor, updatedPages);
+};
+
+
+
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
@@ -2010,6 +2189,8 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
 
           return updatedPages;
         });
+
+        //updateListStylesForAllPages();
       }
     }
 
@@ -2029,12 +2210,13 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       const currentLineText = currentLine ? currentLine.domNode.innerText : "";
       var customHeading = format?.customHeading;
       var size = format?.size;
-      if (currentLineText.trim().length < 1) {
-        if (format.customHeading !== "paragraph") {
-          customHeading = "paragraph";
-          size = selectedFontSize;
-          setSelectedHeadersValue(0);
-        }
+      const isEmptyLine = currentLineText.trim().length === 0;
+      const isNotParagraph = format.customHeading !== "paragraph";
+
+      if (isEmptyLine && isNotParagraph) {
+        customHeading = "paragraph";
+        size = selectedFontSize;
+        setSelectedHeadersValue(0);
       }
 
       if (format.color) {
@@ -2090,6 +2272,16 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
           currentEditor.format("list", false)
         }
       }
+        setTimeout(() => {
+        const editor = editorRefs.current[currentPage].getEditor();
+        const range = editor.getSelection(true);
+        if (!range) return;
+
+          // example after adding or updating new page content
+          const newEditor = editorRefs.current[currentPage].getEditor();
+          //patchListStartOnEditor(newEditor);
+        }, 0); // Delay to let Quill insert the new line first
+
     }
   };
 
@@ -2101,9 +2293,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       editor.focus();
     }
   }, [currentPage]);
-
-  const [toMinus, setToMinus] = useState<number>(0);
-  const [commentLeftButton, setCommentLeftButton] = useState("97.8%");
 
   useEffect(() => {
     if (documentPageSize.title === "JIS B6") {
@@ -2249,9 +2438,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     }
   };
 
-  const [selection, setSelection] = useState<any>(null);
-  const [comments, setComments] = useState<any>([]);
-
   useEffect(() => {
     if (!editorRefs.current[currentPage]) return;
     const editor = editorRefs.current[currentPage].getEditor();
@@ -2260,13 +2446,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       setButtonPosition({ top: bounds.bottom + 20 });
     }
   }, [selection]);
-
-  const [isBoldActive, setIsBoldActive] = useState(false);
-  const [isItalicActive, setIsItalicActive] = useState(false);
-  const [isStrikeActive, setIsStrikeActive] = useState(false);
-  const [isUnderlineActive, setIsUnderlineActive] = useState(false);
-  const [isScriptActive, setIsScriptActice] = useState("");
-  const [isListActive, setIsListActive] = useState("");
 
   type range = {
     index: number;
@@ -2451,15 +2630,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     left: 0,
   });
 
-  const [openComment, SetOpenComment] = useState<boolean>(false);
-  const [isFocusedInput, setIsFocusedInput] = useState<boolean>(false);
-  const [isPublic, setIsPublic] = useState<boolean>(true);
-  const [isInternal, setIsInternal] = useState<boolean>(false);
-  const [currentComment, setCurrentComment] = useState("");
-  const [commentSelection, setCommentSelection] = useState(null);
-  const [commentPrevBg, setCommentPrevBg] = useState("");
-  const commentInputRef: any = useRef(null);
-
   useEffect(() => {
     if (openComment && inputRef.current) {
       commentInputRef.current.focus();
@@ -2563,13 +2733,10 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     setAddReply({ open: false, id: "" });
   };
 
-  const [editComment, setEditComment] = useState<boolean>(false);
-  const [editCommentIndex, setEditCommmentIndex] = useState<any>(null);
   const [addReply, setAddReply] = useState<any>({
     open: false,
     id: "",
   });
-  const [reply, setReply] = useState<any>({});
 
   const handleReplyChange = (indexComment: number, value: string) => {
     setReply((prevReplies: any) => ({
@@ -2577,8 +2744,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       [indexComment]: value,
     }));
   };
-
-  const [addSigns, setAddSigns] = useState<boolean>(true);
 
   const handleClickSignatures = () => {
     setAddSigns(!addSigns);
@@ -2620,7 +2785,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
       }
     }
   };
-
 
   useEffect(() => {
     if (editorRefs.current[currentPage]) {
@@ -2736,14 +2900,11 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     );
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const [indexComment, setIndexComment] = useState<number>(0);
   const handleOpenOptionsMenu = (event: any, index: number) => {
     setIndexComment(index);
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -2755,14 +2916,6 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
     handleClose();
   };
 
-  const div1Ref = useRef<any>(null);
-  const div2Ref = useRef<any>(null);
-  const div3Ref = useRef<any>(null);
-
-  const [remainingVh, setRemainingVh] = useState(0);
-  const [footerWidth ,setFooterWidth ] = useState(0);
-
-  const [documentHeight,setDocumentHeight] = useState(0)
   useEffect(() => {
     const calculateRemainingVh = debounce(() => {
         const viewportHeight = window.innerHeight;
@@ -2790,31 +2943,31 @@ const currentFormats = editor.getFormat(range.index - text.length, 1);
 }, []);
 
 
-useEffect(() => {
-  const updateFooterWidth = () => {
-    const div3Width = div3Ref.current?.offsetWidth || 0;
-    setFooterWidth(div3Width);
-  };
+  useEffect(() => {
+    const updateFooterWidth = () => {
+      const div3Width = div3Ref.current?.offsetWidth || 0;
+      setFooterWidth(div3Width);
+    };
 
-  // Initial call to set the footer width
-  updateFooterWidth();
+    // Initial call to set the footer width
+    updateFooterWidth();
 
-  // Set up the MutationObserver
-  const observer = new MutationObserver(updateFooterWidth);
+    // Set up the MutationObserver
+    const observer = new MutationObserver(updateFooterWidth);
 
-  // Start observing changes in div3Ref
-  if (div3Ref.current) {
-    observer.observe(div3Ref.current, {
-      attributes: true,    // Observe attribute changes
-      childList: true,     // Observe direct children changes
-      attributeFilter: ["style"],
-      subtree: true        // Observe all descendant changes
-    });
-  }
+    // Start observing changes in div3Ref
+    if (div3Ref.current) {
+      observer.observe(div3Ref.current, {
+        attributes: true,    // Observe attribute changes
+        childList: true,     // Observe direct children changes
+        attributeFilter: ["style"],
+        subtree: true        // Observe all descendant changes
+      });
+    }
 
-  // Cleanup observer on component unmount
-  return () => observer.disconnect();
-}, []);
+    // Cleanup observer on component unmount
+    return () => observer.disconnect();
+  }, []);
 
   const EditIconSvg = () => {
     return (
@@ -2833,9 +2986,7 @@ useEffect(() => {
     );
   };
 
-  const scrollPageRef = useRef<any>(null);
-
-  const [editorZoom,setEditorZoom ] = useState("100%");
+  const [editorZoom,setEditorZoom ] = useState("50%");
   return (
     <>
       {isLoading && (
@@ -2895,12 +3046,6 @@ useEffect(() => {
                 outline: "none",
                 width: 168,
               }}
-            // onFocus={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Darken border on focus
-            // }}
-            // onBlur={(e) => {
-            //   e.target.style.borderBottom = "1px solid #174B8B"; // Revert to normal on blur
-            // }}
             />
 
             <div
@@ -3850,24 +3995,27 @@ useEffect(() => {
             // position:"relative"
           }}
         >
-          <QuillToolbar
-            isBoldActive={isBoldActive}
-            setIsBoldActive={setIsBoldActive}
-            isItalicActive={isItalicActive}
-            setIsItalicActive={setIsItalicActive}
-            isUnderlineActive={isUnderlineActive}
-            setIsUnderlineActive={setIsUnderlineActive}
-            isStrikeActive={isStrikeActive}
-            setIsStrikeActive={setIsStrikeActive}
-            isScriptActive={isScriptActive}
-            setIsScriptActive={setIsScriptActice}
-            isListActive={isListActive}
-            setIsListActive={setIsListActive}
-            handleChangeSelection={handleChangeSelection}
-            scrollPageRef={scrollPageRef}
-            editorZoom = {editorZoom}
-            setEditorZoom = {setEditorZoom}
-          />
+        <QuillToolbar
+          pages={pages}
+          setPages={setPages}
+          isBoldActive={isBoldActive}
+          setIsBoldActive={setIsBoldActive}
+          isItalicActive={isItalicActive}
+          setIsItalicActive={setIsItalicActive}
+          isUnderlineActive={isUnderlineActive}
+          setIsUnderlineActive={setIsUnderlineActive}
+          isStrikeActive={isStrikeActive}
+          setIsStrikeActive={setIsStrikeActive}
+          isScriptActive={isScriptActive}
+          setIsScriptActive={setIsScriptActice}
+          isListActive={isListActive}
+          setIsListActive={setIsListActive}
+          handleChangeSelection={handleChangeSelection}
+          scrollPageRef={scrollPageRef}
+          editorZoom={editorZoom}
+          setEditorZoom={setEditorZoom}
+        />
+
         </div>
 
         {(showBlock === "" || documentContent == "word") && (
@@ -3906,7 +4054,7 @@ useEffect(() => {
                 style={{
                   height: "100%",
                   overflowY: "auto",
-                  zoom:editorZoom == "100%" ? "75%" : editorZoom == "75%" ? "60%" : editorZoom == "125%" ? "100%" : editorZoom == "150%" ? "125%" : editorZoom == "175%" ? "150%" :editorZoom  
+                  zoom:editorZoom == "100%" ? "100%" : editorZoom == "75%" ? "75%" : editorZoom == "125%" ? "125%" : editorZoom == "150%" ? "150%" : editorZoom == "175%" ? "175%" :editorZoom  
                 }}
                 ref={scrollPageRef}
               >
@@ -3918,11 +4066,12 @@ useEffect(() => {
                     // width: documentPageSize?.title === "Landscape" ? "90%" : "",
                   }}
                 >
-                  {pages.map((page, index) => {
-                    return (
-                      <div
-                        key={index}
-                        ref={(el) => (containerRefs.current[index] = el)} // Ref for the wrapper div
+                  {console.log("Rendering pages:", pages)}
+                  {pages.map((page, index) => (
+                        page && (
+                          <div
+                            key={index}
+                            ref={(el) => (containerRefs.current[index] = el)}
                         style={{
                           marginBottom: index > 0 ? "20px" : "0px",
                           borderRadius: "5px",
@@ -3931,11 +4080,9 @@ useEffect(() => {
                         }}
                       >
                         <ReactQuill
-                          ref={(el) => (editorRefs.current[index] = el)}
-                          value={page.content}
-                          onChange={(value, delta, source, editor) =>
-                            handleChange(value, delta, source, editor, index)
-                          }
+                          value={pages[index]?.content}
+                          onChange={(value, delta, source, editor) => handleChange(value, delta, source, editor, index)}
+                          ref={(ref) => (editorRefs.current[index] = ref)}
                           readOnly={!editMode}
                           onChangeSelection={handleChangeSelection}
                           modules={modules}
@@ -3967,8 +4114,8 @@ useEffect(() => {
                            `}
                         </style>
                       </div>
-                    );
-                  })}
+                    )
+                  ))}
 
                   {selection && (
                     <Tooltip title="Add Commment">

@@ -9,16 +9,15 @@ import React, {
   useRef,
   useState,
 } from "react";
+import ReactDOM from 'react-dom';
 import { Quill } from "react-quill";
 import DropdownBarImage from "../../../../assets/shape.png";
 import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
+//import { setWaitingForBold } from './sharedflag';
+import { getCtrlShiftAPressed, setCtrlShiftAPressed, getEditorInstances,   clearHighlight } from './sharedflag';
+import TableGridPicker from './TableGridPicker'; // make sure path is correct
 Quill.register("modules/resize", ResizeModule);
-<<<<<<< Updated upstream
-function undoChange() {
-  // @ts-ignore
-  this.quill.history.undo();
-=======
 
 import CustomOrderedList from './customOrderedList'; // path to your blot
 
@@ -26,10 +25,12 @@ type Page =
   | { type: 'pageBreak' }
   | { type: 'content'; content: string };
 
+
 type QuillToolbarProps = {
   pages: Page[];
   setPages: React.Dispatch<React.SetStateAction<Page[]>>;
 };
+
 
 const BlockEmbed1 = Quill.import('blots/block/embed');
 
@@ -138,19 +139,38 @@ static showActionMenu(cell: HTMLTableCellElement, table: HTMLTableElement, node:
   document.addEventListener('click', () => {
     menu.remove();
   }, { once: true });
->>>>>>> Stashed changes
 }
 
-function redoChange() {
-  // @ts-ignore
-  this.quill.history.redo();
+
+  static addInteractionListeners(node: HTMLElement) {
+  const table = node.querySelector('table');
+  if (!table) return;
+
+  const lastRow = table.rows[table.rows.length - 1];
+  const lastColIndex = lastRow ? lastRow.cells.length - 1 : -1;
+
+  // Prevent duplicate listeners
+  const allCells = table.querySelectorAll('td, th');
+  allCells.forEach((cell) => {
+    const clone = cell.cloneNode(true);
+    cell.parentNode?.replaceChild(clone, cell);
+  });
+
+  Array.from(table.rows).forEach((row, rowIndex) => {
+    Array.from(row.cells).forEach((cell, colIndex) => {
+      cell.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isLastRow = rowIndex === table.rows.length - 1;
+        const isLastCol = colIndex === lastColIndex;
+
+        if (isLastRow || isLastCol) {
+          TableBlot.showActionMenu(cell as HTMLTableCellElement, table, node);
+        }
+      });
+    });
+  });
 }
 
-<<<<<<< Updated upstream
-// Custom CheckboxBlot for Quill
-const BlockEmbed = Quill.import("blots/block/embed");
-
-=======
 
   static insertRow(table: HTMLTableElement) {
     const row = table.insertRow();
@@ -187,8 +207,10 @@ const BlockEmbed = Quill.import("blots/block/embed");
   }
 
 }
+
 // Register blot
 Quill.register(TableBlot);
+
 
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
@@ -214,9 +236,10 @@ class ResizableImage extends BlockEmbed {
     };
   }
 }
+
 Quill.register({ "formats/resizableImage": ResizableImage });
 
->>>>>>> Stashed changes
+
 class VideoBlot extends BlockEmbed {
   static create(value: any) {
     const node = super.create();
@@ -226,6 +249,7 @@ class VideoBlot extends BlockEmbed {
     node.setAttribute("height", "auto"); // Optional: Set default height
     return node;
   }
+
 
   static value(node: any) {
     return node.getAttribute("src"); // Get the video source
@@ -575,42 +599,21 @@ Quill.register(SignatureBlot);
 // Add sizes to whitelist and register them
 const SizeStyle = Quill.import("attributors/style/size");
 SizeStyle.whitelist = [
-<<<<<<< Updated upstream
-  "8px",
-  "10px",
-  "12px",
-  "13px",
-  "14px",
-  "16px",
-  "18px",
-  "20px",
-  "24px",
-  "26px",
-  "28px",
-  "32px",
-  "36px",
-  "40px",
-  "44px",
-  "48px",
-  "54px",
-  "60px",
-  "72px",
-=======
   "11.55px",   // ≈ 7pt
   "13.2px",   // ≈ 8pt
   "14.85px",   // ≈ 9pt
   "16.5px",   // ≈ 10pt
   "18.15px", // ≈ 11pt
-  "23.8px", // ≈ 12pt
+  "19.8px", // ≈ 12pt
   "23.1px", // ≈ 14pt
   "29.7px", // ≈ 18pt
   "39.6px", // ≈ 24pt
   "59.4px", // ≈ 36pt
   "79.2px", // ≈ 48pt
   "118.8px", // ≈ 72pt
->>>>>>> Stashed changes
 ];
 Quill.register(SizeStyle, true);
+
 
 // Add fonts to whitelist and register them
 const Font = Quill.import("formats/font");
@@ -692,6 +695,24 @@ const listHandler = function (value: any) {
   }
 };
 
+function undoChange(this: any) {
+  const quill = this.quill;
+  if (quill && quill.history) {
+    quill.history.undo();
+  } else {
+    console.warn("Undo failed: Quill instance or history module not available.");
+  }
+}
+
+function redoChange(this: any) {
+  const quill = this.quill;
+  if (quill && quill.history) {
+    quill.history.redo();
+  } else {
+    console.warn("redo failed: Quill instance or history module not available.");
+  }
+}
+
 // Modules object for setting up the Quill editor
 export const modules = {
   toolbar: {
@@ -704,14 +725,14 @@ export const modules = {
   },
   history: {
     delay: 0,
-    maxStack: 5000,
+    maxStack: 1000,
     userOnly: true,
   },
   resize: {
     modules: ['Resize', 'DisplaySize', 'Toolbar']
   },
   clipboard: {
-    // mathc
+     matchVisual: false
   }
 };
 
@@ -743,6 +764,7 @@ export const formats = [
   "video",
   "audio",
   "customHeading",
+  'htmlTable',
 ];
 
 const List = Quill.import("formats/list");
@@ -766,7 +788,7 @@ const Parchment = Quill.import("parchment");
 
 const lineHeightConfig = {
   scope: Parchment.Scope.BLOCK,
-  whitelist: ["1.5", "1.7", "2", "2.5", "3", "3.5"],
+  whitelist: ["1", "1.15", "1.5", "2", "2.5", "3"],
 };
 
 const LineHeightStyle = new Parchment.Attributor.Style(
@@ -788,6 +810,8 @@ Quill.register(CustomHeadingAttribute, true);
 Quill.register(LineHeightStyle, true);
 
 export default function QuillToolbar(props: any) {
+  const { pages, setPages } = props as QuillToolbarProps;
+  
   const {
     isBoldActive,
     setIsBoldActive,
@@ -826,8 +850,6 @@ export default function QuillToolbar(props: any) {
     setSelectedFontValue,
     setSelectedFontSizeValue,
     setSelectedHeadersValue,
-    setPages,
-    setCurrentPage,
     spacing,
     setSpacing,
     setBgColorSelection,
@@ -842,116 +864,64 @@ export default function QuillToolbar(props: any) {
   } = useContext(ContractContext);
 
   const toolbarRef: any = useRef(null);
+  
+  
+  const [currentPage, setCurrentPage] = useState(0);
 
-<<<<<<< Updated upstream
-  const handleListClick = (value: string) => {
-    const editor = editorRefContext.getEditor();
-    if (!editor) return;
+// const handleAddPage = () => {
+//     setPages(prevPages => {
+//       const updatedPages = [...prevPages, { content: '' }];
+//       const newIndex = updatedPages.length - 1;
+//       setCurrentPage(newIndex);
+//       console.log('📄 New page added at index:', newIndex);
 
-    const range = editor.getSelection(true);
-    if (!range) return;
+//       // Simulate Quill history.record if needed
+//       // const quill = editorRefContext?.getEditor();
+//       // quill?.history?.record();
 
-    let [block] = editor.scroll.descendant(
-      Quill.import("blots/block"),
-      range.index
-    );
+//       return updatedPages;
+//     });
+//   };
 
-    if (block && block.domNode.tagName === "LI") {
-      const list = block.parent;
-      const listType = block.parent?.domNode?.attributes[0]?.nodeValue;
+const PageBreakComponent = () => {
+  const [pages, setPages] = useState<Page[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
 
-      if (list && list.domNode.tagName !== value.toUpperCase()) {
+  // A ref to hold the latest version of the page break function
+    const pageBreakHandlerRef = useRef<(() => void) | null>(null);
 
-        if (listType === value) {
-          editor.format("list", false, "user");
-          setIsListActive("");
-        }
-        else {
-          editor.format("list", false, "user");
-          setIsListActive(value);
-          editor.format("list", value, "user");
-        }
-      } else {
-        list.children.forEach((listItem: any) => {
-          const itemIndex = editor.getIndex(listItem);
-
-          if (value === "none") {
-            setIsListActive("none");
-            editor.formatLine(itemIndex, 1, { list: false }, "user");
-          } else {
-            setIsListActive(value);
-            editor.formatLine(itemIndex, 1, { list: value }, "user");
-          }
-        });
-      }
-    } else {
-      if (value === "none") {
-        setIsListActive("none");
-        editor.format("list", false, "user");
-      } else {
-        setIsListActive(value);
-        editor.format("list", value, "user");
-      }
-    }
-
-    setAnchorEl2(null);
-    setAnchorEl(null);
-  };
-
-=======
+  // This function adds a new page
   // const handleAddPage = () => {
-  //     setPages(prevPages => {
-  //       const updatedPages = [...prevPages, { content: '' }];
-  //       const newIndex = updatedPages.length - 1;
-  //       setCurrentPage(newIndex);
-  //       console.log('📄 New page added at index:', newIndex);
+  //   setPages((prevPages) => {
+  //     const updatedPages = [...prevPages, { content: '' }];
+  //     const newIndex = updatedPages.length - 1;
+  //     setCurrentPage(newIndex);
 
-  //       // Simulate Quill history.record if needed
-  //       // const quill = editorRefContext?.getEditor();
-  //       // quill?.history?.record();
+  //     console.log('📄 Page break added at index:', newIndex);
 
-  //       return updatedPages;
-  //     });
-  //   };
+  //     // Simulate Quill history.record if needed
+  //     // const quill = yourEditorRef.current;
+  //     // if (quill) {
+  //     //   quill.history.record();
+  //     //   console.log('✍️ Quill history recorded');
+  //     // }
 
-  const PageBreakComponent = () => {
-    const [pages, setPages] = useState<Page[]>([]);
-    const [currentPage, setCurrentPage] = useState(0);
+  //     return updatedPages;
+  //   });
+  // }
 
-    // A ref to hold the latest version of the page break function
-      const pageBreakHandlerRef = useRef<(() => void) | null>(null);
+  // Store the handler so it can be triggered outside
+  // pageBreakHandlerRef.current = handleAddPage;
 
-    // This function adds a new page
-    // const handleAddPage = () => {
-    //   setPages((prevPages) => {
-    //     const updatedPages = [...prevPages, { content: '' }];
-    //     const newIndex = updatedPages.length - 1;
-    //     setCurrentPage(newIndex);
-
-    //     console.log('📄 Page break added at index:', newIndex);
-
-    //     // Simulate Quill history.record if needed
-    //     // const quill = yourEditorRef.current;
-    //     // if (quill) {
-    //     //   quill.history.record();
-    //     //   console.log('✍️ Quill history recorded');
-    //     // }
-
-    //     return updatedPages;
-    //   });
-    // }
-
-    // Store the handler so it can be triggered outside
-    // pageBreakHandlerRef.current = handleAddPage;
-
-    // External trigger for page break
-    const triggerPageBreak = () => {
-      if (pageBreakHandlerRef.current) {
-        console.log('🧠 Triggering page break...');
-        pageBreakHandlerRef.current();
-      }
-    };
+  // External trigger for page break
+  const triggerPageBreak = () => {
+    if (pageBreakHandlerRef.current) {
+      console.log('🧠 Triggering page break...');
+      pageBreakHandlerRef.current();
+    }
   };
+};
+
 
   // Trigger function (could be called from outside later)
   const triggerPageBreak = () => {
@@ -959,45 +929,45 @@ export default function QuillToolbar(props: any) {
     PageBreakComponent();
   };
 
-  function removeListFromEmptyLines(editor:any) {
-    const delta = editor.getContents();
-    let index = 0;
+function removeListFromEmptyLines(editor:any) {
+  const delta = editor.getContents();
+  let index = 0;
 
-    console.log("🔍 Running removeListFromEmptyLines");
-    console.log("Delta ops:", delta.ops);
+  console.log("🔍 Running removeListFromEmptyLines");
+  console.log("Delta ops:", delta.ops);
 
-    delta.ops?.forEach((op:any, i:any) => {
-      const insert = op.insert;
-      const currentListType = op.attributes.list; // ✅ Fix here
+  delta.ops?.forEach((op:any, i:any) => {
+    const insert = op.insert;
+     const currentListType = op.attributes.list; // ✅ Fix here
 
-      if (typeof insert === 'string' && insert === '\n') {
-        const attributes = op.attributes;
-        console.log(`Line break at index ${index} with attributes:`, attributes);
+    if (typeof insert === 'string' && insert === '\n') {
+      const attributes = op.attributes;
+      console.log(`Line break at index ${index} with attributes:`, attributes);
 
-        if (attributes && attributes.list) {
-          const prevOp = delta.ops[i - 1];
-          const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
+      if (attributes && attributes.list) {
+        const prevOp = delta.ops[i - 1];
+        const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
 
-          console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
-          console.log(`→ Previous text: "${prevText}"`);
+        console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
+        console.log(`→ Previous text: "${prevText}"`);
 
-          if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
-            console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list.`);
-            editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
-          }
+        if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
+          console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list.`);
+          editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
         }
       }
+    }
 
-      // Advance index
-      if (typeof insert === 'string') {
-        index += insert.length;
-      } else {
-        index += 1;
-      }
-    });
+    // Advance index
+    if (typeof insert === 'string') {
+      index += insert.length;
+    } else {
+      index += 1;
+    }
+  });
 
-    console.log("✅ Finished checking for empty list lines");
-  }
+  console.log("✅ Finished checking for empty list lines");
+}
 
 function removeListFromEmptyLinesalpha(editor: any) {
   const delta = editor.getContents();
@@ -1081,6 +1051,9 @@ function removeListFromEmptyLinesroman(editor: any) {
   console.log("✅ Finished checking for empty list lines");
 }
 
+
+
+
 const handleListClick = (value: string) => {
   console.log('[📋 handleListClick] List format value:', value);
 
@@ -1126,7 +1099,7 @@ const handleListClick = (value: string) => {
   setAnchorEl(null);
 };
 
->>>>>>> Stashed changes
+
   const [indexCursor, setIndexCursor] = useState<any>(null);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -1180,6 +1153,24 @@ const handleListClick = (value: string) => {
   const [anchorElLinkPicture, setAnchorElLinkPicture] = React.useState(null);
   const openLinkPicture = Boolean(anchorElLinkPicture);
 
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+
+  const [prevSelectionBg, setPrevSelectionBg] = useState<any>(null);
+  const [TextColor, setTextColor] = useState("");
+
+  const [selectedColumn, setSelectedColumn] = useState("one");
+  const [dispalyTextChange, setDisplayTextChange] = useState(false);
+
+  const [showFormattingMarks, setShowFormattingMarks] = useState(false);
+  const [selectedAlign, setSelectedAlign] = useState("left");
+
+  const [linkUrl, setLinkUrl] = useState("");
+  const [displayText, setDisplayText] = useState("");
+
+  const [selection, setSelection] = useState<any>(null);
+  const [cursorIndex, setCursorIndex] = useState<number>(0);
+
   const handleClick2 = (event: any) => {
     setAnchorEl2(event.currentTarget);
     const editor = editorRefContext.getEditor();
@@ -1191,6 +1182,7 @@ const handleListClick = (value: string) => {
       }, 0);
     }
   };
+
   const handleClose2 = () => {
     const editor = editorRefContext.getEditor();
     const scrollContainer = scrollPageRef.current;
@@ -1216,6 +1208,7 @@ const handleListClick = (value: string) => {
     }
     setAnchorEl2(null);
   };
+
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
     const editor = editorRefContext.getEditor();
@@ -1259,61 +1252,43 @@ const handleListClick = (value: string) => {
     setAnchorEl(null);
   };
 
-<<<<<<< Updated upstream
-  const handleOpenMargins = (event: any) => {
-    if (openMargins) return;
-    const editor = editorRefContext.getEditor();
-    const range = editor.getSelection(true);
-    setIndexCursor(range);
-    const scrollContainer = scrollPageRef.current;
-    setAnchorElMargins(event.currentTarget);
-=======
-  // Opens the margin popover and stores the cursor position
-  const handleOpenMargins = (event: any) => {
-    if (openMargins) return; // Prevent re-opening if already open
+// Opens the margin popover and stores the cursor position
+const handleOpenMargins = (event: any) => {
+  if (openMargins) return; // Prevent re-opening if already open
 
-    const editor = editorRefContext.getEditor(); // Get Quill editor instance
-    const range = editor.getSelection(true); // Get current selection (with fallback to cursor position)
+  const editor = editorRefContext.getEditor(); // Get Quill editor instance
+  const range = editor.getSelection(true); // Get current selection (with fallback to cursor position)
 
-    setIndexCursor(range); // Save the current cursor position to restore later
-    setAnchorElMargins(event.currentTarget); // Set anchor element for the margin popover
+  setIndexCursor(range); // Save the current cursor position to restore later
+  setAnchorElMargins(event.currentTarget); // Set anchor element for the margin popover
 
-    // Restore scroll position if previously saved
-    const scrollContainer = scrollPageRef.current;
->>>>>>> Stashed changes
-    if (scrollPosition) {
-      scrollContainer.scrollTop = scrollPosition;
+  // Restore scroll position if previously saved
+  const scrollContainer = scrollPageRef.current;
+  if (scrollPosition) {
+    scrollContainer.scrollTop = scrollPosition;
+  }
+};
+
+// Closes the margin popover and restores cursor focus and position
+const handleCloseMargins = () => {
+  const editor = editorRefContext.getEditor(); // Get Quill editor instance
+  setAnchorElMargins(null); // Close the margin popover
+
+  // Restore the saved cursor position
+  if (indexCursor) {
+    if (indexCursor.length > 0) {
+      editor.setSelection(indexCursor.index + indexCursor.length, 0);
+    } else {
+      editor.setSelection(indexCursor.index, 0);
     }
-  };
-<<<<<<< Updated upstream
-  const handleCloseMargins = () => {
-    const editor = editorRefContext.getEditor();
-    setAnchorElMargins(null);
-=======
 
-  // Closes the margin popover and restores cursor focus and position
-  const handleCloseMargins = () => {
-    const editor = editorRefContext.getEditor(); // Get Quill editor instance
-    setAnchorElMargins(null); // Close the margin popover
+    // Delay focus to ensure selection is applied correctly
+    setTimeout(() => {
+      editor.focus();
+    }, 0);
+  }
+};
 
-    // Restore the saved cursor position
->>>>>>> Stashed changes
-    if (indexCursor) {
-      if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0);
-      } else {
-        editor.setSelection(indexCursor.index, 0);
-      }
-<<<<<<< Updated upstream
-=======
-
-      // Delay focus to ensure selection is applied correctly
->>>>>>> Stashed changes
-      setTimeout(() => {
-        editor.focus();
-      }, 0);
-    }
-  };
 
   const handleOpenOrientation = (event: any) => {
     const editor = editorRefContext.getEditor();
@@ -1321,6 +1296,7 @@ const handleListClick = (value: string) => {
     setIndexCursor(range);
     setAnchorElOrientation(event.currentTarget);
   };
+
   const handleCloseOrientation = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElOrientation(null);
@@ -1417,47 +1393,61 @@ const handleListClick = (value: string) => {
     setAnchorElFontColor(null);
   };
 
-  const handleSaveFontColor = () => {
+  const handleSaveFontColor = (color: string) => {
+    if (getCtrlShiftAPressed()) {
+  console.log("Apply font color after Ctrl+Shift+Z");
+  setCtrlShiftAPressed(false);
+
+  const editors = getEditorInstances();
+  console.log("editors:", editors);
+
+
+  editors.forEach((editor, i) => {
+    if (!editor) return;
+
+    console.log(`Editor [${i}] processing...`);
+    clearHighlight(editor);
+    const length = editor.getLength();
+    if (length <= 1) return;
+
+    // Apply font color from start to end (excluding trailing newline)
+    editor.formatText(0, length - 1, { color }, "user");
+
+    console.log(`Editor [${i}] colored from 0 to ${length - 1} with color: ${color}`);
+  });
+
+  // Optional: set color UI/icon state
+  setFontColorSvg(color);
+  handleCloseCase();
+    }
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
 
     const range = editor.getSelection(true);
 
     if (range.length === 0) {
-      setPrevFontColor(TextColor);
+      setPrevFontColor(color);
       const [line] = editor.getLine(range.index);
       const text = line?.domNode?.innerText;
-      console.log(text.trim().length);
-      if (text == "\u200B") {
-        editor.formatText(range.index - 1, 1, { color: TextColor }, "user");
-      }
-      else if (text.trim() == "\u200B" && text.trim().length <= 1) {
-        editor.formatText(range.index - 1, 1, { color: TextColor }, "user");
-      }
-      else {
-        editor.format("color", TextColor, "user");
+      if (text === "\u200B" || (text.trim() === "\u200B" && text.trim().length <= 1)) {
+        editor.formatText(range.index - 1, 1, { color }, "user");
+      } else {
+        editor.format("color", color, "user");
       }
     } else {
-      editor.formatText(
-        range.index,
-        range.length,
-        { color: TextColor },
-        "user"
-      );
+      editor.formatText(range.index, range.length, { color }, "user");
       editor.setSelection(range.index + range.length, 0);
     }
 
-    setFontColorSvg(TextColor);
-
-    setAnchorElFontColor(null);
+    setFontColorSvg(color);
     editor.focus();
   };
-
-
 
   const handleOpenBgColor = (event: any) => {
     setAnchorElBgColor(event.currentTarget);
   };
+
   const handleCloseBgColor = () => {
     setAnchorElBgColor(null);
   };
@@ -1486,36 +1476,53 @@ const handleListClick = (value: string) => {
 
   const handleOpenAlignment = (event: any) => {
     const editor = editorRefContext.getEditor();
+
+    if (!editor) return;
+
+    // Get the current selection (cursor or text range)
     const range = editor.getSelection(true);
+
+    // Save the selection for later restoration
     setIndexCursor(range);
-    if (range.length > 0) {
+
+    // Ensure selection remains intact after menu opens
+    if (range && range.length > 0) {
       setTimeout(() => {
         editor.setSelection(range.index, range.length);
       }, 0);
     }
+
+    // Open the alignment menu anchored to the clicked element
     setAnchorElAlignment(event.currentTarget);
   };
 
+
   const handleCloseAlignment = (event: any) => {
     const editor = editorRefContext.getEditor();
+    if (!editor) return;
+
     const scrollContainer = scrollPageRef.current;
     const scrollY = scrollContainer ? scrollContainer.scrollTop : 0;
+
     if (indexCursor) {
-      if (indexCursor.length > 0) {
-        editor.setSelection(indexCursor.index + indexCursor.length, 0);
-      } else {
-        editor.setSelection(indexCursor.index, 0);
-      }
+      // Restore the cursor to the end of the previous selection
+      const { index, length } = indexCursor;
+      const restoreIndex = length > 0 ? index + length : index;
+      editor.setSelection(restoreIndex, 0);
+
+      // Restore scroll and focus after setting the selection
       setTimeout(() => {
         if (scrollContainer) {
           scrollContainer.scrollTo({
             top: scrollY,
-            behavior: 'smooth' // Makes the scroll smooth
+            behavior: 'smooth', // Smooth scrolling back to previous position
           });
         }
         editor.focus();
       }, 0);
     }
+
+    // Close the alignment dropdown
     setAnchorElAlignment(null);
   };
 
@@ -1697,6 +1704,31 @@ const handleListClick = (value: string) => {
   };
 
   const handleFontChange = (event: SelectChangeEvent<any>) => {
+    if (getCtrlShiftAPressed()) {
+      console.log("Apply font family after Ctrl+Shift+Z");
+      setCtrlShiftAPressed(false);
+
+      const editors = getEditorInstances();
+      console.log("editors:", editors);
+
+      editors.forEach((editor, i) => {
+        if (!editor) return;
+
+        clearHighlight(editor);
+        const length = editor.getLength();
+        if (length <= 1) return;
+
+        editor.formatText(0, length - 1, { font: event.target.value }, "user");
+        console.log(`Editor [${i}] font family set from 0 to ${length - 1} with font: ${event.target.value}`);
+      });
+
+      setSelectedFont(event.target.value);
+      setSelectedFontValue(event.target.value);
+      handleCloseCase(); // if needed
+      return;
+    }
+
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -1735,6 +1767,30 @@ const handleListClick = (value: string) => {
   };
 
   const handleFontSizeChange = (event: SelectChangeEvent<HTMLElement>) => {
+    if (getCtrlShiftAPressed()) {
+      console.log("Apply font size after Ctrl+Shift+Z");
+      setCtrlShiftAPressed(false);
+
+      const editors = getEditorInstances();
+      console.log("editors:", editors);
+
+      editors.forEach((editor, i) => {
+        if (!editor) return;
+
+        clearHighlight(editor);
+        const length = editor.getLength();
+        if (length <= 1) return;
+
+        editor.formatText(0, length - 1, { size: event.target.value }, "user");
+        console.log(`Editor [${i}] font size set from 0 to ${length - 1} with size: ${event.target.value}`);
+      });
+
+      setSelectedFontSize(event.target.value);
+      setSelectedFontSizeValue(event.target.value);
+      handleCloseCase(); // if needed
+      return;
+    }
+
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -1772,7 +1828,6 @@ const handleListClick = (value: string) => {
     }, 0);
   };
 
-
   const handleHeaderChange = (event: SelectChangeEvent<any>) => {
     const editor = editorRefContext?.getEditor();
     const selectedHeaderValue = event.target.value;
@@ -1781,11 +1836,11 @@ const handleListClick = (value: string) => {
     const range = editor.getSelection();
 
     const headerSizes: Record<string, string> = {
-      1: "24px",
-      2: "18px",
-      3: "14px",
-      4: "13px",
-      default: "12px",
+      1: "24.8px",
+      2: "20px",
+      3: "18.5px",
+      4: "16.5px",
+      default: "16px",
     };
 
     const getClass: Record<string, string> = {
@@ -1831,6 +1886,21 @@ const handleListClick = (value: string) => {
     }, 0);
   };
 
+const customLabels = {
+  "11.55px": "7",
+  "13.2px": "8",
+  "14.85px": "9",
+  "16.5px": "10",
+  "18.15px": "11",
+  "19.8px": "12",
+  "23.1px": "14",
+  "29.7px": "18",
+  "39.6px": "24",
+  "59.4px": "36",
+  "79.2px": "48",
+  "118.8px": "72",
+};
+
   const handleSelectOrientation = (value: any) => {
     if (value === "landscape") {
       setDocumentPageSize({
@@ -1855,38 +1925,36 @@ const handleListClick = (value: string) => {
     handleCloseMargins();
   };
 
-  const [canUndo, setCanUndo] = useState(false);
-
-  const [canRedo, setCanRedo] = useState(false);
-
   useEffect(() => {
+    if (!editorRefContext) return;
+
+    const quill = editorRefContext.getEditor();
+
+    // Function to check the undo/redo history
     const checkHistory = () => {
-      if (editorRefContext) {
-        const quill = editorRefContext.getEditor();
-        const undoStack = quill.history.stack.undo;
-        const redoStack = quill.history.stack.redo;
-        // console.log(redoStack[redoStack.length - 1])
-        // console.log(undoStack[undoStack.length-1]);
-        // console.log(redoStack);
-        setCanUndo(undoStack.length > 0);
-        setCanRedo(redoStack.length > 0);
-      }
+      const undoStack = quill.history.stack.undo;
+      const redoStack = quill.history.stack.redo;
+
+          console.log("Undo Stack:", undoStack);
+      console.log("Redo Stack:", redoStack);
+
+      // Set state for undo/redo availability based on the stack lengths
+      setCanUndo(undoStack.length > 0); // If undo stack has entries, enable undo
+      setCanRedo(redoStack.length > 0); // If redo stack has entries, enable redo
     };
 
-    if (editorRefContext) {
-      const quill = editorRefContext.getEditor();
+    // Attach event listeners for content changes and selection changes
+    quill.on("text-change", checkHistory);
+    quill.on("selection-change", checkHistory);
 
-      quill.on("text-change", checkHistory);
-      quill.on("selection-change", checkHistory);
-
-      checkHistory(); // Initial check
-
-      return () => {
-        quill.off("text-change", checkHistory);
-        quill.off("selection-change", checkHistory);
-      };
-    }
-  }, [editorRefContext]);
+    // Initial check when the editor is loaded
+    checkHistory();
+    // Cleanup function to remove event listeners when the component is unmounted
+    return () => {
+      quill.off("text-change", checkHistory);
+      quill.off("selection-change", checkHistory);
+    };
+  }, [editorRefContext]); // Dependency array ensures effect runs when editorRefContext is set
 
   const handleSelectSize = (value: any) => {
     setAnchorElSize(null);
@@ -1952,10 +2020,13 @@ const handleListClick = (value: string) => {
 
   const lineSpacing = [
     {
-      value: "1.5",
+      value: "1",
     },
     {
-      value: "1.7",
+      value: "1.15",
+    },
+    {
+      value: "1.5",
     },
     {
       value: "2",
@@ -1966,12 +2037,7 @@ const handleListClick = (value: string) => {
     {
       value: "3",
     },
-    {
-      value: "3.5",
-    },
   ];
-
-  const [prevSelectionBg, setPrevSelectionBg] = useState<any>(null);
 
   const handleTextHighlightColorChange = (color: any) => {
     handletTextHighlightColor(color.hex);
@@ -1979,6 +2045,30 @@ const handleListClick = (value: string) => {
   };
 
   const handletTextHighlightColor = (color: string) => {
+    if (getCtrlShiftAPressed()) {
+  console.log("Apply background color after Ctrl+Shift+Z");
+  setCtrlShiftAPressed(false);
+
+  const editors = getEditorInstances();
+  console.log("editors:", editors);
+
+  editors.forEach((editor, i) => {
+    if (!editor) return;
+
+    clearHighlight(editor);
+    const length = editor.getLength();
+    if (length <= 1) return;
+
+    editor.formatText(0, length - 1, { background: color }, "user");
+
+    console.log(`Editor [${i}] background colored from 0 to ${length - 1} with color: ${color}`);
+  });
+
+  setPrevBgColor(color);
+  setFontColorSvg(color); // optional: update UI state if needed
+  handleCloseCase();
+  return; // Stop further processing since we've already applied to all editors
+    }
     const editor = editorRefContext.getEditor();
     if (!editor) return;
     const range = editor.getSelection(true);
@@ -2024,15 +2114,13 @@ const handleListClick = (value: string) => {
     }
   };
 
-  const [TextColor, setTextColor] = useState("");
-
   const handleFontColorChange = (color: any) => {
     // const editor = editorRefContext.getEditor();
     // const range = editor.getSelection(true);
     // if(range.length > 0) {
     //   editor.setSelection(range.index,range.length)
     // }
-    setTextColor(color.hex);
+    handleSaveFontColor(color.hex);
     setFontColorSvg(color.hex);
   };
 
@@ -2041,35 +2129,91 @@ const handleListClick = (value: string) => {
     setBgColorSvg(color.hex);
   };
 
-  const toSentenceCase = (text: any) => {
+  const toSentenceCase = (text: string): string => {
+    if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   };
 
-  const toLowerCase = (text: any) => {
-    return text.toLowerCase();
+  const toLowerCase = (text: string): string => {
+    return text?.toLowerCase?.() ?? '';
   };
 
-  const toUpperCase = (text: any) => {
-    return text.toUpperCase();
+  const toUpperCase = (text: string): string => {
+    return text?.toUpperCase?.() ?? '';
   };
 
-  const toCapitalizeEachWord = (text: any) => {
-    return text.replace(
-      /\w\S*/g,
-      (word: any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    );
+  const toCapitalizeEachWord = (text: string): string => {
+    if (!text) return '';
+    return text.replace(/\w\S*/g, (word: string) => {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
   };
 
-  const toToggleCase = (text: any) => {
-    return text
-      .split("")
-      .map((char: any) =>
+  const toToggleCase = (text: string): string => {
+    if (!text) return '';
+    return Array.from(text)
+      .map((char) =>
         char === char.toUpperCase() ? char.toLowerCase() : char.toUpperCase()
       )
-      .join("");
+      .join('');
   };
 
+
   const handleTextTransformation = (transformationFunction: Function) => {
+    if (getCtrlShiftAPressed()) {
+      console.log("Text transformation after Ctrl+Shift+Z");
+      setCtrlShiftAPressed(false);
+
+      const editors = getEditorInstances();
+      console.log("editors:", editors);
+
+      editors.forEach((editor, i) => {
+        console.log(`Editor [${i}] processing...`);
+
+        clearHighlight(editor);
+        let selection = editor.getSelection();
+        console.log(`Editor [${i}] original selection:`, selection);
+
+        // If no selection, apply to full content
+        const index = 0;
+        const length = editor.getLength(); // includes the trailing newline
+
+        console.log(`Editor [${i}] applying transformation from index ${index} to length ${length}`);
+
+        const contents = editor.getContents(index, length);
+        console.log(`Editor [${i}] contents:`, contents);
+
+        const Delta = (editor.constructor as any).imports.delta;
+        let delta = new Delta();
+
+        const transformedOps = contents?.ops?.map((op: any, opIndex: number) => {
+          if (op.insert && typeof op.insert === "string") {
+            const transformedSegment = transformationFunction(op.insert);
+            console.log(`Editor [${i}] op[${opIndex}]:`, op.insert, "->", transformedSegment);
+            return {
+              insert: transformedSegment,
+              attributes: op.attributes || {},
+            };
+          } else {
+            console.log(`Editor [${i}] op[${opIndex}] is non-string or embed:`, op);
+            return op;
+          }
+        });
+
+        delta.retain(index);
+        delta.delete(length);
+
+        transformedOps?.forEach((op: any) => {
+          delta = delta.insert(op.insert, op.attributes);
+        });
+
+        console.log(`Editor [${i}] delta to apply:`, delta);
+        editor.updateContents(delta, "user");
+      });
+
+      handleCloseCase();
+    }
+
     const editor = editorRefContext.getEditor();
     const selection = editor.getSelection();
 
@@ -2111,88 +2255,59 @@ const handleListClick = (value: string) => {
 
     handleCloseCase(); // Close any UI elements related to the transformation
   };
-  const [selectedColumn, setSelectedColumn] = useState("one");
 
-  const handleClickColumns = (value: string) => {
-    const editorContainer = editorRefContext.editor?.root;
+const handleClickColumns = (value: string) => {
+  const editorContainer = editorRefContext.editor?.root;
 
-    if (!editorContainer) {
-      console.error("Editor container not found");
-      return;
-    }
+  if (!editorContainer) {
+    console.error("Editor container not found");
+    return;
+  }
 
-    setSelectedColumn(value);
+  setSelectedColumn(value);
 
-<<<<<<< Updated upstream
-    switch (value) {
-      case "one":
-        editorContainer.style.columnCount = 1;
-        break;
-      case "two":
-        editorContainer.style.columnCount = 2;
-        break;
-      case "three":
-        editorContainer.style.columnCount = 3;
-        break;
-      case "left":
-        editorContainer.style.columnCount = 2;
-        break;
-      case "right":
-        editorContainer.style.columnCount = 2;
-        break;
-      default:
-        editorContainer.style.display = "block"; // Default to single column
-    }
+  // Clear previous column-related styles
+  editorContainer.style.columnCount = "";
+  editorContainer.style.columnGap = "";
+  editorContainer.style.columnRule = "";
+  editorContainer.style.marginLeft = "";
+  editorContainer.style.transform = "";
 
-    handleCloseColumns();
-  };
+  // Force reflow
+  void editorContainer.offsetHeight;
 
-  const [showFormattingMarks, setShowFormattingMarks] = useState(false);
-=======
-    // Clear previous column-related styles
-    editorContainer.style.columnCount = "";
-    editorContainer.style.columnGap = "";
-    editorContainer.style.columnRule = "";
-    editorContainer.style.marginLeft = "";
-    editorContainer.style.transform = "";
+  switch (value) {
+    case "one":
+      editorContainer.style.columnCount = "1";
+      editorContainer.style.width = "100%"; // Ensure full width
+      break;
+    case "two":
+      editorContainer.style.columnCount = "2";
+      editorContainer.style.columnGap = "30px";
+      break;
+    case "three":
+      editorContainer.style.columnCount = "3";
+      editorContainer.style.columnGap = "30px";
+      break;
+    case "left":
+    case "right":
+      editorContainer.style.columnCount = "2";
+      editorContainer.style.columnGap = "30px";
+      // Additional positioning if needed for left/right layout
+      break;
+    default:
+      editorContainer.style.columnCount = "1";
+      break;
+  }
 
-    // Force reflow
-    void editorContainer.offsetHeight;
+  handleCloseColumns();
+};
 
-    switch (value) {
-      case "one":
-        editorContainer.style.columnCount = "1";
-        editorContainer.style.width = "100%"; // Ensure full width
-        break;
-      case "two":
-        editorContainer.style.columnCount = "2";
-        editorContainer.style.columnGap = "30px";
-        break;
-      case "three":
-        editorContainer.style.columnCount = "3";
-        editorContainer.style.columnGap = "30px";
-        break;
-      case "left":
-      case "right":
-        editorContainer.style.columnCount = "2";
-        editorContainer.style.columnGap = "30px";
-        // Additional positioning if needed for left/right layout
-        break;
-      default:
-        editorContainer.style.columnCount = "1";
-        break;
-    }
-
-    handleCloseColumns();
-  };
->>>>>>> Stashed changes
 
   const toggleFormattingMarks = () => {
     setShowFormattingMarks(!showFormattingMarks);
   };
 
-<<<<<<< Updated upstream
-=======
   const handleSelectSpacing = (value: any) => {
   // Update the spacing state to the selected value
   setSpacing(value);
@@ -2220,66 +2335,151 @@ const handleListClick = (value: string) => {
       quillEditor.format("lineHeight", value, "user");
     }
   }
-  };
+};
 
->>>>>>> Stashed changes
+
   useEffect(() => {
     if (!editorRefContext) return;
+
     const editor = editorRefContext.getEditor();
     const editorContainer = editor.root;
-
-    // Get all paragraphs
     const paragraphs = editorContainer.querySelectorAll("p");
 
     paragraphs.forEach((p: HTMLElement) => {
-      // Remove text nodes containing '¶'
-      const childNodes = Array.from(p.childNodes);
-      childNodes.forEach((node: Node) => {
-        if (
-          node.textContent?.includes("¶")
-        ) {
-          node.textContent = node.textContent.replace(/¶/g, "");
-        }
+      // 🔁 Step 1: Remove old formatting marks (even broken/multi-character ones)
+      const oldMarks = p.querySelectorAll(".formatting-mark");
+      oldMarks.forEach((mark) => {
+        const parent = mark.parentNode;
+        if (!parent) return;
+
+        const textContent = mark.textContent || "";
+
+        // Convert special symbols to original characters
+    const restoredText = textContent
+    .replace(/·/g, " ")
+    .replace(/→/g, "\t")
+    .replace(/¶/g, "");
+
+
+        const textNode = document.createTextNode(restoredText);
+        parent.replaceChild(textNode, mark);
       });
 
-      // If showFormattingMarks is true, add new formatting mark
-      const lineText = p.innerText.trim();
-      if (lineText === "" || lineText.length < 95) {
-        if (showFormattingMarks) {
-          // Create and append new formatting mark
-          const mark = document.createElement("span");
-          mark.className = "formatting-mark";
-          mark.innerHTML = "¶";
+      // ✅ Step 2: If formatting is enabled, wrap each character
+      if (showFormattingMarks) {
+        const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+        const textNodes: Text[] = [];
 
-          p.appendChild(mark);
+        while (walker.nextNode()) {
+          textNodes.push(walker.currentNode as Text);
         }
+
+        textNodes.forEach((textNode) => {
+          const originalText = textNode.textContent ?? "";
+          const fragment = document.createDocumentFragment();
+
+          for (let i = 0; i < originalText.length; i++) {
+            const char = originalText[i];
+            const span = document.createElement("span");
+            span.className = "formatting-mark";
+
+            if (char === " " || char === ".") {
+              span.textContent = "·";
+              span.setAttribute("contenteditable", "false");
+            } else if (char === "\t") {
+              span.textContent = "→";
+              span.setAttribute("contenteditable", "false");
+            } else {
+              span.textContent = char;
+            }
+
+            fragment.appendChild(span);
+          }
+
+          textNode.parentNode?.replaceChild(fragment, textNode);
+        });
+
+        // 🧩 Step 3: Add paragraph end mark
+        const endMark = document.createElement("span");
+        endMark.className = "formatting-mark";
+        endMark.setAttribute("contenteditable", "false");
+        endMark.textContent = "¶";
+        p.appendChild(endMark);
       }
     });
-  }, [showFormattingMarks]);
+  }, [showFormattingMarks, editorRefContext]);
 
-  const handleSelectSpacing = (value: any) => {
-    setSpacing(value);
-    setAnchorElSpacing(null);
 
-    const quillEditor = editorRefContext.getEditor();
+  useEffect(() => {
+    if (!editorRefContext) return;
 
-    if (quillEditor) {
-      const savedRange = quillEditor.getSelection(true);
+    const editor = editorRefContext.getEditor();
+    const editorContainer = editor.root;
+    const paragraphs = editorContainer.querySelectorAll("p");
 
-      if (savedRange && savedRange.length > 0) {
-        quillEditor.formatLine(
-          savedRange.index,
-          savedRange.length,
-          {
-            lineHeight: value,
-          },
-          "user"
-        );
-      } else {
-        quillEditor.format("lineHeight", value, "user");
+    paragraphs.forEach((p: HTMLElement) => {
+      // 🔁 Step 1: Remove old formatting marks (even broken/multi-character ones)
+      const oldMarks = p.querySelectorAll(".formatting-mark");
+      oldMarks.forEach((mark) => {
+        const parent = mark.parentNode;
+        if (!parent) return;
+
+        const textContent = mark.textContent || "";
+
+        // Convert special symbols to original characters
+    const restoredText = textContent
+    .replace(/·/g, " ")
+    .replace(/→/g, "\t")
+    .replace(/¶/g, "");
+
+
+        const textNode = document.createTextNode(restoredText);
+        parent.replaceChild(textNode, mark);
+      });
+
+      // ✅ Step 2: If formatting is enabled, wrap each character
+      if (showFormattingMarks) {
+        const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+        const textNodes: Text[] = [];
+
+        while (walker.nextNode()) {
+          textNodes.push(walker.currentNode as Text);
+        }
+
+        textNodes.forEach((textNode) => {
+          const originalText = textNode.textContent ?? "";
+          const fragment = document.createDocumentFragment();
+
+          for (let i = 0; i < originalText.length; i++) {
+            const char = originalText[i];
+            const span = document.createElement("span");
+            span.className = "formatting-mark";
+
+            if (char === " " || char === ".") {
+              span.textContent = "·";
+              span.setAttribute("contenteditable", "false");
+            } else if (char === "\t") {
+              span.textContent = "→";
+              span.setAttribute("contenteditable", "false");
+            } else {
+              span.textContent = char;
+            }
+
+            fragment.appendChild(span);
+          }
+
+          textNode.parentNode?.replaceChild(fragment, textNode);
+        });
+
+        // 🧩 Step 3: Add paragraph end mark
+        const endMark = document.createElement("span");
+        endMark.className = "formatting-mark";
+        endMark.setAttribute("contenteditable", "false");
+        endMark.textContent = "¶";
+        p.appendChild(endMark);
       }
-    }
-  };
+    });
+  }, [showFormattingMarks, editorRefContext]);
 
   useEffect(() => {
     // console.log("I am called")
@@ -2324,27 +2524,32 @@ const handleListClick = (value: string) => {
     };
   }, [openFontColor]);
 
-  const [selectedAlign, setSelectedAlign] = useState("left");
   const handleAlignment = (align: string) => {
+    // Update local state to reflect selected alignment (used for UI highlighting or state)
     setSelectedAlign(align);
+
+    // Get the Quill editor instance from context
     const quill = editorRefContext.getEditor();
+
+    // Get the current selection range in the editor
     const range = quill.getSelection();
 
+    if (!range) return; // If no selection, exit early to avoid errors
+
+    // If 'left' is selected, remove the alignment formatting (Quill treats default as 'left')
     if (align === "left") {
       quill.format("align", false, "user");
     } else {
+      // Otherwise, apply the selected alignment
       quill.format("align", align, "user");
     }
 
+    // Close the alignment dropdown/menu
     setAnchorElAlignment(null);
+
+    // Ensure the editor remains focused after applying formatting
     quill.focus();
   };
-
-  const [linkUrl, setLinkUrl] = useState("");
-  const [displayText, setDisplayText] = useState("");
-
-  const [selection, setSelection] = useState<any>(null);
-  const [cursorIndex, setCursorIndex] = useState<number>(0);
 
   const handleOpenLink = (event: any) => {
     const editor = editorRefContext.getEditor();
@@ -2366,6 +2571,7 @@ const handleListClick = (value: string) => {
   };
 
   const handleOpenFormula = (event: any) => {
+    console.log("cicked dnjcjd bcj")
     const editor = editorRefContext.getEditor();
     const range = editor.getSelection(true);
     setCursorIndex(range.index);
@@ -2374,70 +2580,42 @@ const handleListClick = (value: string) => {
       setSelection(range);
       editor.setSelection(range.index, range.length);
     }
+    console.log("formula : ", event.current);
     setAnchorElFormula(event.currentTarget);
   };
 
-<<<<<<< Updated upstream
-  const handleAddLink = () => {
-    const editor = editorRefContext.getEditor();
+const [isSaving, setIsSaving] = useState(false);
 
-    if (selection) {
-      const { index, length } = selection;
+const handleAddLink = () => {
+  if (isSaving) return; // Prevent double clicks
+  setIsSaving(true);
 
-      // Create a Delta for deleting the selected text and inserting the link
-      let delta = new editor.constructor.imports.delta();
+  const editor = editorRefContext.getEditor();
 
-      // Delete the selected text and insert the link
-      delta = delta
-        .retain(index) // Retain the text before the selection
-        .delete(length) // Delete the selected text
-        .insert(displayText, { link: linkUrl }); // Insert the display text with link formatting
+  if (selection) {
+    const { index, length } = selection;
 
-      // Apply the delta with 'user' action to track undo/redo
-      editor.updateContents(delta, "user");
-    } else {
-      // If no selection, insert the link at the cursor position
-      editor.insertText(cursorIndex, displayText, { link: linkUrl }, "user");
-    }
+    let delta = new editor.constructor.imports.delta();
 
-    // Clear inputs and close the link dialog
-    setDisplayText("");
-    setLinkUrl("");
-    handleCloseLink();
-    setSelection(null);
-=======
-  const [isSaving, setIsSaving] = useState(false);
+    delta = delta
+      .retain(index)
+      .delete(length)
+      .insert(displayText, { link: linkUrl });
 
-  const handleAddLink = () => {
-    if (isSaving) return; // Prevent double clicks
-    setIsSaving(true);
+    editor.updateContents(delta, "user");
+  } else {
+    editor.insertText(cursorIndex, displayText, { link: linkUrl }, "user");
+  }
 
-    const editor = editorRefContext.getEditor();
+  setDisplayText("");
+  setLinkUrl("");
+  handleCloseLink();
+  setSelection(null);
 
-    if (selection) {
-      const { index, length } = selection;
+  // Allow another click after a short delay or after async logic
+  setTimeout(() => setIsSaving(false), 300);
+};
 
-      let delta = new editor.constructor.imports.delta();
-
-      delta = delta
-        .retain(index)
-        .delete(length)
-        .insert(displayText, { link: linkUrl });
-
-      editor.updateContents(delta, "user");
-    } else {
-      editor.insertText(cursorIndex, displayText, { link: linkUrl }, "user");
-    }
-
-    setDisplayText("");
-    setLinkUrl("");
-    handleCloseLink();
-    setSelection(null);
-
-    // Allow another click after a short delay or after async logic
-    setTimeout(() => setIsSaving(false), 300);
->>>>>>> Stashed changes
-  };
 
   const handleCloseLink = () => {
     setDisplayTextChange(false);
@@ -2446,8 +2624,6 @@ const handleListClick = (value: string) => {
     editor.focus();
     setSelection(null);
   };
-
-  const [dispalyTextChange, setDisplayTextChange] = useState(false);
 
   const handleLinkUrlChange = (e: any) => {
     const url = e.target.value;
@@ -2466,85 +2642,53 @@ const handleListClick = (value: string) => {
   const [displayFormula, setDisplayFormula] = useState("");
   const handleFormulaChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDisplayFormula(e.target.value);
-    // setDisplayTextChange(true);
+    //setDisplayTextChange(true);
   };
 
-  const handlePictureFromFile = () => {
-<<<<<<< Updated upstream
-    // Open a file input dialog
-=======
->>>>>>> Stashed changes
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
+const handlePictureFromFile = () => {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
 
-<<<<<<< Updated upstream
-    fileInput.onchange = async (e: any) => {
-      const file = e.target.files[0];
-      if (file) {
-        // Create a URL for the selected image
-        const reader = new FileReader();
+  fileInput.onchange = async (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
 
-        reader.onload = (event: any) => {
-          const imageUrl = event.target.result;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageUrl = event.target?.result as string;
 
-          const quill = editorRefContext.getEditor();
-          quill.insertEmbed(cursorIndex, "image", imageUrl, "user");
+      const quill = editorRefContext.getEditor();
+      const cursorIndex = quill.getSelection()?.index ?? quill.getLength();
 
-          const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
-          if (img) {
-            img.classList.add("resizable");
-          }
+      quill.insertEmbed(cursorIndex, "image", imageUrl, "user");
+      quill.setSelection(cursorIndex + 1);
+      quill.focus();
 
-          // quill.setSelection(cursorIndex + 1);
-          quill.focus();
-        };
-
-        reader.readAsDataURL(file);
+      const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
+      if (img) {
+        console.log("Before adding class - image size:", img.naturalWidth, "x", img.naturalHeight);
+        
+        img.classList.add("resizable");
+        
+const rect = img.getBoundingClientRect();
+      console.log(
+        "After adding class - image size:",
+        Math.round(rect.width),
+        "x",
+        Math.round(rect.height)
+      );
       }
     };
 
-    // Trigger the file input dialog
-=======
-    fileInput.onchange = async (e: Event) => {
-      const target = e.target as HTMLInputElement;
-      const file = target.files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const imageUrl = event.target?.result as string;
-
-        const quill = editorRefContext.getEditor();
-        const cursorIndex = quill.getSelection()?.index ?? quill.getLength();
-
-        quill.insertEmbed(cursorIndex, "image", imageUrl, "user");
-        quill.setSelection(cursorIndex + 1);
-        quill.focus();
-
-        const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
-        if (img) {
-          console.log("Before adding class - image size:", img.naturalWidth, "x", img.naturalHeight);
-          
-          img.classList.add("resizable");
-          
-  const rect = img.getBoundingClientRect();
-        console.log(
-          "After adding class - image size:",
-          Math.round(rect.width),
-          "x",
-          Math.round(rect.height)
-        );
-        }
-      };
-
-      reader.readAsDataURL(file);
-    };
-
->>>>>>> Stashed changes
-    fileInput.click();
-    setAnchorElPicture(null);
+    reader.readAsDataURL(file);
   };
+
+  fileInput.click();
+  setAnchorElPicture(null);
+};
+
 
   const handleVideoFromFile = () => {
     const fileInput = document.createElement("input");
@@ -2617,7 +2761,7 @@ const handleListClick = (value: string) => {
       {
         color: "black",
         background: "#fefefe",
-        lineHeight: "1.5",
+        lineHeight: "1",
         font: "arial",
         size: "13px",
         header: false,
@@ -2633,7 +2777,7 @@ const handleListClick = (value: string) => {
     setPrevBgColor("#fefefe");
     setPrevFontColor("black");
     setSelectedFont("arial");
-    setSelectedFontSize("13px");
+    setSelectedFontSize("17.5px");
     setSelectedHeaders(0);
   };
 
@@ -2656,7 +2800,6 @@ const handleListClick = (value: string) => {
     handleChangeSelection(range, "user");
   };
 
-
   const handleRedo = () => {
     const editor = editorRefContext?.getEditor();
     const redoStack = editor.history.stack.redo;
@@ -2670,7 +2813,6 @@ const handleListClick = (value: string) => {
     const range = editor.getSelection(true);
     handleChangeSelection(range, "user");
   };
-
 
   const ScrollLeftSvg = () => {
     return (
@@ -2986,23 +3128,33 @@ const handleListClick = (value: string) => {
     );
   };
 
-  const SuperScriptSvg = () => {
-    return (
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          className="fill-hover"
-          d="M15.5 13C15.5 13.1326 15.4474 13.2598 15.3536 13.3536C15.2598 13.4473 15.1326 13.5 15 13.5H12C11.9072 13.5 11.8162 13.4742 11.7372 13.4253C11.6582 13.3765 11.5944 13.3067 11.5528 13.2236C11.5113 13.1406 11.4937 13.0476 11.5021 12.9551C11.5104 12.8626 11.5443 12.7743 11.6 12.7L14.2982 9.10251C14.3846 8.98738 14.4451 8.85495 14.4756 8.71428C14.5061 8.57361 14.5059 8.42801 14.4749 8.28743C14.444 8.14685 14.3831 8.01461 14.2964 7.89973C14.2096 7.78486 14.0991 7.69007 13.9724 7.62183C13.8456 7.55359 13.7057 7.51352 13.562 7.50435C13.4184 7.49518 13.2744 7.51713 13.14 7.56871C13.0056 7.62028 12.884 7.70025 12.7833 7.80317C12.6827 7.90608 12.6055 8.02951 12.5569 8.16501C12.535 8.22694 12.5011 8.28394 12.4572 8.33277C12.4132 8.3816 12.3601 8.42129 12.3008 8.44958C12.2415 8.47788 12.1772 8.49421 12.1116 8.49767C12.046 8.50112 11.9804 8.49162 11.9185 8.4697C11.8566 8.44779 11.7995 8.41389 11.7507 8.36995C11.7019 8.326 11.6622 8.27287 11.6339 8.21359C11.6056 8.1543 11.5893 8.09002 11.5858 8.02443C11.5824 7.95883 11.5919 7.89319 11.6138 7.83126C11.6824 7.63864 11.78 7.4576 11.9032 7.29439C12.2224 6.87079 12.6969 6.59136 13.2221 6.51758C13.7474 6.44379 14.2805 6.5817 14.7041 6.90095C15.1277 7.22021 15.4071 7.69466 15.4809 8.21994C15.5547 8.74521 15.4168 9.27829 15.0975 9.70189L13 12.5H15C15.1326 12.5 15.2598 12.5527 15.3536 12.6465C15.4474 12.7402 15.5 12.8674 15.5 13ZM9.32754 3.12501C9.2779 3.08198 9.22026 3.04915 9.15792 3.0284C9.09558 3.00765 9.02977 2.99939 8.96424 3.00409C8.8987 3.00879 8.83474 3.02636 8.776 3.0558C8.71727 3.08523 8.66491 3.12596 8.62192 3.17564L5.75004 6.48626L2.87817 3.17376C2.78862 3.08478 2.66873 3.03296 2.54256 3.0287C2.4164 3.02445 2.29329 3.06808 2.19796 3.15083C2.10262 3.23359 2.04212 3.34934 2.0286 3.47485C2.01507 3.60037 2.04953 3.72635 2.12504 3.82751L5.08817 7.25001L2.12504 10.6725C2.03818 10.7728 1.99472 10.9035 2.00421 11.0358C2.01371 11.1681 2.07538 11.2913 2.17567 11.3781C2.27595 11.465 2.40663 11.5085 2.53896 11.499C2.67129 11.4895 2.79443 11.4278 2.88129 11.3275L5.75629 8.01501L8.62817 11.3275C8.67117 11.3772 8.72354 11.4179 8.78228 11.4473C8.84101 11.4767 8.90497 11.4943 8.97049 11.499C9.03602 11.5037 9.10182 11.4954 9.16416 11.4747C9.22649 11.454 9.28413 11.4211 9.33379 11.3781C9.38345 11.3351 9.42415 11.2828 9.45356 11.224C9.48298 11.1653 9.50054 11.1013 9.50524 11.0358C9.50994 10.9703 9.50169 10.9045 9.48096 10.8421C9.46023 10.7798 9.42742 10.7222 9.38442 10.6725L6.41192 7.25001L9.37817 3.82751C9.46411 3.72742 9.50702 3.59742 9.49754 3.46584C9.48805 3.33425 9.42695 3.21175 9.32754 3.12501Z"
-          fill={isScriptActive == "super" ? "#7771E8" : "#7F7F7F"}
-        />
-      </svg>
-    );
-  };
+ const SuperScriptSvg = () => {
+  return (
+    <svg
+       width="18"
+  height="18"
+  viewBox="0 0 16 16"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    className="fill-hover"
+    transform="translate(1, 1)" 
+    d="M9.33 3.13C9.28 3.08 9.22 3.05 9.16 3.03C9.10 3.01 9.03 2.99 8.96 3.00C8.90 3.01 8.83 3.03 8.78 3.06C8.72 3.09 8.66 3.13 8.62 3.18L5.75 6.49L2.88 3.17C2.79 3.08 2.67 3.03 2.54 3.03C2.42 3.02 2.29 3.07 2.20 3.15C2.10 3.23 2.04 3.35 2.03 3.47C2.02 3.60 2.05 3.73 2.13 3.83L5.09 7.25L2.13 10.67C2.04 10.77 2.00 10.90 2.00 11.04C2.01 11.17 2.08 11.29 2.18 11.38C2.28 11.47 2.41 11.51 2.54 11.50C2.67 11.49 2.79 11.43 2.88 11.33L5.76 8.02L8.63 11.33C8.67 11.38 8.72 11.42 8.78 11.45C8.84 11.48 8.90 11.49 8.97 11.50C9.04 11.50 9.10 11.49 9.16 11.47C9.23 11.45 9.28 11.42 9.33 11.38C9.38 11.34 9.42 11.28 9.45 11.22C9.48 11.17 9.50 11.10 9.51 11.04C9.51 10.97 9.50 10.90 9.48 10.84C9.46 10.78 9.43 10.72 9.38 10.67L6.41 7.25L9.38 3.83C9.46 3.73 9.51 3.60 9.50 3.47C9.49 3.33 9.43 3.21 9.33 3.13Z"
+    fill={isScriptActive == "super" ? "#7771E8" : "#7F7F7F"}
+  />
+  <text
+    x="11"
+    y="10"
+    fontSize="14"
+    fill={isScriptActive == "super" ? "#7771E8" : "#7F7F7F"}
+  >
+    ²
+  </text>
+    </svg>
+  );
+};
+
 
   const FormattingSvg = () => {
     return (
@@ -3671,9 +3823,8 @@ const handleListClick = (value: string) => {
     );
   };
 
-<<<<<<< Updated upstream
-=======
   const [showGrid, setShowGrid] = useState(false);
+
   const insertTable = (rows: number, cols: number) => {
     const quill = editorRefContext.getEditor?.();
     if (!quill) return;
@@ -3706,89 +3857,254 @@ const handleListClick = (value: string) => {
     console.log("Delta after insert:", JSON.stringify(deltaAfterInsert, null, 2));
     quill.setSelection(range.index + 1);
   };
+
   const handleTableSizeSelect = (rows: number, cols: number) => {
     insertTable(rows, cols);
     setShowGrid(false);
   };
->>>>>>> Stashed changes
+
   const handleBold = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("Bold after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+        const editors = getEditorInstances()
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+                clearHighlight(editor);
+                const length = editor.getLength();
+                const formats = editor.getFormat(0, length);
+                const isBold = formats.bold === true;
+                editor.formatText(0, length, 'bold', !isBold); // Toggle bold
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
-    const isBold = editor.getFormat().bold;
-    setIsBoldActive(isBold == undefined ? true : false);
-    editor.format("bold", isBold == undefined ? true : false, "user");
+    if (!editor) return;
+
+    const format = editor.getFormat();
+    const isCurrentlyBold = !!format.bold; // Ensures boolean value
+
+    const newBoldState = !isCurrentlyBold;
+
+    // Update state and apply formatting
+    setIsBoldActive(newBoldState);
+    editor.format("bold", newBoldState, "user");
+
     editor.focus();
   };
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+
   const handleItalic = () => {
+      if (getCtrlShiftAPressed()) {
+        console.log("italic after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+            clearHighlight(editor);
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isItalic = formats.italic === true;
+            editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
-    const isItalic = editor.getFormat().italic;
-    setIsItalicActive(isItalic == undefined ? true : false);
-    editor.format("italic", isItalic == undefined ? true : false, "user");
+    if (!editor) return;
+
+    const currentFormat = editor.getFormat();
+    const isItalicActive = !!currentFormat.italic;
+
+    // Toggle italic formatting
+    editor.format("italic", !isItalicActive, "user");
+
+    // Optionally update local UI state (if you're using it)
+    setIsItalicActive(!isItalicActive);
+
     editor.focus();
   };
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+
   const handleUnderline = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("underline after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+            clearHighlight(editor);
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isUnderline = formats.underline === true;
+            editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
-    const isUnderline = editor.getFormat().underline;
-    setIsUnderlineActive(isUnderline == undefined ? true : false);
-    editor.format("underline", isUnderline == undefined ? true : false, "user");
+    if (!editor) return;
+
+    const currentFormat = editor.getFormat();
+    const isUnderlineActive = !!currentFormat.underline;
+
+    // Toggle underline formatting
+    editor.format("underline", !isUnderlineActive, "user");
+
+    // Optionally update local UI state (e.g., for toolbar button state)
+    setIsUnderlineActive(!isUnderlineActive);
+
     editor.focus();
   };
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
+
   const handleStrikethrough = () => {
+      if (getCtrlShiftAPressed()) {
+        console.log("strikethrough after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+        if (editor) {
+            clearHighlight(editor);
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isStrike = formats.strike === true;
+            editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
+        }
+        });
+      }
+
     const editor = editorRefContext.getEditor();
-    const isStrike = editor.getFormat().strike;
-    setIsStrikeActive(isStrike == undefined ? true : false);
-    editor.format("strike", isStrike == undefined ? true : false, "user");
+
+    if (!editor) return; // Safety check in case editor is not initialized
+
+    // Get current format at cursor position
+    const currentFormat = editor.getFormat();
+    const isStrikethrough = currentFormat.strike === true;
+
+    // Update local UI state (e.g., toggle strikethrough button style)
+    setIsStrikeActive(!isStrikethrough);
+
+    // Apply or remove strikethrough formatting
+    editor.format("strike", !isStrikethrough, "user");
+
+    // Bring focus back to the editor
     editor.focus();
   };
-<<<<<<< Updated upstream
 
-=======
+
   const originalFontSizeMap = new Map<any, string>();
->>>>>>> Stashed changes
   const handleSuperscript = () => {
     const editor = editorRefContext.getEditor();
-    const isSuperscript = editor.getFormat().script === "super";
-    setIsScriptActive(isSuperscript ? "" : "super");
+    const currentFormat = editor.getFormat();
+    const isSuperscript = currentFormat.script === "super";
+
+    // This is the actual selected size before superscript
+    const userSelectedSize = selectedFontSizeValue || "14px";
+
+    const getReducedSize = (size: string): string => {
+      const pxMatch = size.match(/^(\d+)px$/);
+      if (pxMatch) {
+        const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+        return `${reduced}px`;
+      }
+      return size;
+    };
+
     if (isSuperscript) {
+      // Restore the original size from the map
+      const originalSize = originalFontSizeMap.get(editor) || userSelectedSize;
       editor.format("script", false, "user");
-      editor.format("size", selectedFontSizeValue)
+      editor.format("size", originalSize, "user");
+      setIsScriptActive("");
+      originalFontSizeMap.delete(editor);
+    } else {
+      // Store the original size
+      originalFontSizeMap.set(editor, userSelectedSize);
+
+      // Apply reduced size and superscript
+      const reducedSize = getReducedSize(userSelectedSize);
+      editor.format("script", "super", "user");
+      editor.format("size", reducedSize, "user");
+      setIsScriptActive("super");
     }
-    else {
-      editor.format("size", false, "user");
-      editor.format("script", "super", "user")
-    }
+
     editor.focus();
   };
   const handleSubscript = () => {
     const editor = editorRefContext.getEditor();
-    const isSubscript = editor.getFormat().script === "sub";
-    setIsScriptActive(isSubscript ? "" : "sub");
+    const currentFormat = editor.getFormat();
+    const isSubscript = currentFormat.script === "sub";
+
+    // This is the actual selected size before subscript
+    const userSelectedSize = selectedFontSizeValue || "14px";
+
+    const getReducedSize = (size: string): string => {
+      const pxMatch = size.match(/^(\d+)px$/);
+      if (pxMatch) {
+        const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+        return `${reduced}px`;
+      }
+      return size;
+    };
+
     if (isSubscript) {
+      // Restore the original size from the map
+      const originalSize = originalFontSizeMap.get(editor) || userSelectedSize;
       editor.format("script", false, "user");
-      editor.format("size", selectedFontSizeValue)
+      editor.format("size", originalSize, "user");
+      setIsScriptActive("");
+      originalFontSizeMap.delete(editor);
+    } else {
+      // Store the original size
+      originalFontSizeMap.set(editor, userSelectedSize);
+
+      // Apply reduced size and subscript
+      const reducedSize = getReducedSize(userSelectedSize);
+      editor.format("script", "sub", "user");
+      editor.format("size", reducedSize, "user");
+      setIsScriptActive("sub");
     }
-    else {
-      editor.format("size", false, "user");
-      editor.format("script", "sub", "user")
-    }
+
     editor.focus();
   };
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
+  
   const handleIncreaseIndent = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("increaseindent after Ctrl+Shift+A");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors)
+        editors.forEach(editor => {
+          if (editor) {
+              clearHighlight(editor);
+              const length = editor.getLength();
+              let index = 0;
+
+              while (index < length) {
+                  const [line, offset] = editor.getLine(index);
+                  if (line) {
+                      const formats = editor.getFormat(index, 1); // Get formats for the line
+                      const currentIndent = formats.indent || 0;
+                      editor.formatLine(index, 1, 'indent', currentIndent + 1);
+                      index += line.length(); // Move to the start of the next line
+                  } else {
+                      break;
+                  }
+              }
+          }
+        });
+    }
+
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
       const currentIndent = editor.getFormat().indent || 0;
@@ -3796,6 +4112,33 @@ const handleListClick = (value: string) => {
     }
   };
   const handleDecreaseIndent = () => {
+    if (getCtrlShiftAPressed()) {
+        console.log("decreaseindent after Ctrl+Shift+Z");
+        setCtrlShiftAPressed(false);
+
+        const editors = getEditorInstances();
+        console.log("editor: ", editors);
+        editors.forEach(editor => {
+            if (editor) {
+                clearHighlight(editor);
+                const length = editor.getLength();
+                let index = 0;
+
+                while (index < length) {
+                    const [line, offset] = editor.getLine(index);
+                    if (line) {
+                        const formats = editor.getFormat(index, 1);
+                        const currentIndent = formats.indent || 0;
+                        const newIndent = Math.max(0, currentIndent - 1); // prevent negative indent
+                        editor.formatLine(index, 1, 'indent', newIndent);
+                        index += line.length();
+                    } else {
+                        break;
+                    }
+                }
+            }
+        });
+    }
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
       const currentIndent = editor.getFormat().indent || 0;
@@ -3804,44 +4147,34 @@ const handleListClick = (value: string) => {
       }
     }
   };
-  const handleCloseformula = () => {
-      setDisplayFormula("");
-      const editor = editorRefContext.getEditor();
-      setAnchorElFormula(null)
-      editor.focus();
-      setSelection(null);
-  };
-  const handleInsertFormula = () => {
-    if (editorRefContext) {
-      const editor = editorRefContext.getEditor();
-      const range = editor.getSelection(true);
-        console.log("clicked : ", editor);
-      if (range) {
-        // Insert or replace formula at cursor with the current input value
-        editor.insertText(range.index, displayFormula, {
-          bold: true,
-          italic: true
-        }, "user");
 
-<<<<<<< Updated upstream
-  const handleInsertFormula = () => {
-    if (editorRefContext) {
-      const editor = editorRefContext.getEditor();
-      const range = editor.getSelection(true);
-      if (range) {
-        editor.format("formula", true, "user");
-      }
-    }
-  };
+const handleCloseformula = () => {
+    setDisplayFormula("");
+    const editor = editorRefContext.getEditor();
+    setAnchorElFormula(null)
+    editor.focus();
+    setSelection(null);
+};
 
-=======
-        // Move cursor after the formula
-        editor.setSelection(range.index + 1, 0, "user");
-      }
-      handleCloseformula();
+const handleInsertFormula = () => {
+  if (editorRefContext) {
+    const editor = editorRefContext.getEditor();
+    const range = editor.getSelection(true);
+      console.log("clicked : ", editor);
+    if (range) {
+      // Insert or replace formula at cursor with the current input value
+      editor.insertText(range.index, displayFormula, {
+        bold: true,
+        italic: true
+      }, "user");
+
+      // Move cursor after the formula
+      editor.setSelection(range.index + 1, 0, "user");
     }
-  };
->>>>>>> Stashed changes
+    handleCloseformula();
+  }
+};
+
   const handleInsertCodeBlock = () => {
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
@@ -3919,18 +4252,18 @@ const handleListClick = (value: string) => {
         }
 
         if (fontSize && !oldSize.includes(fontSize)) {
-          if (fontSize.includes("pt")) {
-            const fs = fontSize.replace("pt", "");
-            const pt = Math.floor(Number(fs) * 1.333);
-            fontSize = `${pt}px`;
-          }
+          // if (fontSize.includes("pt")) {
+          //   const fs = fontSize.replace("pt", "");
+          //   const pt = Math.floor(Number(fs) * 1.333);
+          //   fontSize = `${pt}px`;
+          // }
 
           if (!SizeStyle.whitelist.includes(fontSize)) {
             SizeStyle.whitelist.push(fontSize);
             setContractNewFontSize((prevValues: string[]) => {
               if (!prevValues.includes(fontSize)) {
                 return [...prevValues, fontSize];
-              } else return [prevValues];
+              } else return [...prevValues, fontSize];
             });
           }
         }
@@ -3972,7 +4305,7 @@ const handleListClick = (value: string) => {
               op.attributes.background = "#fefefe";
             }
             if(!op.attributes.lineHeight) {
-              op.attributes.lineHeight = 1.5;
+              op.attributes.lineHeight = 1;
             }
             if (node.tagName === "DIV") {
               console.log("ss")
@@ -4006,7 +4339,7 @@ const handleListClick = (value: string) => {
                       insert:child.innerText,
                       attributes:{
                         ...op.attributes,
-                        lineHeight:1.5,
+                        lineHeight:1,
                         size:op?.attributes?.size || "12px"
                       },
                     
@@ -4350,7 +4683,8 @@ const handleListClick = (value: string) => {
                       left: "-0.2rem",
                     }}
                   >
-                    {selectedFontSizeValue.replace("px", "")}
+                  {customLabels[selectedFontSizeValue as keyof typeof customLabels] ??
+                     selectedFontSizeValue.replace("px", "")}
                   </div>
                 )}
               >
@@ -4370,7 +4704,9 @@ const handleListClick = (value: string) => {
                       key={size}
                       value={size}
                     >
-                      {size.replace("px", "")}
+                      {customLabels[size as keyof typeof customLabels] 
+  ? customLabels[size as keyof typeof customLabels] 
+  : size.replace("", "")}
                     </MenuItem>
                   ))}
               </Select>
@@ -4693,22 +5029,6 @@ const handleListClick = (value: string) => {
                   onChange={handleFontColorChange}
                   id="menu-color"
                 />
-                <div className="d-flex justify-content-between pt-2">
-                  <button
-                    className="btn btn-sm btn-color-platte btn-outline-primary mx-2"
-                    onClick={() => handleSaveFontColor()}
-                  >
-                    Apply
-                  </button>
-                  <button
-                    className="btn btn-sm btn-color-platte btn-outline-danger mx-2"
-                    onClick={() => {
-                      handleCloseFontColor();
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
               </Menu>
             </span>
           </a>
@@ -4901,21 +5221,29 @@ const handleListClick = (value: string) => {
           />
         )}
         <span className="ql-formats b-r">
-          <button className="btn-undo" id="bold" onClick={handleBold}>
+          <button
+            className={`btn-undo ${isBoldActive ? 'active' : ''}`}
+            id="bold"
+            onClick={handleBold}
+          >
             <BoldSvg />
           </button>
-          <button className="btn-undo ml-2 " id="italic" onClick={handleItalic}>
+          <button
+            className={`btn-undo ml-2 ${isItalicActive ? 'active' : ''}`}
+            id="italic"
+            onClick={handleItalic}
+          >
             <ItalicSvg />
           </button>
           <button
-            className="btn-undo mx-2 "
+            className={`btn-undo mx-2 ${isUnderlineActive ? 'active' : ''}`}
             id="underline"
             onClick={handleUnderline}
           >
             <UnderlineSvg />
           </button>
           <button
-            className="btn-undo"
+            className={`btn-undo ${isStrikeActive ? 'active' : ''}`}
             id="strike"
             onClick={handleStrikethrough}
           >
@@ -4948,17 +5276,20 @@ const handleListClick = (value: string) => {
         />
         <span className="ql-formats b-r">
           <button
-            className="btn-undo"
+            className={`btn-undo ${isScriptActive ? 'super' : ''}`}
             id="superscript"
             onClick={handleSuperscript}
           >
             <SuperScriptSvg />
           </button>
-          <button className="btn-undo mx-2" id="subscript" onClick={handleSubscript}>
+          <button 
+            className={`btn-undo mx-2 ${isScriptActive ? 'sub' : ''}`} 
+            id="subscript" 
+            onClick={handleSubscript}>
             <SubScriptSvg />
           </button>
           <button
-            className="btn-undo"
+            className={`btn-undo ${showFormattingMarks ? 'super' : ''}`}
             id="formatting-marks"
             onClick={toggleFormattingMarks}
           >
@@ -5004,6 +5335,7 @@ const handleListClick = (value: string) => {
                 style={{ width: 30 }}
                 onMouseDown={(e) => {
                   handleListClick("default");
+                  removeListFromEmptyLines(editorRefContext.getEditor());
                 }}
               >
                 <NumberingSvg />
@@ -5060,6 +5392,7 @@ const handleListClick = (value: string) => {
                     }}
                     onClick={() => {
                       handleListClick("none");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
                     }}
                   >
                     <div
@@ -5094,6 +5427,7 @@ const handleListClick = (value: string) => {
                     }}
                     onClick={() => {
                       handleListClick("default");
+                      removeListFromEmptyLines(editorRefContext.getEditor());
                     }}
                   >
                     <div
@@ -5154,7 +5488,10 @@ const handleListClick = (value: string) => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("lower-alpha")}
+                    onClick={() => {
+  handleListClick("lower-alpha");
+  removeListFromEmptyLinesalpha(editorRefContext.getEditor());
+}}
                   >
                     <div
                       className={
@@ -5216,7 +5553,10 @@ const handleListClick = (value: string) => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("upper-alpha")}
+                    onClick={() => {
+                      handleListClick("upper-alpha");
+                      removeListFromEmptyLinesalpha(editorRefContext.getEditor());
+                    }}
                   >
                     <div
                       className={
@@ -5276,7 +5616,10 @@ const handleListClick = (value: string) => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("lower-roman")}
+                  onClick={() => { 
+                    handleListClick("lower-roman");
+                    removeListFromEmptyLinesroman(editorRefContext.getEditor());
+                  }}
                   >
                     <div
                       className={
@@ -5337,7 +5680,9 @@ const handleListClick = (value: string) => {
                         border: "1px solid rgb(119, 113, 232) !important",
                       },
                     }}
-                    onClick={() => handleListClick("upper-roman")}
+                    onClick={() => { handleListClick("upper-roman");
+                      removeListFromEmptyLinesroman(editorRefContext.getEditor());
+                    }}
                   >
                     <div
                       className={
@@ -5410,7 +5755,9 @@ const handleListClick = (value: string) => {
               <span
                 className="d-flex justify-content-center align-items-center"
                 style={{ width: 30, cursor: "pointer" }}
-                onMouseDown={() => handleListClick("bullet-dot")}
+                onMouseDown={() => { handleListClick("bullet-dot");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
               >
                 <BulletSvg />
               </span>
@@ -5464,7 +5811,9 @@ const handleListClick = (value: string) => {
                         border: "1px solid #7771E8 !important",
                       },
                     }}
-                    onClick={() => handleListClick("none")}
+                    onClick={() => { handleListClick("none");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div
                       className="e-de-list-header-presetmenu"
@@ -5500,7 +5849,9 @@ const handleListClick = (value: string) => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-dot-large")}
+                    onClick={() => { handleListClick("bullet-dot-large");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className={"e-de-bullet-list-header-presetmenu"}>
                       <div>
@@ -5530,7 +5881,9 @@ const handleListClick = (value: string) => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-circle")}
+                    onClick={() => { handleListClick("bullet-circle");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5560,7 +5913,9 @@ const handleListClick = (value: string) => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-square")}
+                    onClick={() => { handleListClick("bullet-square");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5592,7 +5947,9 @@ const handleListClick = (value: string) => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-flower")}
+                    onClick={() => { handleListClick("bullet-flower");
+                      //removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5623,7 +5980,9 @@ const handleListClick = (value: string) => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-arrow")}
+                    onClick={() => { handleListClick("bullet-arrow");
+                     // removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5653,7 +6012,9 @@ const handleListClick = (value: string) => {
                           ? "1px solid #7771E8"
                           : "1px solid #cccccc",
                     }}
-                    onClick={() => handleListClick("bullet-tick")}
+                    onClick={() => {  handleListClick("bullet-tick");
+                     // removeListFromEmptyLines(editorRefContext.getEditor());
+                    }}
                   >
                     <div className="e-de-bullet-list-header-presetmenu">
                       <div>
@@ -5744,17 +6105,17 @@ const handleListClick = (value: string) => {
                             // color:"#7F7F7F"
                           }}
                         >
-                          {size.value == "1.5"
+                          {size.value == "1"
                             ? "1"
-                            : size.value == "1.7"
+                            : size.value == "1.15"
                               ? "1.15"
-                              : size.value == "2"
+                              : size.value == "1.5"
                                 ? "1.5"
-                                : size.value == "2.5"
+                                : size.value == "2"
                                   ? "2"
-                                  : size.value == "3"
+                                  : size.value == "2.5"
                                     ? "2.5"
-                                    : size.value == "3.5"
+                                    : size.value == "3"
                                       ? "3"
                                       : ""}
                         </div>
@@ -6001,20 +6362,22 @@ const handleListClick = (value: string) => {
             }}
             id="page-break"
           >
-            <span
-              className="d-flex justify-content-center align-items-center"
-              style={{ width: 34 }}
-              onClick={() => {
-                setPages((prevPages: any) => {
-                  let updatedPages = [...prevPages, { content: "" }];
-                  let newIndex = updatedPages.length - 1;
-                  setCurrentPage(newIndex);
-                  return updatedPages;
-                });
-              }}
-            >
-              <PageBreakSvg />
-            </span>
+      {/* Button or span to trigger the page break */}
+        <span
+          className="d-flex justify-content-center align-items-center"
+          style={{ width: 34 }}
+          onClick={() => {
+            setPages((prevPages: any) => {
+              const updatedPages = [...prevPages, { type: "pageBreak" }];
+              console.log("New page type:", updatedPages[updatedPages.length - 1].type);
+              console.log("After adding page break:", updatedPages);
+              return updatedPages;
+            });
+          }}
+
+        >
+          <PageBreakSvg />
+        </span>
           </span>
         </span>
         <ReactTooltip
@@ -6922,37 +7285,40 @@ const handleListClick = (value: string) => {
           place="bottom"
         />
 
-        <span className="ql-formats">
+        <span className="ql-formats" style={{ position: 'relative' }}>
           <a
-            data-tooltip-id="menu-item-13"
-            data-tooltip-content="Table"
-            data-tooltip-place="bottom"
+            onClick={() => setShowGrid((prev) => !prev)}
+            style={{ cursor: 'pointer' }}
           >
-            <span
-              className="d-flex ql-color fonts"
-              style={{
-                height: 30,
-                border: "1px solid #D9D9D9",
-                borderRadius: 5,
-              }}
-            >
-              <span
-                className="d-flex justify-content-center align-items-center"
-                style={{ width: 30 }}
-              >
+            <span className="d-flex ql-color fonts" style={{ height: 30, border: "1px solid #D9D9D9", borderRadius: 5 }}>
+              <span className="d-flex justify-content-center align-items-center" style={{ width: 30 }}>
                 <TableSvg />
               </span>
-              <span
-                className="d-flex justify-content-center align-items-center"
-                style={{
-                  width: 20,
-                }}
-              >
+              <span className="d-flex justify-content-center align-items-center" style={{ width: 20 }}>
                 <DropdownImage />
               </span>
             </span>
           </a>
+    {showGrid &&
+      ReactDOM.createPortal(
+        <div
+          style={{
+            marginTop: 200,
+            marginLeft: -380,
+            padding: 5,
+            background: '#fff',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            borderRadius: 4,
+            width: 'fit-content',
+            zIndex: 1000,
+          }}
+        >
+          <TableGridPicker onSelect={handleTableSizeSelect} />
+        </div>,
+        document.getElementById('grid-picker-container')!
+      )}
         </span>
+
         <ReactTooltip
           className="custom-tooltip"
           id="menu-item-13"
@@ -7089,6 +7455,7 @@ const handleListClick = (value: string) => {
                           fontWeight: 400,
                         }}
                         onClick={handleAddLink}
+                        disabled={isSaving}
                       >
                         Save
                       </button>
@@ -7430,7 +7797,7 @@ const handleListClick = (value: string) => {
             anchorEl={anchorElFormula}
             open={openFormula}
             closeAfterTransition
-            onClose={() => setAnchorElFormula(null)}
+            onClose={handleCloseformula}
             MenuListProps={{
               "aria-labelledby": "openFormula-button",
             }}
@@ -7499,7 +7866,7 @@ const handleListClick = (value: string) => {
                       color: "black",
                       fontWeight: 400,
                     }}
-                    onClick={() => setAnchorElFormula(null)}
+                    onClick={handleInsertFormula}
                   >
                     Save
                   </button>
@@ -7541,14 +7908,8 @@ const handleListClick = (value: string) => {
       <button onClick={scrollRight} className="scroll-left justify-flex-end">
         <ScrollRightSvg />
       </button>
-<<<<<<< Updated upstream
-    </div>
-  );
-}
-=======
       <div id="grid-picker-container"></div>
+
     </div>
   );
 }
-// TOTAL LINES: 7810 😅
->>>>>>> Stashed changes
