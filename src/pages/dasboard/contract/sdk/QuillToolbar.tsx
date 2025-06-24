@@ -14,9 +14,131 @@ import DropdownBarImage from "../../../../assets/shape.png";
 import { Sketch } from "@uiw/react-color";
 import ResizeModule from "quill-resize-module";
 Quill.register("modules/resize", ResizeModule);
+<<<<<<< Updated upstream
 function undoChange() {
   // @ts-ignore
   this.quill.history.undo();
+=======
+
+import CustomOrderedList from './customOrderedList'; // path to your blot
+
+type Page = 
+  | { type: 'pageBreak' }
+  | { type: 'content'; content: string };
+
+type QuillToolbarProps = {
+  pages: Page[];
+  setPages: React.Dispatch<React.SetStateAction<Page[]>>;
+};
+
+const BlockEmbed1 = Quill.import('blots/block/embed');
+
+class TableBlot extends BlockEmbed1 {
+  static blotName = 'htmlTable';
+  static tagName = 'div';
+  static className = 'custom-html-table';
+
+  static create(value: string) {
+    const node = super.create() as HTMLElement;
+    node.innerHTML = value;
+
+    // Enable contentEditable for all cells
+    TableBlot.makeCellsEditable(node);
+
+    // Bind cell click events to dynamically add row/column
+    TableBlot.addInteractionListeners(node);
+
+    return node;
+  }
+
+  static value(node: HTMLElement) {
+    return node.innerHTML;
+  }
+
+  static makeCellsEditable(node: HTMLElement) {
+    const cells = node.querySelectorAll('td, th');
+    cells.forEach((cell) => {
+      (cell as HTMLElement).contentEditable = 'true';
+      (cell as HTMLElement).style.padding = '8px';
+    });
+  }
+
+static showActionMenu(cell: HTMLTableCellElement, table: HTMLTableElement, node: HTMLElement) {
+  const existingMenu = document.getElementById('table-action-menu');
+  if (existingMenu) existingMenu.remove();
+
+  const menu = document.createElement('div');
+  menu.id = 'table-action-menu';
+  menu.style.position = 'absolute';
+  menu.style.background = '#fff';
+  menu.style.border = '1px solid #ccc';
+  menu.style.padding = '6px';
+  menu.style.boxShadow = '0px 2px 8px rgba(0,0,0,0.15)';
+  menu.style.zIndex = '9999';
+
+  const createMenuItem = (label: string, onClick: (e: MouseEvent) => void) => {
+    const btn = document.createElement('div');
+    btn.textContent = label;
+    btn.style.cursor = 'pointer';
+    btn.style.padding = '4px';
+    btn.onclick = onClick;
+    return btn;
+  };
+
+  const rowIndex = cell.parentElement ? Array.from((cell.parentElement.parentElement as HTMLTableElement).rows).indexOf(cell.parentElement as HTMLTableRowElement) : -1;
+
+  const colIndex = Array.from(cell.parentElement!.children).indexOf(cell);
+
+  menu.appendChild(createMenuItem('+ Add Row', (e) => {
+    e.stopPropagation();
+    TableBlot.insertRow(table);
+    node.innerHTML = table.outerHTML;
+    TableBlot.makeCellsEditable(node);
+    TableBlot.addInteractionListeners(node);
+    menu.remove();
+  }));
+
+  menu.appendChild(createMenuItem('+ Add Column', (e) => {
+    e.stopPropagation();
+    TableBlot.insertColumn(table);
+    node.innerHTML = table.outerHTML;
+    TableBlot.makeCellsEditable(node);
+    TableBlot.addInteractionListeners(node);
+    menu.remove();
+  }));
+
+  if (table.rows.length > 1) {
+    menu.appendChild(createMenuItem('🗑 Delete Row', (e) => {
+      e.stopPropagation();
+      TableBlot.deleteRow(table, rowIndex);
+      node.innerHTML = table.outerHTML;
+      TableBlot.makeCellsEditable(node);
+      TableBlot.addInteractionListeners(node);
+      menu.remove();
+    }));
+  }
+
+  if (table.rows[0].cells.length > 1) {
+    menu.appendChild(createMenuItem('🗑 Delete Column', (e) => {
+      e.stopPropagation();
+      TableBlot.deleteColumn(table, colIndex);
+      node.innerHTML = table.outerHTML;
+      TableBlot.makeCellsEditable(node);
+      TableBlot.addInteractionListeners(node);
+      menu.remove();
+    }));
+  }
+
+  document.body.appendChild(menu);
+
+  const rect = cell.getBoundingClientRect();
+  menu.style.top = `${rect.bottom + window.scrollY}px`;
+  menu.style.left = `${rect.left + window.scrollX}px`;
+
+  document.addEventListener('click', () => {
+    menu.remove();
+  }, { once: true });
+>>>>>>> Stashed changes
 }
 
 function redoChange() {
@@ -24,9 +146,77 @@ function redoChange() {
   this.quill.history.redo();
 }
 
+<<<<<<< Updated upstream
 // Custom CheckboxBlot for Quill
 const BlockEmbed = Quill.import("blots/block/embed");
 
+=======
+
+  static insertRow(table: HTMLTableElement) {
+    const row = table.insertRow();
+    const colCount = table.rows[0]?.cells.length || 1;
+    for (let i = 0; i < colCount; i++) {
+      const cell = row.insertCell();
+      cell.contentEditable = 'true';
+      cell.style.padding = '8px';
+    }
+  }
+
+  static insertColumn(table: HTMLTableElement) {
+    Array.from(table.rows).forEach((row) => {
+      const cell = row.insertCell();
+      cell.contentEditable = 'true';
+      cell.style.padding = '8px';
+    });
+  }
+
+  static deleteRow(table: HTMLTableElement, rowIndex: number) {
+    if (table.rows.length > 1 && rowIndex >= 0) {
+      table.deleteRow(rowIndex);
+    }
+  }
+
+  static deleteColumn(table: HTMLTableElement, colIndex: number) {
+    if (table.rows[0].cells.length > 1 && colIndex >= 0) {
+      Array.from(table.rows).forEach((row) => {
+        if (row.cells[colIndex]) {
+          row.deleteCell(colIndex);
+        }
+      });
+    }
+  }
+
+}
+// Register blot
+Quill.register(TableBlot);
+
+// Custom CheckboxBlot for Quill
+const BlockEmbed = Quill.import("blots/block/embed");
+
+class ResizableImage extends BlockEmbed {
+  static blotName = "resizableImage";
+  static tagName = "img";
+
+  static create(value: { src: string; width?: string; height?: string }) {
+    const node = super.create() as HTMLImageElement;
+    node.setAttribute("src", value.src);
+    if (value.width) node.style.width = value.width;
+    if (value.height) node.style.height = value.height;
+    node.classList.add("resizable");
+    return node;
+  }
+
+  static value(node: HTMLImageElement) {
+    return {
+      src: node.getAttribute("src") || "",
+      width: node.style.width || undefined,
+      height: node.style.height || undefined,
+    };
+  }
+}
+Quill.register({ "formats/resizableImage": ResizableImage });
+
+>>>>>>> Stashed changes
 class VideoBlot extends BlockEmbed {
   static create(value: any) {
     const node = super.create();
@@ -385,6 +575,7 @@ Quill.register(SignatureBlot);
 // Add sizes to whitelist and register them
 const SizeStyle = Quill.import("attributors/style/size");
 SizeStyle.whitelist = [
+<<<<<<< Updated upstream
   "8px",
   "10px",
   "12px",
@@ -404,6 +595,20 @@ SizeStyle.whitelist = [
   "54px",
   "60px",
   "72px",
+=======
+  "11.55px",   // ≈ 7pt
+  "13.2px",   // ≈ 8pt
+  "14.85px",   // ≈ 9pt
+  "16.5px",   // ≈ 10pt
+  "18.15px", // ≈ 11pt
+  "23.8px", // ≈ 12pt
+  "23.1px", // ≈ 14pt
+  "29.7px", // ≈ 18pt
+  "39.6px", // ≈ 24pt
+  "59.4px", // ≈ 36pt
+  "79.2px", // ≈ 48pt
+  "118.8px", // ≈ 72pt
+>>>>>>> Stashed changes
 ];
 Quill.register(SizeStyle, true);
 
@@ -474,6 +679,7 @@ const oldSize = [
   "60px",
   "72px",
 ];
+
 const listHandler = function (value: any) {
   // @ts-ignore
   const formats = this.quill.getFormat();
@@ -637,6 +843,7 @@ export default function QuillToolbar(props: any) {
 
   const toolbarRef: any = useRef(null);
 
+<<<<<<< Updated upstream
   const handleListClick = (value: string) => {
     const editor = editorRefContext.getEditor();
     if (!editor) return;
@@ -691,6 +898,235 @@ export default function QuillToolbar(props: any) {
     setAnchorEl(null);
   };
 
+=======
+  // const handleAddPage = () => {
+  //     setPages(prevPages => {
+  //       const updatedPages = [...prevPages, { content: '' }];
+  //       const newIndex = updatedPages.length - 1;
+  //       setCurrentPage(newIndex);
+  //       console.log('📄 New page added at index:', newIndex);
+
+  //       // Simulate Quill history.record if needed
+  //       // const quill = editorRefContext?.getEditor();
+  //       // quill?.history?.record();
+
+  //       return updatedPages;
+  //     });
+  //   };
+
+  const PageBreakComponent = () => {
+    const [pages, setPages] = useState<Page[]>([]);
+    const [currentPage, setCurrentPage] = useState(0);
+
+    // A ref to hold the latest version of the page break function
+      const pageBreakHandlerRef = useRef<(() => void) | null>(null);
+
+    // This function adds a new page
+    // const handleAddPage = () => {
+    //   setPages((prevPages) => {
+    //     const updatedPages = [...prevPages, { content: '' }];
+    //     const newIndex = updatedPages.length - 1;
+    //     setCurrentPage(newIndex);
+
+    //     console.log('📄 Page break added at index:', newIndex);
+
+    //     // Simulate Quill history.record if needed
+    //     // const quill = yourEditorRef.current;
+    //     // if (quill) {
+    //     //   quill.history.record();
+    //     //   console.log('✍️ Quill history recorded');
+    //     // }
+
+    //     return updatedPages;
+    //   });
+    // }
+
+    // Store the handler so it can be triggered outside
+    // pageBreakHandlerRef.current = handleAddPage;
+
+    // External trigger for page break
+    const triggerPageBreak = () => {
+      if (pageBreakHandlerRef.current) {
+        console.log('🧠 Triggering page break...');
+        pageBreakHandlerRef.current();
+      }
+    };
+  };
+
+  // Trigger function (could be called from outside later)
+  const triggerPageBreak = () => {
+    console.log('🧠 Triggering page break...');
+    PageBreakComponent();
+  };
+
+  function removeListFromEmptyLines(editor:any) {
+    const delta = editor.getContents();
+    let index = 0;
+
+    console.log("🔍 Running removeListFromEmptyLines");
+    console.log("Delta ops:", delta.ops);
+
+    delta.ops?.forEach((op:any, i:any) => {
+      const insert = op.insert;
+      const currentListType = op.attributes.list; // ✅ Fix here
+
+      if (typeof insert === 'string' && insert === '\n') {
+        const attributes = op.attributes;
+        console.log(`Line break at index ${index} with attributes:`, attributes);
+
+        if (attributes && attributes.list) {
+          const prevOp = delta.ops[i - 1];
+          const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
+
+          console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
+          console.log(`→ Previous text: "${prevText}"`);
+
+          if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
+            console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list.`);
+            editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
+          }
+        }
+      }
+
+      // Advance index
+      if (typeof insert === 'string') {
+        index += insert.length;
+      } else {
+        index += 1;
+      }
+    });
+
+    console.log("✅ Finished checking for empty list lines");
+  }
+
+function removeListFromEmptyLinesalpha(editor: any) {
+  const delta = editor.getContents();
+  let index = 0;
+
+  console.log("🔍 Running removeListFromEmptyLines");
+  console.log("Delta ops:", delta.ops);
+
+  const listTypesToCheck = ['lower-alpha', 'upper-alpha'];
+
+  delta.ops?.forEach((op: any, i: number) => {
+    const insert = op.insert;
+    const listType = op.attributes?.list;
+
+    if (typeof insert === 'string' && insert === '\n') {
+      console.log(`↪️ Line break at index ${index} with attributes:`, op.attributes);
+
+      if (listTypesToCheck.includes(listType)) {
+        const prevOp = delta.ops[i - 1];
+        const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
+
+        console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
+        console.log(`→ Previous text: "${prevText}"`);
+
+        if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
+          console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list formatting.`);
+          editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
+        }
+      }
+    }
+
+    // Advance index
+    if (typeof insert === 'string') {
+      index += insert.length;
+    } else {
+      index += 1;
+    }
+  });
+
+  console.log("✅ Finished checking for empty list lines");
+}
+
+function removeListFromEmptyLinesroman(editor: any) {
+  const delta = editor.getContents();
+  let index = 0;
+
+  console.log("🔍 Running removeListFromEmptyLines");
+  console.log("Delta ops:", delta.ops);
+
+  const listTypesToCheck = ['lower-roman', 'upper-roman'];
+
+  delta.ops?.forEach((op: any, i: number) => {
+    const insert = op.insert;
+    const listType = op.attributes?.list;
+
+    if (typeof insert === 'string' && insert === '\n') {
+      console.log(`↪️ Line break at index ${index} with attributes:`, op.attributes);
+
+      if (listTypesToCheck.includes(listType)) {
+        const prevOp = delta.ops[i - 1];
+        const prevText = typeof prevOp?.insert === 'string' ? prevOp.insert : '';
+
+        console.log(`→ Checking previous op at i=${i - 1}:`, prevOp);
+        console.log(`→ Previous text: "${prevText}"`);
+
+        if (!prevText || /^[\s\u200b]*$/.test(prevText)) {
+          console.log(`⚠️ Empty or invisible list line at index ${index}. Removing list formatting.`);
+          editor.formatLine(index, 1, { list: false, skipNumber: true }, 'user');
+        }
+      }
+    }
+
+    // Advance index
+    if (typeof insert === 'string') {
+      index += insert.length;
+    } else {
+      index += 1;
+    }
+  });
+
+  console.log("✅ Finished checking for empty list lines");
+}
+
+const handleListClick = (value: string) => {
+  console.log('[📋 handleListClick] List format value:', value);
+
+  const editor = editorRefContext.getEditor();
+  if (!editor) return;
+
+  const range = editor.getSelection(true);
+  if (!range) return;
+
+  const [block, offset] = editor.scroll.descendant(
+    Quill.import('blots/block'),
+    range.index
+  );
+  
+
+  if (block && block.domNode.tagName === 'LI') {
+    // Get the current list type from the blot's attributes (safer)
+    const formats = editor.getFormat(range);
+    const currentList = formats.list || null;
+
+    if (currentList === value) {
+      // Remove list formatting if clicking the same list type
+      editor.format('list', false, 'user');
+      setIsListActive('');
+    } else {
+      // Apply new list type
+      editor.format('list', value, 'user');
+      setIsListActive(value);
+    }
+  } else {
+    // If not inside a list item, just toggle formatting for current line(s)
+    if (value === 'none') {
+      editor.format('list', false, 'user');
+      setIsListActive('');
+    } else {
+      editor.format('list', value, 'user');
+      setIsListActive(value);
+    }
+  }
+
+  // Close menus
+  setAnchorEl2(null);
+  setAnchorEl(null);
+};
+
+>>>>>>> Stashed changes
   const [indexCursor, setIndexCursor] = useState<any>(null);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -823,6 +1259,7 @@ export default function QuillToolbar(props: any) {
     setAnchorEl(null);
   };
 
+<<<<<<< Updated upstream
   const handleOpenMargins = (event: any) => {
     if (openMargins) return;
     const editor = editorRefContext.getEditor();
@@ -830,19 +1267,48 @@ export default function QuillToolbar(props: any) {
     setIndexCursor(range);
     const scrollContainer = scrollPageRef.current;
     setAnchorElMargins(event.currentTarget);
+=======
+  // Opens the margin popover and stores the cursor position
+  const handleOpenMargins = (event: any) => {
+    if (openMargins) return; // Prevent re-opening if already open
+
+    const editor = editorRefContext.getEditor(); // Get Quill editor instance
+    const range = editor.getSelection(true); // Get current selection (with fallback to cursor position)
+
+    setIndexCursor(range); // Save the current cursor position to restore later
+    setAnchorElMargins(event.currentTarget); // Set anchor element for the margin popover
+
+    // Restore scroll position if previously saved
+    const scrollContainer = scrollPageRef.current;
+>>>>>>> Stashed changes
     if (scrollPosition) {
       scrollContainer.scrollTop = scrollPosition;
     }
   };
+<<<<<<< Updated upstream
   const handleCloseMargins = () => {
     const editor = editorRefContext.getEditor();
     setAnchorElMargins(null);
+=======
+
+  // Closes the margin popover and restores cursor focus and position
+  const handleCloseMargins = () => {
+    const editor = editorRefContext.getEditor(); // Get Quill editor instance
+    setAnchorElMargins(null); // Close the margin popover
+
+    // Restore the saved cursor position
+>>>>>>> Stashed changes
     if (indexCursor) {
       if (indexCursor.length > 0) {
         editor.setSelection(indexCursor.index + indexCursor.length, 0);
       } else {
         editor.setSelection(indexCursor.index, 0);
       }
+<<<<<<< Updated upstream
+=======
+
+      // Delay focus to ensure selection is applied correctly
+>>>>>>> Stashed changes
       setTimeout(() => {
         editor.focus();
       }, 0);
@@ -1657,6 +2123,7 @@ export default function QuillToolbar(props: any) {
 
     setSelectedColumn(value);
 
+<<<<<<< Updated upstream
     switch (value) {
       case "one":
         editorContainer.style.columnCount = 1;
@@ -1681,11 +2148,81 @@ export default function QuillToolbar(props: any) {
   };
 
   const [showFormattingMarks, setShowFormattingMarks] = useState(false);
+=======
+    // Clear previous column-related styles
+    editorContainer.style.columnCount = "";
+    editorContainer.style.columnGap = "";
+    editorContainer.style.columnRule = "";
+    editorContainer.style.marginLeft = "";
+    editorContainer.style.transform = "";
+
+    // Force reflow
+    void editorContainer.offsetHeight;
+
+    switch (value) {
+      case "one":
+        editorContainer.style.columnCount = "1";
+        editorContainer.style.width = "100%"; // Ensure full width
+        break;
+      case "two":
+        editorContainer.style.columnCount = "2";
+        editorContainer.style.columnGap = "30px";
+        break;
+      case "three":
+        editorContainer.style.columnCount = "3";
+        editorContainer.style.columnGap = "30px";
+        break;
+      case "left":
+      case "right":
+        editorContainer.style.columnCount = "2";
+        editorContainer.style.columnGap = "30px";
+        // Additional positioning if needed for left/right layout
+        break;
+      default:
+        editorContainer.style.columnCount = "1";
+        break;
+    }
+
+    handleCloseColumns();
+  };
+>>>>>>> Stashed changes
 
   const toggleFormattingMarks = () => {
     setShowFormattingMarks(!showFormattingMarks);
   };
 
+<<<<<<< Updated upstream
+=======
+  const handleSelectSpacing = (value: any) => {
+  // Update the spacing state to the selected value
+  setSpacing(value);
+
+  // Close the spacing dropdown/menu by clearing its anchor element
+  setAnchorElSpacing(null);
+
+  // Get the Quill editor instance from the context/ref
+  const quillEditor = editorRefContext.getEditor();
+
+  if (quillEditor) {
+    // Get the current selection range in the editor (true means get the current cursor position or selection)
+    const savedRange = quillEditor.getSelection(true);
+
+    if (savedRange) {
+      // If there is an active selection (even length 0 means just cursor), format the lines within the selection
+      quillEditor.formatLine(
+        savedRange.index, // Start index of selection
+        savedRange.length, // Length of selection
+        { lineHeight: value }, // Apply the lineHeight formatting with the selected value
+        "user" // Source of the change (user-triggered)
+      );
+    } else {
+      // If there is no selection (cursor not focused), just apply lineHeight format to the current cursor position
+      quillEditor.format("lineHeight", value, "user");
+    }
+  }
+  };
+
+>>>>>>> Stashed changes
   useEffect(() => {
     if (!editorRefContext) return;
     const editor = editorRefContext.getEditor();
@@ -1840,6 +2377,7 @@ export default function QuillToolbar(props: any) {
     setAnchorElFormula(event.currentTarget);
   };
 
+<<<<<<< Updated upstream
   const handleAddLink = () => {
     const editor = editorRefContext.getEditor();
 
@@ -1867,6 +2405,38 @@ export default function QuillToolbar(props: any) {
     setLinkUrl("");
     handleCloseLink();
     setSelection(null);
+=======
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleAddLink = () => {
+    if (isSaving) return; // Prevent double clicks
+    setIsSaving(true);
+
+    const editor = editorRefContext.getEditor();
+
+    if (selection) {
+      const { index, length } = selection;
+
+      let delta = new editor.constructor.imports.delta();
+
+      delta = delta
+        .retain(index)
+        .delete(length)
+        .insert(displayText, { link: linkUrl });
+
+      editor.updateContents(delta, "user");
+    } else {
+      editor.insertText(cursorIndex, displayText, { link: linkUrl }, "user");
+    }
+
+    setDisplayText("");
+    setLinkUrl("");
+    handleCloseLink();
+    setSelection(null);
+
+    // Allow another click after a short delay or after async logic
+    setTimeout(() => setIsSaving(false), 300);
+>>>>>>> Stashed changes
   };
 
   const handleCloseLink = () => {
@@ -1900,11 +2470,15 @@ export default function QuillToolbar(props: any) {
   };
 
   const handlePictureFromFile = () => {
+<<<<<<< Updated upstream
     // Open a file input dialog
+=======
+>>>>>>> Stashed changes
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
 
+<<<<<<< Updated upstream
     fileInput.onchange = async (e: any) => {
       const file = e.target.files[0];
       if (file) {
@@ -1931,6 +2505,43 @@ export default function QuillToolbar(props: any) {
     };
 
     // Trigger the file input dialog
+=======
+    fileInput.onchange = async (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageUrl = event.target?.result as string;
+
+        const quill = editorRefContext.getEditor();
+        const cursorIndex = quill.getSelection()?.index ?? quill.getLength();
+
+        quill.insertEmbed(cursorIndex, "image", imageUrl, "user");
+        quill.setSelection(cursorIndex + 1);
+        quill.focus();
+
+        const img = quill.root.querySelector(`img[src="${imageUrl}"]`);
+        if (img) {
+          console.log("Before adding class - image size:", img.naturalWidth, "x", img.naturalHeight);
+          
+          img.classList.add("resizable");
+          
+  const rect = img.getBoundingClientRect();
+        console.log(
+          "After adding class - image size:",
+          Math.round(rect.width),
+          "x",
+          Math.round(rect.height)
+        );
+        }
+      };
+
+      reader.readAsDataURL(file);
+    };
+
+>>>>>>> Stashed changes
     fileInput.click();
     setAnchorElPicture(null);
   };
@@ -3060,6 +3671,46 @@ export default function QuillToolbar(props: any) {
     );
   };
 
+<<<<<<< Updated upstream
+=======
+  const [showGrid, setShowGrid] = useState(false);
+  const insertTable = (rows: number, cols: number) => {
+    const quill = editorRefContext.getEditor?.();
+    if (!quill) return;
+
+    const range = quill.getSelection(true);
+    if (!range) return;
+
+    let tableHTML = `<table border="1" style="border-collapse: collapse; width: 100%;">`;
+
+    // Header
+    tableHTML += '<thead><tr>';
+    for (let c = 0; c < cols; c++) {
+      tableHTML += `<th style="padding: 8px;"></th>`;
+    }
+    tableHTML += '</tr></thead>';
+
+    // Body
+    tableHTML += '<tbody>';
+    for (let r = 0; r < rows - 1; r++) {
+      tableHTML += '<tr>';
+      for (let c = 0; c < cols; c++) {
+        tableHTML += `<td style="padding: 8px;"></td>`;
+      }
+      tableHTML += '</tr>';
+    }
+    tableHTML += '</tbody></table>';
+
+    quill.insertEmbed(range.index, 'htmlTable', tableHTML, 'user');
+    const deltaAfterInsert = quill.getContents();
+    console.log("Delta after insert:", JSON.stringify(deltaAfterInsert, null, 2));
+    quill.setSelection(range.index + 1);
+  };
+  const handleTableSizeSelect = (rows: number, cols: number) => {
+    insertTable(rows, cols);
+    setShowGrid(false);
+  };
+>>>>>>> Stashed changes
   const handleBold = () => {
     const editor = editorRefContext.getEditor();
     const isBold = editor.getFormat().bold;
@@ -3067,7 +3718,10 @@ export default function QuillToolbar(props: any) {
     editor.format("bold", isBold == undefined ? true : false, "user");
     editor.focus();
   };
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   const handleItalic = () => {
     const editor = editorRefContext.getEditor();
     const isItalic = editor.getFormat().italic;
@@ -3075,7 +3729,10 @@ export default function QuillToolbar(props: any) {
     editor.format("italic", isItalic == undefined ? true : false, "user");
     editor.focus();
   };
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   const handleUnderline = () => {
     const editor = editorRefContext.getEditor();
     const isUnderline = editor.getFormat().underline;
@@ -3083,7 +3740,10 @@ export default function QuillToolbar(props: any) {
     editor.format("underline", isUnderline == undefined ? true : false, "user");
     editor.focus();
   };
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   const handleStrikethrough = () => {
     const editor = editorRefContext.getEditor();
     const isStrike = editor.getFormat().strike;
@@ -3091,7 +3751,11 @@ export default function QuillToolbar(props: any) {
     editor.format("strike", isStrike == undefined ? true : false, "user");
     editor.focus();
   };
+<<<<<<< Updated upstream
 
+=======
+  const originalFontSizeMap = new Map<any, string>();
+>>>>>>> Stashed changes
   const handleSuperscript = () => {
     const editor = editorRefContext.getEditor();
     const isSuperscript = editor.getFormat().script === "super";
@@ -3106,7 +3770,6 @@ export default function QuillToolbar(props: any) {
     }
     editor.focus();
   };
-
   const handleSubscript = () => {
     const editor = editorRefContext.getEditor();
     const isSubscript = editor.getFormat().script === "sub";
@@ -3121,7 +3784,10 @@ export default function QuillToolbar(props: any) {
     }
     editor.focus();
   };
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   const handleIncreaseIndent = () => {
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
@@ -3129,7 +3795,6 @@ export default function QuillToolbar(props: any) {
       editor.format("indent", currentIndent + 1, "user");
     }
   };
-
   const handleDecreaseIndent = () => {
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
@@ -3139,7 +3804,26 @@ export default function QuillToolbar(props: any) {
       }
     }
   };
+  const handleCloseformula = () => {
+      setDisplayFormula("");
+      const editor = editorRefContext.getEditor();
+      setAnchorElFormula(null)
+      editor.focus();
+      setSelection(null);
+  };
+  const handleInsertFormula = () => {
+    if (editorRefContext) {
+      const editor = editorRefContext.getEditor();
+      const range = editor.getSelection(true);
+        console.log("clicked : ", editor);
+      if (range) {
+        // Insert or replace formula at cursor with the current input value
+        editor.insertText(range.index, displayFormula, {
+          bold: true,
+          italic: true
+        }, "user");
 
+<<<<<<< Updated upstream
   const handleInsertFormula = () => {
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
@@ -3150,6 +3834,14 @@ export default function QuillToolbar(props: any) {
     }
   };
 
+=======
+        // Move cursor after the formula
+        editor.setSelection(range.index + 1, 0, "user");
+      }
+      handleCloseformula();
+    }
+  };
+>>>>>>> Stashed changes
   const handleInsertCodeBlock = () => {
     if (editorRefContext) {
       const editor = editorRefContext.getEditor();
@@ -3166,7 +3858,6 @@ export default function QuillToolbar(props: any) {
       }
     }
   };
-
   useEffect(() => {
     if (!editorRefContext) return;
     const quill = editorRefContext.getEditor();
@@ -3350,7 +4041,6 @@ export default function QuillToolbar(props: any) {
       }
     );
   }, [editorRefContext]);
-
   useEffect(() => {
     if (!editorRefContext) return;
     const editor = editorRefContext.getEditor();
@@ -3424,7 +4114,6 @@ export default function QuillToolbar(props: any) {
       observer.disconnect();
     };
   }, [editorRefContext, fontColorSvg, selectedFontSizeValue]);
-
   const formatFont = (index: number, selectedFont: string, length?: number) => {
     if (length) {
       if (!editorRefContext) return;
@@ -3438,7 +4127,6 @@ export default function QuillToolbar(props: any) {
       setSelectedFontValue(selectedFont);
     }
   };
-
   useEffect(() => {
     contractNewFont?.forEach((newFont: string) => {
       if (!Font.whitelist.includes(newFont) && newFont != "ql-cursor") {
@@ -3446,7 +4134,6 @@ export default function QuillToolbar(props: any) {
       }
     });
   }, [contractNewFont]);
-
   useEffect(() => {
     contractNewFontSize?.forEach((newFont: string) => {
       if (!SizeStyle.whitelist.includes(newFont)) {
@@ -3454,7 +4141,6 @@ export default function QuillToolbar(props: any) {
       }
     });
   }, [contractNewFontSize]);
-
   useEffect(() => {
     contractNewFontStyles?.forEach((styleRule: any) => {
       if (!document.querySelector(styleRule.split(" ")[0])) {
@@ -3469,8 +4155,7 @@ export default function QuillToolbar(props: any) {
   return (
     <div
       className="d-flex align-items-center justify-content-between"
-      style={{ height: "100%" }}
-    >
+      style={{ height: "100%" }}>
       <button onClick={scrollLeft} className="scroll-left">
         <ScrollLeftSvg />
       </button>
@@ -6856,6 +7541,14 @@ export default function QuillToolbar(props: any) {
       <button onClick={scrollRight} className="scroll-left justify-flex-end">
         <ScrollRightSvg />
       </button>
+<<<<<<< Updated upstream
     </div>
   );
 }
+=======
+      <div id="grid-picker-container"></div>
+    </div>
+  );
+}
+// TOTAL LINES: 7810 😅
+>>>>>>> Stashed changes

@@ -203,7 +203,520 @@ function SyncFesion() {
     setTimeout(() => {
       setEditMode(false);
     }, 0);
+<<<<<<< Updated upstream
     setDucomentName("");
+=======
+  };
+
+  editorElement.addEventListener('paste', handlePaste);
+  return () => {
+    editorElement.removeEventListener('paste', handlePaste);
+  };
+}, [currentPage]);
+
+//   useEffect(() => {
+//   if (!editorRefs) return;
+
+//   const savedDelta = editorRefs.getContent();
+//   console.log("saveddelta", savedDelta);
+
+//   if (savedDelta) {
+//     const savedDeltaParsed = JSON.parse(savedDelta);
+//     const quill = editorRefContext.getEditor?.();
+//     if (quill) {
+//       quill.setContents(savedDeltaParsed);
+//     }
+//   }
+// }, []);
+
+
+
+  // Keep ref in sync
+ 
+  useEffect(() => {
+    formattingVisibleRef.current = formattingVisible;
+  }, [formattingVisible]);
+
+// function patchListStartOnEditor(editor: any) {
+//   const ols = editor.root.querySelectorAll('ol');
+//   ols.forEach((ol: any) => {
+//     const startAttr = ol.getAttribute('start');
+//     const start = startAttr ? parseInt(startAttr, 10) : 1;
+//     if (!isNaN(start)) {
+//       ol.style.setProperty('--custom-start', start - 1);
+//       ol.style.setProperty('counter-reset', `list-item ${start - 1}`);
+//     }
+//   });
+// }
+
+// function updateListStylesForAllPages() {
+//   editorRefs.current.forEach((editorRefs:any) => {
+//     const editor = editorRefs.getEditor();
+//     patchListStartOnEditor(editor);
+//   });
+// }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+
+      // Only trigger on Ctrl + Shift + a
+      if (e.ctrlKey && e.shiftKey && key === 'a') {
+        e.preventDefault();
+        setCtrlShiftAPressed(true);
+
+        const instances: any[] = [];
+        const highlightColor = '#B4D5FF';
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            instances.push(editor);
+            const length = editor.getLength();
+            editor.formatText(0, length - 1, { background: highlightColor }, "user");
+          }
+        });
+
+        setEditorInstances(instances);
+        setupGlobalHighlightClearListener(); // 🧠 Set once for all
+      }
+      
+      // Only trigger on Ctrl + Shift + B
+      if (e.ctrlKey && e.shiftKey && key === 'b') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + B detected: applying bold to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isBold = formats.bold === true;
+            editor.formatText(0, length, 'bold', !isBold); // Toggle bold
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + i
+      if (e.ctrlKey && e.shiftKey && key === 'i') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + i detected: applying italic to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isItalic = formats.italic === true;
+            editor.formatText(0, length, 'italic', !isItalic); // Toggle italic
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + u
+      if (e.ctrlKey && e.shiftKey && key === 'u') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + u detected: applying underline to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isUnderline = formats.underline === true;
+            editor.formatText(0, length, 'underline', !isUnderline); // Toggle underline
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + x
+      if (e.ctrlKey && e.shiftKey && key === 'x') {
+        e.preventDefault(); // Prevent any default behavior like browser shortcuts
+
+        console.log('Ctrl + Shift + x detected: applying underline to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (editor) {
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isStrike = formats.strike === true;
+            editor.formatText(0, length, 'strike', !isStrike); // Toggle strike
+          }
+        });
+      }
+
+      // Only trigger on Ctrl + Shift + +
+      if (e.ctrlKey && e.shiftKey && e.key === '+') {
+        e.preventDefault(); // Prevent default browser behavior
+
+        console.log('Ctrl + Shift + + detected: applying superscript to all editors');
+
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (!editor) return;
+
+          const length = editor.getLength();
+          const formats = editor.getFormat(0, length);
+          const isSuperscript = formats.script === "super";
+
+          const currentFormat = editor.getFormat();
+          const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
+
+          // Helper: reduce size by 4px
+          const getReducedSize = (size: string): string => {
+            const pxMatch = size.match(/^(\d+)px$/);
+            if (pxMatch) {
+              const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+              return `${reduced}px`;
+            }
+            return size;
+          };
+
+          if (isSuperscript) {
+                const getIncreasedSize = (size: string): string => {
+                const pxMatch = size.match(/^(\d+)px$/);
+                if (pxMatch) {
+                  const increased = parseInt(pxMatch[1], 10) + 4;
+                  return `${increased}px`;
+                }
+                return size;
+              };
+
+            const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
+            console.log("Restoring for editor:", editor);
+            console.log("Original size:", originalSize, "| Current size:", currentSize);
+
+            editor.formatText(0, length, {
+              script: false,
+              size: originalSize,
+            }, 'user');
+
+            originalFontSizeMap.delete(editor);
+            setIsScriptActice("");
+          } else {
+            // Store original size and apply superscript
+            if (!originalFontSizeMap.has(editor)) {
+              originalFontSizeMap.set(editor, currentSize);
+              console.log("Storing original size:", currentSize, "for editor:", editor);
+            }
+
+            const reducedSize = getReducedSize(currentSize);
+            console.log("Applying reduced size:", reducedSize, "to editor:", editor);
+
+            editor.formatText(0, length, {
+              script: 'super',
+              size: reducedSize,
+            }, 'user');
+
+            setIsScriptActice("super");
+          }
+        });
+      }
+      // Only trigger on Ctrl + -
+      if (e.ctrlKey && e.key === '-') {
+          e.preventDefault(); // Prevent default browser behavior
+
+          console.log('Ctrl + Shift + - detected: applying subscript to all editors');
+
+          editorRefs.current.forEach((ref: any) => {
+            const editor = ref?.getEditor();
+            if (!editor) return;
+
+            const length = editor.getLength();
+            const formats = editor.getFormat(0, length);
+            const isSubscript = formats.script === "sub";
+
+            const currentFormat = editor.getFormat();
+            const currentSize = currentFormat.size || selectedFontSizeValue || "14px";
+
+            // Helper: reduce size by 4px
+            const getReducedSize = (size: string): string => {
+              const pxMatch = size.match(/^(\d+)px$/);
+              if (pxMatch) {
+                const reduced = Math.max(parseInt(pxMatch[1], 10) - 4, 8);
+                return `${reduced}px`;
+              }
+              return size;
+            };
+
+            if (isSubscript) {
+              // Helper: increase size by 4px
+              const getIncreasedSize = (size: string): string => {
+                const pxMatch = size.match(/^(\d+)px$/);
+                if (pxMatch) {
+                  const increased = parseInt(pxMatch[1], 10) + 4;
+                  return `${increased}px`;
+                }
+                return size;
+              };
+
+              const originalSize = originalFontSizeMap.get(editor) || getIncreasedSize(currentSize);
+              console.log("Restoring for editor:", editor);
+              console.log("Original size:", originalSize, "| Current size:", currentSize);
+
+              editor.formatText(0, length, {
+                script: false,
+                size: originalSize,
+              }, 'user');
+
+              originalFontSizeMap.delete(editor);
+              setIsScriptActice("");
+            } else {
+              // Store original size and apply subscript
+              if (!originalFontSizeMap.has(editor)) {
+                originalFontSizeMap.set(editor, currentSize);
+                console.log("Storing original size:", currentSize, "for editor:", editor);
+              }
+
+              const reducedSize = getReducedSize(currentSize);
+              console.log("Applying reduced size:", reducedSize, "to editor:", editor);
+
+              editor.formatText(0, length, {
+                script: 'sub',
+                size: reducedSize,
+              }, 'user');
+
+              setIsScriptActice("sub");
+            }
+          });
+        }
+
+      // Only trigger on Ctrl + 8
+      if (e.ctrlKey && e.key === '8') {
+        e.preventDefault();
+        editorRefs.current.forEach((ref: any) => {
+          const editor = ref?.getEditor();
+          if (!editor) return;
+
+          const editorContainer = editor.root;
+          const paragraphs = editorContainer.querySelectorAll("p");
+
+          paragraphs.forEach((p: HTMLElement) => {
+            const oldMarks = p.querySelectorAll(".formatting-mark");
+            oldMarks.forEach((mark) => {
+              const parent = mark.parentNode;
+              if (!parent) return;
+
+              const textContent = mark.textContent || "";
+              const restoredText = textContent
+                .replace(/·/g, " ")
+                .replace(/→/g, "\t")
+                .replace(/¶/g, "");
+
+              const textNode = document.createTextNode(restoredText);
+              parent.replaceChild(textNode, mark);
+            });
+
+            // ✅ Use ref to access current visibility
+            if (!formattingVisibleRef.current) {
+              const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT, null);
+              const textNodes: Text[] = [];
+
+              while (walker.nextNode()) {
+                textNodes.push(walker.currentNode as Text);
+              }
+
+              textNodes.forEach((textNode) => {
+                const originalText = textNode.textContent ?? "";
+                const fragment = document.createDocumentFragment();
+
+                for (let i = 0; i < originalText.length; i++) {
+                  const char = originalText[i];
+                  const span = document.createElement("span");
+                  span.className = "formatting-mark";
+
+                  if (char === " " || char === ".") {
+                    span.textContent = "·";
+                    span.setAttribute("contenteditable", "false");
+                  } else if (char === "\t") {
+                    span.textContent = "→";
+                    span.setAttribute("contenteditable", "false");
+                  } else {
+                    span.textContent = char;
+                  }
+
+                  fragment.appendChild(span);
+                }
+
+                textNode.parentNode?.replaceChild(fragment, textNode);
+              });
+
+              const endMark = document.createElement("span");
+              endMark.className = "formatting-mark";
+              endMark.setAttribute("contenteditable", "false");
+              endMark.textContent = "¶";
+              p.appendChild(endMark);
+            }
+          });
+        });
+
+        // ✅ Proper toggle
+        setFormattingVisible(prev => !prev);
+      }
+
+      
+      if (e.key === ' ') {
+        console.log("triggered");
+        const focusedEditorIndex = currentPage;
+        console.log("focusedEditorIndex", focusedEditorIndex);
+        const editor = editorRefs.current[currentPage].getEditor();
+
+        const range = editor.getSelection(true);
+        if (!range) return;
+
+        // Get the current line/blot before cursor
+        const [block, offset] = editor.scroll.descendant(
+          Quill.import('blots/block'),
+          range.index - 1
+        );
+        if (!block) return;
+
+        const text = block.domNode.textContent || '';
+        // Remove all whitespace and zero-width spaces to normalize input
+        const cleanedText = text.replace(/\s+/g, '').replace(/\u200B/g, '');
+        console.log('Cleaned:', JSON.stringify(cleanedText)); 
+
+        if (/^\d+\.$/.test(cleanedText)) {
+          const match = cleanedText.match(/^(\d+)\.$/);
+          if (match) {
+            const startNumber = parseInt(match[1], 10);
+            console.log("start: ", startNumber);
+            Quill.register(CustomOrderedList, true);
+
+            e.preventDefault();
+
+            // Step 1: Get the formats at the first character of the text being deleted
+const currentFormats = editor.getFormat(range.index - text.length, 1);
+            // Remove the original typed text (e.g., "1.")
+            editor.deleteText(range.index - text.length, text.length);
+
+            editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+
+            console.log("currentFormats", currentFormats['size']);
+            // Reapply font-size
+            if (currentFormats['size']) {
+              editor.formatText(range.index - text.length, 1, 'size', currentFormats['size']);
+            }
+
+
+            // Insert a space to allow typing after list bullet
+            editor.insertText(range.index - text.length, ' ');
+
+            // Set cursor right after the inserted space
+            editor.setSelection(range.index - text.length + 1, 0);
+
+            // Patch OL element manually to fix start attribute and CSS variable
+            setTimeout(() => {
+              const [leaf] = editor.getLeaf(range.index - text.length);
+              if (!leaf) return;
+
+              let parent = leaf.parent;
+              while (parent && parent.domNode?.tagName !== 'OL') {
+                parent = parent.parent;
+              }
+
+              if (parent && parent.domNode?.tagName === 'OL') {
+                parent.domNode.setAttribute('start', String(startNumber));
+                parent.domNode.style.setProperty('--custom-start', startNumber - 1);
+                 parent.domNode.style.fontSize = currentFormats['size']; // <-- Try thi
+              }
+            }, 0);
+          }
+        }  else if (/^[a-zA-Z]\.$/.test(cleanedText)) {
+          console.log("yes this calllllllllllllllllllllllllllllllllllllll")
+          const match = cleanedText.match(/^([a-zA-Z])\.$/);
+          if (match) {
+            Quill.register(CustomAlphaList, true);
+            const letter = match[1];
+            const isUpper = letter === letter.toUpperCase();
+            const startNumber = letter.toLowerCase().charCodeAt(0) - 96; // 'a' = 1
+            const listStyle = isUpper ? 'upper-alpha' : 'lower-alpha';
+
+            console.log(`Alphabet list: ${letter}, start=${startNumber}, style=${listStyle}`);
+
+            e.preventDefault();
+
+            // Remove the typed "a." or "A."
+            editor.deleteText(range.index - text.length, text.length);
+            console.log("startnumber: ", startNumber, "  liststyletype: ", listStyle);
+            // Format the line as ordered list
+            editor.formatLine(range.index - text.length, 1, 'list', 'ordered');
+
+
+            // Insert a space after formatting
+            editor.insertText(range.index - text.length, ' ');
+            editor.setSelection(range.index - text.length + 1, 0);
+
+            // Delay DOM patching to next tick
+              setTimeout(() => {
+                const [leaf] = editor.getLeaf(range.index - text.length);
+                if (!leaf) return;
+
+                let parent = leaf.parent;
+                while (parent && parent.domNode?.tagName !== 'OL') {
+                  parent = parent.parent;
+                }
+                if (parent && parent.domNode?.tagName === 'OL') {
+                  parent.domNode.setAttribute('start', String(startNumber));
+                  parent.domNode.setAttribute('data-alpha', isUpper ? 'upper' : 'lower');
+                  parent.domNode.setAttribute('data-alpha', isUpper ? 'upper' : 'lower');
+                  console.log('data-alpha set:', parent.domNode.getAttribute('data-alpha'));
+
+                  // parent.domNode.setAttribute('start', String(startNumber));
+                  // parent.domNode.style.listStyleType = listStyle; // 'upper-alpha' or 'lower-alpha'
+                }
+              }, 0);
+
+          }
+        } else {
+          console.log("Not a numbered list item", cleanedText);
+        }
+      }
+
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    pages.forEach((page, i) => {
+      if (page.type === "pageBreak") {
+        const editor = editorRefs.current[currentPage]?.getEditor();
+        if (!editor) return; // editor not ready
+
+        // Get cursor position
+        
+        const selection = editor.getSelection(true);
+        const insertIndex = selection ? selection.index : editor.getLength();
+        console.log("selection: ", selection.index);
+        console.log("insertIndex: ", insertIndex);
+
+        // Insert text at cursor position
+        const pageBreakText = "\n----- PAGE BREAK -----\n";
+        editor.insertText(insertIndex, pageBreakText, { color: 'white' });
+
+
+        // Set cursor right after the inserted text
+        editor.setSelection(insertIndex + pageBreakText.length);
+
+        console.log("Page break inserted at position:", insertIndex);
+      }
+    });
+  }, [pages]);
+
+  useEffect(() => {
+    // Exit early if editorRefs are not initialized
+    if (!editorRefs) return;
+
+    // Reset document state when no ID is present
+>>>>>>> Stashed changes
     if (!id && !newId) {
       setTimeout(() => {
         setPages([{ content: "" }]);
@@ -310,12 +823,23 @@ function SyncFesion() {
   const editorContainerRef: any = useRef(null);
 
   const handleSubmit = async () => {
+<<<<<<< Updated upstream
     console.log("handle submit");
     try {
+=======
+    try {
+        if (!editorRefs) return;
+    const editorRef = editorRefs.current[0];
+    const quillEditor = editorRef.getEditor();
+      const quillEditor1 = editorRefs.current[currentPage].getEditor();
+    const savedDelta =  quillEditor.getContents();
+    console.log("saveddelta", savedDelta);
+>>>>>>> Stashed changes
       if (!documentName) {
         toast.error("Please enter the name of the document");
         return;
       }
+<<<<<<< Updated upstream
       setAuditTrails([
         ...(auditTrails || []),
         {
@@ -326,6 +850,38 @@ function SyncFesion() {
       ]);
 
       await createPayload();
+=======
+
+      // 1. Get Quill content as Delta
+      const quill = editorRefs.current[currentPage].getEditor();
+      if (!quill) {
+        toast.error("Editor instance not found.");
+        return;
+      }
+
+      const contentDelta = quill.getContents(); // This includes your custom embeds like tables
+      const contentJSON = JSON.stringify(contentDelta);
+
+      // 2. Prepare your payload including the content
+      const payload = {
+        documentName,
+        content: contentJSON,
+        auditTrails: [
+          ...(auditTrails || []),
+          {
+            user: user?.firstName,
+            date: new Date(),
+            message: "has added the new version",
+          },
+        ],
+        // ... any other data you want to send
+      };
+
+      // 3. Save it via your API or local storage
+            await createPayload();
+
+      // 4. Reset UI states as you are already doing
+>>>>>>> Stashed changes
       setBgColorSvg("#fefefe");
       setPrevBgColor("#fefefe");
       setSelectedFontSize("12px");
@@ -333,10 +889,18 @@ function SyncFesion() {
       setSelectedFontValue("arial");
       setSelectedFont("arial");
       setPrevFontColor("black");
+<<<<<<< Updated upstream
     } catch (error: any) {
       console.log(error);
 
       let errorMessage = "Failed to create .";
+=======
+
+      toast.success("Document saved successfully!");
+    } catch (error: any) {
+      console.log(error);
+      let errorMessage = "Failed to save document.";
+>>>>>>> Stashed changes
       if (error.response && error.response.data) {
         errorMessage =
           error.response.data.message ||
@@ -1006,6 +1570,10 @@ function SyncFesion() {
       </div>
     );
   };
+<<<<<<< Updated upstream
+=======
+  const container = useRef<DocumentEditorContainerComponent | null>(null);  // Use useRef to store container
+>>>>>>> Stashed changes
 
   let container: DocumentEditorContainerComponent;
   const onCreated = useCallback(() => {
@@ -1315,6 +1883,7 @@ function SyncFesion() {
     setPages([...updatedPages]);
   };
 
+<<<<<<< Updated upstream
   const handleChange = (value:any, delta:any, source:string, editor:any, index:number) => {
     const updatedPages = [...pages];
     const editor_ = editorRefs.current[currentPage].getEditor();
@@ -1327,6 +1896,8 @@ function SyncFesion() {
 
     handleOverflow(index, editor_, updatedPages); 
   };
+=======
+>>>>>>> Stashed changes
   const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
     const currentEditor = editorRefs?.current[index]?.getEditor();
 
